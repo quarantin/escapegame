@@ -14,15 +14,16 @@
 	</nav>
 	<div class="container">
 		<div class="title"><h1>STRANGER THINGS</h1></div>
-		<form action="stranger-things" method="post">
+		<form method="post">
+			{% csrf_token %}
 			<div class="row">
 				<div class="col">
 			        <label class="head_block">Video Brief</label>
 			        <div class="row">
-			        	<div class= "col">
+			        	<div class="col">
 			        		<button id="START" type=submit name="executer" value="START">
-								<img src="{% static 'img/icons8-play-100.png' %}">
-							</button>
+							<img src="{% static 'img/icons8-play-100.png' %}">
+						</button>
 			        	</div>
 			        	<div class="col">
 			        		<p class="time" id="time_start"></p>

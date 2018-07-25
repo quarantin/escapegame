@@ -15,14 +15,15 @@
 	<div class="container">
 		<div class="title"><h1>1001 NUITS</h1></div>
 		<form method="post">
+			{% csrf_token %}
 			<div class="row">
 				<div class="col">
 			        <label class="head_block">Video Brief</label>
 			        <div class="row">
-			        	<div class= "col">
-			        		<button id="BRIEF" type=submit name="executer" value="brief_nuits">
-								<img src="{% static 'img/icons8-play-100.png' %}">
-							</button>
+			        	<div class="col">
+						<button name="play-video" type="submit">
+							<img src="{% static 'img/icons8-play-100.png' %}">
+						</button>
 			        	</div>
 			        	<div class="col">
 			        		<p class="time" id="time_start"></p>
@@ -38,17 +39,17 @@
 			        	</div>
 			        	<div class ="col">
 			        		<div class="row">
-			        			<div class ="col">
-					        		<button id="FONTAINE" type=submit name="executer" value="Ouvrir">
-										<img src="{% static 'img/icons8-ouvrir-100.png' %}">
-									</button>
-								</div>
-								<div class ="col">
-									<button id="FONTAINE" type=submit name="executer" value="fermer">
-										<img src="{% static 'img/icons8-cadenas-100.png' %}">
-									</button>
-								</div>
+							<div class ="col">
+								<button name="lock-garden-door" type="submit">
+									<img src="{% static 'img/icons8-cadenas-100.png' %}">
+								</button>
 							</div>
+			        			<div class ="col">
+					        		<button name="unlock-garden-door" type="submit">
+									<img src="{% static 'img/icons8-ouvrir-100.png' %}">
+								</button>
+							</div>
+						</div>
 			        	</div>
 			        </div>
 				</div>

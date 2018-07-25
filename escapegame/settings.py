@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'mille_et_une_nuits',
+    'stranger_things',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -126,3 +128,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
+
+VIDEO_PLAYER = 'mplayer'
+#VIDEO_PLAYER = 'omxplayer'
+
