@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'door',
+    'video',
     'mille_et_une_nuits',
     'stranger_things',
     'django.contrib.admin',
