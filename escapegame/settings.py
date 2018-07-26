@@ -129,6 +129,5 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
-#VIDEO_PLAYER = 'mplayer'
 VIDEO_PLAYER = 'omxplayer'
-
+VIDEO_PATH = '/opt/vc/src/hello_pi/hello_video/'
