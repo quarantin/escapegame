@@ -19,9 +19,27 @@ from django.contrib.auth.views import LoginView
 from . import views
 
 urlpatterns = [
+	# Landing page
 	path('', views.index),
+
+	# Admin section
 	path('admin/', admin.site.urls),
+
+	# Authentication
 	path('accounts/', include('django.contrib.auth.urls')),
+
+	# Door module
+	path('door/', include('door.urls')),
+
+	# Status module
+	path('status/', include('status.urls')),
+
+	# Video module
+	path('video/', include('video.urls')),
+
+	# 1001 nuits module
 	path('1001-nuits/', include('mille_et_une_nuits.urls')),
+
+	# Stranger things module
 	path('stranger-things/', include('stranger_things.urls')),
 ]
