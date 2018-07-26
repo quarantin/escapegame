@@ -129,6 +129,6 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
-VIDEO_PLAYER = 'mplayer'
-#VIDEO_PLAYER = 'omxplayer'
+#VIDEO_PLAYER = 'mplayer'
+VIDEO_PLAYER = 'omxplayer'
 
