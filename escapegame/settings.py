@@ -25,7 +25,11 @@ SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'raspberrypi.local' ]
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'raspberrypi.local'
+]
 
 
 # Application definition
