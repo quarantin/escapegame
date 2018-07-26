@@ -4,8 +4,6 @@ from django.http import HttpResponse
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 
-from escapegame import libraspi
-
 from .models import MilleEtUneNuitsSettings
 
 @login_required
