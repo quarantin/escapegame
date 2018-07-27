@@ -6,6 +6,8 @@
 	<title>1001 Nuits interface</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+	<script src="{% static 'js/jquery.min-3.3.1.js' %}"></script>
+	<script src="{% static 'js/script.js' %}"></script>
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light">
@@ -14,14 +16,12 @@
 	</nav>
 	<div class="container">
 		<div class="title"><h1>1001 NUITS</h1></div>
-		<form method="post">
-			{% csrf_token %}
 			<div class="row">
 				<div class="col">
 			        <label class="head_block">Video Brief</label>
 			        <div class="row">
 			        	<div class="col">
-						<button name="play-video" type="submit">
+						<button id="play-video" value="test.h264" type="submit">
 							<img src="{% static 'img/icons8-play-100.png' %}">
 						</button>
 			        	</div>
@@ -62,7 +62,6 @@
 					<label class="head_block">Lampe</label>
 				</div>
 			</div>
-		</form>
 	</div>
 </body>
 </html>
