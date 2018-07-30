@@ -1,11 +1,10 @@
 from django.db import models
-from escapegame.models import SingletonModel
 
 invalid_pin = -1
 default_duration_door = 10
 default_duration_led = 10
 
-class StrangerThingsSettings(SingletonModel):
+class StrangerThingsSettings(models.Model):
 
 	# Dark door (Sombre)
 	pin_door_dark = models.IntegerField(default=invalid_pin)

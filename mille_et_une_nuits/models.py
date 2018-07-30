@@ -1,5 +1,4 @@
 from django.db import models
-from escapegame.models import SingletonModel
 
 invalid_pin = -1
 default_duration_door = 10
@@ -7,7 +6,7 @@ default_duration_led = 10
 default_video_path = '/opt/vc/src/hello_pi/hello_video/test.h264'
 default_video_player = 'omxplayer'
 
-class MilleEtUneNuitsSettings(SingletonModel):
+class MilleEtUneNuitsSettings(models.Model):
 
 	# Path to welcome video
 	video_path = models.CharField(max_length=255, default=default_video_path)
