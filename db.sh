@@ -10,10 +10,11 @@ python3 manage.py migrate
 # Populate database
 python3 manage.py shell -c "
 from video.models import VideoPlayer
-from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
-VideoPlayer(video_player='mplayer').save()
-VideoPlayer(video_player='omxplayer').save()
+VideoPlayer(video_player='/usr/bin/mplayer').save()
+VideoPlayer(video_player='/usr/bin/omxplayer').save()
+
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 eg1 = EscapeGame(name='Mille et une nuits', video='test.h264')
 eg1.save()
