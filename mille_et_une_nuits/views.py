@@ -24,11 +24,3 @@ def index(request):
 
 	template = loader.get_template('1001_nuits/index.html')
 	return HttpResponse(template.render({}, request))
-
-@login_required
-def door_control(request):
-	return HttpResponse('Door control view (1001 nuits)')
-
-@login_required
-def light_control(request):
-	return HttpResponse('Light control view (1001 nuits)')
