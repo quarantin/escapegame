@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 class EscapeGameAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'video' )
+	list_display = ( 'name', 'video_path' )
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'door_pin' )
