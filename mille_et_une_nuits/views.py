@@ -4,23 +4,13 @@ from django.http import HttpResponse
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 
-from .models import MilleEtUneNuitsSettings
+from escapegame.models import EscapeGame, EscapeGameRoom
 
 @login_required
 def index(request):
-
-	if request.method == 'POST':
-
-		settings = MilleEtUneNuitsSettings.load()
-
-		if 'play-video' in request.POST:
-			libraspi.play_video(settings.video_path)
-
-		elif 'lock-garden-door' in request.POST:
-			libraspi.close_door(settings.pin_door_garden)
-
-		elif 'unlock-garden-door' in request.POST:
-			libraspi.open_door(settings.pin_door_garden, settings.pin_door_garden_duration)
-
 	template = loader.get_template('1001_nuits/index.html')
-	return HttpResponse(template.render({}, request))
+
+	# TODO retrieve video_path from database
+	context = { 'video_path': 'test.h264' }
+
+	return HttpResponse(template.render(context, request))
