@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth.views import LoginView
-from . import views
+from escapegame import views
 
 urlpatterns = [
 	# Landing page
@@ -38,8 +38,8 @@ urlpatterns = [
 	path('video/', include('video.urls')),
 
 	# 1001 nuits module
-	#path('1001-nuits/', include('mille_et_une_nuits.urls')),
+	path('1001-nuits/', include('mille_et_une_nuits.urls')),
 
 	# Stranger things module
-	#path('stranger-things/', include('stranger_things.urls')),
+	path('stranger-things/', include('stranger_things.urls')),
 ]

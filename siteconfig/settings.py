@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'door',
     'video',
     'challenge',
-    #'webui',
     'escapegame',
+    'mille_et_une_nuits',
+    'stranger_things',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,8 +66,9 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
 		os.path.join(BASE_DIR, 'templates'),
-		#os.path.join(BASE_DIR, 'mille_et_une_nuits', 'templates'),
-		#os.path.join(BASE_DIR, 'stranger_things', 'templates'),
+		os.path.join(BASE_DIR, 'escapegame', 'templates'),
+		os.path.join(BASE_DIR, 'mille_et_une_nuits', 'templates'),
+		os.path.join(BASE_DIR, 'stranger_things', 'templates'),
 	],
         'APP_DIRS': True,
         'OPTIONS': {
