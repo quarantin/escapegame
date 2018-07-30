@@ -7,16 +7,24 @@ rm -f db.sqlite3
 python3 manage.py makemigrations
 python3 manage.py migrate
 
-# Add video player "mplayer"
-python3 manage.py shell -c "from video.models import VideoPlayer; VideoPlayer(video_player='mplayer').save()"
+# Populate database
+python3 manage.py shell -c "
+from video.models import VideoPlayer
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
-# Add video player "omxplayer"
-python3 manage.py shell -c "from video.models import VideoPlayer; VideoPlayer(video_player='omxplayer').save()"
+VideoPlayer(video_player='mplayer').save()
+VideoPlayer(video_player='omxplayer').save()
 
-# Add escape game "Mille et une nuits"
-python3 manage.py shell -c "from escapegame.models import EscapeGame; EscapeGame(name='Mille et une nuits', video='test.h264').save()"
+eg1 = EscapeGame(name='Mille et une nuits', video='test.h264')
+eg1.save()
 
-# Add escape game "Stranger Things"
-python3 manage.py shell -c "from escapegame.models import EscapeGame; EscapeGame(name='Mille et une nuits', video='test.h264').save()"
+eg2 = EscapeGame(name='Mille et une nuits', video='test.h264')
+eg2.save()
+
+room1 = EscapeGameRoom(name='Fontaine', game=eg1, door_pin=3)
+room1.save()
+
+chall1 = EscapeGameChallenge(name='chall1', room=room1, solved=False)
+chall1.save()"
 
 python3 manage.py createsuperuser --user gamemaster --email none@mail.com
