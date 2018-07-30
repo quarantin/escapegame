@@ -16,16 +16,43 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
-eg1 = EscapeGame(name='Mille et une nuits', video='test.h264')
-eg1.save()
+eg = EscapeGame(name='Mille et une nuits', video_path='test.h264')
+eg.save()
 
-eg2 = EscapeGame(name='Mille et une nuits', video='test.h264')
-eg2.save()
-
-room1 = EscapeGameRoom(name='Fontaine', game=eg1, door_pin=3)
+room1 = EscapeGameRoom(name='Fontaine', game=eg, door_pin=3)
 room1.save()
 
-chall1 = EscapeGameChallenge(name='chall1', room=room1, solved=False)
-chall1.save()"
+room2 = EscapeGameRoom(name='Caverne', game=eg, door_pin=4)
+room2.save()
 
+chall1 = EscapeGameChallenge(name='room1-chall1', room=room1, solved=False)
+chall1.save()
+chall2 = EscapeGameChallenge(name='room1-chall2', room=room1, solved=False)
+chall2.save()
+
+chall1 = EscapeGameChallenge(name='room2-chall1', room=room2, solved=False)
+chall1.save()
+chall2 = EscapeGameChallenge(name='room2-chall2', room=room2, solved=False)
+chall2.save()
+
+eg = EscapeGame(name='Stranger Things', video_path='test.h264')
+eg.save()
+
+room1 = EscapeGameRoom(name='In the past', game=eg, door_pin=3)
+room1.save()
+
+room2 = EscapeGameRoom(name='In the future', game=eg, door_pin=4)
+room2.save()
+
+chall1 = EscapeGameChallenge(name='room1-chall1', room=room1, solved=False)
+chall1.save()
+chall2 = EscapeGameChallenge(name='room1-chall2', room=room1, solved=False)
+chall2.save()
+
+chall1 = EscapeGameChallenge(name='room2-chall1', room=room2, solved=False)
+chall1.save()
+chall2 = EscapeGameChallenge(name='room2-chall2', room=room2, solved=False)
+chall2.save()
+
+"
 python3 manage.py createsuperuser --user gamemaster --email none@mail.com
