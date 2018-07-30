@@ -37,8 +37,9 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'door',
     'video',
-    'mille_et_une_nuits',
-    'stranger_things',
+    'challenge',
+    #'webui',
+    'escapegame',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,15 +58,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'escapegame.urls'
+ROOT_URLCONF = 'siteconfig.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
 		os.path.join(BASE_DIR, 'templates'),
-		os.path.join(BASE_DIR, 'mille_et_une_nuits', 'templates'),
-		os.path.join(BASE_DIR, 'stranger_things', 'templates'),
+		#os.path.join(BASE_DIR, 'mille_et_une_nuits', 'templates'),
+		#os.path.join(BASE_DIR, 'stranger_things', 'templates'),
 	],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -79,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'escapegame.wsgi.application'
+WSGI_APPLICATION = 'siteconfig.wsgi.application'
 
 
 # Database

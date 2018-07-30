@@ -31,15 +31,15 @@ urlpatterns = [
 	# Door module
 	path('door/', include('door.urls')),
 
-	# Status module
-	path('status/', include('status.urls')),
+	# Challenge status module
+	path('challenge/', include('challenge.urls')),
 
 	# Video module
 	path('video/', include('video.urls')),
 
 	# 1001 nuits module
-	path('1001-nuits/', include('mille_et_une_nuits.urls')),
+	#path('1001-nuits/', include('mille_et_une_nuits.urls')),
 
 	# Stranger things module
-	path('stranger-things/', include('stranger_things.urls')),
+	#path('stranger-things/', include('stranger_things.urls')),
 ]
