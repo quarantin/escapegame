@@ -6,6 +6,8 @@ class EscapeGame(models.Model):
 	name = models.CharField(max_length=255)
 	slug = models.SlugField(max_length=255, editable=False)
 	video_path = models.CharField(max_length=255)
+	door_pin = models.IntegerField(default=3)
+	door_pin_opened = models.BooleanField(default=False, editable=False)
 
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
@@ -18,7 +20,8 @@ class EscapeGameRoom(models.Model):
 
 	name = models.CharField(max_length=255)
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	door_pin = models.IntegerField(default=3)
+	door_pin = models.IntegerField(default=5)
+	door_pin_opened = models.BooleanField(default=False, editable=False)
 
 	def __str__(self):
 		return '%s / %s' % (self.game, self.name)
