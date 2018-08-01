@@ -1,27 +1,21 @@
+# -*- coding: utf-8 -*-
+
 import os, subprocess
 
 #import RPi.GPIO as GPIO
 
 from .models import VideoPlayer
 from django.conf import settings
-
-def get_video_player():
-
-	video_players = VideoPlayer.objects.all()
-	for video_player in video_players:
-		player = str(video_player)
-		if os.path.exists(player):
-			return player
-
-	raise Exception('No video player found.')
+from django_admin_conf_vars.global_vars import config
 
 def play_video(video_path):
 
 	try:
-		video_path = os.path.join(settings.VIDEO_PATH, video_path)
+
+		video_path = os.path.join(config.VIDEO_PATH, video_path)
 
 		print("DEBUG: Playing video '%s'" % video_path)
-		return subprocess.call([ get_video_player(), video_path ]), 'Success'
+		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
 
 	except Exception as err:
 		return 1, "Error: %s" % err
@@ -30,7 +24,7 @@ def stop_video(video_path):
 
 	try:
 		print("DEBUG: Stopping video '%s'" % video_path)
-		return subprocess.call([ 'killall', get_video_player() ]), 'Success'
+		return subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
 	except Exception as err:
 		return 1, "Error: %s" % err
