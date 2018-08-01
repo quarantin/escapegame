@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 import os, subprocess
 
-from .models import EscapeGame, EscapeGameRoom
+from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from escapegame import libraspi
 
@@ -136,9 +136,9 @@ def door_close(request, slug, pin=-1):
 	Challenge handling, no login requried for now (REST)
 """
 @login_required
-def challenge_status(request, slug, challenge):
+def challenge_status(request, slug):
 
-	game = EscapeGame.objects.get(id=gameid)
+	game = EscapeGame.objects.get(slug=slug)
 
 	result = {}
 	result['name'] = game.name

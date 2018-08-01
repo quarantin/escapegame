@@ -22,7 +22,7 @@ urlpatterns = [
 	path('<slug:slug>/door/<int:pin>/close', views.door_close, name='Close door'),
 
 	# Challenge controls
-	path('<slug:slug>/challenge/<int:challenge>', views.challenge_status, name='Challenge Status'),
+	path('<slug:slug>/challenge/status', views.challenge_status, name='Challenge Status'),
 	path('<slug:slug>/challenge/<int:challenge>/solve', views.challenge_solve, name='Solve Challenge'),
 	path('<slug:slug>/challenge/<int:challenge>/reset', views.challenge_reset, name='Reset Challenge'),
 ]
