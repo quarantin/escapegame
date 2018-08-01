@@ -3,6 +3,7 @@ from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 class EscapeGameAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'video_path' )
+	prepoluated_fields = { 'slug': ('name',) }
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'door_pin' )

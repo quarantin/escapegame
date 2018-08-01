@@ -1,9 +1,15 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 
 class EscapeGame(models.Model):
 
 	name = models.CharField(max_length=255)
+	slug = models.SlugField(max_length=255, editable=False)
 	video_path = models.CharField(max_length=255)
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super(EscapeGame, self).save(*args, **kwargs)
 
 	def __str__(self):
 		return self.name
