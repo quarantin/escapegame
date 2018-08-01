@@ -4,6 +4,11 @@
 
 cd "${ROOTDIR}"
 
+cd siteconfig
+rm -f settings.py
+ln -s settings.bootstrap.py settings.py
+cd ..
+
 # Clear database
 rm -f db.sqlite3
 
@@ -59,3 +64,8 @@ chall2.save()
 
 "
 ${PYTHON} manage.py createsuperuser --user gamemaster --email none@mail.com
+
+cd siteconfig
+rm -f settings.py
+ln -s settings.real.py settings.py
+cd ..
