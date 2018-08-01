@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -52,16 +51,9 @@ def escapegame_start(request, slug):
 		})
 
 	status, message = libraspi.open_door(game.door_pin)
-	if status != 0:
-		return JsonResponse({
-			'status': status,
-			'message': message,
-		})
-
-
 	return JsonResponse({
-		'status': 0,
-		'message': 'Success',
+		'status': status,
+		'message': message,
 	})
 
 def escapegame_reset(request, slug):
