@@ -131,3 +131,54 @@ def door_close(request, slug, pin=-1):
 		'status': status,
 		'message': message,
 	})
+
+"""
+	Challenge handling, no login requried for now (REST)
+"""
+@login_required
+def challenge_status(request, slug, challenge):
+
+	game = EscapeGame.objects.get(id=gameid)
+
+	result = {}
+	result['name'] = game.name
+	result['rooms'] = []
+
+	rooms = EscapeGameRoom.objects.filter(game=game)
+	for room in rooms:
+
+		newroom = {}
+		newroom['name'] = room.name
+		newroom['challenges'] = []
+
+		challs = EscapeGameChallenge.objects.filter(room=room)
+		for chall in challs:
+
+			newchall = {}
+			newchall['name'] = chall.name
+			newchall['solved'] = chall.solved
+
+			newroom['challenges'].append(newchall)
+
+		result['rooms'].append(newroom)
+
+	result['status'] = 0
+	result['message'] = 'Success'
+
+	return JsonResponse(result)
+
+@login_required
+def challenge_solve(request, slug, challenge):
+
+	return JsonResponse({
+		'status': 1,
+		'message': 'Not implemented!',
+	})
+
+@login_required
+def challenge_reset(request, slug, challenge):
+
+	return JsonResponse({
+		'status': 1,
+		'message': 'Not implemented!',
+	})
