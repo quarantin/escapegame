@@ -21,7 +21,7 @@ ${PYTHON} manage.py shell -c "
 
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, VideoPlayer
 
-VideoPlayer(video_player='/usr/bin/mplayer').save()
+VideoPlayer(video_player='/usr/bin/mpv').save()
 VideoPlayer(video_player='/usr/bin/omxplayer').save()
 
 game = EscapeGame(name='1001 nuits', video_path='test.h264')
