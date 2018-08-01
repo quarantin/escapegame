@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. env.sh
+. $(dirname $0)/env.sh
 
 ENTRY=$(crontab -l 2>&1 | grep django-service)
 if [ -z "$ENTRY" ]; then

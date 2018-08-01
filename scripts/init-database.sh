@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. env.sh
+. $(dirname $0)/env.sh
 
 cd "${ROOTDIR}"
 
