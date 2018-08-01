@@ -1,6 +1,13 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 
+class VideoPlayer(models.Model):
+
+	video_player = models.CharField(max_length=255)
+
+	def __str__(self):
+		return self.video_player
+
 class EscapeGame(models.Model):
 
 	name = models.CharField(max_length=255)

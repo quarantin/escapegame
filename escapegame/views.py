@@ -1,8 +1,17 @@
+from django.conf import settings
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
+import os, subprocess
+
 from .models import EscapeGame, EscapeGameRoom
+
+from escapegame import utils
+
+"""
+	Escape Game Operator Pages
+"""
 
 @login_required
 def index(request):
@@ -28,3 +37,103 @@ def escapegame(request, slug):
 	template = loader.get_template('escapegame/escapegame.html')
 
 	return HttpResponse(template.render(context, request))
+
+def escapegame_start(request, slug):
+
+	game = EscapeGame.objects.get(slug=slug)
+
+	status, message = utils.play_video(game.video_path)
+	if status != 0:
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+	status, message = utils.open_door(game.door_pin)
+	if status != 0:
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+
+	return JsonResponse({
+		'status': 0,
+		'message': 'Success',
+	})
+
+def escapegame_reset(request, slug):
+
+	""" TODO: Reset all states (doors, challenges, etc) """
+
+	return JsonResponse({
+		'status': 0,
+		'message': 'Success',
+	})
+	
+"""
+	Video Handling, no login required for now (REST)
+"""
+
+def video_play(request, slug):
+
+	game = EscapeGame.objects.get(slug=slug)
+
+	status, message = utils.play_video(game.video_path)
+
+	return JsonResponse({
+		'status': status,
+		'message': message,
+	})
+
+def video_stop(request, slug):
+
+	game = EscapeGame.objects.get(slug=slug)
+
+	status, message = utils.stop_video(game.video_path)
+
+	return JsonResponse({
+		'status': status,
+		'message': message,
+	})
+
+"""
+	Door Handling, no login required for now (REST)
+"""
+
+def door_status(request, slug, pin=-1):
+
+	if pin == -1:
+		game = EscapeGame.objects.get(slug=slug)
+		pin = game.door_pin
+
+	return JsonResponse({
+		'status': 0,
+		'message': 'Success',
+	})
+
+def door_open(request, slug, pin=-1):
+
+	if pin == -1:
+		game = EscapeGame.objects.get(slug=slug)
+		pin = game.door_pin
+
+	status, message = utils.open_door(pin)
+
+	return JsonResponse({
+		'status': status,
+		'message': message,
+	})
+
+def door_close(request, slug, pin=-1):
+
+	if pin == -1:
+		game = EscapeGame.objects.get(slug=slug)
+		pin = game.door_pin
+
+	status, message = utils.close_door(pin)
+
+	return JsonResponse({
+		'status': status,
+		'message': message,
+	})

@@ -1,12 +1,23 @@
 
 $(document).ready(function() {
 
-	$('#play-video').click(function() {
+	$('#start-escapegame').click(function() {
 
-		var filename = $('#play-video').val();
+		var slug = $('#start-escapegame').val();
 
 		$.ajax({
-			url: '/video/play/' + filename,
+			url: '/escapegame/' + slug + '/start',
 		});
 	});
+
+
+	$('#stop-escapegame').click(function() {
+
+		var slug = $('#stop-escapegame').val();
+
+		$.ajax({
+			url: '/escapegame/' + slug + '/reset',
+		});
+	});
+
 });

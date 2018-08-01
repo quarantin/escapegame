@@ -32,11 +32,11 @@ urlpatterns = [
 	path('challenge/', include('challenge.urls')),
 
 	# Door module
-	path('door/', include('door.urls')),
+	#path('door/', include('door.urls')),
 
 	# Escape game section
 	path('escapegame/', include('escapegame.urls')),
 
 	# Video module
-	path('video/', include('video.urls')),
+	#path('video/', include('video.urls')),
 ]
