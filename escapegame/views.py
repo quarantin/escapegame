@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
 from django.template import loader
 from django.http import HttpResponse, JsonResponse

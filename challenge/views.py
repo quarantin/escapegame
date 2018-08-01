@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.http import JsonResponse
 
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
