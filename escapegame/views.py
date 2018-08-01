@@ -7,7 +7,7 @@ import os, subprocess
 
 from .models import EscapeGame, EscapeGameRoom
 
-from escapegame import utils
+from escapegame import libraspi
 
 """
 	Escape Game Operator Pages
@@ -42,14 +42,14 @@ def escapegame_start(request, slug):
 
 	game = EscapeGame.objects.get(slug=slug)
 
-	status, message = utils.play_video(game.video_path)
+	status, message = libraspi.play_video(game.video_path)
 	if status != 0:
 		return JsonResponse({
 			'status': status,
 			'message': message,
 		})
 
-	status, message = utils.open_door(game.door_pin)
+	status, message = libraspi.open_door(game.door_pin)
 	if status != 0:
 		return JsonResponse({
 			'status': status,
@@ -79,7 +79,7 @@ def video_play(request, slug):
 
 	game = EscapeGame.objects.get(slug=slug)
 
-	status, message = utils.play_video(game.video_path)
+	status, message = libraspi.play_video(game.video_path)
 
 	return JsonResponse({
 		'status': status,
@@ -90,7 +90,7 @@ def video_stop(request, slug):
 
 	game = EscapeGame.objects.get(slug=slug)
 
-	status, message = utils.stop_video(game.video_path)
+	status, message = libraspi.stop_video(game.video_path)
 
 	return JsonResponse({
 		'status': status,
@@ -118,7 +118,7 @@ def door_open(request, slug, pin=-1):
 		game = EscapeGame.objects.get(slug=slug)
 		pin = game.door_pin
 
-	status, message = utils.open_door(pin)
+	status, message = libraspi.open_door(pin)
 
 	return JsonResponse({
 		'status': status,
@@ -131,7 +131,7 @@ def door_close(request, slug, pin=-1):
 		game = EscapeGame.objects.get(slug=slug)
 		pin = game.door_pin
 
-	status, message = utils.close_door(pin)
+	status, message = libraspi.close_door(pin)
 
 	return JsonResponse({
 		'status': status,
