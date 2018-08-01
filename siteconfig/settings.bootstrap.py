@@ -132,7 +132,4 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
-#VIDEO_PLAYER = 'omxplayer'
-#VIDEO_PATH = '/opt/vc/src/hello_pi/hello_video/'
-
 #VARS_MODULE_PATH = 'escapegame.settings'
