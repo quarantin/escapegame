@@ -1,14 +1,18 @@
 #!/bin/bash
 
+. env.sh
+
+cd "${ROOTDIR}"
+
 # Clear database
 rm -f db.sqlite3
 
 # Create database
-python3 manage.py makemigrations
-python3 manage.py migrate
+${PYTHON} manage.py makemigrations
+${PYTHON} manage.py migrate
 
 # Populate database
-python3 manage.py shell -c "
+${PYTHON} manage.py shell -c "
 
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, VideoPlayer
 
@@ -54,4 +58,4 @@ chall2 = EscapeGameChallenge(name='room2-chall2', room=room2, solved=False)
 chall2.save()
 
 "
-python3 manage.py createsuperuser --user gamemaster --email none@mail.com
+${PYTHON} manage.py createsuperuser --user gamemaster --email none@mail.com
