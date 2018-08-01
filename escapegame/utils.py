@@ -20,6 +20,7 @@ def play_video(video_path):
 	try:
 		video_path = os.path.join(settings.VIDEO_PATH, video_path)
 
+		print("DEBUG: Playing video '%s'" % video_path)
 		return subprocess.call([ get_video_player(), video_path ]), 'Success'
 
 	except Exception as err:
@@ -28,12 +29,15 @@ def play_video(video_path):
 def stop_video(video_path):
 
 	try:
+		print("DEBUG: Stopping video '%s'" % video_path)
 		return subprocess.call([ 'killall', get_video_player() ]), 'Success'
 
 	except Exception as err:
 		return 1, "Error: %s" % err
 
 def open_door(pin):
+
+	print("DEBUG: Opening door with pin %d" % pin)
 
 	try:
 		ret = 0
@@ -44,6 +48,8 @@ def open_door(pin):
 		return 1, "Error: %s" % err
 
 def close_door(pin):
+
+	print("DEBUG: Closing door with pin %d" % pin)
 
 	try:
 		ret = 0
