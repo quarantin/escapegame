@@ -1,9 +1,9 @@
 
 $(document).ready(function() {
 
-	$('#start-escapegame').click(function() {
+	var slug = $('#slug').val();
 
-		var slug = $('#start-escapegame').val();
+	$('#start-escapegame').click(function() {
 
 		$.ajax({
 			url: '/escapegame/' + slug + '/start',
@@ -13,11 +13,16 @@ $(document).ready(function() {
 
 	$('#stop-escapegame').click(function() {
 
-		var slug = $('#stop-escapegame').val();
-
 		$.ajax({
 			url: '/escapegame/' + slug + '/reset',
 		});
+	});
+
+	$.ajax({
+		url: '/escapegame/' + slug + '/challenge/status',
+		success: function(data) {
+			alert(data['escapegame_name']);
+		},
 	});
 
 });

@@ -4,7 +4,7 @@ from django_admin_conf_vars.global_vars import config
 
 import os, subprocess
 
-if config.RUNNING_ON_PI == True:
+if config.RUNNING_ON_PI == 'True':
 	import RPi.GPIO as GPIO
 
 def play_video(video_path):
@@ -30,14 +30,15 @@ def stop_video(video_path):
 
 def open_door(pin):
 
-	print("DEBUG: Opening door with pin %d" % pin)
-
 	try:
 		ret = 0
-		if config.RUNNING_ON_PI == True:
+		if config.RUNNING_ON_PI == 'True':
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			ret = GPIO.output(pin, True)
+
+		print("DEBUG: Opening door with pin %d" % pin)
+		print("DEBUG: Opening door with RUNNING_ON_PI == %s" % (config.RUNNING_ON_PI == 'True'))
 
 		return ret, 'Success'
 
@@ -46,14 +47,14 @@ def open_door(pin):
 
 def close_door(pin):
 
-	print("DEBUG: Closing door with pin %d" % pin)
-
 	try:
 		ret = 0
-		if config.RUNNING_ON_PI == True:
+		if config.RUNNING_ON_PI == 'True':
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			ret = GPIO.output(pin, False)
+
+		print("DEBUG: Closing door with pin %d" % pin)
 
 		return ret, 'Success'
 
