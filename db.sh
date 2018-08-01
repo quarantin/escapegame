@@ -16,7 +16,7 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
-eg = EscapeGame(name='Mille et une nuits', video_path='test.h264')
+eg = EscapeGame(name='1001 nuits', video_path='test.h264')
 eg.save()
 
 room1 = EscapeGameRoom(name='Fontaine', game=eg, door_pin=3)
