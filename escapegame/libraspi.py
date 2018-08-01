@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from django_admin_conf_vars.global_vars import config
+
 import os, subprocess
 
-#import RPi.GPIO as GPIO
-
-from .models import VideoPlayer
-from django.conf import settings
-from django_admin_conf_vars.global_vars import config
+try:
+	import RPi.GPIO as GPIO
+except:
+	pass
 
 def play_video(video_path):
 
@@ -35,7 +36,11 @@ def open_door(pin):
 
 	try:
 		ret = 0
-		#ret = GPIO.output(pin, True)
+		if config.RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.OUT)
+			ret = GPIO.output(pin, True)
+
 		return ret, 'Success'
 
 	except Exception as err:
@@ -47,7 +52,11 @@ def close_door(pin):
 
 	try:
 		ret = 0
-		#ret = GPIO.output(pin, False)
+		if config.RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.OUT)
+			ret = GPIO.output(pin, False)
+
 		return ret, 'Success'
 
 	except Exception as err:
