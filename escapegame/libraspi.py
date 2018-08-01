@@ -4,10 +4,8 @@ from django_admin_conf_vars.global_vars import config
 
 import os, subprocess
 
-try:
+if config.RUNNING_ON_PI == True:
 	import RPi.GPIO as GPIO
-except:
-	pass
 
 def play_video(video_path):
 
@@ -36,7 +34,7 @@ def open_door(pin):
 
 	try:
 		ret = 0
-		if config.RUNNING_ON_PI:
+		if config.RUNNING_ON_PI == True:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			ret = GPIO.output(pin, True)
@@ -52,7 +50,7 @@ def close_door(pin):
 
 	try:
 		ret = 0
-		if config.RUNNING_ON_PI:
+		if config.RUNNING_ON_PI == True:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			ret = GPIO.output(pin, False)
