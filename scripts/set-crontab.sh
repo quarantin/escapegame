@@ -1,18 +1,17 @@
 #!/bin/bash
 
-SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+. env.sh
 
 ENTRY=$(crontab -l 2>&1 | grep django-service)
 if [ -z "$ENTRY" ]; then
 
 	CRONTAB=$(mktemp)
-	ROOTDIR=$(realpath "${SCRIPTDIR}/..")
 
 	echo "@reboot ${ROOTDIR}/scripts/django-service.sh &" > "${CRONTAB}"
 	crontab "${CRONTAB}"
-	RES=$?
+	STATUS=$?
 	rm -f "${CRONTAB}"
-	if [ "$RES" = "0" ]; then
+	if [ "$STATUS" = "0" ]; then
 		crontab -l
 		echo "[ + ] django-service.sh installed successfully."
 	else
