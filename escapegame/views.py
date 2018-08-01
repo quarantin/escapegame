@@ -138,34 +138,44 @@ def door_close(request, slug, pin=-1):
 @login_required
 def challenge_status(request, slug):
 
-	game = EscapeGame.objects.get(slug=slug)
+	try:
+		game = EscapeGame.objects.get(slug=slug)
 
-	result = {}
-	result['name'] = game.name
-	result['rooms'] = []
+		result = {}
+		result['escapegame_name'] = game.name
+		result['rooms'] = []
 
-	rooms = EscapeGameRoom.objects.filter(game=game)
-	for room in rooms:
+		rooms = EscapeGameRoom.objects.filter(game=game)
+		for room in rooms:
 
-		newroom = {}
-		newroom['name'] = room.name
-		newroom['challenges'] = []
+			newroom = {}
+			newroom['challenges'] = []
 
-		challs = EscapeGameChallenge.objects.filter(room=room)
-		for chall in challs:
+			challs = EscapeGameChallenge.objects.filter(room=room)
+			for chall in challs:
 
-			newchall = {}
-			newchall['name'] = chall.name
-			newchall['solved'] = chall.solved
+				newchall = {}
+				newchall['challenge_name'] = chall.name
+				newchall['solved'] = chall.solved
 
-			newroom['challenges'].append(newchall)
+				newroom['challenges'].append(newchall)
 
-		result['rooms'].append(newroom)
+			newroom['room_name'] = room.name
+			newroom['door_pin'] = room.door_pin
+			newroom['door_pin_opened'] = room.door_pin_opened
 
-	result['status'] = 0
-	result['message'] = 'Success'
+			result['rooms'].append(newroom)
 
-	return JsonResponse(result)
+		result['status'] = 0
+		result['message'] = 'Success'
+
+		return JsonResponse(result)
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'message': 'Error: %s' % err,
+		});
 
 @login_required
 def challenge_solve(request, slug, challenge):
