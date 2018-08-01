@@ -1,10 +1,13 @@
 #!/bin/bash
 
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 ENTRY=$(crontab -l 2>&1 | grep django-service)
 if [ -z "$ENTRY" ]; then
 
 	CRONTAB=$(mktemp)
-	ROOTDIR="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null && pwd )"
+	ROOTDIR=$(realpath "${SCRIPTDIR}/..")
+
 	echo "@reboot ${ROOTDIR}/scripts/django-service.sh &" > "${CRONTAB}"
 	crontab "${CRONTAB}"
 	RES=$?
