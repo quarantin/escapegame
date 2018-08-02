@@ -156,6 +156,9 @@ def door_open(request, game_slug, room_slug=None):
 		pin = room.door_pin
 
 	status, message = libraspi.open_door(pin)
+	if status == 0:
+		room.door_locked = False
+		room.save()
 
 	return JsonResponse({
 		'status': status,
@@ -164,7 +167,7 @@ def door_open(request, game_slug, room_slug=None):
 
 def door_close(request, game_slug, room_slug=None):
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 	pin = game.door_pin
 
 	if room_slug:
@@ -172,6 +175,9 @@ def door_close(request, game_slug, room_slug=None):
 		pin = room.door_pin
 
 	status, message = libraspi.close_door(pin)
+	if status == 0:
+		room.door_locked = True
+		room.save()
 
 	return JsonResponse({
 		'status': status,
