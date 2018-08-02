@@ -1,6 +1,14 @@
 {% extends "escapegame/base.html" %}
 {% block content %}
 	<div class="row">
+	{% if games|length < 1 %}
+		<div class="col-sm-6">
+			<span>
+				<p>No escape game configured yet.<br>
+				You can visit <a href="/admin/escapegame/escapegame/">this</a> page to create a new escape game.</p>
+			</span>
+		</div>
+	{% else %}
 		{% for game in games %}
 		<div class="col-sm-6">
 			<div class="card">
@@ -13,5 +21,6 @@
 			</div>
 		</div>
 		{% endfor %}
+	{% endif %}
 	</div>
 {% endblock %}

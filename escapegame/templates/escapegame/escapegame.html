@@ -8,41 +8,47 @@
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 
 	<div class="col">
-		<label class="head_block">Video Brief</label>
+		<label class="head_block">Video Briefing &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
 		<div class="row">
-			<div class="col">
-				<button id="start-escapegame" type="submit">
-					<img src="{% static 'img/icons8-play-100.png' %}">
-				</button>
-				<button id="stop-escapegame" type="submit">
-					<img src="{% static 'img/icons8-stop-100.png' %}">
-				</button>
-
-			</div>
-			<div class="col">
-				<p class="time" id="time_start"></p>
-			</div>
+			<button id="start-escapegame" type="submit">
+				<img src="{% static 'img/icons8-play-100.png' %}">
+			</button>
+			<button id="stop-escapegame" type="submit">
+				<img src="{% static 'img/icons8-stop-100.png' %}">
+			</button>
+			<button id="lock-{{ game.slug }}" class="lock-button" type="submit">
+				<img src="{% static 'img/icons8-cadenas-100.png' %}">
+			</button>
+			<button id="unlock-{{ game.slug }}" class="unlock-button" type="submit">
+				<img src="{% static 'img/icons8-ouvrir-100.png' %}">
+			</button>
 		</div>
 	</div>
 
+{% if rooms|length < 1 %}
+	<div class="col">
+		<span>
+			<p>No room configured yet for this escape game.<br>
+			You can visit <a href="/admin/escapegame/escapegameroom">this</a> page to create new rooms.</p>
+		</span>
+	</div>
+{% else %}
 	{% for room in rooms %}
 	<div id="{{ room.slug }}" class="col">
-		<label class="head_block">{{ room.name }}</label>
+		<label class="head_block">Salle &laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
 		<div class="row">
-			<div class ="col">
-				<button id="lock-{{ room.slug }}" type="submit">
-					<img src="{% static 'img/icons8-cadenas-100.png' %}">
-				</button>
-				<button id="unlock-{{ room.slug }}" type="submit">
-					<img src="{% static 'img/icons8-ouvrir-100.png' %}">
-				</button>
-			</div>
+			<button id="lock-{{ room.slug }}" class="lock-button" type="submit">
+				<img src="{% static 'img/icons8-cadenas-100.png' %}">
+			</button>
+			<button id="unlock-{{ room.slug }}" class="unlock-button" type="submit">
+				<img src="{% static 'img/icons8-ouvrir-100.png' %}">
+			</button>
 		</div>
 		<div id="{{ room.slug }}-data" class="row">
-			<!-- Placeholder for status -->
+			<!-- Placeholder for room status -->
 			Data will be refreshed soon!
 		</div>
 	</div>
-	<br>
 	{% endfor %}
+{% endif %}
 {% endblock %}
