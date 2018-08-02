@@ -28,7 +28,7 @@ class EscapeGame(models.Model):
 	name = models.CharField(max_length=255, default='')
 	slug = models.SlugField(max_length=255, editable=False)
 	door_pin = models.IntegerField(default=3)
-	door_pin_opened = models.BooleanField(default=False, editable=False)
+	door_locked = models.BooleanField(default=True, editable=False)
 	video_path = models.CharField(max_length=255)
 	map_image_path = models.ImageField(upload_to=config.UPLOAD_PATH)
 	sas_door_image_path = models.ImageField(upload_to=config.UPLOAD_PATH, default='')
@@ -46,7 +46,7 @@ class EscapeGameRoom(models.Model):
 	name = models.CharField(max_length=255, default='')
 	slug = models.SlugField(max_length=255, editable=False)
 	door_pin = models.IntegerField(default=5)
-	door_pin_opened = models.BooleanField(default=False, editable=False)
+	door_locked = models.BooleanField(default=True, editable=False)
 	map_image_path = models.ImageField(upload_to=config.UPLOAD_PATH, default='')
 	door_image_path = models.ImageField(upload_to=config.UPLOAD_PATH, default='')
 

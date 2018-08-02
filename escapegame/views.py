@@ -211,7 +211,7 @@ def challenge_status(request, game_slug):
 			newroom['name'] = room.name
 			newroom['slug'] = room.slug
 			newroom['door_pin'] = room.door_pin
-			newroom['door_pin_opened'] = room.door_pin_opened
+			newroom['door_locked'] = room.door_locked
 
 			result['rooms'].append(newroom)
 
