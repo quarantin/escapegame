@@ -1,78 +1,78 @@
+
+function switch_elements(selector1, selector2, state)
+{
+	if (state) {
+		$(selector1).show();
+		$(selector2).hide();
+	}
+	else {
+		$(selector1).hide();
+		$(selector2).show();
+	}
+}
+
 $(document).ready(function() {
-
-	start_but = $('button#start-escapegame');
-	stop_but = $('button#stop-escapegame')
-
-	lock_buts = $('button.lock-button');
-	unlock_buts = $('button.unlock-button');
-
-	start_but.show();
-	stop_but.hide();
-
-	lock_buts.show();
-	unlock_buts.hide();
 
 	slug = $('input#game-slug').val();
 
+	switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
+
+	start_but = $('button#start-escapegame');
 	start_but.click(function() {
 
-		start_but.hide();
-		stop_but.show();
+		switch_elements('button#start-escapegame', 'button#stop-escapegame', false);
 
 		$.ajax({
 			url: '/escapegame/' + slug + '/start',
 		});
 	});
 
+	stop_but = $('button#stop-escapegame')
 	stop_but.click(function() {
 
-		stop_but.hide();
-		start_but.show();
+		switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
 		$.ajax({
 			url: '/escapegame/' + slug + '/reset',
 		});
 	});
 
+	lock_buts = $('button.lock-button');
 	lock_buts.click(function() {
 
-		lock_but = $('button#' + this.id);
-		unlock_but = $('button#un' + this.id);
+		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
-		lock_but.hide();
-		unlock_but.show();
+		$.ajax({
+			url: '/escapegame/' + slug + '/door/' + this.val() + '/unlock',
+		});
 	});
 
+	unlock_buts = $('button.unlock-button');
 	unlock_buts.click(function() {
 
-		unlock_but = $('button#' + this.id);
-		lock_but = $('button#' + this.id.substring(2));
+		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
-		lock_but.show();
-		unlock_but.hide();
+		$.ajax({
+			url: '/escapegame/' + slug + '/door/' + this.val() + '/lock',
+		});
 	});
 
 	$.ajax({
-		url: '/escapegame/' + slug + '/challenge/status',
-		success: function(data) {
+		url: '/escapegame/' + slug + '/status',
+		success: function(game) {
 
-			if (typeof data === 'undefined')
+			if (typeof game === 'undefined')
 				return;
 
+			switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, true);
+			switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, true);
+
 			// For each room...
-			for (var index in data.rooms) {
+			for (var index in game.rooms) {
 
-				var room = data.rooms[index];
+				var room = game.rooms[index];
 
-				alert("room.door_locked = " + room.door_locked);
-				if (room.door_locked === true) {
-					$('button#lock-' + room.slug).show();
-					$('button#unlock-' + room.slug).hide();
-				}
-				else {
-					$('button#lock-' + room.slug).hide();
-					$('button#unlock-' + room.slug).show();
-				}
+				switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, true);
 
 				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
 				var statusdiv = $('div#' + room.slug + '-data');

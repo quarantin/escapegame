@@ -5,26 +5,29 @@ from . import views
 
 urlpatterns = [
 
+	#####
+	# Web API
+	#####
+
 	# Escape game selector view
-	path('', views.index, name='Index'),
+	path('', views.selector_index, name='Index'),
 
 	# Escape game control view
-	path('<slug:game_slug>/', views.escapegame, name='Escape Game'),
-	path('<slug:game_slug>/start/', views.escapegame_start, name='Start Escape Game'),
-	path('<slug:game_slug>/reset/', views.escapegame_reset, name='Reset Escape Game'),
+	path('<slug:game_slug>/', views.escapegame_index, name='Escape game index'),
+	path('<slug:game_slug>/start/', views.escapegame_start, name='Start escape game'),
+	path('<slug:game_slug>/reset/', views.escapegame_reset, name='Reset escape game'),
+	path('<slug:game_slug>/status/', views.escapegame_status, name='Escape game status'),
+
+	#####
+	# REST API
+	#####
 
 	# Video controls
-	path('<slug:game_slug>/video/play/', views.video_play, name='Play Briefing Video'),
-	path('<slug:game_slug>/video/stop/', views.video_stop, name='Stop Briefing Video'),
+	path('<slug:game_slug>/video/<str:action>/', views.set_video_state, name='Play/stop briefing video'),
 
 	# Door controls
-	path('<slug:game_slug>/door/<slug:room_slug>/', views.door_status, name='Door Status'),
-	path('<slug:game_slug>/door/open/', views.door_open, name='Open SAS Door'),
-	path('<slug:game_slug>/door/open/<slug:room_slug>/', views.door_open, name='Open Door'),
-	path('<slug:game_slug>/door/close/<slug:room_slug>/', views.door_close, name='Close Door'),
+	path('<slug:game_slug>/door/<slug:room_slug>/<str:action>/', views.set_door_lock, name='Lock/unlock doors'),
 
 	# Challenge controls
-	path('<slug:game_slug>/challenge/status/', views.challenge_status, name='Challenge Status'),
-	path('<slug:game_slug>/challenge/solve/<slug:challenge_slug>/', views.challenge_solve, name='Solve Challenge'),
-	path('<slug:game_slug>/challenge/reset/<slug:challenge_slug>/', views.challenge_reset, name='Reset Challenge'),
+	path('<slug:game_slug>/challenge/<slug:challenge_slug>/<str:action>/', views.set_challenge_status, name='Solve/reset challenges'),
 ]

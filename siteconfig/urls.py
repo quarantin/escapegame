@@ -24,8 +24,8 @@ from django.contrib.auth.views import LoginView
 from escapegame import views
 
 urlpatterns = [
-	# Landing page
-	path('', views.index),
+	# Escape game selector
+	path('', views.selector_index),
 
 	# Authentication
 	path('accounts/', include('django.contrib.auth.urls')),

@@ -20,7 +20,7 @@ def play_video(video_path):
 		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
 
 	except Exception as err:
-		return 1, "Error: %s" % err
+		return 1, 'Error: %s' % err
 
 def stop_video(video_path):
 
@@ -29,37 +29,21 @@ def stop_video(video_path):
 		return subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
 	except Exception as err:
-		return 1, "Error: %s" % err
+		return 1, 'Error: %s' % err
 
-def open_door(pin):
+def set_door_lock(pin, locked):
 
 	try:
+
 		ret = 0
 		if config.RUNNING_ON_PI == 'True':
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
-			ret = GPIO.output(pin, True)
+			ret = GPIO.output(pin, locked)
 
-		print("DEBUG: Opening door with pin %d" % pin)
-
+		state = (locked and 'Closing' or 'Opening')
+		print("DEBUG: %s door with pin %d" % (state, pin))
 		return ret, 'Success'
 
 	except Exception as err:
-		return 1, "Error: %s" % err
-
-def close_door(pin):
-
-	try:
-		ret = 0
-		if config.RUNNING_ON_PI == 'True':
-			GPIO.setmode(GPIO.BOARD)
-			GPIO.setup(pin, GPIO.OUT)
-			ret = GPIO.output(pin, False)
-
-		print("DEBUG: Closing door with pin %d" % pin)
-
-		return ret, 'Success'
-
-	except Exception as err:
-		return 1, "Error: %s" % err
-
+		return 1, 'Error: %s' % err

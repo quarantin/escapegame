@@ -8,20 +8,45 @@
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 
 	<div class="col">
-		<label class="head_block">Video Briefing &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
-		<div class="row">
+		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+		<div class="row head_block">
 			<button id="start-escapegame" type="submit">
-				<img src="{% static 'img/icons8-play-100.png' %}">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-play-100.png' %}" title="Start escape game">
+					<p>Start escape game</p>
+				</div>
 			</button>
 			<button id="stop-escapegame" type="submit">
-				<img src="{% static 'img/icons8-stop-100.png' %}">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-stop-100.png' %}" title="Reset escape game">
+					<p>Reset escape game</p>
+				</div>
 			</button>
-			<button id="lock-{{ game.slug }}" class="lock-button" type="submit">
-				<img src="{% static 'img/icons8-cadenas-100.png' %}">
+			<button class="lock-button" id="lock-sas-{{ game.slug }}" value={{ game.slug }} type="submit"> 
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock SAS door">
+					<p>Unlock SAS door</p>
+				</div>
 			</button>
-			<button id="unlock-{{ game.slug }}" class="unlock-button" type="submit">
-				<img src="{% static 'img/icons8-ouvrir-100.png' %}">
+			<button id="unlock-sas-{{ game.slug }}" class="unlock-button" type="submit">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock SAS door">
+					<p>Lock SAS door</p>
+				</div>
 			</button>
+			<button id="lock-corridor-{{ game.slug }}" class="lock-button" type="submit">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock corridor door">
+					<p>Unlock corridor door</p>
+				</div>
+			</button>
+			<button id="unlock-corridor-{{ game.slug }}" class="unlock-button" type="submit">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock corridor door">
+					<p>Lock corridor door</p>
+				</div>
+			</button>
+
 		</div>
 	</div>
 
@@ -35,18 +60,26 @@
 {% else %}
 	{% for room in rooms %}
 	<div id="{{ room.slug }}" class="col">
-		<label class="head_block">Salle &laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
-		<div class="row">
-			<button id="lock-{{ room.slug }}" class="lock-button" type="submit">
-				<img src="{% static 'img/icons8-cadenas-100.png' %}">
-			</button>
-			<button id="unlock-{{ room.slug }}" class="unlock-button" type="submit">
-				<img src="{% static 'img/icons8-ouvrir-100.png' %}">
-			</button>
-		</div>
-		<div id="{{ room.slug }}-data" class="row">
-			<!-- Placeholder for room status -->
-			Data will be refreshed soon!
+		<label class="head_block head_border">Salle &laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
+		<div class="row head_block">
+			<div class="col" id="{{ room.slug }}-data">
+				<!-- Placeholder for room status -->
+				Data will be refreshed soon!
+			</div>
+			<div class="col">
+				<button id="lock-{{ room.slug }}" class="lock-button" type="submit">
+					<div class="image-with-caption">
+						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock room door">
+						<p>Unlock room door</p>
+					</div>
+				</button>
+				<button id="unlock-{{ room.slug }}" class="unlock-button" type="submit">
+					<div class="image-with-caption">
+						<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock room door">
+						<p>Lock room door</p>
+					</div>
+				</button>
+			</div>
 		</div>
 	</div>
 	{% endfor %}

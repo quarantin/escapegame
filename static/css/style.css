@@ -17,8 +17,11 @@
 	background-image: url(img/icons8-stop-100.png);
 }
 
-.head_block {
+.head_border {
 	border: solid black 1px;
+}
+
+.head_block {
 	text-align: center;
 	width: 450px;
 }
@@ -43,11 +46,28 @@ button {
 
 table {
 	margin-top: 10px;
-	margin-left: 30px;
+	margin-left: 10px;
 }
 
 table, th, td {
 	text-align: center;
 	padding: 5px;
 	border: 1px solid black;
+}
+
+.image-with-caption {
+	/* width of logo images */
+	width: 100px;
+	margin-left: 10px;
+}
+
+.image-with-caption p {
+	height: 30px;
+	font-size: 75%;
+	text-align: center;
+}
+
+.image-with-caption img {
+	display: block;
+	margin: 0 auto;
 }
