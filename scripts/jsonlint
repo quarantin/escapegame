@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python -mjson.tool $1
