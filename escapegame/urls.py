@@ -11,6 +11,7 @@ urlpatterns = [
 	# Escape game control view
 	path('<slug:slug>', views.escapegame, name='Escape Game'),
 	path('<slug:slug>/start', views.escapegame_start, name='Start Escape Game'),
+	path('<slug:slug>/reset', views.escapegame_reset, name='Reset Escape Game'),
 
 	# Video controls
 	path('<slug:slug>/video/play', views.video_play, name='Play Brief Video'),

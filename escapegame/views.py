@@ -60,9 +60,46 @@ def escapegame_reset(request, slug):
 
 	""" TODO: Reset all states (doors, challenges, etc) """
 
+	game = EscapeGame.objects.get(slug=slug)
+	rooms = EscapeGameRoom.objects.filter(game=game)
+
+	# Stop the video player
+	status, message = libraspi.stop_video(game.video_path)
+	if status != 0:
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+	# Close the SAS door
+	status, message = libraspi.close_door(game.door_pin)
+	if status != 0:
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+	# For each room
+	for room in rooms:
+
+		# Close the door
+		status, message = libraspi.close_door(room.door_pin)
+		if status != 0:
+			return JsonResponse({
+				'status': status,
+				'message': message,
+			})
+
+		# Reset all the challenges
+		challenges = EscapeGameChallenge.objects.filter(room=room)
+		for chall in challenges:
+			print("DEBUG: Reseting challenge %s" % chall)
+			chall.solved = False
+			chall.save()
+
 	return JsonResponse({
-		'status': 0,
-		'message': 'Success',
+		'status': status,
+		'message': message,
 	})
 	
 """
@@ -142,7 +179,8 @@ def challenge_status(request, slug):
 		game = EscapeGame.objects.get(slug=slug)
 
 		result = {}
-		result['escapegame_name'] = game.name
+		result['name'] = game.name
+		result['slug'] = game.slug
 		result['rooms'] = []
 
 		rooms = EscapeGameRoom.objects.filter(game=game)
@@ -155,12 +193,14 @@ def challenge_status(request, slug):
 			for chall in challs:
 
 				newchall = {}
-				newchall['challenge_name'] = chall.name
+				newchall['name'] = chall.name
+				newchall['slug'] = chall.slug
 				newchall['solved'] = chall.solved
 
 				newroom['challenges'].append(newchall)
 
-			newroom['room_name'] = room.name
+			newroom['name'] = room.name
+			newroom['slug'] = room.slug
 			newroom['door_pin'] = room.door_pin
 			newroom['door_pin_opened'] = room.door_pin_opened
 
