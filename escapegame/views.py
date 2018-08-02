@@ -26,9 +26,9 @@ def index(request):
 	return HttpResponse(template.render(context, request))
 
 @login_required
-def escapegame(request, slug):
+def escapegame(request, game_slug):
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 
 	context = {
 		'game': game,
@@ -39,9 +39,9 @@ def escapegame(request, slug):
 
 	return HttpResponse(template.render(context, request))
 
-def escapegame_start(request, slug):
+def escapegame_start(request, game_slug):
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 
 	status, message = libraspi.play_video(game.video_path)
 	if status != 0:
@@ -56,11 +56,11 @@ def escapegame_start(request, slug):
 		'message': message,
 	})
 
-def escapegame_reset(request, slug):
+def escapegame_reset(request, game_slug):
 
 	""" TODO: Reset all states (doors, challenges, etc) """
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(game=game)
 
 	# Stop the video player
@@ -106,9 +106,9 @@ def escapegame_reset(request, slug):
 	Video Handling, no login required for now (REST)
 """
 
-def video_play(request, slug):
+def video_play(request, game_slug):
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 
 	status, message = libraspi.play_video(game.video_path)
 
@@ -117,9 +117,9 @@ def video_play(request, slug):
 		'message': message,
 	})
 
-def video_stop(request, slug):
+def video_stop(request, game_slug):
 
-	game = EscapeGame.objects.get(slug=slug)
+	game = EscapeGame.objects.get(slug=game_slug)
 
 	status, message = libraspi.stop_video(game.video_path)
 
@@ -132,22 +132,28 @@ def video_stop(request, slug):
 	Door Handling, no login required for now (REST)
 """
 
-def door_status(request, slug, pin=-1):
+def door_status(request, game_slug, room_slug=None):
 
-	if pin == -1:
-		game = EscapeGame.objects.get(slug=slug)
-		pin = game.door_pin
+	game = EscapeGame.objects.get(slug=game_slug)
+	pin = game.door_pin
+
+	if room_slug:
+		room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
+		pin = room.door_pin
 
 	return JsonResponse({
 		'status': 0,
 		'message': 'Success',
 	})
 
-def door_open(request, slug, pin=-1):
+def door_open(request, game_slug, room_slug=None):
 
-	if pin == -1:
-		game = EscapeGame.objects.get(slug=slug)
-		pin = game.door_pin
+	game = EscapeGame.objects.get(slug=game_slug)
+	pin = game.door_pin
+
+	if room_slug:
+		room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
+		pin = room.door_pin
 
 	status, message = libraspi.open_door(pin)
 
@@ -156,11 +162,14 @@ def door_open(request, slug, pin=-1):
 		'message': message,
 	})
 
-def door_close(request, slug, pin=-1):
+def door_close(request, game_slug, room_slug=None):
 
-	if pin == -1:
-		game = EscapeGame.objects.get(slug=slug)
-		pin = game.door_pin
+	game = EscapeGame.objects.get(slug=slug)
+	pin = game.door_pin
+
+	if room_slug:
+		room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
+		pin = room.door_pin
 
 	status, message = libraspi.close_door(pin)
 
@@ -173,10 +182,10 @@ def door_close(request, slug, pin=-1):
 	Challenge handling, no login requried for now (REST)
 """
 @login_required
-def challenge_status(request, slug):
+def challenge_status(request, game_slug):
 
 	try:
-		game = EscapeGame.objects.get(slug=slug)
+		game = EscapeGame.objects.get(slug=game_slug)
 
 		result = {}
 		result['name'] = game.name
@@ -218,7 +227,7 @@ def challenge_status(request, slug):
 		});
 
 @login_required
-def challenge_solve(request, slug, challenge):
+def challenge_solve(request, game_slug, challenge_slug):
 
 	return JsonResponse({
 		'status': 1,
@@ -226,7 +235,7 @@ def challenge_solve(request, slug, challenge):
 	})
 
 @login_required
-def challenge_reset(request, slug, challenge):
+def challenge_reset(request, game_slug, challenge_slug):
 
 	return JsonResponse({
 		'status': 1,
