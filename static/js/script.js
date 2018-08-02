@@ -1,28 +1,55 @@
 $(document).ready(function() {
 
-	var slug = $('input#game-slug').val();
+	start_but = $('button#start-escapegame');
+	stop_but = $('button#stop-escapegame')
 
-	$('#start-escapegame').show();
-	$('#stop-escapegame').hide();
+	lock_buts = $('button.lock-button');
+	unlock_buts = $('button.unlock-button');
 
-	$('#start-escapegame').click(function() {
+	start_but.show();
+	stop_but.hide();
 
-		$('#start-escapegame').hide();
-		$('#stop-escapegame').show();
+	lock_buts.show();
+	unlock_buts.hide();
+
+	slug = $('input#game-slug').val();
+
+	start_but.click(function() {
+
+		start_but.hide();
+		stop_but.show();
 
 		$.ajax({
 			url: '/escapegame/' + slug + '/start',
 		});
 	});
 
-	$('#stop-escapegame').click(function() {
+	stop_but.click(function() {
 
-		$('#stop-escapegame').hide();
-		$('#start-escapegame').show();
+		stop_but.hide();
+		start_but.show();
 
 		$.ajax({
 			url: '/escapegame/' + slug + '/reset',
 		});
+	});
+
+	lock_buts.click(function() {
+
+		lock_but = $('button#' + this.id);
+		unlock_but = $('button#un' + this.id);
+
+		lock_but.hide();
+		unlock_but.show();
+	});
+
+	unlock_buts.click(function() {
+
+		unlock_but = $('button#' + this.id);
+		lock_but = $('button#' + this.id.substring(2));
+
+		lock_but.show();
+		unlock_but.hide();
 	});
 
 	$.ajax({
@@ -32,18 +59,29 @@ $(document).ready(function() {
 			if (typeof data === 'undefined')
 				return;
 
+			// For each room...
 			for (var index in data['rooms']) {
+
 				var room = data['rooms'][index];
 				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
-				var datadiv = $('div#' + room.slug).find('div#' + room.slug + '-data');
-				for (var subindex in room['challenges']) {
-					var chall = room['challenges'][subindex];
-					var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
-					html += '\t<tr>\n\t\t<td>' + chall.name + "</td>\n\t\t<td>" + solved + '</td>\n\t</tr>\n';
+				var datadiv = $('div#' + room.slug + '-data');
 
+				if (room['challenges'].length == 0) {
+					html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
+				}
+				else {
+					// For each challenge...
+					for (var subindex in room['challenges']) {
+						var chall = room['challenges'][subindex];
+						var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
+						html += '\t<tr>\n\t\t<td>' + chall.name + "</td>\n\t\t<td>" + solved + '</td>\n\t</tr>\n';
+
+					}
+
+					html = '<table>\n' + html + '</table>\n';
 				}
 
-				datadiv.html('<table>\n' + html + '</table>\n');
+				datadiv.html(html);
 			}
 		},
 	});
