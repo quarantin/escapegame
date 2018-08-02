@@ -2,9 +2,9 @@
 
 . $(dirname $0)/env.sh
 
-DEBIAN_PACKAGES=( sqlite3 )
+DEBIAN_PACKAGES=( 'sqlite3' )
 
-PIP_PACKAGES=( django django-constance )
+PIP_PACKAGES=( 'django' 'django-constance[database]' )
 
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
 
