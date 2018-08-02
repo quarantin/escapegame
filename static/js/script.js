@@ -63,8 +63,18 @@ $(document).ready(function() {
 			for (var index in data['rooms']) {
 
 				var room = data['rooms'][index];
+
+				if (room['door_locked'] === true) {
+					$('button#lock-' + room.slug).show();
+					$('button#unlock-' + room.slug).hide();
+				}
+				else {
+					$('button#lock-' + room.slug).hide();
+					$('button#unlock-' + room.slug).show();
+				}
+
 				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
-				var datadiv = $('div#' + room.slug + '-data');
+				var statusdiv = $('div#' + room.slug + '-data');
 
 				if (room['challenges'].length == 0) {
 					html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
@@ -81,7 +91,7 @@ $(document).ready(function() {
 					html = '<table>\n' + html + '</table>\n';
 				}
 
-				datadiv.html(html);
+				statusdiv.html(html);
 			}
 		},
 	});
