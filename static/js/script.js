@@ -60,11 +60,12 @@ $(document).ready(function() {
 				return;
 
 			// For each room...
-			for (var index in data['rooms']) {
+			for (var index in data.rooms) {
 
-				var room = data['rooms'][index];
+				var room = data.rooms[index];
 
-				if (room['door_locked'] === true) {
+				alert("room.door_locked = " + room.door_locked);
+				if (room.door_locked === true) {
 					$('button#lock-' + room.slug).show();
 					$('button#unlock-' + room.slug).hide();
 				}
@@ -76,13 +77,13 @@ $(document).ready(function() {
 				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
 				var statusdiv = $('div#' + room.slug + '-data');
 
-				if (room['challenges'].length == 0) {
+				if (room.challenges.length == 0) {
 					html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
 				}
 				else {
 					// For each challenge...
-					for (var subindex in room['challenges']) {
-						var chall = room['challenges'][subindex];
+					for (var subindex in room.challenges) {
+						var chall = room.challenges[subindex];
 						var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
 						html += '\t<tr>\n\t\t<td>' + chall.name + "</td>\n\t\t<td>" + solved + '</td>\n\t</tr>\n';
 
