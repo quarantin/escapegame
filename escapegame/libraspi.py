@@ -38,7 +38,6 @@ def open_door(pin):
 			ret = GPIO.output(pin, True)
 
 		print("DEBUG: Opening door with pin %d" % pin)
-		print("DEBUG: Opening door with RUNNING_ON_PI == %s" % (config.RUNNING_ON_PI == 'True'))
 
 		return ret, 'Success'
 
