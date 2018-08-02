@@ -4,8 +4,8 @@
 
 cd "${ROOTDIR}"
 
-# Clear database
-rm -f db.sqlite3
+# Clear database, migrations, etc.
+./clean.sh
 
 # Create database
 ${PYTHON} manage.py makemigrations
