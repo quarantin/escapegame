@@ -135,6 +135,9 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
+MEDIA_ROOT = os.path.join(os.environ.get('HOME'), 'media')
+MEDIA_URL = '/media/'
+
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
@@ -149,8 +152,6 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 }
 
 CONSTANCE_CONFIG = {
-	'MEDIA_ROOT': (os.path.join(os.environ.get('HOME'), 'media'), 'The directory to store multimedia files.', 'text_field'),
-	'MEDIA_URL': ('/media/', 'The URL part to access multimedia files.', 'text_field'),
 	'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
 	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
 	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
