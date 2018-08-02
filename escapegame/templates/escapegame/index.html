@@ -1,31 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Escape &amp; Cie Interface Gamemaster</title>
-	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-</head>
-<body>
-	<nav class="navbar navbar-light bg-light">
-		<span class="navbar-brand mb-0 h1">Escape &amp; Cie Interface Gamemaster</span>
-	</nav>
-	<div class="container">
-		<div class="row">
-			{% for game in games %}
-			<div class="col-sm-6">
-				<div class="card">
-					<img class="card-img-top" src="..." alt="">
-					<div class="card-body">
-						<h5 class="card-title">{{ game.name }}</h5>
-						<p class="card-text">page de gestion de l'espace {{ game.name }}</p>
-						<a href="/escapegame/{{ game.slug }}" class="btn btn-primary">Interface de gestion</a>
-					</div>
+{% extends "escapegame/base.html" %}
+{% block content %}
+	<div class="row">
+		{% for game in games %}
+		<div class="col-sm-6">
+			<div class="card">
+				<img class="card-img-top" src="..." alt="">
+				<div class="card-body">
+					<h5 class="card-title">{{ game.name }}</h5>
+					<p class="card-text">page de gestion de l'espace {{ game.name }}</p>
+					<a href="/escapegame/{{ game.slug }}" class="btn btn-primary">Interface de gestion</a>
 				</div>
 			</div>
-			{% endfor %}
 		</div>
+		{% endfor %}
 	</div>
-</body>
-</html>
+{% endblock %}

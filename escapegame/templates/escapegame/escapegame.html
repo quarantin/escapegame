@@ -1,66 +1,48 @@
+{% extends "escapegame/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>1001 Nuits interface</title>
-	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-	<script src="{% static 'js/jquery.min-3.3.1.js' %}"></script>
-	<script src="{% static 'js/script.js' %}"></script>
-</head>
-<body>
-	<nav class="navbar navbar-light bg-light">
-	  	<span class="navbar-brand mb-0 h1">Escape &amp; Cie Interface Gamemaster</span>
-		<a href="/" class="btn btn-primary">Accueil</a>
-	</nav>
-	<div class="container">
-
-		<div class="title">
-			<h1>{{ game.name }}</h1>
-		</div>
-
-		<input id="slug" type="hidden" value="{{ game.slug }}">
-
-		<div class="col">
-			<label class="head_block">Video Brief</label>
-			<div class="row">
-				<div class="col">
-					<button id="start-escapegame" type="submit">
-						<img src="{% static 'img/icons8-play-100.png' %}">
-					</button>
-					<button id="stop-escapegame" type="submit">
-						<img src="{% static 'img/icons8-stop-100.png' %}">
-					</button>
-
-				</div>
-				<div class="col">
-					<p class="time" id="time_start"></p>
-				</div>
-			</div>
-		</div>
-
-		{% for room in rooms %}
-		<div id="{{ room.name }}" class="col">
-			<label class="head_block">{{ room.name }}</label>
-			<div class ="col">
-				<div class="row">
-					<div class ="col">
-						<button id="lock-{{ room.slug }}" type="submit"></button>
-							<img src="{% static 'img/icons8-cadenas-100.png' %}">
-						</button>
-						<button id="unlock-{{ room.slug }}" type="submit">
-							<img src="{% static 'img/icons8-ouvrir-100.png' %}">
-						</button>
-					</div>
-				</div>
-			</div>
-			<div id="data">
-				<!-- Placeholder for status -->
-			</div>
-		</div>
-		<br>
-		{% endfor %}
+{% block content %}
+	<div class="title">
+		<h1>{{ game.name }}</h1>
 	</div>
-</body>
-</html>
+
+	<input id="game-slug" type="hidden" value="{{ game.slug }}">
+
+	<div class="col">
+		<label class="head_block">Video Brief</label>
+		<div class="row">
+			<div class="col">
+				<button id="start-escapegame" type="submit">
+					<img src="{% static 'img/icons8-play-100.png' %}">
+				</button>
+				<button id="stop-escapegame" type="submit">
+					<img src="{% static 'img/icons8-stop-100.png' %}">
+				</button>
+
+			</div>
+			<div class="col">
+				<p class="time" id="time_start"></p>
+			</div>
+		</div>
+	</div>
+
+	{% for room in rooms %}
+	<div id="{{ room.slug }}" class="col">
+		<label class="head_block">{{ room.name }}</label>
+		<div class="row">
+			<div class ="col">
+				<button id="lock-{{ room.slug }}" type="submit">
+					<img src="{% static 'img/icons8-cadenas-100.png' %}">
+				</button>
+				<button id="unlock-{{ room.slug }}" type="submit">
+					<img src="{% static 'img/icons8-ouvrir-100.png' %}">
+				</button>
+			</div>
+		</div>
+		<div id="{{ room.slug }}-data" class="row">
+			<!-- Placeholder for status -->
+			Data will be refreshed soon!
+		</div>
+	</div>
+	<br>
+	{% endfor %}
+{% endblock %}
