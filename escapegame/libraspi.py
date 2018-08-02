@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from django_admin_conf_vars.global_vars import config
+from constance import config
 
 import os, subprocess
 
 if config.RUNNING_ON_PI == 'True':
 	import RPi.GPIO as GPIO
+
+def is_running_on_pi():
+	return ' '.join(os.uname()).strip().endswith('armv7l')
 
 def play_video(video_path):
 

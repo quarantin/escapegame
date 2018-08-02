@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
-from django_admin_conf_vars.global_vars import config
+from constance import config
 
 class VideoPlayer(models.Model):
 

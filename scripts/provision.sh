@@ -4,7 +4,7 @@
 
 DEBIAN_PACKAGES=( sqlite3 )
 
-PIP_PACKAGES=( django django-admin-conf-vars )
+PIP_PACKAGES=( django django-constance )
 
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
 
