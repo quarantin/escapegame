@@ -5,8 +5,8 @@
 cd "${ROOTDIR}"
 
 cd siteconfig
-rm -f settings.py
-ln -s settings.bootstrap.py settings.py
+cp settings.py settings.py.bak
+grep -v '^VARS_MODULE_PATH' settings.py.bak > settings.py
 cd ..
 
 # Clear database
@@ -66,6 +66,5 @@ chall2.save()
 ${PYTHON} manage.py createsuperuser --user gamemaster --email none@mail.com
 
 cd siteconfig
-rm -f settings.py
-ln -s settings.real.py settings.py
+mv settings.py.bak settings.py
 cd ..
