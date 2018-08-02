@@ -1,42 +1,53 @@
-.logo > img{
+.logo > img {
 	width: 160px;
 	height: 200px;
 	text-align: center;
 }
-.title > h1{
+.title > h1 {
 	font-family: Avenir;
 	text-align: center;
 	margin-bottom: 50px;
 }
 
-.play_img{
+.play_img {
 	background-image: url(img/icons8-play-100.png);
 }
 
-.reset_img{
+.reset_img {
 	background-image: url(img/icons8-stop-100.png);
 }
 
-.head_block{
+.head_block {
 	border: solid black 1px;
 	text-align: center;
 	width: 450px;
 }
 
-button{
+button {
 	background: #FFF;
 	border:0;
 }
 
-.time{
+.time {
 	margin-top: 30px;
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.card{
+.card {
 }
 
-.navbar{
+.navbar {
 	margin-bottom: 40px;
+}
+
+table {
+	margin-top: 10px;
+	margin-left: 30px;
+}
+
+table, th, td {
+	text-align: center;
+	padding: 5px;
+	border: 1px solid black;
 }
