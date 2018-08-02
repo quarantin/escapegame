@@ -134,4 +134,7 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
+MEDIA_ROOT=os.path.join(os.environ.get('HOME'), 'media')
+MEDIA_URL = '/media/'
+
 VARS_MODULE_PATH = 'escapegame.settings'
