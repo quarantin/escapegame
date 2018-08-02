@@ -14,13 +14,14 @@ urlpatterns = [
 	path('<slug:game_slug>/reset/', views.escapegame_reset, name='Reset Escape Game'),
 
 	# Video controls
-	path('<slug:game_slug>/video/play/', views.video_play, name='Play Brief Video'),
-	path('<slug:game_slug>/video/stop/', views.video_stop, name='Stop Brief Video'),
+	path('<slug:game_slug>/video/play/', views.video_play, name='Play Briefing Video'),
+	path('<slug:game_slug>/video/stop/', views.video_stop, name='Stop Briefing Video'),
 
 	# Door controls
 	path('<slug:game_slug>/door/<slug:room_slug>/', views.door_status, name='Door Status'),
-	path('<slug:game_slug>/door/open/<slug:room_slug>/', views.door_open, name='Open door'),
-	path('<slug:game_slug>/door/close/<slug:room_slug>/', views.door_close, name='Close door'),
+	path('<slug:game_slug>/door/open/', views.door_open, name='Open SAS Door'),
+	path('<slug:game_slug>/door/open/<slug:room_slug>/', views.door_open, name='Open Door'),
+	path('<slug:game_slug>/door/close/<slug:room_slug>/', views.door_close, name='Close Door'),
 
 	# Challenge controls
 	path('<slug:game_slug>/challenge/status/', views.challenge_status, name='Challenge Status'),
