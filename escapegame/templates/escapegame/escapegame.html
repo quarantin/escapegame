@@ -2,13 +2,13 @@
 {% load static %}
 {% block content %}
 	<div class="title">
-		<h1>{{ game.name }}</h1>
+		<h1>{{ game.escape_game_name }}</h1>
 	</div>
 
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 
 	<div class="col">
-		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.escape_game_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
 			<button id="start-escapegame" type="submit">
 				<div class="image-with-caption">
@@ -22,25 +22,25 @@
 					<p>Reset escape game</p>
 				</div>
 			</button>
-			<button class="lock-button" id="lock-sas-{{ game.slug }}" value={{ game.slug }} type="submit"> 
+			<button class="lock-button" id="lock-sas-{{ game.slug }}" value="sas" type="submit"> 
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock SAS door">
 					<p>Unlock SAS door</p>
 				</div>
 			</button>
-			<button id="unlock-sas-{{ game.slug }}" class="unlock-button" type="submit">
+			<button class="unlock-button" id="unlock-sas-{{ game.slug }}" value="sas" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock SAS door">
 					<p>Lock SAS door</p>
 				</div>
 			</button>
-			<button id="lock-corridor-{{ game.slug }}" class="lock-button" type="submit">
+			<button class="lock-button" id="lock-corridor-{{ game.slug }}" value="corridor" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock corridor door">
 					<p>Unlock corridor door</p>
 				</div>
 			</button>
-			<button id="unlock-corridor-{{ game.slug }}" class="unlock-button" type="submit">
+			<button class="unlock-button" id="unlock-corridor-{{ game.slug }}" value="corridor" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock corridor door">
 					<p>Lock corridor door</p>
@@ -60,20 +60,20 @@
 {% else %}
 	{% for room in rooms %}
 	<div id="{{ room.slug }}" class="col">
-		<label class="head_block head_border">Salle &laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
+		<label class="head_block head_border">Salle &laquo;&nbsp;{{ room.room_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
 			<div class="col" id="{{ room.slug }}-data">
 				<!-- Placeholder for room status -->
 				Data will be refreshed soon!
 			</div>
 			<div class="col">
-				<button id="lock-{{ room.slug }}" class="lock-button" type="submit">
+				<button id="lock-{{ room.slug }}" value="{{ room.slug }}" class="lock-button" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock room door">
 						<p>Unlock room door</p>
 					</div>
 				</button>
-				<button id="unlock-{{ room.slug }}" class="unlock-button" type="submit">
+				<button id="unlock-{{ room.slug }}" value="{{ room.slug }}" class="unlock-button" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock room door">
 						<p>Lock room door</p>

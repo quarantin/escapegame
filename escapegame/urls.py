@@ -13,21 +13,34 @@ urlpatterns = [
 	path('', views.selector_index, name='Index'),
 
 	# Escape game control view
-	path('<slug:game_slug>/', views.escapegame_index, name='Escape game index'),
-	path('<slug:game_slug>/start/', views.escapegame_start, name='Start escape game'),
-	path('<slug:game_slug>/reset/', views.escapegame_reset, name='Reset escape game'),
-	path('<slug:game_slug>/status/', views.escapegame_status, name='Escape game status'),
+	path('<slug:game_slug>/', views.escapegame_index),
 
 	#####
 	# REST API
 	#####
 
+	# Escape game controls
+	path('<slug:game_slug>/start/', views.escapegame_start),
+	path('<slug:game_slug>/reset/', views.escapegame_reset),
+	path('<slug:game_slug>/status/', views.escapegame_status),
+
 	# Video controls
-	path('<slug:game_slug>/video/<str:action>/', views.set_video_state, name='Play/stop briefing video'),
+	path('<slug:game_slug>/video/play/', views.set_video_state, { 'action': 'play'}),
+	path('<slug:game_slug>/video/stop/', views.set_video_state, { 'action': 'stop'}),
 
 	# Door controls
-	path('<slug:game_slug>/door/<slug:room_slug>/<str:action>/', views.set_door_locked, name='Lock/unlock doors'),
+	path('<slug:game_slug>/<slug:room_slug>/lock/', views.set_door_locked, { 'action': 'lock' }),
+	path('<slug:game_slug>/<slug:room_slug>/unlock/', views.set_door_locked, { 'action': 'unlock' }),
 
 	# Challenge controls
-	path('<slug:game_slug>/challenge/<slug:challenge_slug>/<str:action>/', views.set_challenge_status, name='Solve/reset challenges'),
+	path('<slug:game_slug>/<slug:room_slug/<slug:challenge_slug>/solve/', views.set_challenge_status, { 'action': 'solve'}),
+	path('<slug:game_slug>/<slug:room_slug/<slug:challenge_slug>/reset/', views.set_challenge_status, { 'action': 'reset'}),
+
+	path('this-is-a-test', views.set_challenge_status, {
+		'game_slug': '1001-nuits',
+		'room_slug': 'fontaine',
+		'challenge_slug': 'room1-chall1',
+		'action': 'solve',
+	}),
+
 ]

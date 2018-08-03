@@ -1,6 +1,9 @@
 
 function switch_elements(selector1, selector2, state)
 {
+	// Just for debug
+	//alert("Switching '" + selector1 + "' with '" + selector2 + "' " + state);
+
 	if (state) {
 		$(selector1).show();
 		$(selector2).hide();
@@ -13,66 +16,71 @@ function switch_elements(selector1, selector2, state)
 
 $(document).ready(function() {
 
-	slug = $('input#game-slug').val();
+	// The slug of the current escape game
+	game_slug = $('input#game-slug').val();
 
 	switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
+	// Handler for the button to start the video
 	start_but = $('button#start-escapegame');
 	start_but.click(function() {
 
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', false);
 
 		$.ajax({
-			url: '/escapegame/' + slug + '/start',
+			url: '/escapegame/' + game_slug + '/start',
 		});
 	});
 
+	// Handler for the button to stop the video
 	stop_but = $('button#stop-escapegame')
 	stop_but.click(function() {
 
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
 		$.ajax({
-			url: '/escapegame/' + slug + '/reset',
+			url: '/escapegame/' + game_slug + '/reset',
 		});
 	});
 
+	// Handler for lock buttons
 	lock_buts = $('button.lock-button');
 	lock_buts.click(function() {
 
 		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
 		$.ajax({
-			url: '/escapegame/' + slug + '/door/' + this.val() + '/unlock',
+			url: '/escapegame/' + game_slug + '/' + this.value + '/unlock',
 		});
 	});
 
+	// Handler for unlock buttons
 	unlock_buts = $('button.unlock-button');
 	unlock_buts.click(function() {
 
 		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
 		$.ajax({
-			url: '/escapegame/' + slug + '/door/' + this.val() + '/lock',
+			url: '/escapegame/' + game_slug + '/' + this.value + '/lock',
 		});
 	});
 
 	$.ajax({
-		url: '/escapegame/' + slug + '/status',
+		url: '/escapegame/' + game_slug + '/status',
 		success: function(game) {
 
 			if (typeof game === 'undefined')
 				return;
 
-			switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, true);
-			switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, true);
+			switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, game.sas_door_locked);
+			switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, game.corridor_door_locked);
 
 			// For each room...
 			for (var index in game.rooms) {
 
 				var room = game.rooms[index];
 
-				switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, true);
+				switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, room.door_locked);
 
 				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
 				var statusdiv = $('div#' + room.slug + '-data');

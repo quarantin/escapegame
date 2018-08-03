@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from .models import Image, Video, EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from .models import Image, Video, RaspberryPi, EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 class ImageAdmin(admin.ModelAdmin):
 	list_display = ( 'image_type', 'image_path' )
@@ -9,12 +9,24 @@ class ImageAdmin(admin.ModelAdmin):
 class VideoAdmin(admin.ModelAdmin):
 	list_display = ( 'video_name', 'video_path' )
 
+class RaspberryPiAdmin(admin.ModelAdmin):
+	list_display = ( 'name', 'hostname', 'port', 'validation_url' )
+	fieldsets = (
+		('General', { 'fields': (
+			'name',
+			'hostname',
+			'port',
+			'validation_url',
+			)}),
+	)
+
 class EscapeGameAdmin(admin.ModelAdmin):
 	list_display = ( 'escape_game_name', 'video_brief' )
 	prepoluated_fields = { 'slug': ( 'escape_game_name', )}
 	fieldsets = (
 		('General', { 'fields': (
 			'escape_game_name',
+			'escape_game_controller',
 			'video_brief',
 			)}),
 		('Door controls', { 'fields': (
@@ -36,6 +48,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 	fieldsets = (
 		('General', { 'fields': (
 			'room_name',
+			'room_controller',
 			'escape_game',
 			)}),
 		('Door controls', { 'fields': (
@@ -66,6 +79,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Video, VideoAdmin)
+admin.site.register(RaspberryPi, RaspberryPiAdmin)
 admin.site.register(EscapeGame, EscapeGameAdmin)
 admin.site.register(EscapeGameRoom, EscapeGameRoomAdmin)
 admin.site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)

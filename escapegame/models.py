@@ -6,6 +6,8 @@ from constance import config
 
 from escapegame import libraspi
 
+import requests
+
 class Video(models.Model):
 
 	video_name = models.CharField(max_length=255)
@@ -53,11 +55,22 @@ class Arduino(models.Model):
 		self.slug = slugify(self.name)
 		super(EscapeGame, self).save(*args, **kwargs)
 
+class RaspberryPi(models.Model):
+
+	name = models.CharField(max_length=255)
+	hostname = models.CharField(max_length=32)
+	port = models.IntegerField(default=8000)
+	validation_url = models.URLField(max_length=255)
+
+	def __str__(self):
+		return self.name
+
 class EscapeGame(models.Model):
 
 	escape_game_name = models.CharField(max_length=255, default='')
-	slug = models.SlugField(max_length=255, editable=False)
+	escape_game_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
 	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
+	slug = models.SlugField(max_length=255, editable=False)
 
 	sas_door_pin = models.IntegerField(default=7)
 	corridor_door_pin = models.IntegerField(default=9)
@@ -65,9 +78,9 @@ class EscapeGame(models.Model):
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
 
-	map_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='game_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_MAP })
-	sas_door_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
-	corridor_door_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+	map_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='game_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_MAP })
+	sas_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+	corridor_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
 
 	def set_sas_door_locked(self, locked):
 		try:
@@ -103,18 +116,19 @@ class EscapeGame(models.Model):
 class EscapeGameRoom(models.Model):
 
 	room_name = models.CharField(max_length=255, default='')
-	slug = models.SlugField(max_length=255, editable=False)
+	room_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
 	escape_game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
+	slug = models.SlugField(max_length=255, editable=False)
 
 	door_pin = models.IntegerField(default=5)
 	door_locked = models.BooleanField(default=True)
 
-	room_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='room_image_path', limit_choices_to={ 'image_type': Image.TYPE_ROOM })
-	door_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='room_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
-
+	room_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image_path', limit_choices_to={ 'image_type': Image.TYPE_ROOM })
+	door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
 
 	def set_door_locked(self, locked):
 		try:
+			print('set_door_lock(%s) [%s]' % (locked, self))
 			status, message = libraspi.set_door_locked(self.door_pin, locked)
 			if status == 0:
 				self.door_locked = locked
@@ -124,6 +138,24 @@ class EscapeGameRoom(models.Model):
 
 		except Exception as err:
 			return 1, 'Error: %s' % err
+
+	def set_remote_door_locked(self, host, port, action):
+		try:
+			print('set_remote_door_lock(%s, %d, %s) [%s]' % (host, port, action, self))
+			locked = (action == 'lock')
+			response = requests.get('http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
+			print("WTF")
+			print(response.json())
+			# TODO check response is valid
+			# if response is valid:
+			if True:
+				self.door_locked = locked
+				self.save()
+
+			return 0, 'Success'
+
+		except Exception as err:
+			return 1, 'Error %s' % err
 
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.room_name)
@@ -139,7 +171,7 @@ class EscapeGameChallenge(models.Model):
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
 	solved = models.BooleanField(default=False)
-	challenge_image_path = models.ForeignKey(Image, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_CHALL })
+	challenge_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_CHALL })
 
 	def set_solved(self, solved):
 		try:
