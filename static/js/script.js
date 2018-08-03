@@ -47,6 +47,10 @@ $(document).ready(function() {
 	lock_buts = $('button.lock-button');
 	lock_buts.click(function() {
 
+		ok = confirm('Are you really sure you want to unlock the door?');
+		if (ok !== true)
+			return;
+
 		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
 		$.ajax({
@@ -57,6 +61,10 @@ $(document).ready(function() {
 	// Handler for unlock buttons
 	unlock_buts = $('button.unlock-button');
 	unlock_buts.click(function() {
+
+		ok = confirm('Are you really sure you want to lock the door?');
+		if (ok !== true)
+			return;
 
 		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
