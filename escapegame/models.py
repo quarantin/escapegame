@@ -6,7 +6,8 @@ from constance import config
 
 from escapegame import libraspi
 
-import requests
+import os
+#import requests
 
 class Video(models.Model):
 
@@ -164,14 +165,15 @@ class EscapeGameRoom(models.Model):
 	def set_remote_door_locked(self, host, port, action):
 		try:
 			print('set_remote_door_lock(%s, %d, %s) [%s]' % (host, port, action, self))
-			locked = (action == 'lock')
-			response = requests.get('http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
-			print("WTF")
-			print(response.json())
+			# FIXME Why is this not working?
+			#response = requests.get('http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
+			#print(response.json())
+			os.system('wget -O /tmp/door-status.txt http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
+
 			# TODO check response is valid
 			# if response is valid:
 			if True:
-				self.door_locked = locked
+				self.door_locked = (action != 'lock')
 				self.save()
 
 			return 0, 'Success'
