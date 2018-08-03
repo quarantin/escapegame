@@ -49,7 +49,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = libraspi.play_video(game.video_path)
+		status, message = libraspi.play_video(game.video_brief.video_path)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -82,7 +82,7 @@ def escapegame_reset(request, game_slug):
 		rooms = EscapeGameRoom.objects.filter(escape_game=game)
 
 		# Stop video player
-		status, message = libraspi.stop_video(game.video_path)
+		status, message = libraspi.stop_video(game.video_brief.video_path)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -249,6 +249,7 @@ def set_door_locked(request, game_slug, room_slug, action):
 			'status': status,
 			'message': message,
 			'method': method,
+			'locked': locked,
 		})
 
 	except Exception as err:
@@ -280,6 +281,7 @@ def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
 			'status': status,
 			'message': message,
 			'method': method,
+			'solved': solved,
 		})
 
 	except Exception as err:
