@@ -2,7 +2,7 @@
 
 . $(dirname $0)/env.sh
 
-DEBIAN_PACKAGES=( 'sqlite3' )
+DEBIAN_PACKAGES=( 'sqlite3' 'vim' )
 
 PIP_PACKAGES=( 'django' 'django-constance[database]' )
 
