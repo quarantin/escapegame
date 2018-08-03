@@ -38,7 +38,7 @@ def set_door_locked(pin, locked):
 			GPIO.setup(pin, GPIO.OUT)
 			GPIO.output(pin, locked)
 
-		state = (locked and 'Closing' or 'Opening')
+		state = (locked and 'Opening' or 'Closing')
 		print("DEBUG: %s door with pin %d" % (state, pin))
 		return 0, 'Success'
 
