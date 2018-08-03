@@ -4,7 +4,7 @@ from constance import config
 
 import os, subprocess
 
-if config.RUNNING_ON_PI == 'True':
+if config.RUNNING_ON_PI == True:
 	import RPi.GPIO as GPIO
 
 def is_running_on_pi():
@@ -33,15 +33,14 @@ def stop_video(video_path):
 def set_door_locked(pin, locked):
 
 	try:
-		ret = 0
-		if config.RUNNING_ON_PI == 'True':
+		if config.RUNNING_ON_PI == True:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
-			ret = GPIO.output(pin, locked)
+			GPIO.output(pin, locked)
 
 		state = (locked and 'Closing' or 'Opening')
 		print("DEBUG: %s door with pin %d" % (state, pin))
-		return ret, 'Success'
+		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
