@@ -57,10 +57,32 @@ class Arduino(models.Model):
 
 class RaspberryPi(models.Model):
 
+	DEFAULT_TIMEOUT = 3
+
 	name = models.CharField(max_length=255)
 	hostname = models.CharField(max_length=32)
 	port = models.IntegerField(default=8000)
 	validation_url = models.URLField(max_length=255)
+
+	def save(self, *args, **kwargs):
+		super(RaspberryPi, self).save(*args, **kwargs)
+		status, message = self.send_config()
+		if status != 0:
+			print("ERROR: %d %s" % (status, message))
+
+	def send_config(self):
+		try:
+			url = 'http://%s:%d/api/config' % (self.hostname, self.port)
+			print("Sending request to configure validation url: %s" % url)
+			response = requests.post(url, data={ 'validation_url': self.validation_url}, timeout=RaspberryPi.DEFAULT_TIMEOUT)
+			if not response:
+				raise Exception('send_config failed to send POST request')
+
+			# TODO check response success
+			return 0, 'Success'
+
+		except Exception as err:
+			return 1, 'Error: %s' % err
 
 	def __str__(self):
 		return self.name
