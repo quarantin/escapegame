@@ -13,7 +13,6 @@ def is_running_on_pi():
 def play_video(video_path):
 
 	try:
-
 		video_path = os.path.join(config.VIDEO_PATH, video_path)
 
 		print("DEBUG: Playing video '%s'" % video_path)
@@ -31,10 +30,9 @@ def stop_video(video_path):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def set_door_lock(pin, locked):
+def set_door_locked(pin, locked):
 
 	try:
-
 		ret = 0
 		if config.RUNNING_ON_PI == 'True':
 			GPIO.setmode(GPIO.BOARD)

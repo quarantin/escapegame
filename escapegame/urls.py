@@ -26,7 +26,7 @@ urlpatterns = [
 	path('<slug:game_slug>/video/<str:action>/', views.set_video_state, name='Play/stop briefing video'),
 
 	# Door controls
-	path('<slug:game_slug>/door/<slug:room_slug>/<str:action>/', views.set_door_lock, name='Lock/unlock doors'),
+	path('<slug:game_slug>/door/<slug:room_slug>/<str:action>/', views.set_door_locked, name='Lock/unlock doors'),
 
 	# Challenge controls
 	path('<slug:game_slug>/challenge/<slug:challenge_slug>/<str:action>/', views.set_challenge_status, name='Solve/reset challenges'),
