@@ -5,7 +5,7 @@
 LOGFILE='django.log'
 PORT=80
 
-cd "${DJANGO}"
+cd "${ROOTDIR}"
 
 echo -n > "${LOGFILE}"
 
