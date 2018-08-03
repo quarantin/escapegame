@@ -2,15 +2,14 @@
 
 . $(dirname $0)/env.sh
 
-LOGFILE='django.log'
+SLEEP=5
 PORT=80
 
 cd "${ROOTDIR}"
 
-echo -n > "${LOGFILE}"
-
 while true; do
-	"${PYTHON}" manage.py runserver "${HOSTNAME}:${PORT}" 2>&1 >> "${LOGFILE}"
-	sleep 5
+	"${PYTHON}" manage.py runserver "${HOSTNAME}:${PORT}"
+	echo "${PYTHON} died! Restarting django in ${SLEEP}"
+	sleep "${SLEEP}"
 done
 
