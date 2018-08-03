@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOST=raspberrypi.local
+HOST="$(hostname).local"
 PORT=80
 
 PYTHON=python3
