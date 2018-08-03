@@ -33,14 +33,6 @@ urlpatterns = [
 	path('<slug:game_slug>/<slug:room_slug>/unlock/', views.set_door_locked, { 'action': 'unlock' }),
 
 	# Challenge controls
-	path('<slug:game_slug>/<slug:room_slug/<slug:challenge_slug>/solve/', views.set_challenge_status, { 'action': 'solve'}),
-	path('<slug:game_slug>/<slug:room_slug/<slug:challenge_slug>/reset/', views.set_challenge_status, { 'action': 'reset'}),
-
-	path('this-is-a-test', views.set_challenge_status, {
-		'game_slug': '1001-nuits',
-		'room_slug': 'fontaine',
-		'challenge_slug': 'room1-chall1',
-		'action': 'solve',
-	}),
-
+	path('<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/solve/', views.set_challenge_status, { 'action': 'solve'}),
+	path('<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/reset/', views.set_challenge_status, { 'action': 'reset'}),
 ]
