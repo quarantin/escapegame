@@ -1,13 +1,16 @@
 #!/bin/bash
 
-HOST="$(hostname).local"
+. $(dirname $0)/env.sh
+
+LOGFILE='django.log'
 PORT=80
 
-PYTHON=python3
-DJANGO="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null && pwd )"
+cd "${DJANGO}"
 
-cd "${DJANGO}" && while true; do
-	"${PYTHON}" manage.py runserver "${HOST}:${PORT}"
+echo -n > "${LOGFILE}"
+
+while true; do
+	"${PYTHON}" manage.py runserver "${HOSTNAME}:${PORT}" 2>&1 >> "${LOGFILE}"
 	sleep 5
 done
 
