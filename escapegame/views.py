@@ -35,7 +35,6 @@ def escapegame_index(request, game_slug):
 		'rooms': EscapeGameRoom.objects.filter(escape_game=game),
 	}
 
-
 	template = loader.get_template('escapegame/escapegame.html')
 
 	return HttpResponse(template.render(context, request))
@@ -223,7 +222,7 @@ def set_door_locked(request, game_slug, room_slug, action):
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action \'%s\'' % action)
 
-		locked = (action == 'lock')
+		locked = (action != 'lock')
 
 		game = EscapeGame.objects.get(slug=game_slug)
 

@@ -55,7 +55,7 @@ def set_door_locked(request, action, pin):
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action: %s' % action)
 
-		locked = (action == 'lock')
+		locked = (action != 'lock')
 
 		status, message = libraspi.set_door_locked(pin, locked)
 
