@@ -7,7 +7,7 @@ from constance import config
 from escapegame import libraspi
 
 import os
-#import requests
+import requests
 
 class Video(models.Model):
 
