@@ -33,16 +33,7 @@ urlpatterns = [
 	# Admin section
 	path('admin/', admin.site.urls),
 
-	# Challenge status module
-	path('challenge/', include('challenge.urls')),
-
-	# Door module
-	#path('door/', include('door.urls')),
-
 	# Escape game section
 	path('escapegame/', include('escapegame.urls')),
 
-	# Video module
-	#path('video/', include('video.urls')),
-
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
