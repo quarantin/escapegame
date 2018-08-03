@@ -31,6 +31,9 @@ class Image(models.Model):
 	image_type = models.CharField(max_length=255, choices=IMAGE_TYPE_CHOICES, default=TYPE_ROOM)
 	image_path = models.ImageField(upload_to=config.UPLOAD_PATH)
 
+	def __str__(self):
+		return '%s / %s' % (self.image_type, self.image_path)
+
 class VideoPlayer(models.Model):
 
 	video_player = models.CharField(max_length=255)
