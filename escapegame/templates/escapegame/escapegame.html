@@ -7,7 +7,7 @@
 
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 
-	<div class="col">
+	<div class="col head_block">
 		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.escape_game_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
 			<button id="start-escapegame" type="submit">
@@ -51,7 +51,7 @@
 	</div>
 
 {% if rooms|length < 1 %}
-	<div class="col">
+	<div class="col head_block">
 		<span>
 			<p>No room configured yet for this escape game.<br>
 			You can visit <a href="/admin/escapegame/escapegameroom">this</a> page to create new rooms.</p>
@@ -59,7 +59,7 @@
 	</div>
 {% else %}
 	{% for room in rooms %}
-	<div id="{{ room.slug }}" class="col">
+	<div class="col head_block" id="{{ room.slug }}">
 		<label class="head_block head_border">Salle &laquo;&nbsp;{{ room.room_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
 			<div class="col" id="{{ room.slug }}-data">

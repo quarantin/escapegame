@@ -23,7 +23,8 @@
 
 .head_block {
 	text-align: center;
-	width: 450px;
+	width: 50%;
+	margin: 0 auto !important;
 }
 
 button {
