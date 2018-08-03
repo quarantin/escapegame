@@ -29,6 +29,9 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 video_brief = Video(video_name='Video demo', video_path='test.h264')
 video_brief.save()
 
+raspi = RaspberryPi(name='Raspi 1001-nuits', hostname='127.0.0.1', port=8000, validation_url='http://example.com')
+raspi.save()
+
 game = EscapeGame(escape_game_name='1001 nuits', video_brief=video_brief)
 game.save()
 
