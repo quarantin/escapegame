@@ -9,6 +9,10 @@ from escapegame import libraspi
 import os
 import requests
 
+"""
+Class to represent a video. Video are played at the begining of escape game,
+when the challengers enter the SAS.
+"""
 class Video(models.Model):
 
 	video_name = models.CharField(max_length=255)
@@ -17,6 +21,10 @@ class Video(models.Model):
 	def __str__(self):
 		return self.video_name
 
+"""
+Class to represent an image. Images are used to represent visual objects on a map,
+like doors, challenges, rooms, or even a whole escape game map.
+"""
 class Image(models.Model):
 
 	TYPE_CHALL = 'challenge'
@@ -58,32 +66,18 @@ class Arduino(models.Model):
 
 class RaspberryPi(models.Model):
 
-	DEFAULT_TIMEOUT = 3
 
 	name = models.CharField(max_length=255)
 	hostname = models.CharField(max_length=32)
 	port = models.IntegerField(default=8000)
-	validation_url = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
 		super(RaspberryPi, self).save(*args, **kwargs)
-		status, message = self.send_config()
-		if status != 0:
-			print("ERROR: %d %s" % (status, message))
-
-	def send_config(self):
-		try:
-			url = 'http://%s:%d/api/config' % (self.hostname, self.port)
-			print("Sending request to configure validation url: %s" % url)
-			response = requests.post(url, data={ 'validation_url': self.validation_url}, timeout=RaspberryPi.DEFAULT_TIMEOUT)
-			if not response:
-				raise Exception('send_config failed to send POST request')
-
-			# TODO check response success
-			return 0, 'Success'
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
+		remote_pins = RemotePin.objects.filter(raspberrypi=self)
+		for pin in remote_pins:
+			status, message = pin.send_config()
+			if status != 0:
+				print("ERROR: %d %s" % (status, message))
 
 	def __str__(self):
 		return self.name
@@ -212,3 +206,42 @@ class EscapeGameChallenge(models.Model):
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
+
+class RemotePin(models.Model):
+
+	DEFAULT_TIMEOUT = 3
+
+	TYPE_LED = 'led'
+	TYPE_DOOR = 'door'
+	TYPE_CHALL = 'challenge'
+
+	PIN_TYPES = (
+		(TYPE_LED, 'Led'),
+		(TYPE_DOOR, 'Door'),
+		(TYPE_CHALL, 'Challenge'),
+	)
+
+	name = models.CharField(max_length=255)
+	pin_type = models.CharField(max_length=16, choices=PIN_TYPES)
+	pin_number = models.IntegerField(default=7)
+	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	callback_url = models.URLField(max_length=255)
+
+	def send_config(self):
+		try:
+			raspi = self.raspberrypi
+			port = raspi.port != 80 and ':%d' % port or ''
+			url = 'http://%s%s/api/config' % (raspi.hostname, port)
+			print("Sending request to configure validation url: %s" % url)
+			response = requests.post(url, data={ 'callback_url': self.callback_url}, timeout=RemotePin.DEFAULT_TIMEOUT)
+			if not response:
+				raise Exception('send_config failed to send POST request')
+
+			# TODO check response success
+			return 0, 'Success'
+
+		except Exception as err:
+			return 1, 'Error: %s' % err
+
+	def __str__(self):
+		return self.name

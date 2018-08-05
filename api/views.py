@@ -25,11 +25,11 @@ def set_config(request):
 		for key in request.POST:
 			print("DEBUG: key=%s" % key)
 
-		validation_url = request.POST.get('validation_url')
-		if not validation_url:
-			raise Exception('Missing parameter \'validation_url\'')
+		callback_url = request.POST.get('callback_url')
+		if not callback_url:
+			raise Exception('Missing parameter \'callback_url\'')
 
-		config.VALIDATION_URL = validation_url
+		config.VALIDATION_URL = callback_url
 
 		return JsonResponse({
 			'status': 0,

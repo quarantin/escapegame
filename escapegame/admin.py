@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from .models import Image, Video, RaspberryPi, EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from .models import *
 
 class ImageAdmin(admin.ModelAdmin):
 	list_display = ( 'image_type', 'image_path' )
@@ -9,14 +9,25 @@ class ImageAdmin(admin.ModelAdmin):
 class VideoAdmin(admin.ModelAdmin):
 	list_display = ( 'video_name', 'video_path' )
 
+class RemotePinAdmin(admin.ModelAdmin):
+	list_display = ( 'name', 'pin_type', 'pin_number', 'raspberrypi', 'callback_url' )
+	fieldsets = (
+		('General', { 'fields': (
+			'name',
+			'pin_type',
+			'pin_number',
+			'raspberrypi',
+			'callback_url',
+			)}),
+	)
+
 class RaspberryPiAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'hostname', 'port', 'validation_url' )
+	list_display = ( 'name', 'hostname', 'port' )
 	fieldsets = (
 		('General', { 'fields': (
 			'name',
 			'hostname',
 			'port',
-			'validation_url',
 			)}),
 	)
 
@@ -79,6 +90,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Video, VideoAdmin)
+admin.site.register(RemotePin, RemotePinAdmin)
 admin.site.register(RaspberryPi, RaspberryPiAdmin)
 admin.site.register(EscapeGame, EscapeGameAdmin)
 admin.site.register(EscapeGameRoom, EscapeGameRoomAdmin)

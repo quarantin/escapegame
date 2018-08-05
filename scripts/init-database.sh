@@ -29,8 +29,11 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 video_brief = Video(video_name='Video demo', video_path='test.h264')
 video_brief.save()
 
-raspi = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80, validation_url='http://example.com')
+raspi = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80)
 raspi.save()
+
+remote_pin = RemotePin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, pin_type='door', pin_number=7, callback_url='http://escapegame.local/escapegame/1001-nuits/fontaine/unlock')
+remote_pin.save()
 
 game = EscapeGame(escape_game_name='1001 nuits', video_brief=video_brief)
 game.save()
