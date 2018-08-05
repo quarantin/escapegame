@@ -22,7 +22,7 @@ urlpatterns = [
 
 	# Video controls
 	path('<slug:game_slug>/video/play/', views.set_video_state, { 'action': 'play' }),
-	path('<slug:game_slug>/video/stop/', views.set_video_state { 'action': 'stop' }),
+	path('<slug:game_slug>/video/stop/', views.set_video_state, { 'action': 'stop' }),
 
 	# Door controls
 	path('<slug:game_slug>/<slug:room_slug>/lock/', views.set_door_locked, { 'action': 'lock' }),
