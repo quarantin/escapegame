@@ -154,7 +154,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 
 
 DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
-IS_MASTER = (socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
+IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
 
 CONSTANCE_CONFIG = {
 	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),

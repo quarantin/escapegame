@@ -35,8 +35,7 @@ urlpatterns = [
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-is_master = (socket.gethostname() == config.MASTER_HOSTNAME)
-if is_master:
+if config.IS_MASTER:
 
 	# Admin pages
 	urlpatterns.append(path('admin/', admin.site.urls))
