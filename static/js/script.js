@@ -28,7 +28,7 @@ $(document).ready(function() {
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', false);
 
 		$.ajax({
-			url: '/' + game_slug + '/start',
+			url: '/web/' + game_slug + '/start',
 		});
 	});
 
@@ -39,7 +39,7 @@ $(document).ready(function() {
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
 		$.ajax({
-			url: '/' + game_slug + '/reset',
+			url: '/web/' + game_slug + '/reset',
 		});
 	});
 
@@ -54,7 +54,7 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
 		$.ajax({
-			url: '/' + game_slug + '/' + this.value + '/unlock',
+			url: '/web/' + game_slug + '/' + this.value + '/unlock',
 		});
 	});
 
@@ -69,12 +69,12 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
 		$.ajax({
-			url: '/' + game_slug + '/' + this.value + '/lock',
+			url: '/web/' + game_slug + '/' + this.value + '/lock',
 		});
 	});
 
 	$.ajax({
-		url: '/' + game_slug + '/status',
+		url: '/web/' + game_slug + '/status',
 		success: function(game) {
 
 			if (typeof game === 'undefined')
