@@ -3,20 +3,12 @@ from escapegame.models import *
 
 import socket
 
-@background(schedule=0, repeat=0)
-def poll_gpios():
-	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-	if not myself:
-		return
-
-	remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
-	for remote_pin in remote_pins:
-		poll_gpio.now(remote_pin.pin_number)
-
-	
-@background(schedule=60)
+@background(schedule=0)
 def poll_gpio(pin):
-	open('/tmp/w00t-BBQ', 'w+').close()
+	fin = open('/tmp/w00t-BBQ2', 'w+')
+	fin.write('w00t')
+	fin.close()
+
 	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 	if not myself:
 		print("ERROR: Could not find matching Raspberry Pi: %s.local" % socket.gethostname())
