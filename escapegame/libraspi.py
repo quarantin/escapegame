@@ -30,7 +30,7 @@ def do_get(url):
 
 def do_post(url, data):
 	try:
-		print("Performing request POST %s data=%s" % (url, data)
+		print("Performing request POST %s data=%s" % (url, data))
 		response = request.post(url, data=data)
 		if not response:
 			return None
