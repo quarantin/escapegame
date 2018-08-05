@@ -284,7 +284,7 @@ def set_door_locked(request, game_slug, room_slug, action):
 	Challenge controls, no login requried for now (REST API)
 """
 
-@login_required
+#@login_required
 def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
 
 	method = 'set_challenge_status'
