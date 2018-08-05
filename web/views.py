@@ -4,9 +4,11 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
 
 from escapegame import libraspi
+
+from constance import config
 
 import os, subprocess
 
@@ -29,10 +31,41 @@ def selector_index(request):
 def escapegame_index(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
+	rooms = EscapeGameRoom.objects.filter(escape_game=game)
+
+	host = config.MASTER_HOSTNAME
+	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
+
+	game.callback_url_lock_sas = 'http://%s%s/web/%s/sas/lock' % (host, port, game_slug)
+	game.callback_url_unlock_sas = 'http://%s%s/web/%s/sas/unlock' % (host, port, game_slug)
+
+	game.callback_url_lock_corridor = 'http://%s%s/web/%s/corridor/lock' % (host, port, game_slug)
+	game.callback_url_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock' % (host, port, game_slug)
+
+	for room in rooms:
+
+		game_controller = game.escape_game_controller
+		if room.room_controller:
+			game_controller = room.room_controller
+
+		if game_controller:
+			remote_pins = RemoteDoorPin.objects.filter(room=room)
+			for remote_pin in remote_pins:
+				host = game_controller.hostname
+				port = game_controller.port != 80 and ':%d' % game_controller.port or ''
+
+				room.callback_url_lock = 'http://%s%s/api/door/lock/%d' % (host, port, room.door_pin)
+				room.callback_url_unlock = 'http://%s%s/api/door/unlock/%d' % (host, port, room.door_pin)
+		else:
+			host = config.MASTER_HOSTNAME
+			port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
+
+			room.callback_url_lock = 'http://%s%s/api/door/lock/%d' % (host, port, room.door_pin)
+			room.callback_url_unlock = 'http://%s%s/api/door/unlock/%d' % (host, port, room.door_pin)
 
 	context = {
 		'game': game,
-		'rooms': EscapeGameRoom.objects.filter(escape_game=game),
+		'rooms': rooms,
 	}
 
 	template = loader.get_template('escapegame/escapegame.html')
@@ -211,7 +244,7 @@ def set_video_state(request, game_slug, action):
 		})
 
 """
-	Door controls, no login required for now (REST API)
+	Door controls (SAS, Corridor), no login required for now (REST API)
 """
 
 def set_door_locked(request, game_slug, room_slug, action):
@@ -222,24 +255,14 @@ def set_door_locked(request, game_slug, room_slug, action):
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action \'%s\'' % action)
 
-		locked = (action != 'lock')
+		locked = (action == 'lock')
 
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		if room_slug in [ 'sas', 'corridor' ]:
-			status, message = game.set_door_locked(room_slug, locked)
+		if room_slug not in [ 'sas', 'corridor' ]:
+			raise Exception('Invalid door \'%s\'' % room_slug)
 
-		else:
-			room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)
-
-			remote_raspi = game.escape_game_controller
-			if room.room_controller:
-				remote_raspi = room.room_controller
-
-			if remote_raspi:
-				status, message = room.set_remote_door_locked(remote_raspi.hostname, remote_raspi.port, action)
-			else:
-				status, message = room.set_door_locked(locked)
+		status, message = game.set_door_locked(room_slug, locked)
 
 		return JsonResponse({
 			'status': status,
