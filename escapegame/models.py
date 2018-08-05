@@ -87,7 +87,7 @@ class EscapeGame(models.Model):
 			elif door == 'corridor':
 				door_pin = self.corridor_door_pin
 
-			else
+			else:
 				raise Exception('Invalid door \'%s\'' % door)
 
 			status, message = libraspi.set_door_locked(door_pin, locked)
@@ -132,25 +132,6 @@ class EscapeGameRoom(models.Model):
 
 		except Exception as err:
 			return 1, 'Error: %s' % err
-
-	def set_remote_door_locked(self, host, port, action):
-		try:
-			print('set_remote_door_lock(%s, %d, %s) [%s]' % (host, port, action, self))
-			# FIXME Why is this not working?
-			#response = requests.get('http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
-			#print(response.json())
-			os.system('wget -O /tmp/door-status.txt http://%s:%d/api/door/%s/%d' % (host, port, action, self.door_pin))
-
-			# TODO check response is valid
-			# if response is valid:
-			if True:
-				self.door_locked = (action != 'lock')
-				self.save()
-
-			return 0, 'Success'
-
-		except Exception as err:
-			return 1, 'Error %s' % err
 
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.room_name)
