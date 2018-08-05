@@ -20,14 +20,17 @@ def do_get(url):
 		#
 		#return 0, response.content
 
-		output = os.system('wget -q -O- %s' % url)
-		return 0, output
+		print("Performing request GET %s" % url)
+		os.system('wget -q -O /dev/null %s' % url)
+
+		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
 def do_post(url, data):
 	try:
+		print("Performing request POST %s data=%s" % (url, data)
 		response = request.post(url, data=data)
 		if not response:
 			return None
