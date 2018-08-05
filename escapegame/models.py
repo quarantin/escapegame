@@ -7,6 +7,7 @@ from constance import config
 from escapegame import libraspi
 
 import os
+import socket
 import requests
 
 """
@@ -229,13 +230,17 @@ class RemotePin(models.Model):
 
 	def send_config(self):
 		try:
-			raspi = self.raspberrypi
-			port = raspi.port != 80 and ':%d' % port or ''
-			url = 'http://%s%s/api/config' % (raspi.hostname, port)
-			print("Sending request to configure validation url: %s" % url)
-			response = requests.post(url, data={ 'callback_url': self.callback_url}, timeout=RemotePin.DEFAULT_TIMEOUT)
-			if not response:
-				raise Exception('send_config failed to send POST request')
+			if socket.gethostname() == config.MASTER_HOSTNAME:
+
+				raspi = self.raspberrypi
+				port = raspi.port != 80 and ':%d' % port or ''
+				url = 'http://%s%s/api/config' % (raspi.hostname, port)
+				print('Sending request to configure validation url: %s' % url)
+				response = requests.post(url, data={ 'callback_url': self.callback_url}, timeout=RemotePin.DEFAULT_TIMEOUT)
+				if not response:
+					raise Exception('send_config failed to send POST request')
+			else:
+				print('Not sending request to configuration validation url because I am the remote Raspberry Pi named \'%s\'' % self.name)
 
 			# TODO check response success
 			return 0, 'Success'
