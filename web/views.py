@@ -290,7 +290,7 @@ def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
 	method = 'set_challenge_status'
 
 	try:
-		if action not [ 'validate', 'reset' ]:
+		if action not in [ 'validate', 'reset' ]:
 			raise Exception('Invalid action \'%s\'' % action)
 
 		solved = (action == 'validate')
