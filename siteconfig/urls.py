@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path, re_path
 from django.contrib.auth.views import LoginView
+from django.views.generic.base import RedirectView
 
 from constance import config
 
@@ -31,6 +32,9 @@ if config.IS_MASTER:
 
 	urlpatterns = [
 
+		# Landing page
+		path('', RedirectView.as_view(url='/web', permanent=True)),
+
 		# Authentication pages
 		path('accounts/', include('django.contrib.auth.urls')),
 
@@ -41,11 +45,14 @@ if config.IS_MASTER:
 		path('admin/', admin.site.urls),
 
 		# Web pages
-		re_path('web/', include('api.urls')),
+		path('web/', include('web.urls')),
 
 	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
 	urlpatterns = [
+
+		# Landing page
+		path('', RedirectView.as_view(url='/admin', permanent=True)),
 
 		# Authentication pages
 		path('accounts/', include('django.contrib.auth.urls')),
@@ -54,6 +61,6 @@ else:
 		path('api/', include('api.urls')),
 
 		# Admin pages
-		re_path(r'^', admin.site.urls),
+		path('admin/', admin.site.urls),
 
 	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
