@@ -203,8 +203,8 @@ class RemoteChallengePin(models.Model):
 		room_slug = self.challenge.room.slug
 		chall_slug = self.challenge.slug
 
-		self.callback_url_validate = 'http://%s%s/%s/%s/%s/validate' % (host, port, game_slug, room_slug, chall_slug)
-		self.callback_url_reset = 'http://%s%s/%s/%s/%s/reset' % (host, port, game_slug, room_slug, chall_slug)
+		self.callback_url_validate = 'http://%s%s/web/%s/%s/%s/validate' % (host, port, game_slug, room_slug, chall_slug)
+		self.callback_url_reset = 'http://%s%s/web/%s/%s/%s/reset' % (host, port, game_slug, room_slug, chall_slug)
 		super(RemoteChallengePin, self).save(*args, **kwargs)
 
 	def __str__(self):
@@ -225,8 +225,8 @@ class RemoteDoorPin(models.Model):
 		game_slug = self.room.escape_game.slug
 		room_slug = self.room.slug
 
-		self.callback_url_lock = 'http://%s%s/%s/%s/lock/' % (host, port, game_slug, room_slug)
-		self.callback_url_unlock = 'http://%s%s/%s/%s/unlock/' % (host, port, game_slug, room_slug)
+		self.callback_url_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)
+		self.callback_url_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
 		super(RemoteDoorPin, self).save(*args, **kwargs)
 
 	def __str__(self):
