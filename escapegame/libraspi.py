@@ -13,11 +13,15 @@ def is_running_on_pi():
 
 def do_get(url):
 	try:
-		response = requests.get(url)
-		if not response:
-			return None
+		# Why the fuck is this not working???
+		#response = requests.get(url)
+		#if not response:
+		#	return None
+		#
+		#return 0, response.content
 
-		return 0, response.content
+		output = os.system('wget -q -O- %s' % url)
+		return 0, output
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
