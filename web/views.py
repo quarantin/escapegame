@@ -259,10 +259,12 @@ def set_door_locked(request, game_slug, room_slug, action):
 
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		if room_slug not in [ 'sas', 'corridor' ]:
-			raise Exception('Invalid door \'%s\'' % room_slug)
+		if room_slug in [ 'sas', 'corridor' ]:
+			status, message = game.set_door_locked(room_slug, locked)
 
-		status, message = game.set_door_locked(room_slug, locked)
+		else:
+			room = EscapeGameRooms.objects.get(slug=room_slug, game=game)
+			status, message = room.set_door_locked(locked)
 
 		return JsonResponse({
 			'status': status,
