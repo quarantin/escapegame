@@ -290,7 +290,10 @@ def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
 	method = 'set_challenge_status'
 
 	try:
-		solved = (action == 'solve')
+		if action not [ 'validate', 'reset' ]:
+			raise Exception('Invalid action \'%s\'' % action)
+
+		solved = (action == 'validate')
 
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)
