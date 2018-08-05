@@ -58,7 +58,7 @@ remote_pin.save()
 
 url_lock = 'http://escapegame.local/1001-nuits/fontaine/lock'
 url_unlock = 'http://escapegame.local/1001-nuits/fontaine/unlock'
-remote_pin = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, room=room1, pin_number=8, callback_url_lock=url_lock, callback_url_unlock=url_unlock)
+remote_pin = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, room=room1, pin_number=7, callback_url_lock=url_lock, callback_url_unlock=url_unlock)
 remote_pin.save()
 
 pin_number = 7
