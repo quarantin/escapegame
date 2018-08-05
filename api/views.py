@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from escapegame import libraspi
 from escapegame.models import RaspberryPi
 
-import os, subprocess
+import os, socket, subprocess
 
 """
 	Challenge controls, no login required for now (REST API)
