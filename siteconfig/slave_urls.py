@@ -20,12 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from django.contrib.auth.views import LoginView
-#from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
 
+	# TODO Just for debug, must redirect to /admin for production
 	# Landing page
 	#path('', RedirectView.as_view(url='/admin', permanent=False)),
+	path('', RedirectView.as_view(url='/web', permanent=False)),
 
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
@@ -35,5 +37,8 @@ urlpatterns = [
 
 	# Admin pages
 	path('admin/', admin.site.urls),
+
+	# TODO Just for debug, must be removed for production
+	path('web/', include('web.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
