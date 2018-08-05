@@ -29,6 +29,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: '/web/' + game_slug + '/start',
+			crossDomain: true,
 		});
 	});
 
@@ -40,6 +41,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: '/web/' + game_slug + '/reset',
+			crossDomain: true,
 		});
 	});
 
@@ -55,6 +57,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: this.value,
+			crossDomain: true,
 		});
 	});
 
@@ -70,11 +73,13 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: this.value,
+			crossDomain: true,
 		});
 	});
 
 	$.ajax({
 		url: '/web/' + game_slug + '/status',
+		crossDomain: true,
 		success: function(game) {
 
 			if (typeof game === 'undefined')
