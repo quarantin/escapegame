@@ -32,10 +32,10 @@ video_brief.save()
 game = EscapeGame(escape_game_name='1001 nuits', video_brief=video_brief)
 game.save()
 
-room1 = EscapeGameRoom(room_name='Fontaine', escape_game=game, door_pin=5)
+room1 = EscapeGameRoom(room_name='Fontaine', escape_game=game, door_pin=7)
 room1.save()
 
-room2 = EscapeGameRoom(room_name='Caverne', escape_game=game, door_pin=7)
+room2 = EscapeGameRoom(room_name='Caverne', escape_game=game, door_pin=9)
 room2.save()
 
 chall1 = EscapeGameChallenge(challenge_name='room1-chall1', room=room1, solved=False)
