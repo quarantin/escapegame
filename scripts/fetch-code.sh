@@ -4,8 +4,6 @@ ORIGIN=corentin
 BRANCH=master
 
 OUTPUT=$(git status --porcelain)
-echo $OUTPUT
-echo "======="
 MODIFIED=$(echo "${OUTPUT}" | grep '^ M ' | wc -l)
 if [ "${MODIFIED}" -gt "0" ]; then
 	echo "You have some local modifications, please commit or stash them first."
