@@ -28,7 +28,10 @@ $(document).ready(function() {
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', false);
 
 		$.ajax({
-			url: '/web/' + game_slug + '/start',
+			xhrFields: {
+				withCredentials: false
+			},
+			url: '/web/' + game_slug + '/start/',
 			crossDomain: true,
 		});
 	});
@@ -40,7 +43,10 @@ $(document).ready(function() {
 		switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
 		$.ajax({
-			url: '/web/' + game_slug + '/reset',
+			xhrFields: {
+				withCredentials: false
+			},
+			url: '/web/' + game_slug + '/reset/',
 			crossDomain: true,
 		});
 	});
@@ -56,6 +62,9 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
 		$.ajax({
+			xhrFields: {
+				withCredentials: false
+			},
 			url: this.value,
 			crossDomain: true,
 		});
@@ -72,13 +81,16 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
 		$.ajax({
+			xhrFields: {
+				withCredentials: false
+			},
 			url: this.value,
 			crossDomain: true,
 		});
 	});
 
 	$.ajax({
-		url: '/web/' + game_slug + '/status',
+		url: '/web/' + game_slug + '/status/',
 		crossDomain: true,
 		success: function(game) {
 
