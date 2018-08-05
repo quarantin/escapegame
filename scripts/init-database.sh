@@ -61,6 +61,9 @@ url_unlock = 'http://escapegame.local/1001-nuits/fontaine/unlock'
 remote_pin = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, room=room1, pin_number=7, callback_url_lock=url_lock, callback_url_unlock=url_unlock)
 remote_pin.save()
 
+room1.room_controller = raspi
+room1.save()
+
 pin_number = 7
 url_on = 'http://1001-nuits.local/api/led/on/%d' % pin_number
 url_off = 'http://1001-nuits.local/api/led/off/%d' % pin_number
