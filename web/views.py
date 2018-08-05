@@ -226,11 +226,8 @@ def set_door_locked(request, game_slug, room_slug, action):
 
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		if room_slug == 'sas':
-			status, message = game.set_sas_door_locked(locked)
-
-		elif room_slug == 'corridor':
-			status, message = game.set_corridor_door_locked(locked)
+		if room_slug in [ 'sas', 'corridor' ]:
+			status, message = game.set_door_locked(room_slug, locked)
 
 		else:
 			room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)

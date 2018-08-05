@@ -79,23 +79,20 @@ class EscapeGame(models.Model):
 	sas_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
 	corridor_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
 
-	def set_sas_door_locked(self, locked):
+	def set_door_locked(self, door, locked):
 		try:
-			status, message = libraspi.set_door_locked(self.sas_door_pin, locked)
+			if door == 'sas':
+				door_pin = self.sas_door_pin
+
+			elif door == 'corridor':
+				door_pin = self.corridor_door_pin
+
+			else
+				raise Exception('Invalid door \'%s\'' % door)
+
+			status, message = libraspi.set_door_locked(door_pin, locked)
 			if status == 0:
 				self.sas_door_locked = locked
-				self.save()
-
-			return status, message
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
-
-	def set_corridor_door_locked(self, locked):
-		try:
-			status, message = libraspi.set_door_locked(self.corridor_door_pin, locked)
-			if status == 0:
-				self.corridor_door_locked = locked
 				self.save()
 
 			return status, message
