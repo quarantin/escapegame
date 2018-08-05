@@ -22,9 +22,6 @@ def set_config(request):
 		if request.method != 'POST':
 			raise Exception('Unsupported method: %s' % request.method)
 		
-		for key in request.POST:
-			print("DEBUG: key=%s" % key)
-
 		callback_url = request.POST.get('callback_url')
 		if not callback_url:
 			raise Exception('Missing parameter \'callback_url\'')
