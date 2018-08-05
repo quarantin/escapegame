@@ -16,7 +16,7 @@ import os, subprocess
 	Escape Game Operator Pages
 """
 
-@login_required
+#@login_required
 def selector_index(request):
 
 	context = {
@@ -27,7 +27,7 @@ def selector_index(request):
 
 	return HttpResponse(template.render(context, request))
 
-@login_required
+#@login_required
 def escapegame_index(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
