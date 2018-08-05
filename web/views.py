@@ -263,7 +263,7 @@ def set_door_locked(request, game_slug, room_slug, action):
 			status, message = game.set_door_locked(room_slug, locked)
 
 		else:
-			room = EscapeGameRooms.objects.get(slug=room_slug, game=game)
+			room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)
 			status, message = room.set_door_locked(locked)
 
 		return JsonResponse({
