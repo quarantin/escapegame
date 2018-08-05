@@ -20,12 +20,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from django.contrib.auth.views import LoginView
-#from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
 
 	# Landing page
-	#path('', RedirectView.as_view(url='/web', permanent=False)),
+	path('', RedirectView.as_view(url='/web', permanent=False)),
 
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
