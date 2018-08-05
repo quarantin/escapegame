@@ -23,18 +23,18 @@ def set_challenge_state(request, action, pin):
 
 		validated = (action == 'validate')
 
-		status, message = libraspi.set_challenge_state(pin, validated)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'message': message,
-				'method': method,
-			})
+		#status, message = libraspi.set_challenge_state(pin, validated)
+		#if status != 0:
+		#	return JsonResponse({
+		#		'status': status,
+		#		'message': message,
+		#		'method': method,
+		#	})
 
 		if config.IS_SLAVE:
 			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 			remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, pin_number=pin)
-			callback_url = (validated and remote_pin.callback_url_solve or remote_pin.callback_url_reset)
+			callback_url = (validated and remote_pin.callback_url_validate or remote_pin.callback_url_reset)
 
 			status, message = libraspi.do_get(callback_url)
 			# TODO validate status and message (the content of response)
