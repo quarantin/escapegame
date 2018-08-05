@@ -181,8 +181,8 @@ class RemoteChallengePin(models.Model):
 		room_slug = self.challenge.room.slug
 		chall_slug = self.challenge.slug
 
-		self.callback_url_validate = 'http://%s%s/web/%s/%s/%s/validate' % (host, port, game_slug, room_slug, chall_slug)
-		self.callback_url_reset = 'http://%s%s/web/%s/%s/%s/reset' % (host, port, game_slug, room_slug, chall_slug)
+		self.callback_url_validate = 'http://%s%s/web/%s/%s/%s/validate/' % (host, port, game_slug, room_slug, chall_slug)
+		self.callback_url_reset = 'http://%s%s/web/%s/%s/%s/reset/' % (host, port, game_slug, room_slug, chall_slug)
 		super(RemoteChallengePin, self).save(*args, **kwargs)
 
 	def __str__(self):
@@ -223,8 +223,8 @@ class RemoteLedPin(models.Model):
 		host = self.raspberrypi.hostname
 		port = (self.raspberrypi.port != 80 and ':%d' % self.raspberrypi.port or '')
 
-		self.url_on = 'http://%s%s/api/led/on/%d' % (host, port, self.pin_number)
-		self.url_off = 'http://%s%s/api/led/off/%d' % (host, port, self.pin_number)
+		self.url_on = 'http://%s%s/api/led/on/%d/' % (host, port, self.pin_number)
+		self.url_off = 'http://%s%s/api/led/off/%d/' % (host, port, self.pin_number)
 		super(RemoteLedPin, self).save(*args, **kwargs)
 
 	def __str__(self):
