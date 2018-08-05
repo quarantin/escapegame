@@ -2,7 +2,7 @@
 
 from constance import config
 
-import os, subprocess
+import os, subprocess, time
 import requests
 
 if config.RUNNING_ON_PI:
@@ -67,7 +67,7 @@ def get_pin_state(pin):
 		if config.RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
-			ret = GPIO.output(pin, state)
+			ret = GPIO.input(pin, state)
 
 		print("DEBUG: Getting pin state on pin %d = %s" % (pin, ret))
 		return ret, 'Success'
@@ -103,6 +103,24 @@ def set_led_status(pin, onoff):
 		state = (state and 'on' or 'off')
 		print("DEBUG: Turning %s led on pin %d" % (state, pin))
 		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+def wait_for_pin_state_change(pin, timeout):
+
+	try:
+		ret = 0
+		if config.RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.IN)
+			ret = GPIO.wait_for_edge(pin, GPIO_RISING, timeout=timeout)
+			if ret is None:
+				raise Exception("Timeout reached")
+		else:
+			time.sleep(timeout / 1000)
+
+		return ret, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
