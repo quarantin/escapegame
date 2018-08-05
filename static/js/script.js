@@ -54,7 +54,7 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#un' + this.id, false);
 
 		$.ajax({
-			url: '/web/' + game_slug + '/' + this.value + '/unlock',
+			url: this.value,
 		});
 	});
 
@@ -69,7 +69,7 @@ $(document).ready(function() {
 		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
 
 		$.ajax({
-			url: '/web/' + game_slug + '/' + this.value + '/lock',
+			url: this.value,
 		});
 	});
 

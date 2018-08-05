@@ -22,25 +22,25 @@
 					<p>Reset escape game</p>
 				</div>
 			</button>
-			<button class="lock-button" id="lock-sas-{{ game.slug }}" value="sas" type="submit"> 
+			<button class="lock-button" id="lock-sas-{{ game.slug }}" value="{{ game.callback_url_lock_sas}}" type="submit"> 
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock SAS door">
 					<p>Unlock SAS door</p>
 				</div>
 			</button>
-			<button class="unlock-button" id="unlock-sas-{{ game.slug }}" value="sas" type="submit">
+			<button class="unlock-button" id="unlock-sas-{{ game.slug }}" value="{{ game.callback_url_unlock_sas }}" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock SAS door">
 					<p>Lock SAS door</p>
 				</div>
 			</button>
-			<button class="lock-button" id="lock-corridor-{{ game.slug }}" value="corridor" type="submit">
+			<button class="lock-button" id="lock-corridor-{{ game.slug }}" value="{{ game.callback_url_lock_corridor }}" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock corridor door">
 					<p>Unlock corridor door</p>
 				</div>
 			</button>
-			<button class="unlock-button" id="unlock-corridor-{{ game.slug }}" value="corridor" type="submit">
+			<button class="unlock-button" id="unlock-corridor-{{ game.slug }}" value="{{ game.callback_url_unlock_corridor }}" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock corridor door">
 					<p>Lock corridor door</p>
@@ -67,13 +67,13 @@
 				Data will be refreshed soon!
 			</div>
 			<div class="col">
-				<button id="lock-{{ room.slug }}" value="{{ room.slug }}" class="lock-button" type="submit">
+				<button id="lock-{{ room.slug }}" value="{{ room.callback_url_lock }}" class="lock-button" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock room door">
 						<p>Unlock room door</p>
 					</div>
 				</button>
-				<button id="unlock-{{ room.slug }}" value="{{ room.slug }}" class="unlock-button" type="submit">
+				<button id="unlock-{{ room.slug }}" value="{{ room.callback_url_unlock }}" class="unlock-button" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock room door">
 						<p>Lock room door</p>
