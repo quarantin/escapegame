@@ -5,12 +5,12 @@ from . import views
 
 urlpatterns = [
 
+	# Challenge controls
+	path('challenge/<str:action>/<int:pin>/', views.set_challenge_state),
+
 	# Door controls
 	path('door/<str:action>/<int:pin>/', views.set_door_locked),
 
 	# Led controls
 	path('led/<str:action>/<int:pin>/', views.set_led_state),
-
-	# Challenge controls
-	path('challenge/<str:action>/<int:pin>/', views.set_challenge_state),
 ]

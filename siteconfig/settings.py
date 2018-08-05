@@ -14,6 +14,10 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os, socket
 
+DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
+
+IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -60,7 +64,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'siteconfig.urls'
+if IS_MASTER:
+	ROOT_URLCONF = 'siteconfig.urls'
+else:
+	ROOT_URLCONF = 'siteconfig.slave_urls'
 
 TEMPLATES = [
     {
@@ -151,10 +158,6 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 		}
 	],
 }
-
-
-DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
-IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
 
 CONSTANCE_CONFIG = {
 	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),

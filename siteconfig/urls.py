@@ -22,45 +22,21 @@ from django.urls import include, path, re_path
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
-from constance import config
+urlpatterns = [
 
-import web
+	# Landing page
+	path('', RedirectView.as_view(url='/web', permanent=True)),
 
-import socket
+	# Authentication pages
+	path('accounts/', include('django.contrib.auth.urls')),
 
-if config.IS_MASTER:
+	# REST API
+	path('api/', include('api.urls')),
 
-	urlpatterns = [
+	# Admin pages
+	path('admin/', admin.site.urls),
 
-		# Landing page
-		path('', RedirectView.as_view(url='/web', permanent=True)),
+	# Web interface
+	path('web/', include('web.urls')),
 
-		# Authentication pages
-		path('accounts/', include('django.contrib.auth.urls')),
-
-		# REST API
-		path('api/', include('api.urls')),
-
-		# Admin pages
-		path('admin/', admin.site.urls),
-
-		# Web pages
-		path('web/', include('web.urls')),
-
-	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-else:
-	urlpatterns = [
-
-		# Landing page
-		path('', RedirectView.as_view(url='/admin', permanent=True)),
-
-		# Authentication pages
-		path('accounts/', include('django.contrib.auth.urls')),
-
-		# REST API
-		path('api/', include('api.urls')),
-
-		# Admin pages
-		path('admin/', admin.site.urls),
-
-	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
