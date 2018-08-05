@@ -29,12 +29,6 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 video_brief = Video(video_name='Video demo', video_path='test.h264')
 video_brief.save()
 
-raspi = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80)
-raspi.save()
-
-remote_pin = RemotePin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, pin_type='door', pin_number=7, callback_url='http://escapegame.local/escapegame/1001-nuits/fontaine/unlock')
-remote_pin.save()
-
 game = EscapeGame(escape_game_name='1001 nuits', video_brief=video_brief)
 game.save()
 
@@ -54,6 +48,26 @@ chall1.save()
 chall2 = EscapeGameChallenge(challenge_name='room2-chall2', room=room2, solved=False)
 chall2.save()
 
+raspi = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80)
+raspi.save()
+
+url_validate = 'http://escapegame.local/1001-nuits/fontaine/room1-chall1/validate'
+url_reset = 'http://escapegame.local/1001-nuits/fontaine/room1-chall1/reset'
+remote_pin = RemoteChallengePin(name='Pin 1001-nuits salle fontaine chall 1', raspberrypi=raspi, challenge=chall1, pin_number=7, callback_url_validate=url_validate, callback_url_reset=url_reset)
+remote_pin.save()
+
+url_lock = 'http://escapegame.local/1001-nuits/fontaine/lock'
+url_unlock = 'http://escapegame.local/1001-nuits/fontaine/unlock'
+remote_pin = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi, room=room1, pin_number=8, callback_url_lock=url_lock, callback_url_unlock=url_unlock)
+remote_pin.save()
+
+pin_number = 7
+url_on = 'http://1001-nuits.local/api/led/on/%d' % pin_number
+url_off = 'http://1001-nuits.local/api/led/off/%d' % pin_number
+remote_pin = RemoteLedPin(name='Pin 1001-nuits led salle fontaine chall 2', raspberrypi=raspi, pin_number=pin_number, url_on=url_on, url_off=url_off)
+remote_pin.save()
+
+# Stranger Things
 game = EscapeGame(escape_game_name='Stranger Things', video_brief=video_brief)
 game.save()
 

@@ -53,32 +53,11 @@ class VideoPlayer(models.Model):
 	def __str__(self):
 		return self.video_player
 
-class Arduino(models.Model):
-
-	name = models.CharField(max_length=255, default='')
-	slug = models.SlugField(max_length=255, editable=False)
-	ip_address = models.CharField(max_length=16)
-	#wildcard/placeholder to replace in template (§IP_ADDRESS§)
-	code_template = models.FileField(upload_to=config.UPLOAD_PATH)
-
-	def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
-		super(EscapeGame, self).save(*args, **kwargs)
-
 class RaspberryPi(models.Model):
-
 
 	name = models.CharField(max_length=255)
 	hostname = models.CharField(max_length=32)
 	port = models.IntegerField(default=8000)
-
-	def save(self, *args, **kwargs):
-		super(RaspberryPi, self).save(*args, **kwargs)
-		remote_pins = RemotePin.objects.filter(raspberrypi=self)
-		for pin in remote_pins:
-			status, message = pin.send_config()
-			if status != 0:
-				print("ERROR: %d %s" % (status, message))
 
 	def __str__(self):
 		return self.name
@@ -88,7 +67,7 @@ class EscapeGame(models.Model):
 	escape_game_name = models.CharField(max_length=255, default='')
 	escape_game_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
 	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
-	slug = models.SlugField(max_length=255, editable=False)
+	slug = models.SlugField(max_length=255)
 
 	sas_door_pin = models.IntegerField(default=7)
 	corridor_door_pin = models.IntegerField(default=9)
@@ -136,7 +115,7 @@ class EscapeGameRoom(models.Model):
 	room_name = models.CharField(max_length=255, default='')
 	room_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
 	escape_game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	slug = models.SlugField(max_length=255, editable=False)
+	slug = models.SlugField(max_length=255)
 
 	door_pin = models.IntegerField(default=5)
 	door_locked = models.BooleanField(default=True)
@@ -186,7 +165,7 @@ class EscapeGameRoom(models.Model):
 class EscapeGameChallenge(models.Model):
 
 	challenge_name = models.CharField(max_length=255, default='')
-	slug = models.SlugField(max_length=255, editable=False)
+	slug = models.SlugField(max_length=255)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
 	solved = models.BooleanField(default=False)
@@ -208,45 +187,68 @@ class EscapeGameChallenge(models.Model):
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
 
-class RemotePin(models.Model):
-
-	DEFAULT_TIMEOUT = 3
-
-	TYPE_LED = 'led'
-	TYPE_DOOR = 'door'
-	TYPE_CHALL = 'challenge'
-
-	PIN_TYPES = (
-		(TYPE_LED, 'Led'),
-		(TYPE_DOOR, 'Door'),
-		(TYPE_CHALL, 'Challenge'),
-	)
-
+class RemoteChallengePin(models.Model):
+	
 	name = models.CharField(max_length=255)
-	pin_type = models.CharField(max_length=16, choices=PIN_TYPES)
-	pin_number = models.IntegerField(default=7)
+	challenge = models.ForeignKey(EscapeGameChallenge, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
-	callback_url = models.URLField(max_length=255)
+	pin_number = models.IntegerField(default=7)
+	callback_url_validate = models.URLField(max_length=255)
+	callback_url_reset = models.URLField(max_length=255)
 
-	def send_config(self):
-		try:
-			if socket.gethostname() == config.MASTER_HOSTNAME:
+	def save(self, *args, **kwargs):
+		host = config.MASTER_HOSTNAME
+		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
+		game_slug = self.challenge.room.escape_game.slug
+		room_slug = self.challenge.room.slug
+		chall_slug = self.challenge.slug
 
-				raspi = self.raspberrypi
-				port = raspi.port != 80 and ':%d' % port or ''
-				url = 'http://%s%s/api/config' % (raspi.hostname, port)
-				print('Sending request to configure validation url: %s' % url)
-				response = requests.post(url, data={ 'callback_url': self.callback_url}, timeout=RemotePin.DEFAULT_TIMEOUT)
-				if not response:
-					raise Exception('send_config failed to send POST request')
-			else:
-				print('Not sending request to configuration validation url because I am the remote Raspberry Pi named \'%s\'' % self.name)
-
-			# TODO check response success
-			return 0, 'Success'
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
+		self.callback_url_validate = 'http://%s%s/%s/%s/%s/validate' % (host, port, game_slug, room_slug, chall_slug)
+		self.callback_url_reset = 'http://%s%s/%s/%s/%s/reset' % (host, port, game_slug, room_slug, chall_slug)
+		super(RemoteChallengePin, self).save(*args, **kwargs)
 
 	def __str__(self):
 		return self.name
+
+class RemoteDoorPin(models.Model):
+
+	name = models.CharField(max_length=255)
+	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	pin_number = models.IntegerField(default=7)
+	callback_url_lock = models.URLField(max_length=255)
+	callback_url_unlock = models.URLField(max_length=255)
+
+	def save(self, *args, **kwargs):
+		host = config.MASTER_HOSTNAME
+		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
+		game_slug = self.room.escape_game.slug
+		room_slug = self.room.slug
+
+		self.callback_url_lock = 'http://%s%s/%s/%s/lock/' % (host, port, game_slug, room_slug)
+		self.callback_url_unlock = 'http://%s%s/%s/%s/unlock/' % (host, port, game_slug, room_slug)
+		super(RemoteDoorPin, self).save(*args, **kwargs)
+
+	def __str__(self):
+		return self.name
+
+
+class RemoteLedPin(models.Model):
+
+	name = models.CharField(max_length=255)
+	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	pin_number = models.IntegerField(default=7)
+	url_on = models.URLField(max_length=255)
+	url_off = models.URLField(max_length=255)
+
+	def save(self, *args, **kwargs):
+		host = self.raspberrypi.hostname
+		port = (self.raspberrypi.port != 80 and ':%d' % self.raspberrypi.port or '')
+
+		self.url_on = 'http://%s%s/api/led/on/%d' % (host, port, self.pin_number)
+		self.url_off = 'http://%s%s/api/led/off/%d' % (host, port, self.pin_number)
+		super(RemoteLedPin, self).save(*args, **kwargs)
+
+	def __str__(self):
+		return self.name
+

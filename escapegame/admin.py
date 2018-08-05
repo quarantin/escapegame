@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pprint
 from django.contrib import admin
 from .models import *
 
@@ -9,17 +10,52 @@ class ImageAdmin(admin.ModelAdmin):
 class VideoAdmin(admin.ModelAdmin):
 	list_display = ( 'video_name', 'video_path' )
 
-class RemotePinAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'pin_type', 'pin_number', 'raspberrypi', 'callback_url' )
+class RemoteChallengePinAdmin(admin.ModelAdmin):
+	list_display = ( 'name', 'challenge', 'pin_number', 'raspberrypi', 'callback_url_validate', 'callback_url_reset' )
 	fieldsets = (
 		('General', { 'fields': (
 			'name',
-			'pin_type',
-			'pin_number',
+			'challenge',
 			'raspberrypi',
-			'callback_url',
+			'pin_number',
+			'callback_url_validate',
+			'callback_url_reset',
 			)}),
 	)
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'callback_url_validate', 'callback_url_reset' )
+
+class RemoteDoorPinAdmin(admin.ModelAdmin):
+	list_display = ( 'name', 'room', 'pin_number', 'raspberrypi', 'callback_url_lock', 'callback_url_unlock' )
+	fieldsets = (
+		('General', { 'fields': (
+			'name',
+			'room',
+			'raspberrypi',
+			'pin_number',
+			'callback_url_lock',
+			'callback_url_unlock',
+			)}),
+	)
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'callback_url_lock', 'callback_url_unlock' )
+
+class RemoteLedPinAdmin(admin.ModelAdmin):
+	list_display = ( 'name', 'pin_number', 'raspberrypi', 'url_on', 'url_off' )
+	fieldsets = (
+		('General', { 'fields': (
+			'name',
+			'raspberrypi',
+			'pin_number',
+			'url_on',
+			'url_off',
+			)}),
+	)
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'url_on', 'url_off' )
 
 class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'hostname', 'port' )
@@ -32,11 +68,12 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 	)
 
 class EscapeGameAdmin(admin.ModelAdmin):
-	list_display = ( 'escape_game_name', 'video_brief' )
+	list_display = ( 'escape_game_name', 'video_brief', 'slug' )
 	prepoluated_fields = { 'slug': ( 'escape_game_name', )}
 	fieldsets = (
 		('General', { 'fields': (
 			'escape_game_name',
+			'slug',
 			'escape_game_controller',
 			'video_brief',
 			)}),
@@ -53,12 +90,16 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			)}),
 	)
 
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', 'sas_door_locked', 'corridor_door_locked' )
+
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = ( 'room_name', 'door_pin' )
 	prepoluated_fields = { 'slug': ( 'room_name', )}
 	fieldsets = (
 		('General', { 'fields': (
 			'room_name',
+			'slug',
 			'room_controller',
 			'escape_game',
 			)}),
@@ -72,12 +113,16 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			)})
 	)
 
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', 'door_locked' )
+
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	list_display = ( 'challenge_name', 'room', 'solved' )
 	prepoluated_fields = { 'slug': ( 'challenge_name', )}
 	fieldset = (
 		('General', { 'fields': (
 			'challenge_name',
+			'slug',
 			'room',
 			)}),
 		('Status', { 'fields': (
@@ -88,9 +133,14 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			)}),
 	)
 
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', 'solved' )
+
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Video, VideoAdmin)
-admin.site.register(RemotePin, RemotePinAdmin)
+admin.site.register(RemoteChallengePin, RemoteChallengePinAdmin)
+admin.site.register(RemoteDoorPin, RemoteDoorPinAdmin)
+admin.site.register(RemoteLedPin, RemoteLedPinAdmin)
 admin.site.register(RaspberryPi, RaspberryPiAdmin)
 admin.site.register(EscapeGame, EscapeGameAdmin)
 admin.site.register(EscapeGameRoom, EscapeGameRoomAdmin)

@@ -152,12 +152,19 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 	],
 }
 
+
+DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
+IS_MASTER = (socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
+
 CONSTANCE_CONFIG = {
-	'MASTER_HOSTNAME': ('escapegame.local', 'The domain name of the Raspberry Pi acting as master.'),
+	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),
+	'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
+	'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
+	'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.'),
+	'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
 	'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
 	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
 	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
 	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
-	'VALIDATION_URL': ('http://escapegame.local/1001-nuits/fontaine/room1-chall1/solve', 'URL to call to validate a challenge (only for Raspberry Pis acting as slaves).'),
 }
 

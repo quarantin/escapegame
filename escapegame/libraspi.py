@@ -3,12 +3,35 @@
 from constance import config
 
 import os, subprocess
+import requests
 
-if config.RUNNING_ON_PI == True:
+if config.RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
 
 def is_running_on_pi():
 	return ' '.join(os.uname()).strip().endswith('armv7l')
+
+def do_get(url):
+	try:
+		response = requests.get(url)
+		if not response:
+			return None
+
+		return 0, response.content
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+def do_post(url, data):
+	try:
+		response = request.post(url, data=data)
+		if not response:
+			return None
+
+		return 0, response.content
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
 
 def play_video(video_path):
 
@@ -30,16 +53,48 @@ def stop_video(video_path):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
+def get_pin_state(pin):
+
+	try:
+		ret = 0
+		if config.RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.IN)
+			ret = GPIO.output(pin, state)
+
+		print("DEBUG: Getting pin state on pin %d = %s" % (pin, ret))
+		return ret, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
 def set_door_locked(pin, locked):
 
 	try:
-		if config.RUNNING_ON_PI == True:
+		state = not locked
+		if config.RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
-			GPIO.output(pin, locked)
+			GPIO.output(pin, state)
 
-		state = (locked and 'Opening' or 'Closing')
-		print("DEBUG: %s door with pin %d" % (state, pin))
+		state = (state and 'Opening' or 'Closing')
+		print("DEBUG: %s door on pin %d" % (state, pin))
+		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+def set_led_status(pin, onoff):
+
+	try:
+		state = not onoff
+		if config.RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.OUT)
+			GPIO.output(pin, state)
+
+		state = (state and 'on' or 'off')
+		print("DEBUG: Turning %s led on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:
