@@ -18,6 +18,8 @@ DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
 
 IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
 
+RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -145,8 +147,6 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(os.environ.get('HOME'), 'media')
 MEDIA_URL = '/media/'
-
-RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
