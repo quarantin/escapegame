@@ -23,6 +23,8 @@ from django.contrib.auth.views import LoginView
 
 from constance import config
 
+import web
+
 import socket
 
 if config.IS_MASTER:
@@ -39,7 +41,7 @@ if config.IS_MASTER:
 		path('admin/', admin.site.urls),
 
 		# Web pages
-		re_path(r'^', include('web.urls')),
+		re_path('web/', include('api.urls')),
 
 	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
@@ -51,7 +53,7 @@ else:
 		# REST API
 		path('api/', include('api.urls')),
 
-		# Web pages
+		# Admin pages
 		re_path(r'^', admin.site.urls),
 
 	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
