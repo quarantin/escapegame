@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'api',
+    'web',
     'escapegame',
     'django.contrib.admin',
     'django.contrib.auth',

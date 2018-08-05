@@ -17,26 +17,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf import settings
-from django.urls import include, path
 from django.conf.urls.static import static
+from django.urls import include, path, re_path
 from django.contrib.auth.views import LoginView
 
-from escapegame import views
+from constance import config
+
+import socket
 
 urlpatterns = [
-	# Escape game selector
-	path('', views.selector_index),
 
-	# Authentication
+	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
-
-	# Admin section
-	path('admin/', admin.site.urls),
-
-	# Escape game section
-	path('escapegame/', include('escapegame.urls')),
 
 	# REST API
 	path('api/', include('api.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+is_master = (socket.gethostname() == config.MASTER_HOSTNAME)
+if is_master:
+
+	# Admin pages
+	urlpatterns.append(path('admin/', admin.site.urls))
+
+	# Web pages
+	urlpatterns.append(re_path(r'^', include('web.urls')))
+else:
+	# Admin pages
+	urlpatterns.append(re_path(r'^', admin.site.urls))

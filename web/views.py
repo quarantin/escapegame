@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from escapegame import libraspi
 
