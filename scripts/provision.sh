@@ -4,7 +4,7 @@
 
 DEBIAN_PACKAGES=( 'sqlite3' 'vim' )
 
-PIP_PACKAGES=( 'django' 'django-constance[database]' )
+PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-constance[database]' )
 
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
 
