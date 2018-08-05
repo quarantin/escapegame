@@ -25,23 +25,33 @@ from constance import config
 
 import socket
 
-urlpatterns = [
-
-	# Authentication pages
-	path('accounts/', include('django.contrib.auth.urls')),
-
-	# REST API
-	path('api/', include('api.urls')),
-
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
 if config.IS_MASTER:
 
-	# Admin pages
-	urlpatterns.append(path('admin/', admin.site.urls))
+	urlpatterns = [
 
-	# Web pages
-	urlpatterns.append(re_path(r'^', include('web.urls')))
+		# Authentication pages
+		path('accounts/', include('django.contrib.auth.urls')),
+
+		# REST API
+		path('api/', include('api.urls')),
+
+		# Admin pages
+		path('admin/', admin.site.urls),
+
+		# Web pages
+		re_path(r'^', include('web.urls')),
+
+	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
-	# Admin pages
-	urlpatterns.append(re_path(r'^', admin.site.urls))
+	urlpatterns = [
+
+		# Authentication pages
+		path('accounts/', include('django.contrib.auth.urls')),
+
+		# REST API
+		path('api/', include('api.urls')),
+
+		# Web pages
+		re_path(r'^', admin.site.urls),
+
+	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
