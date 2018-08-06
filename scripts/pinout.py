@@ -26,7 +26,8 @@ for pin in range(0, 32):
 		print("PIN %d = %s" % (pin, func))
 
 	except Exception as err:
-		#print('Error: %s' % err)
-		print("PIN %d is not a GPIO" % pin)
-		pass
-
+		err = str(err)
+		if err.startswith('The channel sent is invalid on a Raspberry Pi'):
+			print("PIN %d is not a GPIO" % pin)
+		else:
+			print('Error: %s' % err)
