@@ -18,3 +18,5 @@ set hlsearch
 set tabstop=4 noexpandtab
 EOF
 fi
+
+sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
