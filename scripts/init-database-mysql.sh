@@ -12,7 +12,7 @@ DBHOST='localhost'
 echo "[client]" > "${HOME}/.my.cnf"
 
 # Only the MySQL root user can drop or create the database, insert users etc
-mysql -u root -e "
+sudo mysql -u root -e "
 	DROP DATABASE ${DBNAME};
 	DROP USER IF EXISTS '${DBUSER}'@'${DBHOST}';
 	CREATE DATABASE ${DBNAME} CHARACTER SET utf8;
