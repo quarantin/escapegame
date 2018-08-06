@@ -2,7 +2,7 @@
 
 . $(dirname $0)/env.sh
 
-SLEEP=5
+SLEEP=1
 PORT=80
 
 cd "${ROOTDIR}"
