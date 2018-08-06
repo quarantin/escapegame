@@ -13,15 +13,14 @@ def is_running_on_pi():
 
 def do_get(url):
 	try:
-		# Why the fuck is this not working???
-		#response = requests.get(url)
-		#if not response:
-		#	return None
-		#
-		#return 0, response.content
+		response = requests.get(url)
+		if not response:
+			return None
+		
+		return 0, response.content
 
-		print("Performing request GET %s" % url)
-		os.system('wget -q -O /dev/null %s' % url)
+		#print("Performing request GET %s" % url)
+		#os.system('wget -q -O /dev/null %s' % url)
 
 		return 0, 'Success'
 
