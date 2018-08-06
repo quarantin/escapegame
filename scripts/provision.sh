@@ -13,6 +13,8 @@ sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
 if [ "$USER" = "pi" ]; then
 cat << EOF > ~/.vimrc
 syntax on
+set ic
+set hlsearch
 set tabstop=4 noexpandtab
 EOF
 fi
