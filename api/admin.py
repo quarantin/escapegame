@@ -2,6 +2,8 @@ from django.contrib import admin
 from escapegame.models import RaspberryPi, RemoteChallengePin
 from . import tasks
 
+from constance import config
+
 import socket
 
 try:
@@ -12,6 +14,14 @@ try:
 			tasks.poll_gpio.now(remote_pin.pin_number)
 
 except Exception as err:
+
 	err = str(err)
-	if not err.startswith('no such table: escapegame_raspberrypi'):
+
+	if err.startswith('no such table: escapegame_raspberrypi'):
+		pass
+
+	elif err.startswith('RaspberryPi matching query does not exist') and config.IS_MASTER:
+		pass
+
+	else:
 		print("Adding background tasks failed! (Error: %s)" % err)
