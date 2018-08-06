@@ -18,6 +18,8 @@ $(document).ready(function() {
 
 	// The slug of the current escape game
 	game_slug = $('input#game-slug').val();
+	if (game_slug === undefined)
+		return;
 
 	switch_elements('button#start-escapegame', 'button#stop-escapegame', true);
 
