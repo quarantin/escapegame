@@ -13,5 +13,5 @@ try:
 
 except Exception as err:
 	err = str(err)
-	if not err.startswith('no such table: escapegame_raspberrypi')
+	if not err.startswith('no such table: escapegame_raspberrypi'):
 		print("Adding background tasks failed! (Error: %s)" % err)
