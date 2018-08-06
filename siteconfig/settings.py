@@ -34,62 +34,62 @@ SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '%s.local' % socket.gethostname(),
+	'127.0.0.1',
+	'localhost',
+	'%s.local' % socket.gethostname(),
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'api',
-    'web',
-    'escapegame',
-    'corsheaders',
-    'background_task',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'constance',
-    'constance.backends.database',
+	'api',
+	'web',
+	'escapegame',
+	'corsheaders',
+	'background_task',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'constance',
+	'constance.backends.database',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 if IS_MASTER:
-    ROOT_URLCONF = 'siteconfig.urls'
+	ROOT_URLCONF = 'siteconfig.urls'
 else:
-    ROOT_URLCONF = 'siteconfig.slave_urls'
+	ROOT_URLCONF = 'siteconfig.slave_urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'escapegame', 'templates'),
-        ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [
+			os.path.join(BASE_DIR, 'escapegame', 'templates'),
+		],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'siteconfig.wsgi.application'
@@ -99,20 +99,20 @@ WSGI_APPLICATION = 'siteconfig.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'escapegame',
-        'USER': 'escapegame',
-        'PASSWORD': 'escapegame',
-        'HOST': 'localhost',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-    },
-    },
-    'sqlite3': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.mysql',
+		'NAME': 'escapegame',
+		'USER': 'escapegame',
+		'PASSWORD': 'escapegame',
+		'HOST': 'localhost',
+		'OPTIONS': {
+			'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+	},
+	},
+	'sqlite3': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	}
 }
 
 
@@ -120,18 +120,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+	{
+		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+	},
 ]
 
 
@@ -155,7 +155,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+	os.path.join(BASE_DIR, "static")
 ]
 
 MEDIA_ROOT = os.path.join(os.environ.get('HOME'), 'media')
@@ -164,73 +164,73 @@ MEDIA_URL = '/media/'
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 CONSTANCE_ADDITIONAL_FIELDS = {
-    'text_field': [
-        'django.forms.CharField',
-        {
-            'widget': 'django.forms.TextInput',
-        }
-    ],
+	'text_field': [
+		'django.forms.CharField',
+		{
+			'widget': 'django.forms.TextInput',
+		}
+	],
 }
 
 CONSTANCE_CONFIG = {
-    'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),
-    'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
-    'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
-    'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.'),
-    'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
-    'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
-    'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
-    'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
-    'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
+	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),
+	'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
+	'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
+	'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.'),
+	'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
+	'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
+	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
+	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
+	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
 
 #CORS_ORIGIN_WHITELIST = [
-#    '.local',
+#	'.local',
 #]
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'logfile': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': BASE_DIR + "/django-debug.log",
-        },
-        'logfile_db': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': BASE_DIR + "/django-debug-database.log",
-        },
+	'version': 1,
+	'disable_existing_loggers': False,
+	'handlers': {
+		'logfile': {
+			'level':'DEBUG',
+			'class':'logging.FileHandler',
+			'filename': BASE_DIR + "/django-debug.log",
+		},
+		'logfile_db': {
+			'level':'DEBUG',
+			'class':'logging.FileHandler',
+			'filename': BASE_DIR + "/django-debug-database.log",
+		},
 
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': [ 'logfile_db' ],
-            'level': 'WARN',
-            'propagate': True,
-        },
-        'django': {
-            'handlers':[ 'logfile', 'console' ],
-            'level':'DEBUG',
-            'propagate': True,
-        },
-        'escapegame': {
-            'handlers': [ 'logfile', 'console' ],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'escapegame.tasks': {
-            'handlers': [ 'logfile', 'console' ],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    }
+		'console':{
+			'level':'DEBUG',
+			'class':'logging.StreamHandler',
+		},
+	},
+	'loggers': {
+		'django.db.backends': {
+			'handlers': [ 'logfile_db' ],
+			'level': 'WARN',
+			'propagate': True,
+		},
+		'django': {
+			'handlers':[ 'logfile', 'console' ],
+			'level':'DEBUG',
+			'propagate': True,
+		},
+		'escapegame': {
+			'handlers': [ 'logfile', 'console' ],
+			'level': 'DEBUG',
+			'propagate': True,
+		},
+		'escapegame.tasks': {
+			'handlers': [ 'logfile', 'console' ],
+			'level': 'DEBUG',
+			'propagate': True,
+		},
+	}
 }
