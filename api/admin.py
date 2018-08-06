@@ -11,7 +11,7 @@ try:
 	if myself:
 		remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
 		for remote_pin in remote_pins:
-			tasks.poll_gpio.now(remote_pin.pin_number)
+			tasks.poll_gpio(remote_pin.pin_number)
 
 except Exception as err:
 
