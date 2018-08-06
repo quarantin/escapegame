@@ -194,21 +194,28 @@ CORS_ALLOW_CREDENTIALS = False
 LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': False,
+	'formatters': {
+		'default': {
+			'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+		},
+	},
 	'handlers': {
+		'console':{
+			'level':'DEBUG',
+			'class':'logging.StreamHandler',
+			'formatter': 'default',
+		},
 		'logfile': {
 			'level':'DEBUG',
 			'class':'logging.FileHandler',
+			'formatter': 'default',
 			'filename': BASE_DIR + "/django-debug.log",
 		},
 		'logfile_db': {
 			'level':'DEBUG',
 			'class':'logging.FileHandler',
+			'formatter': 'default',
 			'filename': BASE_DIR + "/django-debug-database.log",
-		},
-
-		'console':{
-			'level':'DEBUG',
-			'class':'logging.StreamHandler',
 		},
 	},
 	'loggers': {
