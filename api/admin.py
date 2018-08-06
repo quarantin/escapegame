@@ -12,4 +12,6 @@ try:
 			tasks.poll_gpio.now(remote_pin.pin_number)
 
 except Exception as err:
-	print("Adding background tasks failed! (Error: %s)" % err)
+	err = str(err)
+	if not err.startswith('no such table: escapegame_raspberrypi')
+		print("Adding background tasks failed! (Error: %s)" % err)
