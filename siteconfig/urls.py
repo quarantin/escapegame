@@ -25,7 +25,7 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
 
 	# Landing page
-	path('', RedirectView.as_view(url='/web', permanent=False)),
+	path('', RedirectView.as_view(url='/web/', permanent=False)),
 
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),

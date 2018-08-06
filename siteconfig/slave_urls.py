@@ -27,7 +27,7 @@ urlpatterns = [
 	# TODO Just for debug, must redirect to /admin for production
 	# Landing page
 	#path('', RedirectView.as_view(url='/admin', permanent=False)),
-	path('', RedirectView.as_view(url='/web', permanent=False)),
+	path('', RedirectView.as_view(url='/web/', permanent=False)),
 
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
