@@ -158,7 +158,8 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static")
 ]
 
-MEDIA_ROOT = os.path.join(os.environ.get('HOME'), 'media')
+HOME = os.environ.get('HOME') or '/home/pi'
+MEDIA_ROOT = os.path.join(HOME, 'media')
 MEDIA_URL = '/media/'
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
