@@ -39,8 +39,8 @@ sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.ini" /etc/uwsgi/apps-available/escapeg
 sudo cp "${ROOTDIR}/conf/escapegame.nginx.conf" /etc/nginx/sites-available/escapegame.conf
 
 # Replace <ROOTDIR> placeholder with correct root folder (django root)
-sudo sed -i "s/<ROOTDIR>/${ROOTDIR}/" /etc/uwsgi/apps-available/escapegame.ini
-sudo sed -i "s/<ROOTDIR>/${ROOTDIR}/" /etc/nginx/sites-available/escapegame.conf
+sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/uwsgi/apps-available/escapegame.ini
+sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/nginx/sites-available/escapegame.conf
 
 # Creates corresponding symlinks
 sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/escapegame.ini
