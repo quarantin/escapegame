@@ -9,4 +9,4 @@ class EscapegameConfig(AppConfig):
 	logger = logging.getLogger(name)
 
 	def taskLogger(pin):
-		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapeGameConfig.name, pin))
+		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapegameConfig.name, pin))
