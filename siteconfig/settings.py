@@ -155,7 +155,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, "static")
+	os.path.join(BASE_DIR, "static"),
+	'/usr/local/lib/python3.5/dist-packages/django/contrib/admin/static/',
 ]
 
 HOME = os.environ.get('HOME') or '/home/pi'
