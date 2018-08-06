@@ -9,35 +9,40 @@ from escapegame.apps import EscapegameConfig as AppConfig
 
 import socket
 
+logger = AppConfig.logger
+
 try:
-	logger = AppConfig.logger
-	task = Task.objects.get(task_name='api.tasks.poll_gpio')
-	logger.info("Not adding background task %s, already present in db" % task.task_name)
-except:
+	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
+	if myself:
+		remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
+		for remote_pin in remote_pins:
+			try:
+				task = Task.objects.get(task_name='%s.tasks.poll.gpio.%d' % (AppConfig.name, remote_pin.pin_number))
+				if task:
+					logger.info("Not adding background task %s, already present in db" % task.task_name)
+					continue
 
-	try:
-		myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-		if myself:
-			remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
-			for remote_pin in remote_pins:
-				tasks.poll_gpio(remote_pin.pin_number)
+			except Exeption as err:
+				logger.error('Error: %s' % err)
 
-	except Exception as err:
+			tasks.poll_gpio(remote_pin.pin_number)
 
-		err = str(err)
+except Exception as err:
 
-		# SQLite3
-		if err.startswith('no such table: escapegame_raspberrypi'):
-			pass
+	err = str(err)
 
-		# MySQL
-		if err.startswith('(1146, "Table \'escapegame.escapegame_raspberrypi\' doesn\'t exist")'):
-			pass
+	# SQLite3
+	if err.startswith('no such table: escapegame_raspberrypi'):
+		pass
 
-		# No Raspberry Pi yet in database, or we are the master
-		elif err.startswith('RaspberryPi matching query does not exist'):
-			pass
+	# MySQL
+	if err.startswith('(1146, "Table \'escapegame.escapegame_raspberrypi\' doesn\'t exist")'):
+		pass
 
-		# We want to see other errors
-		else:
-			logger.error("Adding background tasks failed! (Error: %s)" % err)
+	# No Raspberry Pi yet in database, or we are the master
+	elif err.startswith('RaspberryPi matching query does not exist'):
+		pass
+
+	# We want to see other errors
+	else:
+		logger.error("Adding background tasks failed! (Error: %s)" % err)
