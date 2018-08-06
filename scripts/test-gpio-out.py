@@ -10,13 +10,9 @@ if len(sys.argv) > 1:
 print("Please ensure pin %d is wired directly to the challenge pin you want to test." % pin)
 input("[ Press enter to continue when ready ]")
 
-GPIO.setmode(GPIO.BOARD)
-
 print("Configuring pin %d for output" % pin)
-
-gpio_type = GPIO.gpio_function(pin)
-if gpio_type != GPIO.OUT:
-	GPIO.setup(pin, GPIO.OUT)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(pin, GPIO.OUT)
 
 i = -1
 
