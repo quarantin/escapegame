@@ -70,7 +70,7 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255)
 
 	sas_door_pin = models.IntegerField(default=7)
-	corridor_door_pin = models.IntegerField(default=9)
+	corridor_door_pin = models.IntegerField(default=10)
 
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
