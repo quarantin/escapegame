@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import sys
 import RPi.GPIO as GPIO
 
 # See:
@@ -15,8 +16,12 @@ FUNCTIONS = {
 	GPIO.UNKNOWN: 'GPIO.UNKNOWN',
 }
 
+verbose = False
+if '-v' in sys.argv[1:]:
+	verbose = True
+
 GPIO.setmode(GPIO.BOARD)
-for pin in range(0, 32):
+for pin in range(1, 41):
 
 	try:
 		func = GPIO.gpio_function(pin)
@@ -28,6 +33,7 @@ for pin in range(0, 32):
 	except Exception as err:
 		err = str(err)
 		if err.startswith('The channel sent is invalid on a Raspberry Pi'):
-			print("PIN %d is not a GPIO" % pin)
+			if verbose:
+				print("PIN %d is not a GPIO" % pin)
 		else:
 			print('Error: %s' % err)
