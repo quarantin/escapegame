@@ -105,6 +105,9 @@ DATABASES = {
         'USER': 'escapegame',
         'PASSWORD': 'escapegame',
         'HOST': 'localhost',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+	},
     },
     'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
