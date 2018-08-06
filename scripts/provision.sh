@@ -2,9 +2,9 @@
 
 . $(dirname $0)/env.sh
 
-DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' )
+DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' 'mysql-server' )
 
-PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-background-tasks' 'django-constance[database]' )
+PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-background-tasks' 'django-constance[database]' 'mysqlclient' )
 
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
 

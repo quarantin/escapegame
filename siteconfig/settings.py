@@ -100,6 +100,13 @@ WSGI_APPLICATION = 'siteconfig.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'escapegame',
+        'USER': 'escapegame',
+        'PASSWORD': 'escapegame',
+        'HOST': 'localhost',
+    },
+    'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
