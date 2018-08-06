@@ -18,13 +18,8 @@ def do_get(url):
 	try:
 		response = requests.get(url)
 		if not response:
-			return None
+			raise Exception("requests.get(url=%s) failed!" % url)
 		
-		return 0, response.content
-
-		#logger.info("Performing request GET %s" % url)
-		#os.system('wget -q -O /dev/null %s' % url)
-
 		return 0, 'Success'
 
 	except Exception as err:
@@ -35,9 +30,9 @@ def do_post(url, data):
 		logger.info("Performing request POST %s data=%s" % (url, data))
 		response = request.post(url, data=data)
 		if not response:
-			return None
+			raise Exception("requests.port(url=%s, data=%s) failed!" % (url, data))
 
-		return 0, response.content
+		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
