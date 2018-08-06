@@ -1,7 +1,6 @@
 from background_task import background
 from escapegame.models import *
-
-import logging
+from escapegame.apps import EscapegameConfig as AppConfig
 
 import socket, time
 
@@ -11,7 +10,7 @@ def poll_gpio(pin):
 	fin.write('w00t')
 	fin.close()
 
-	logger = logging.getLogger('poll-gpio-%d' % pin)
+	logger = AppConfig.taskLogger
 
 	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 	if not myself:
@@ -26,24 +25,20 @@ def poll_gpio(pin):
 	callback_url_reset = remote_pin.callback_url_reset
 	callback_url_validate = remote_pin.callback_url_validate
 
-	print("Polling for GPIO pin %d" % pin)
 	logger.info("Polling for GPIO pin %d" % pin)
 	while True:
 
 		try:
 			status, message = libraspi.wait_for_pin_state_change(pin)
 			if message != 'Success':
-				print('libraspi.wait_for_pin_state_change() failed')
 				raise Exception('libraspi.wait_for_pin_state_change() failed')
 
 			status, message = libraspi.get_pin_state(pin)
 			if message != 'Success':
-				print('libraspi.get_pin_state() failed')
 				raise Exception('libraspi.get_pin_state() failed')
 
 			callback_url = (status == 0 and callback_url_reset or callback_url_validate)
 
-			print("Performing request GET %s" % callback_url)
 			logger.info("Performing request GET %s" % callback_url)
 			libraspi.do_get(callback_url)
 

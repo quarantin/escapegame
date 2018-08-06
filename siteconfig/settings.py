@@ -70,16 +70,16 @@ MIDDLEWARE = [
 ]
 
 if IS_MASTER:
-	ROOT_URLCONF = 'siteconfig.urls'
+    ROOT_URLCONF = 'siteconfig.urls'
 else:
-	ROOT_URLCONF = 'siteconfig.slave_urls'
+    ROOT_URLCONF = 'siteconfig.slave_urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-		os.path.join(BASE_DIR, 'escapegame', 'templates'),
-	],
+            os.path.join(BASE_DIR, 'escapegame', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -107,7 +107,7 @@ DATABASES = {
         'HOST': 'localhost',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-	},
+    },
     },
     'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -155,7 +155,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, "static")
+    os.path.join(BASE_DIR, "static")
 ]
 
 MEDIA_ROOT = os.path.join(os.environ.get('HOME'), 'media')
@@ -164,71 +164,73 @@ MEDIA_URL = '/media/'
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 CONSTANCE_ADDITIONAL_FIELDS = {
-	'text_field': [
-		'django.forms.CharField',
-		{
-			'widget': 'django.forms.TextInput',
-		}
-	],
+    'text_field': [
+        'django.forms.CharField',
+        {
+            'widget': 'django.forms.TextInput',
+        }
+    ],
 }
 
 CONSTANCE_CONFIG = {
-	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),
-	'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
-	'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
-	'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.'),
-	'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
-	'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
-	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
-	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
-	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
+    'REQUEST_TIMEOUT': (3, 'The default network timeout for requests.'),
+    'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
+    'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
+    'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.'),
+    'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
+    'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
+    'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
+    'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
+    'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
 
 #CORS_ORIGIN_WHITELIST = [
-#	'.local',
+#    '.local',
 #]
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
-        },
-    },
     'handlers': {
         'logfile': {
             'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR + "/django-service.log",
-            'maxBytes': 50000,
-            'backupCount': 2,
-            'formatter': 'standard',
+            'class':'logging.FileHandler',
+            'filename': BASE_DIR + "/django-debug.log",
         },
+        'logfile_db': {
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename': BASE_DIR + "/django-debug-database.log",
+        },
+
         'console':{
-            'level':'INFO',
+            'level':'DEBUG',
             'class':'logging.StreamHandler',
-            'formatter': 'standard'
         },
     },
     'loggers': {
-        'django': {
-            'handlers':['console'],
-            'propagate': True,
-            'level':'WARN',
-        },
         'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
+            'handlers': [ 'logfile_db' ],
+            'level': 'WARN',
+            'propagate': True,
         },
-        'MYAPP': {
-            'handlers': ['console', 'logfile'],
+        'django': {
+            'handlers':[ 'logfile', 'console' ],
+            'level':'DEBUG',
+            'propagate': True,
+        },
+        'escapegame': {
+            'handlers': [ 'logfile', 'console' ],
             'level': 'DEBUG',
+            'propagate': True,
+        },
+        'escapegame.tasks': {
+            'handlers': [ 'logfile', 'console' ],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     }
 }

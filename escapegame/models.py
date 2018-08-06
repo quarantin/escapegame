@@ -4,6 +4,9 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from constance import config
 
+from escapegame.apps import EscapegameConfig as AppConfig
+logger = AppConfig.logger
+
 from escapegame import libraspi
 
 import os
@@ -122,7 +125,7 @@ class EscapeGameRoom(models.Model):
 
 	def set_door_locked(self, locked):
 		try:
-			print('set_door_lock(%s) [%s]' % (locked, self))
+			logger.info('set_door_lock(%s) [%s]' % (locked, self))
 			status, message = libraspi.set_door_locked(self.door_pin, locked)
 			if status == 0:
 				self.door_locked = locked

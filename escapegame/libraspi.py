@@ -2,6 +2,9 @@
 
 from constance import config
 
+from escapegame.apps import EscapegameConfig as AppConfig
+logger = AppConfig.logger
+
 import os, sys, subprocess, time
 import requests
 
@@ -19,7 +22,7 @@ def do_get(url):
 		
 		return 0, response.content
 
-		#print("Performing request GET %s" % url)
+		#logger.info("Performing request GET %s" % url)
 		#os.system('wget -q -O /dev/null %s' % url)
 
 		return 0, 'Success'
@@ -29,7 +32,7 @@ def do_get(url):
 
 def do_post(url, data):
 	try:
-		print("Performing request POST %s data=%s" % (url, data))
+		logger.info("Performing request POST %s data=%s" % (url, data))
 		response = request.post(url, data=data)
 		if not response:
 			return None
@@ -44,7 +47,7 @@ def play_video(video_path):
 	try:
 		video_path = os.path.join(config.VIDEO_PATH, video_path)
 
-		print("DEBUG: Playing video '%s'" % video_path)
+		logger.info("Playing video '%s'" % video_path)
 		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
 
 	except Exception as err:
@@ -53,7 +56,7 @@ def play_video(video_path):
 def stop_video(video_path):
 
 	try:
-		print("DEBUG: Stopping video '%s'" % video_path)
+		logger.info("Stopping video '%s'" % video_path)
 		return subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
 	except Exception as err:
@@ -68,7 +71,7 @@ def get_pin_state(pin):
 			GPIO.setup(pin, GPIO.IN)
 			state = GPIO.input(pin)
 
-		print("DEBUG: Getting pin state on pin %d = %s" % (pin, state))
+		logger.info("Getting pin state on pin %d = %s" % (pin, state))
 		return state, 'Success'
 
 	except Exception as err:
@@ -84,7 +87,7 @@ def set_door_locked(pin, locked):
 			GPIO.output(pin, state)
 
 		state = (state and 'Opening' or 'Closing')
-		print("DEBUG: %s door on pin %d" % (state, pin))
+		logger.info("%s door on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:
@@ -100,7 +103,7 @@ def set_led_status(pin, onoff):
 			GPIO.output(pin, state)
 
 		state = (state and 'on' or 'off')
-		print("DEBUG: Turning %s led on pin %d" % (state, pin))
+		logger.info("Turning %s led on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:

@@ -2,5 +2,9 @@
 
 from django.apps import AppConfig
 
+import logging
+
 class EscapegameConfig(AppConfig):
-    name = 'Escape Game Configuration'
+    name = 'escapegame'
+    logger = logging.getLogger(name)
+    taskLogger = logging.getLogger('%s.tasks' % name)

@@ -5,11 +5,14 @@ from . import tasks
 
 from constance import config
 
+from escapegame.apps import EscapegameConfig as AppConfig
+
 import socket
 
 try:
+	logger = AppConfig.logger
 	task = Task.objects.get(task_name='api.tasks.poll_gpio')
-	print("Not adding background task %s, already present in db" % task.task_name)
+	logger.info("Not adding background task %s, already present in db" % task.task_name)
 except:
 
 	try:
@@ -37,4 +40,4 @@ except:
 
 		# We want to see other errors
 		else:
-			print("Adding background tasks failed! (Error: %s)" % err)
+			logger.error("Adding background tasks failed! (Error: %s)" % err)
