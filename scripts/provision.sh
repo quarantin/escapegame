@@ -2,9 +2,10 @@
 
 . $(dirname $0)/env.sh
 
-DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' 'mysql-server' )
+TIMEZONE='Europe/Paris'
+DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' 'mysql-server' 'nginx-light' 'uwsgi' 'uwsgi-plugin-python3' )
 
-PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-background-tasks' 'django-constance[database]' 'mysqlclient' )
+PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-background-tasks' 'django-constance[database]' 'mysqlclient' 'uwsgi' 'uwsgi-django' )
 
 # Install Debian packages
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
@@ -23,7 +24,27 @@ EOF
 fi
 
 # Configure timezone
-sudo timedatectl set-timezone Europe/Paris
+sudo timedatectl set-timezone "${TIMEZONE}"
 
 # Hide GNU screen startup message
 sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
+
+# Remote default configs of nginx and uwsgi
+sudo rm -f /etc/uwsgi/apps-enabled/*
+sudo rm -f /etc/nginx/sites-enabled/*
+
+# Deply our custom nginx and uwsgi configs
+sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.ini" /etc/uwsgi/apps-available/escapegame.ini
+sudo cp "${ROOTDIR}/conf/escapegame.nginx.conf" /etc/nginx/sites-available/escapegame.conf
+
+# Replace <ROOTDIR> placeholder with correct root folder (django root)
+sudo sed -i "s/<ROOTDIR>/${ROOTDIR}/" /etc/uwsgi/apps-available/escapegame.ini
+sudo sed -i "s/<ROOTDIR>/${ROOTDIR}/" /etc/nginx/sites-available/escapegame.conf
+
+# Creates corresponding symlinks
+sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/escapegame.ini
+sudo ln -s -r -t /etc/nginx/sites-enabled/ /etc/nginx/sites-available/escapegame.conf
+
+# Restarting services
+sudo /etc/init.d/uwsgi restart
+sudo /etc/init.d/nginx restart
