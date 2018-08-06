@@ -23,11 +23,18 @@ except:
 
 		err = str(err)
 
+		# SQLite3
 		if err.startswith('no such table: escapegame_raspberrypi'):
 			pass
 
-		elif err.startswith('RaspberryPi matching query does not exist') and config.IS_MASTER:
+		# MySQL
+		if err.startswith('(1146, "Table \'escapegame.escapegame_raspberrypi\' doesn\'t exist")'):
 			pass
 
+		# No Raspberry Pi yet in database, or we are the master
+		elif err.startswith('RaspberryPi matching query does not exist'):
+			pass
+
+		# We want to see other errors
 		else:
 			print("Adding background tasks failed! (Error: %s)" % err)
