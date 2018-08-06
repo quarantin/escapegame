@@ -10,7 +10,7 @@ def poll_gpio(pin):
 	fin.write('w00t')
 	fin.close()
 
-	logger = AppConfig.taskLogger(pin)
+	logger = AppConfig.taskLogger(pin=pin)
 
 	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 	if not myself:
