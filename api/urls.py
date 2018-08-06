@@ -44,7 +44,7 @@ try:
 			except Exception as err:
 				logger.error('Error: %s' % err)
 
-			tasks.poll_gpio(remote_pin.pin_number, verbose_name=task_name)
+			tasks.poll_gpio(remote_pin.pin_number, task_name=task_name)
 
 except Exception as err:
 
