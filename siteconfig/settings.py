@@ -209,7 +209,13 @@ LOGGING = {
 			'level':'DEBUG',
 			'class':'logging.FileHandler',
 			'formatter': 'default',
-			'filename': BASE_DIR + "/django-debug.log",
+			'filename': BASE_DIR + "/django-service.log",
+		},
+		'logfile_tasks': {
+			'level':'DEBUG',
+			'class':'logging.FileHandler',
+			'formatter': 'default',
+			'filename': BASE_DIR + "/django-background-tasks.log",
 		},
 		'logfile_db': {
 			'level':'DEBUG',
@@ -235,7 +241,7 @@ LOGGING = {
 			'propagate': True,
 		},
 		'escapegame.tasks': {
-			'handlers': [ 'logfile', 'console' ],
+			'handlers': [ 'logfile_tasks', 'console' ],
 			'level': 'DEBUG',
 			'propagate': True,
 		},
