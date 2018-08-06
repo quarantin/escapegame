@@ -6,6 +6,7 @@ import socket, time
 
 @background(schedule=0)
 def poll_gpio(pin):
+
 	fin = open('/tmp/w00t-BBQ', 'w+')
 	fin.write('w00t')
 	fin.close()
