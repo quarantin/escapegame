@@ -40,7 +40,7 @@ try:
 					logger.info("Not adding background task %s, already present in db" % task.task_name)
 					continue
 
-			except Exeption as err:
+			except Exception as err:
 				logger.error('Error: %s' % err)
 
 			tasks.poll_gpio(remote_pin.pin_number)
