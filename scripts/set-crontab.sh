@@ -4,11 +4,8 @@
 
 CRONTAB=$(mktemp)
 
-LOGFILE_DJANGO="${ROOTDIR}/django.log"
-LOGFILE_DJANGO_TASKS="${ROOTDIR}/django-tasks.log"
-
-echo "@reboot ${ROOTDIR}/scripts/django-service.sh >>${LOGFILE_DJANGO} 2>&1" >> "${CRONTAB}"
-echo "@reboot ${ROOTDIR}/scripts/django-background-service.sh >>${LOGFILE_DJANGO_TASKS} 2>&1" >> "${CRONTAB}"
+echo "@reboot ${ROOTDIR}/scripts/django-service.sh" >> "${CRONTAB}"
+echo "@reboot ${ROOTDIR}/scripts/django-background-service.sh" >> "${CRONTAB}"
 
 crontab "${CRONTAB}"
 STATUS=$?
