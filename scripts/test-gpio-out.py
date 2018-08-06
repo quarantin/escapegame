@@ -20,7 +20,7 @@ while True:
 
 	i += 1
 
-	state = ((i % 2) == 0) and GPIO.HIGH or GPIO.LOW
+	state = ((i % 2) == 1) and GPIO.HIGH or GPIO.LOW
 
 	print("Writing state: %s" % state)
 
