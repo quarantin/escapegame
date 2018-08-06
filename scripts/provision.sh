@@ -11,8 +11,8 @@ sudo apt-get install "${DEBIAN_PACKAGES[@]}"
 sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
 
 if [ "$USER" = "pi" ]; then
-echo <<< EOF
+cat << EOF > ~/.vimrc
 syntax on
-set tabstop=8 noexpandtab
-EOF >> ~/.vimrc
+set tabstop=4 noexpandtab
+EOF
 fi
