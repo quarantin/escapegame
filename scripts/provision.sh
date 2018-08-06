@@ -43,6 +43,9 @@ sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/uwsgi/apps-available/escapegame.ini
 sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/nginx/sites-available/escapegame.conf
 sudo sed -i "s#<HOSTNAME>#$(hostname).local#" /etc/nginx/sites-available/escapegame.conf
 
+# Disable server tokens for nginx (hide the version)
+sudo sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
+
 # Creates corresponding symlinks
 sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/escapegame.ini
 sudo ln -s -r -t /etc/nginx/sites-enabled/ /etc/nginx/sites-available/escapegame.conf
