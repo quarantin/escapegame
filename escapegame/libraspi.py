@@ -2,7 +2,7 @@
 
 from constance import config
 
-import os, subprocess, time
+import os, sys, subprocess, time
 import requests
 
 if config.RUNNING_ON_PI:
@@ -62,17 +62,17 @@ def stop_video(video_path):
 def get_pin_state(pin):
 
 	try:
-		ret = 0
+		state = 0
 		if config.RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
-			ret = GPIO.input(pin, state)
+			state = GPIO.input(pin)
 
-		print("DEBUG: Getting pin state on pin %d = %s" % (pin, ret))
-		return ret, 'Success'
+		print("DEBUG: Getting pin state on pin %d = %s" % (pin, state))
+		return state, 'Success'
 
 	except Exception as err:
-		return 1, 'Error: %s' % err
+		return -1, 'Error: %s' % err
 
 def set_door_locked(pin, locked):
 
@@ -106,20 +106,21 @@ def set_led_status(pin, onoff):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def wait_for_pin_state_change(pin, timeout):
+def wait_for_pin_state_change(pin, timeout=-1):
 
 	try:
-		ret = 0
+		ret = pin
 		if config.RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
-			ret = GPIO.wait_for_edge(pin, GPIO_RISING, timeout=timeout)
+			ret = GPIO.wait_for_edge(pin, GPIO.BOTH, timeout=timeout)
 			if ret is None:
 				raise Exception("Timeout reached")
 		else:
-			time.sleep(timeout / 1000)
+			secs = (timeout == -1 and sys.maxsize or timeout / 1000)
+			time.sleep(secs)
 
 		return ret, 'Success'
 
 	except Exception as err:
-		return 1, 'Error: %s' % err
+		return -1, 'Error: %s' % err
