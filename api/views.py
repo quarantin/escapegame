@@ -71,6 +71,8 @@ def set_door_locked(request, action, pin):
 				'status': status,
 				'message': message,
 				'method': method,
+				'pin': pin,
+				'locked': locked,
 			})
 
 		if config.IS_SLAVE:
@@ -85,6 +87,8 @@ def set_door_locked(request, action, pin):
 			'status': status,
 			'message': message,
 			'method': method,
+			'pin': pin,
+			'locked': locked,
 		})
 
 
