@@ -232,17 +232,17 @@ LOGGING = {
 		},
 		'django': {
 			'handlers':[ 'logfile', 'console' ],
-			'level':'DEBUG',
+			'level':'INFO',
 			'propagate': True,
 		},
 		'escapegame': {
 			'handlers': [ 'logfile', 'console' ],
-			'level': 'DEBUG',
+			'level': 'INFO',
 			'propagate': True,
 		},
 		'escapegame.tasks': {
 			'handlers': [ 'logfile_tasks', 'console' ],
-			'level': 'DEBUG',
+			'level': 'INFO',
 			'propagate': True,
 		},
 	}
