@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 	'escapegame',
 	'corsheaders',
 	'background_task',
+	'import_export',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -154,8 +155,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, "static"),
+	os.path.join(BASE_DIR, "escapegame", "static"),
 ]
 
 HOME = os.environ.get('HOME') or '/home/pi'
