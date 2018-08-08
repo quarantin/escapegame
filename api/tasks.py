@@ -23,8 +23,8 @@ def poll_gpio(pin):
 		logger.error("Could not find matching remote challenge pin: %d on Raspberry Pi: %s.local" % (pin, socket.gethostname()))
 		return
 
-	callback_url_reset = remote_pin.callback_url_reset
-	callback_url_validate = remote_pin.callback_url_validate
+	url_callback_reset = remote_pin.url_callback_reset
+	url_callback_validate = remote_pin.url_callback_validate
 
 	logger.info("Polling for GPIO pin %d" % pin)
 	while True:
@@ -38,7 +38,7 @@ def poll_gpio(pin):
 			if message != 'Success':
 				raise Exception('libraspi.get_pin_state() failed')
 
-			callback_url = (status == 0 and callback_url_reset or callback_url_validate)
+			callback_url = (status == 0 and url_callback_reset or url_callback_validate)
 
 			logger.info("Performing request GET %s" % callback_url)
 			libraspi.do_get(callback_url)

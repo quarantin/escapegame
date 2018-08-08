@@ -36,32 +36,32 @@ def escapegame_index(request, game_slug):
 	host = config.MASTER_HOSTNAME
 	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
 
-	game.callback_url_lock_sas = 'http://%s%s/web/%s/sas/lock/' % (host, port, game_slug)
-	game.callback_url_unlock_sas = 'http://%s%s/web/%s/sas/unlock/' % (host, port, game_slug)
+	game.url_callback_lock_sas = 'http://%s%s/web/%s/sas/lock/' % (host, port, game_slug)
+	game.url_callback_unlock_sas = 'http://%s%s/web/%s/sas/unlock/' % (host, port, game_slug)
 
-	game.callback_url_lock_corridor = 'http://%s%s/web/%s/corridor/lock/' % (host, port, game_slug)
-	game.callback_url_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock/' % (host, port, game_slug)
+	game.url_callback_lock_corridor = 'http://%s%s/web/%s/corridor/lock/' % (host, port, game_slug)
+	game.url_callback_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock/' % (host, port, game_slug)
 
 	for room in rooms:
 
-		game_controller = game.escapegame_controller
-		if room.room_controller:
-			game_controller = room.room_controller
+		raspberrypi = game.raspberrypi
+		if room.raspberrypi:
+			raspberrypi = room.raspberrypi
 
-		if game_controller:
+		if raspberrypi:
 			remote_pins = RemoteDoorPin.objects.filter(room=room)
 			for remote_pin in remote_pins:
-				host = game_controller.hostname
-				port = game_controller.port != 80 and ':%d' % game_controller.port or ''
+				host = raspberrypi.hostname
+				port = raspberrypi.port != 80 and ':%d' % raspberrypi.port or ''
 
-				room.callback_url_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-				room.callback_url_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+				room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
+				room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
 		else:
 			host = config.MASTER_HOSTNAME
 			port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
 
-			room.callback_url_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-			room.callback_url_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+			room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
+			room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
 
 	context = {
 		'game': game,

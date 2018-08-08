@@ -63,10 +63,10 @@ class VideoPlayer(models.Model):
 
 class EscapeGame(models.Model):
 
-	escapegame_name = models.CharField(max_length=255, default='')
-	escapegame_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
-	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
+	escapegame_name = models.CharField(max_length=255, default='')
+	raspberrypi = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
+	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
 
 	sas_door_pin = models.IntegerField(default=7)
 	corridor_door_pin = models.IntegerField(default=10)
@@ -108,10 +108,10 @@ class EscapeGame(models.Model):
 
 class EscapeGameRoom(models.Model):
 
-	room_name = models.CharField(max_length=255, default='')
-	room_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
-	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
+	room_name = models.CharField(max_length=255, default='')
+	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
 
 	door_pin = models.IntegerField(default=5)
 	door_locked = models.BooleanField(default=True)
@@ -141,8 +141,8 @@ class EscapeGameRoom(models.Model):
 
 class EscapeGameChallenge(models.Model):
 
-	challenge_name = models.CharField(max_length=255, default='')
 	slug = models.SlugField(max_length=255)
+	challenge_name = models.CharField(max_length=255, default='')
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
 	solved = models.BooleanField(default=False)
@@ -182,8 +182,8 @@ class RemoteChallengePin(models.Model):
 	challenge = models.ForeignKey(EscapeGameChallenge, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
 	pin_number = models.IntegerField(default=7)
-	callback_url_validate = models.URLField(max_length=255)
-	callback_url_reset = models.URLField(max_length=255)
+	url_callback_validate = models.URLField(max_length=255)
+	url_callback_reset = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
 
@@ -193,8 +193,8 @@ class RemoteChallengePin(models.Model):
 		room_slug = self.challenge.room.slug
 		chall_slug = self.challenge.slug
 
-		self.callback_url_validate = 'http://%s%s/web/%s/%s/%s/validate/' % (host, port, game_slug, room_slug, chall_slug)
-		self.callback_url_reset = 'http://%s%s/web/%s/%s/%s/reset/' % (host, port, game_slug, room_slug, chall_slug)
+		self.url_callback_validate = 'http://%s%s/web/%s/%s/%s/validate/' % (host, port, game_slug, room_slug, chall_slug)
+		self.url_callback_reset = 'http://%s%s/web/%s/%s/%s/reset/' % (host, port, game_slug, room_slug, chall_slug)
 
 		super(RemoteChallengePin, self).save(*args, **kwargs)
 
@@ -207,8 +207,8 @@ class RemoteDoorPin(models.Model):
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
 	pin_number = models.IntegerField(default=7)
-	callback_url_lock = models.URLField(max_length=255)
-	callback_url_unlock = models.URLField(max_length=255)
+	url_callback_lock = models.URLField(max_length=255)
+	url_callback_unlock = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
 
@@ -217,8 +217,8 @@ class RemoteDoorPin(models.Model):
 		game_slug = self.room.escapegame.slug
 		room_slug = self.room.slug
 
-		self.callback_url_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)
-		self.callback_url_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
+		self.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)
+		self.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
 
 		super(RemoteDoorPin, self).save(*args, **kwargs)
 
