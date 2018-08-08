@@ -30,11 +30,11 @@ urlpatterns = [
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
-	# REST API
-	path('api/', include('api.urls')),
-
 	# Admin pages
 	path('admin/', admin.site.urls),
+
+	# REST API
+	path('api/', include('api.urls')),
 
 	# Web interface
 	path('web/', include('web.urls')),

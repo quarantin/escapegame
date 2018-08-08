@@ -32,11 +32,11 @@ urlpatterns = [
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
-	# REST API
-	path('api/', include('api.urls')),
-
 	# Admin pages
 	path('admin/', admin.site.urls),
+
+	# REST API (slave)
+	path('api/', include('api.urls')),
 
 	# TODO Just for debug, must be removed for production
 	path('web/', include('web.urls')),
