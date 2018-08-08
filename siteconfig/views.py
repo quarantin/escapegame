@@ -8,7 +8,7 @@ from siteconfig.forms import JsonImportForm, JsonExportForm
 import json
 
 @csrf_exempt
-def import_view(request):
+def json_import_view(request):
 
 	try:
 		if request.method == 'POST':
@@ -33,7 +33,7 @@ def import_view(request):
 import traceback
 
 @csrf_exempt
-def export_view(request):
+def json_export_view(request):
 
 	try:
 		if request.method == 'POST':

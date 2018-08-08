@@ -22,6 +22,8 @@ from django.urls import include, path
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
+from siteconfig.views import json_export_view, json_import_view
+
 urlpatterns = [
 
 	# TODO Just for debug, must redirect to /admin for production
@@ -34,6 +36,12 @@ urlpatterns = [
 
 	# Admin pages
 	path('admin/', admin.site.urls),
+
+	# Export page
+	path('admin/json/export/', json_export_view),
+
+	# Import page
+	path('admin/json/import/', json_import_view),
 
 	# REST API (slave)
 	path('api/', include('api.urls')),
