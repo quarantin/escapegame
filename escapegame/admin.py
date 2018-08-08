@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
-import pprint
 from django.contrib.admin import site
-from import_export import admin, resources
-from .models import *
 
+from import_export import admin, resources
+
+from .models import *
 
 # Media resources
 
