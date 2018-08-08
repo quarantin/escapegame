@@ -12,10 +12,20 @@ def get_sorted_query_set(queryset):
 
 	result = []
 
+	top_fields = [ 'id', 'slug', 'name', 'escapegame_name', 'room_name', 'challenge_name', 'escapegame_id', 'room_id', 'challenge_id', 'raspberrypi_id' ]
+
 	for obj in queryset:
 		objdict = OrderedDict()
+
+		for top_field in top_fields:
+			if top_field in obj:
+				objdict[top_field] = obj.pop(top_field)
+
 		for key in sorted(obj.keys()):
-			objdict[key] = obj[key]
+			if not key.endswith('door_locked') and not key.endswith('solved'):
+				val = obj[key]
+				if val != None:
+					objdict[key] = obj[key]
 
 		result.append(objdict)
 
@@ -77,26 +87,26 @@ class JsonExportForm(forms.Form):
 
 		# Export Raspberry Pis
 		if post.get('raspberry_pis'):
-			config['raspberry_pis'] = [ raspi for raspi in RaspberryPi.objects.all().order_by('id').values() ]
+			config['raspberry_pis'] = get_sorted_query_set(RaspberryPi.objects.all().order_by('id').values())
 
 		# Export remote challenge pins
 		if post.get('remote_challenge_pins'):
-			config['remote_challenge_pins'] = [ pin for pin in RemoteChallengePin.objects.all().order_by('id').values() ]
+			config['remote_challenge_pins'] = get_sorted_query_set(RemoteChallengePin.objects.all().order_by('id').values())
 
 		# Export the remote door pins
 		if post.get('remote_door_pins'):
-			config['remote_door_pins'] = [ pin for pin in RemoteDoorPin.objects.all().order_by('id').values() ]
+			config['remote_door_pins'] = get_sorted_query_set(RemoteDoorPin.objects.all().order_by('id').values())
 
 		# Export the remote LED pins
 		if post.get('remote_led_pins'):
-			config['remote_led_pins'] = [ pin for pin in RemoteLedPin.objects.all().order_by('id').values() ]
+			config['remote_led_pins'] = get_sorted_query_set(RemoteLedPin.objects.all().order_by('id').values())
 
 		# Export images
 		if post.get('images'):
-			config['images'] = [ image for image in Image.objects.all().order_by('id').values() ]
+			config['images'] = get_sorted_query_set(Image.objects.all().order_by('id').values())
 
 		# Export videos
 		if post.get('videos'):
-			config['videos'] = [ video for video in Video.objects.all().order_by('id').values() ]
+			config['videos'] = get_sorted_query_set(Video.objects.all().order_by('id').values())
 
 		return config
