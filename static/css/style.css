@@ -72,3 +72,18 @@ table, th, td {
 	display: block;
 	margin: 0 auto;
 }
+
+div.import-export {
+	/*text-align: center;*/
+	width: 50%;
+	margin: 0 auto;
+}
+
+input[type=file].import-export {
+	margin-bottom: 10px;
+}
+
+input[type=checkbox].import-export {
+	margin-top: 5px;
+	margin-right: 10px;
+}
