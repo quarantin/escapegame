@@ -1,71 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.admin import site
-
-from import_export import admin, resources
+from django.contrib import admin
 
 from .models import *
 
-# Media resources
-
-class ImageResource(resources.ModelResource):
-	class Meta:
-		model = Image
-
-class VideoResource(resources.ModelResource):
-	class Meta:
-		model = Video
-
-
-# Escape game resources
-
-class EscapeGameResource(resources.ModelResource):
-	class Meta:
-		model = EscapeGame
-
-class EscapeGameRoomResource(resources.ModelResource):
-	class Meta:
-		model = EscapeGameRoom
-
-class EscapeGameChallengeResource(resources.ModelResource):
-	class Meta:
-		model = EscapeGameChallenge
-
-
-# Remote pin resources
-
-class RaspberryPiResource(resources.ModelResource):
-	class Meta:
-		model = RaspberryPi
-
-class RemoteChallengePinResource(resources.ModelResource):
-	class Meta:
-		model = RemoteChallengePin
-
-class RemoteDoorPinResource(resources.ModelResource):
-	class Meta:
-		model = RemoteDoorPin
-
-class RemoteLedPinResource(resources.ModelResource):
-	class Meta:
-		model = RemoteLedPin
-
-
 # Media admin classes
 
-class ImageAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = ImageResource
+class ImageAdmin(admin.ModelAdmin):
 	list_display = ( 'image_type', 'image_path' )
 
-class VideoAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = VideoResource
+class VideoAdmin(admin.ModelAdmin):
 	list_display = ( 'video_name', 'video_path' )
 
 
 # Escape game admin classes
 
-class EscapeGameAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = EscapeGameResource
+class EscapeGameAdmin(admin.ModelAdmin):
 	list_display = [ 'escape_game_name', 'video_brief', 'slug' ]
 	prepoluated_fields = { 'slug': ( 'escape_game_name', )}
 	fieldsets = (
@@ -91,8 +41,7 @@ class EscapeGameAdmin(admin.ImportExportActionModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'sas_door_locked', 'corridor_door_locked' )
 
-class EscapeGameRoomAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = EscapeGameRoomResource
+class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = ( 'room_name', 'door_pin' )
 	prepoluated_fields = { 'slug': ( 'room_name', )}
 	fieldsets = (
@@ -115,8 +64,7 @@ class EscapeGameRoomAdmin(admin.ImportExportActionModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'door_locked' )
 
-class EscapeGameChallengeAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = EscapeGameChallengeResource
+class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	list_display = ( 'challenge_name', 'room', 'solved' )
 	prepoluated_fields = { 'slug': ( 'challenge_name', )}
 	fieldset = (
@@ -139,8 +87,7 @@ class EscapeGameChallengeAdmin(admin.ImportExportActionModelAdmin):
 
 # Remote pin admin classes
 
-class RaspberryPiAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = RaspberryPiResource
+class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'hostname', 'port' )
 	fieldsets = (
 		('General', { 'fields': (
@@ -150,8 +97,7 @@ class RaspberryPiAdmin(admin.ImportExportActionModelAdmin):
 			)}),
 	)
 
-class RemoteChallengePinAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = RemoteChallengePinResource
+class RemoteChallengePinAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'challenge', 'pin_number', 'raspberrypi', 'callback_url_validate', 'callback_url_reset' )
 	fieldsets = (
 		('General', { 'fields': (
@@ -167,8 +113,7 @@ class RemoteChallengePinAdmin(admin.ImportExportActionModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'callback_url_validate', 'callback_url_reset' )
 
-class RemoteDoorPinAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = RemoteDoorPinResource
+class RemoteDoorPinAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'room', 'pin_number', 'raspberrypi', 'callback_url_lock', 'callback_url_unlock' )
 	fieldsets = (
 		('General', { 'fields': (
@@ -184,8 +129,7 @@ class RemoteDoorPinAdmin(admin.ImportExportActionModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'callback_url_lock', 'callback_url_unlock' )
 
-class RemoteLedPinAdmin(admin.ImportExportActionModelAdmin):
-	resource_class = RemoteLedPinResource
+class RemoteLedPinAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'pin_number', 'raspberrypi', 'url_on', 'url_off' )
 	fieldsets = (
 		('General', { 'fields': (
@@ -203,12 +147,12 @@ class RemoteLedPinAdmin(admin.ImportExportActionModelAdmin):
 
 # Register all admin classes to django admin site
 
-site.register(Image, ImageAdmin)
-site.register(Video, VideoAdmin)
-site.register(RemoteChallengePin, RemoteChallengePinAdmin)
-site.register(RemoteDoorPin, RemoteDoorPinAdmin)
-site.register(RemoteLedPin, RemoteLedPinAdmin)
-site.register(RaspberryPi, RaspberryPiAdmin)
-site.register(EscapeGame, EscapeGameAdmin)
-site.register(EscapeGameRoom, EscapeGameRoomAdmin)
-site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)
+admin.site.register(Image, ImageAdmin)
+admin.site.register(Video, VideoAdmin)
+admin.site.register(RemoteChallengePin, RemoteChallengePinAdmin)
+admin.site.register(RemoteDoorPin, RemoteDoorPinAdmin)
+admin.site.register(RemoteLedPin, RemoteLedPinAdmin)
+admin.site.register(RaspberryPi, RaspberryPiAdmin)
+admin.site.register(EscapeGame, EscapeGameAdmin)
+admin.site.register(EscapeGameRoom, EscapeGameRoomAdmin)
+admin.site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)

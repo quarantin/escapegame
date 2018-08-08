@@ -48,7 +48,6 @@ INSTALLED_APPS = [
 	'escapegame',
 	'corsheaders',
 	'background_task',
-	'import_export',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -79,7 +78,8 @@ TEMPLATES = [
 	{
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
 		'DIRS': [
-			os.path.join(BASE_DIR, 'escapegame', 'templates'),
+			os.path.join(BASE_DIR, 'siteconfig', 'templates'),
+			os.path.join(BASE_DIR, 'web', 'templates'),
 		],
 		'APP_DIRS': True,
 		'OPTIONS': {

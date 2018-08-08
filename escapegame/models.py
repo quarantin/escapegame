@@ -2,7 +2,6 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
-from import_export import resources
 from constance import config
 
 from escapegame.apps import EscapegameConfig as AppConfig
