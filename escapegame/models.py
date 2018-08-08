@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from import_export import resources
 from constance import config
 
 from escapegame.apps import EscapegameConfig as AppConfig
@@ -13,17 +14,7 @@ import os
 import socket
 import requests
 
-"""
-Class to represent a video. Video are played at the begining of escape game,
-when the challengers enter the SAS.
-"""
-class Video(models.Model):
-
-	video_name = models.CharField(max_length=255)
-	video_path = models.CharField(max_length=255)
-
-	def __str__(self):
-		return self.video_name
+# Media classes
 
 """
 Class to represent an image. Images are used to represent visual objects on a map,
@@ -49,6 +40,18 @@ class Image(models.Model):
 	def __str__(self):
 		return '%s / %s' % (self.image_type, self.image_path)
 
+"""
+Class to represent a video. Video are played at the begining of escape game,
+when the challengers enter the SAS.
+"""
+class Video(models.Model):
+
+	video_name = models.CharField(max_length=255)
+	video_path = models.CharField(max_length=255)
+
+	def __str__(self):
+		return self.video_name
+
 class VideoPlayer(models.Model):
 
 	video_player = models.CharField(max_length=255)
@@ -56,19 +59,13 @@ class VideoPlayer(models.Model):
 	def __str__(self):
 		return self.video_player
 
-class RaspberryPi(models.Model):
 
-	name = models.CharField(max_length=255)
-	hostname = models.CharField(max_length=32)
-	port = models.IntegerField(default=8000)
-
-	def __str__(self):
-		return self.name
+# Escape game classes
 
 class EscapeGame(models.Model):
 
 	escape_game_name = models.CharField(max_length=255, default='')
-	escape_game_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
+	escape_game_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
 	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
 
@@ -113,7 +110,7 @@ class EscapeGame(models.Model):
 class EscapeGameRoom(models.Model):
 
 	room_name = models.CharField(max_length=255, default='')
-	room_controller = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
+	room_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
 	escape_game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
 
@@ -168,6 +165,18 @@ class EscapeGameChallenge(models.Model):
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
 
+
+# Remote pin classes
+
+class RaspberryPi(models.Model):
+
+	name = models.CharField(max_length=255)
+	hostname = models.CharField(max_length=32)
+	port = models.IntegerField(default=8000)
+
+	def __str__(self):
+		return self.name
+
 class RemoteChallengePin(models.Model):
 	
 	name = models.CharField(max_length=255)
@@ -212,7 +221,6 @@ class RemoteDoorPin(models.Model):
 
 	def __str__(self):
 		return self.name
-
 
 class RemoteLedPin(models.Model):
 
