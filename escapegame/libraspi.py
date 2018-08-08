@@ -2,6 +2,8 @@
 
 from constance import config
 
+from siteconfig import settings
+
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
@@ -33,6 +35,15 @@ def do_post(url, data):
 			raise Exception("requests.port(url=%s, data=%s) failed!" % (url, data))
 
 		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+def git_version():
+
+	try:
+		output = subprocess.check_output([ 'git', 'rev-parse', 'HEAD' ], cwd=settings.BASE_DIR)
+		return output.decode('utf-8').strip()
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
