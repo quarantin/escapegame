@@ -63,8 +63,8 @@ class VideoPlayer(models.Model):
 
 class EscapeGame(models.Model):
 
-	escape_game_name = models.CharField(max_length=255, default='')
-	escape_game_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
+	escapegame_name = models.CharField(max_length=255, default='')
+	escapegame_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
 	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
 
@@ -100,17 +100,17 @@ class EscapeGame(models.Model):
 			return 1, 'Error: %s' % err
 
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.escape_game_name)
+		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(*args, **kwargs)
 
 	def __str__(self):
-		return self.escape_game_name
+		return self.escapegame_name
 
 class EscapeGameRoom(models.Model):
 
 	room_name = models.CharField(max_length=255, default='')
 	room_controller = models.ForeignKey('RaspberryPi', blank=True, null=True, on_delete=models.CASCADE)
-	escape_game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
+	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	slug = models.SlugField(max_length=255)
 
 	door_pin = models.IntegerField(default=5)
@@ -137,7 +137,7 @@ class EscapeGameRoom(models.Model):
 		super(EscapeGameRoom, self).save(*args, **kwargs)
 
 	def __str__(self):
-		return '%s / %s' % (self.escape_game, self.room_name)
+		return '%s / %s' % (self.escapegame, self.room_name)
 
 class EscapeGameChallenge(models.Model):
 
@@ -189,7 +189,7 @@ class RemoteChallengePin(models.Model):
 
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
-		game_slug = self.challenge.room.escape_game.slug
+		game_slug = self.challenge.room.escapegame.slug
 		room_slug = self.challenge.room.slug
 		chall_slug = self.challenge.slug
 
@@ -214,7 +214,7 @@ class RemoteDoorPin(models.Model):
 
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
-		game_slug = self.room.escape_game.slug
+		game_slug = self.room.escapegame.slug
 		room_slug = self.room.slug
 
 		self.callback_url_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)

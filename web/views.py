@@ -31,7 +31,7 @@ def selector_index(request):
 def escapegame_index(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
-	rooms = EscapeGameRoom.objects.filter(escape_game=game)
+	rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
 	host = config.MASTER_HOSTNAME
 	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
@@ -44,7 +44,7 @@ def escapegame_index(request, game_slug):
 
 	for room in rooms:
 
-		game_controller = game.escape_game_controller
+		game_controller = game.escapegame_controller
 		if room.room_controller:
 			game_controller = room.room_controller
 
@@ -111,7 +111,7 @@ def escapegame_reset(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
-		rooms = EscapeGameRoom.objects.filter(escape_game=game)
+		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
 		# Stop video player
 		status, message = libraspi.stop_video(game.video_brief.video_path)
@@ -176,13 +176,13 @@ def escapegame_status(request, game_slug):
 		game = EscapeGame.objects.get(slug=game_slug)
 
 		result = {}
-		result['name'] = game.escape_game_name
+		result['name'] = game.escapegame_name
 		result['slug'] = game.slug
 		result['sas_door_locked'] = game.sas_door_locked
 		result['corridor_door_locked'] = game.corridor_door_locked
 		result['rooms'] = []
 
-		rooms = EscapeGameRoom.objects.filter(escape_game=game)
+		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 		for room in rooms:
 
 			newroom = {}
@@ -263,7 +263,7 @@ def set_door_locked(request, game_slug, room_slug, action):
 			status, message = game.set_door_locked(room_slug, locked)
 
 		else:
-			room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)
+			room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 			status, message = room.set_door_locked(locked)
 
 		return JsonResponse({
@@ -296,7 +296,7 @@ def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
 		solved = (action == 'validate')
 
 		game = EscapeGame.objects.get(slug=game_slug)
-		room = EscapeGameRoom.objects.get(slug=room_slug, escape_game=game)
+		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
 		status, message = chall.set_solved(solved)

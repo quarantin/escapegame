@@ -2,13 +2,13 @@
 {% load static %}
 {% block content %}
 	<div class="title">
-		<h1>{{ game.escape_game_name }}</h1>
+		<h1>{{ game.escapegame_name }}</h1>
 	</div>
 
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 
 	<div class="col head_block">
-		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.escape_game_name }}&nbsp;&raquo;</label>
+		<label class="head_block head_border">Video Briefing &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
 			<button id="start-escapegame" type="submit">
 				<div class="image-with-caption">

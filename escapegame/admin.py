@@ -16,13 +16,13 @@ class VideoAdmin(admin.ModelAdmin):
 # Escape game admin classes
 
 class EscapeGameAdmin(admin.ModelAdmin):
-	list_display = [ 'escape_game_name', 'video_brief', 'slug' ]
-	prepoluated_fields = { 'slug': ( 'escape_game_name', )}
+	list_display = [ 'escapegame_name', 'video_brief', 'slug' ]
+	prepoluated_fields = { 'slug': ( 'escapegame_name', )}
 	fieldsets = (
 		('General', { 'fields': (
-			'escape_game_name',
+			'escapegame_name',
 			'slug',
-			'escape_game_controller',
+			'escapegame_controller',
 			'video_brief',
 			)}),
 		('Door controls', { 'fields': (
@@ -49,7 +49,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'room_name',
 			'slug',
 			'room_controller',
-			'escape_game',
+			'escapegame',
 			)}),
 		('Door controls', { 'fields': (
 			'door_pin',

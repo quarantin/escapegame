@@ -6,13 +6,13 @@ VideoPlayer(video_player='/usr/bin/omxplayer').save()
 video_brief = Video(video_name='Video demo', video_path='test.h264')
 video_brief.save()
 
-game = EscapeGame(escape_game_name='1001 nuits', video_brief=video_brief)
+game = EscapeGame(escapegame_name='1001 nuits', video_brief=video_brief)
 game.save()
 
-room1 = EscapeGameRoom(room_name='Fontaine', escape_game=game, door_pin=7)
+room1 = EscapeGameRoom(room_name='Fontaine', escapegame=game, door_pin=7)
 room1.save()
 
-room2 = EscapeGameRoom(room_name='Caverne', escape_game=game, door_pin=9)
+room2 = EscapeGameRoom(room_name='Caverne', escapegame=game, door_pin=9)
 room2.save()
 
 chall1 = EscapeGameChallenge(challenge_name='room1-chall1', room=room1, solved=False)
@@ -48,13 +48,13 @@ remote_pin = RemoteLedPin(name='Pin 1001-nuits led salle fontaine chall 2', rasp
 remote_pin.save()
 
 # Stranger Things
-game = EscapeGame(escape_game_name='Stranger Things', video_brief=video_brief)
+game = EscapeGame(escapegame_name='Stranger Things', video_brief=video_brief)
 game.save()
 
-room1 = EscapeGameRoom(room_name='In the past', escape_game=game, door_pin=5)
+room1 = EscapeGameRoom(room_name='In the past', escapegame=game, door_pin=5)
 room1.save()
 
-room2 = EscapeGameRoom(room_name='In the future', escape_game=game, door_pin=7)
+room2 = EscapeGameRoom(room_name='In the future', escapegame=game, door_pin=7)
 room2.save()
 
 chall1 = EscapeGameChallenge(challenge_name='room1-chall1', room=room1, solved=False)
