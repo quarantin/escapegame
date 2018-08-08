@@ -1,9 +1,12 @@
-{% extends "escapegame/base.html" %}
+{% extends "siteconfig/base.html" %}
 {% load static %}
 {% block content %}
 	<div class="title">
 		<h1>Import configuration</h1>
 	</div>
+
+	{% include 'siteconfig/messages.html' %}
+
 	<div class="import-export">
 		<form method="POST" action="/admin/json/import/" enctype="multipart/form-data">
 			{% csrf_token %}

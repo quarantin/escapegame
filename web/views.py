@@ -23,7 +23,7 @@ def selector_index(request):
 		'games': EscapeGame.objects.all(),
 	}
 
-	template = loader.get_template('escapegame/index.html')
+	template = loader.get_template('web/index.html')
 
 	return HttpResponse(template.render(context, request))
 
@@ -68,7 +68,7 @@ def escapegame_index(request, game_slug):
 		'rooms': rooms,
 	}
 
-	template = loader.get_template('escapegame/escapegame.html')
+	template = loader.get_template('web/escapegame.html')
 
 	return HttpResponse(template.render(context, request))
 

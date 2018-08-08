@@ -1,9 +1,11 @@
-{% extends "escapegame/base.html" %}
+{% extends "siteconfig/base.html" %}
 {% load static %}
 {% block content %}
 	<div class="title">
 		<h1>{{ game.escapegame_name }}</h1>
 	</div>
+
+	{% include 'siteconfig/messages.html' %}
 
 	<input id="game-slug" type="hidden" value="{{ game.slug }}">
 

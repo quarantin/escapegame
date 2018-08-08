@@ -15,7 +15,7 @@ def json_import_view(request):
 			form = JsonImportForm(request.POST, request.FILES)
 			if form.is_valid():
 				form.json_import(request.FILES['json_configuration'])
-				messages.success("Successfully uploaded file '%s'" % request.FILES['json_configuration'])
+				messages.success(request, "Successfully uploaded file '%s'" % request.FILES['json_configuration'])
 
 		else:
 			form = JsonImportForm()
@@ -24,7 +24,7 @@ def json_import_view(request):
 			'form': form,
 		}
 
-		template = loader.get_template('siteconfig/import.html')
+		template = loader.get_template('siteconfig/json-import.html')
 		return HttpResponse(template.render(context, request))
 
 	except Exception as err:
@@ -60,7 +60,7 @@ def json_export_view(request):
 			'form': form,
 		}
 
-		template = loader.get_template('siteconfig/export.html')
+		template = loader.get_template('siteconfig/json-export.html')
 		return HttpResponse(template.render(context, request))
 
 	except Exception as err:
