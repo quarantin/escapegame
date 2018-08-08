@@ -187,6 +187,7 @@ class RemoteChallengePin(models.Model):
 	callback_url_reset = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
+
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
 		game_slug = self.challenge.room.escape_game.slug
@@ -195,6 +196,7 @@ class RemoteChallengePin(models.Model):
 
 		self.callback_url_validate = 'http://%s%s/web/%s/%s/%s/validate/' % (host, port, game_slug, room_slug, chall_slug)
 		self.callback_url_reset = 'http://%s%s/web/%s/%s/%s/reset/' % (host, port, game_slug, room_slug, chall_slug)
+
 		super(RemoteChallengePin, self).save(*args, **kwargs)
 
 	def __str__(self):
@@ -210,6 +212,7 @@ class RemoteDoorPin(models.Model):
 	callback_url_unlock = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
+
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
 		game_slug = self.room.escape_game.slug
@@ -217,6 +220,7 @@ class RemoteDoorPin(models.Model):
 
 		self.callback_url_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)
 		self.callback_url_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
+
 		super(RemoteDoorPin, self).save(*args, **kwargs)
 
 	def __str__(self):
@@ -231,11 +235,13 @@ class RemoteLedPin(models.Model):
 	url_off = models.URLField(max_length=255)
 
 	def save(self, *args, **kwargs):
+
 		host = self.raspberrypi.hostname
 		port = (self.raspberrypi.port != 80 and ':%d' % self.raspberrypi.port or '')
 
 		self.url_on = 'http://%s%s/api/led/on/%d/' % (host, port, self.pin_number)
 		self.url_off = 'http://%s%s/api/led/off/%d/' % (host, port, self.pin_number)
+
 		super(RemoteLedPin, self).save(*args, **kwargs)
 
 	def __str__(self):
