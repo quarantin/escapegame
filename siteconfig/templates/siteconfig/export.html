@@ -1,0 +1,61 @@
+{% extends "escapegame/base.html" %}
+{% load static %}
+{% block content %}
+	<div class="title">
+		<h1>Export configuration</h1>
+	</div>
+	<div class="import-export">
+		<form action="/admin/import-export/export/" method="POST">
+			<div class="col">
+				<div class="row">
+					<input name="indent" class="import-export" type="checkbox" checked />
+					<label for="indent">Beautify JSON</label>
+				</div>
+				<div class="row">
+					<input name="export_date" class="import-export" type="checkbox" checked />
+					<label for="export_date">Export date</label>
+				</div>
+				<div class="row">
+					<input name="software_version" class="import-export" type="checkbox" checked />
+					<label for="software_version">Software version</label>
+				</div>
+				<div class="row">
+					<input name="escapegames" class="import-export" type="checkbox" checked />
+					<label for="escapegames">Escape games</label>
+				</div>
+				<div class="row">
+					<input name="arduinos" class="import-export" type="checkbox" checked />
+					<label for="arduinos">Arduinos</label>
+				</div>
+				<div class="row">
+					<input name="raspberry_pis" class="import-export" type="checkbox" checked />
+					<label for="raspberry_pis">Raspberry Pis</label>
+				</div>
+				<div class="row">
+					<input name="remote_challenge_pins" class="import-export" type="checkbox" checked />
+					<label for="remote_challenge_pins">Remote challenge pins</label>
+				</div>
+				<div class="row">
+					<input name="remote_door_pins" class="import-export" type="checkbox" checked />
+					<label for="remote_door_pins">Remote door pins</label>
+				</div>
+				<div class="row">
+					<input name="remote_led_pins" class="import-export" type="checkbox" checked />
+					<label for="remote_led_pins">Remote LED pins</label>
+				</div>
+				<div class="row">
+					<input name="images" class="import-export" type="checkbox" checked />
+					<label for="images">Images</label>
+				</div>
+				<div class="row">
+					<input name="videos" class="import-export" type="checkbox" checked />
+					<label for="videos">Videos</label>
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}
+

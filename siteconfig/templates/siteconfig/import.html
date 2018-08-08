@@ -1,0 +1,30 @@
+{% extends "escapegame/base.html" %}
+{% load static %}
+{% block content %}
+	<div class="title">
+		<h1>Import configuration</h1>
+	</div>
+	<div class="import-export">
+		<form method="POST" action="/admin/import-export/import/" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="col">
+				<div class="row">
+					<div class="col">
+						{% if form.json_configuration.errors %}
+						{{ form.subject.errors }}
+						{% endif %}
+						<label for="json_configuration">Import JSON configuration</label>
+						<br>
+						<input name="json_configuration" class="import-export" type="file" accept=".json">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
