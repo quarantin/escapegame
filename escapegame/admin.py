@@ -22,7 +22,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		('General', { 'fields': (
 			'escapegame_name',
 			'slug',
-			'raspbberypi',
+			'raspberrypi',
 			'video_brief',
 			)}),
 		('Door controls', { 'fields': (
