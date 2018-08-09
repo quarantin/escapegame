@@ -241,12 +241,12 @@ LOGGING = {
 		},
 		'escapegame': {
 			'handlers': [ 'logfile', 'console' ],
-			'level': 'INFO',
+			'level': 'DEBUG',
 			'propagate': True,
 		},
 		'escapegame.tasks': {
 			'handlers': [ 'logfile_tasks', 'console' ],
-			'level': 'INFO',
+			'level': 'DEBUG',
 			'propagate': True,
 		},
 	}
