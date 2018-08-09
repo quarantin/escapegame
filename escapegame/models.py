@@ -12,13 +12,46 @@ from escapegame import libraspi
 import os
 import socket
 import requests
+import traceback
+
+# Generic JSON import/export
+
+def generic_json_import(model, dic):
+
+	try:
+		fin = open('/tmp/debug-wtf.log', 'w+')
+		try:
+			obj = model.objects.get(id=dic['id'])
+			for key, val in dic.items():
+				setattr(obj, key, val)
+		except:
+			obj = model(**dic)
+
+		obj.save()
+
+		fin.close()
+
+		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s<br>\n%s' % (err, traceback.format_exc().replace('\n', '<br>\n'))
+
+def generic_json_import_list(model, listdic):
+
+	try:
+		for dic in listdic:
+			status, message = generic_json_import(model, dic)
+			if status != 0:
+				return status, message
+
+		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
 
 # Media classes
 
-"""
-Class to represent an image. Images are used to represent visual objects on a map,
-like doors, challenges, rooms, or even a whole escape game map.
-"""
 class Image(models.Model):
 
 	TYPE_CHALL = 'challenge'
@@ -33,30 +66,46 @@ class Image(models.Model):
 		(TYPE_ROOM,  'Room'),
 	)
 
+	image_name = models.CharField(max_length=255)
 	image_type = models.CharField(max_length=255, choices=IMAGE_TYPE_CHOICES, default=TYPE_ROOM)
 	image_path = models.ImageField(upload_to=config.UPLOAD_PATH)
 
 	def __str__(self):
-		return '%s / %s' % (self.image_type, self.image_path)
+		return '%s [%s] (%s)' % (self.image_name, self.image_type, self.image_path)
 
-"""
-Class to represent a video. Video are played at the begining of escape game,
-when the challengers enter the SAS.
-"""
+	def json_import(jsondata):
+		return generic_json_import(Image, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(Image, jsondata)
+
 class Video(models.Model):
 
 	video_name = models.CharField(max_length=255)
 	video_path = models.CharField(max_length=255)
 
 	def __str__(self):
-		return self.video_name
+		return '%s (%s)' % (self.video_name, self.video_path)
+
+	def json_import(jsondata):
+		return generic_json_import(Video, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(Video, jsondata)
 
 class VideoPlayer(models.Model):
 
-	video_player = models.CharField(max_length=255)
+	video_player_name = models.CharField(max_length=255)
+	video_player_path = models.CharField(max_length=255)
 
 	def __str__(self):
-		return self.video_player
+		return '%s (%s)' % (self.video_player_name, self.video_player_path)
+
+	def json_import(jsondata):
+		return generic_json_import(VideoPlayer, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(VideoPlayer, jsondata)
 
 
 # Escape game classes
@@ -77,6 +126,19 @@ class EscapeGame(models.Model):
 	map_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='game_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_MAP })
 	sas_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
 	corridor_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+
+	def __str__(self):
+		return self.escapegame_name
+
+	def json_import(jsondata):
+		return generic_json_import(EscapeGame, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(EscapeGame, jsondata)
+
+	def save(self, **kwargs):
+		self.slug = slugify(self.escapegame_name)
+		super(EscapeGame, self).save(**kwargs)
 
 	def set_door_locked(self, door, locked):
 		try:
@@ -99,13 +161,6 @@ class EscapeGame(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
-	def save(self, *args, **kwargs):
-		self.slug = slugify(self.escapegame_name)
-		super(EscapeGame, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return self.escapegame_name
-
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -118,6 +173,19 @@ class EscapeGameRoom(models.Model):
 
 	room_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image_path', limit_choices_to={ 'image_type': Image.TYPE_ROOM })
 	door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+
+	def __str__(self):
+		return '%s / %s' % (self.escapegame, self.room_name)
+
+	def json_import(jsondata):
+		return generic_json_import(EscapeGameRoom, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(EscapeGameRoom, jsondata)
+
+	def save(self, **kwargs):
+		self.slug = slugify(self.room_name)
+		super(EscapeGameRoom, self).save(**kwargs)
 
 	def set_door_locked(self, locked):
 		try:
@@ -132,13 +200,6 @@ class EscapeGameRoom(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
-	def save(self, *args, **kwargs):
-		self.slug = slugify(self.room_name)
-		super(EscapeGameRoom, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return '%s / %s' % (self.escapegame, self.room_name)
-
 class EscapeGameChallenge(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -148,6 +209,19 @@ class EscapeGameChallenge(models.Model):
 	solved = models.BooleanField(default=False)
 	challenge_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_CHALL })
 
+	def __str__(self):
+		return '%s / %s' % (self.room, self.challenge_name)
+
+	def json_import(jsondata):
+		return generic_json_import(EscapeGameChallenge, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(EscapeGameChallenge, jsondata)
+
+	def save(self, **kwargs):
+		self.slug = slugify(self.challenge_name)
+		super(EscapeGameChallenge, self).save(**kwargs)
+
 	def set_solved(self, solved):
 		try:
 			self.solved = solved
@@ -156,13 +230,6 @@ class EscapeGameChallenge(models.Model):
 
 		except Exeption as err:
 			return 1, 'Error: %s' % err
-
-	def save(self, *args, **kwargs):
-		self.slug = slugify(self.challenge_name)
-		super(EscapeGameChallenge, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return '%s / %s' % (self.room, self.challenge_name)
 
 
 # Remote pin classes
@@ -176,6 +243,12 @@ class RaspberryPi(models.Model):
 	def __str__(self):
 		return self.name
 
+	def json_import(jsondata):
+		return generic_json_import(RaspberryPi, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(RaspberryPi, jsondata)
+
 class RemoteChallengePin(models.Model):
 	
 	name = models.CharField(max_length=255)
@@ -185,7 +258,16 @@ class RemoteChallengePin(models.Model):
 	url_callback_validate = models.URLField(max_length=255)
 	url_callback_reset = models.URLField(max_length=255)
 
-	def save(self, *args, **kwargs):
+	def __str__(self):
+		return self.name
+
+	def json_import(jsondata):
+		return generic_json_import(RemoteChallengePin, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(RemoteChallengePin, jsondata)
+
+	def save(self, **kwargs):
 
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
@@ -196,10 +278,7 @@ class RemoteChallengePin(models.Model):
 		self.url_callback_validate = 'http://%s%s/web/%s/%s/%s/validate/' % (host, port, game_slug, room_slug, chall_slug)
 		self.url_callback_reset = 'http://%s%s/web/%s/%s/%s/reset/' % (host, port, game_slug, room_slug, chall_slug)
 
-		super(RemoteChallengePin, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return self.name
+		super(RemoteChallengePin, self).save(**kwargs)
 
 class RemoteDoorPin(models.Model):
 
@@ -210,7 +289,16 @@ class RemoteDoorPin(models.Model):
 	url_callback_lock = models.URLField(max_length=255)
 	url_callback_unlock = models.URLField(max_length=255)
 
-	def save(self, *args, **kwargs):
+	def __str__(self):
+		return self.name
+
+	def json_import(jsondata):
+		return generic_json_import(RemoteDoorPin, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(RemoteDoorPin, jsondata)
+
+	def save(self, **kwargs):
 
 		host = config.MASTER_HOSTNAME
 		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
@@ -220,10 +308,7 @@ class RemoteDoorPin(models.Model):
 		self.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, game_slug, room_slug)
 		self.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
 
-		super(RemoteDoorPin, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return self.name
+		super(RemoteDoorPin, self).save(**kwargs)
 
 class RemoteLedPin(models.Model):
 
@@ -233,7 +318,16 @@ class RemoteLedPin(models.Model):
 	url_on = models.URLField(max_length=255)
 	url_off = models.URLField(max_length=255)
 
-	def save(self, *args, **kwargs):
+	def __str__(self):
+		return self.name
+
+	def json_import(jsondata):
+		return generic_json_import(RemoteLedPin, jsondata)
+
+	def json_import_list(jsondata):
+		return generic_json_import_list(RemoteLedPin, jsondata)
+
+	def save(self, **kwargs):
 
 		host = self.raspberrypi.hostname
 		port = (self.raspberrypi.port != 80 and ':%d' % self.raspberrypi.port or '')
@@ -241,8 +335,5 @@ class RemoteLedPin(models.Model):
 		self.url_on = 'http://%s%s/api/led/on/%d/' % (host, port, self.pin_number)
 		self.url_off = 'http://%s%s/api/led/off/%d/' % (host, port, self.pin_number)
 
-		super(RemoteLedPin, self).save(*args, **kwargs)
-
-	def __str__(self):
-		return self.name
+		super(RemoteLedPin, self).save(**kwargs)
 
