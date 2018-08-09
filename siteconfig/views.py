@@ -3,9 +3,19 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseServerError
 
-from siteconfig.forms import JsonImportForm, JsonExportForm
+from siteconfig.admin import JsonImportForm, JsonExportForm
 
 import json
+
+def json_import_export_view(request):
+
+	try:
+		context = {}
+		template = loader.get_template('admin/app_index.html')
+		return HttpResponse(template.render(context, request))
+
+	except Exception as err:
+		return HttpResponseServerError('Error: %s' % err)
 
 @csrf_exempt
 def json_import_view(request):
@@ -14,9 +24,12 @@ def json_import_view(request):
 		if request.method == 'POST':
 			form = JsonImportForm(request.POST, request.FILES)
 			if form.is_valid():
-				form.json_import(request.FILES['json_configuration'])
-				messages.success(request, "Successfully uploaded file '%s'" % request.FILES['json_configuration'])
-
+				jsonfile = request.FILES['json_configuration']
+				status, message = form.json_import(jsonfile)
+				if status != 0:
+					messages.error(request, "Failed to upload JSON file '%s' (%s)" % (jsonfile, message))
+				else:
+					messages.success(request, "Successfully uploaded file '%s'" % jsonfile)
 		else:
 			form = JsonImportForm()
 
@@ -61,6 +74,7 @@ def json_export_view(request):
 		}
 
 		template = loader.get_template('siteconfig/json-export.html')
+		#template = loader.get_template('admin/app_index.html')
 		return HttpResponse(template.render(context, request))
 
 	except Exception as err:
