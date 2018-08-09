@@ -1,7 +1,7 @@
 from escapegame.models import *
 
-VideoPlayer(video_player='/usr/bin/mpv').save()
-VideoPlayer(video_player='/usr/bin/omxplayer').save()
+VideoPlayer(video_player_name='Media Player', video_player_path='/usr/bin/mpv').save()
+VideoPlayer(video_player_name='OMX Player', video_player_path='/usr/bin/omxplayer').save()
 
 video_brief = Video(video_name='Video demo', video_path='test.h264')
 video_brief.save()
