@@ -1,0 +1,45 @@
+{% extends "admin/app_index.html" %}
+{% load i18n %}
+
+{% block bodyclass %}{{ block.super }} app-{{ app_label }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo;
+{% for app in app_list %}
+{{ app.name }}
+{% endfor %}
+<a href="/admin/escapegame/json/">{% trans 'JSON' %}</a>
+&rsaquo;
+Import
+</div>
+{% endblock %}
+
+{% block content %}
+	<div class="title">
+		<h1>Import JSON configuration</h1>
+	</div>
+	<div class="import-export">
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="col">
+				<div class="row">
+					<div class="col">
+						{% if form.json_configuration.errors %}
+						{{ form.subject.errors }}
+						{% endif %}
+						<label for="json_configuration">Select a JSON file</label>
+						<br>
+						<input name="json_configuration" class="import-export" type="file" accept=".json">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

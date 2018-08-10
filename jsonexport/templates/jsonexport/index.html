@@ -1,0 +1,43 @@
+{% extends "admin/app_index.html" %}
+{% load i18n %}
+
+{% block bodyclass %}{{ block.super }} app-{{ app_label }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo;
+{% for app in app_list %}
+{{ app.name }}
+{% endfor %}
+<a href="/admin/escapegame/json/">{% trans 'JSON' %}</a>
+&rsaquo;
+Index
+</div>
+{% endblock %}
+
+{% block content %}
+	<div class="title">
+		<h1>JSON Import / Export</h1>
+	</div>
+
+	<div class="app-import-export module">
+		<table>
+			<caption>
+				<a href="/admin/escapegame/json/" class="section" title="{% trans 'Import or export escape game configuration as JSON' %}" >{% trans 'JSON Import / Export' %}</a>
+			</caption>
+
+			<tr class="model-import-export">
+				<th scope="row"><a href="/admin/escapegame/json/import/" title="{% trans 'Import escape game settings' %}">{% trans 'Import' %}</a></th>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+
+			<tr class="model-import-export">
+				<th scope="row"><a href="/admin/escapegame/json/export/" title="{% trans 'Export escape game settings' %}">{% trans 'Export' %}</a></th>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+{% endblock %}
