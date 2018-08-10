@@ -21,7 +21,7 @@ game_1001_nuits.save()
 
 # Room La fontaine
 
-room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=11, raspberrypi=raspi_1001_nuits)
+room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits)
 room_fontaine.save()
 
 # Challenge: La fontaine
@@ -82,7 +82,7 @@ game_stranger_things.save()
 
 # Room: La salle claire
 
-room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=11)
+room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=7)
 room.save()
 
 # Challenge: 1 (Stranger Things / La salle claire)
