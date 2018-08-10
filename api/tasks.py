@@ -15,19 +15,19 @@ def poll_gpio(pin):
 
 	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 	if not myself:
-		logger.error("Could not find matching Raspberry Pi: %s.local" % socket.gethostname())
+		print("Could not find matching Raspberry Pi: %s.local" % socket.gethostname())
 		return
 
 	challenges = EscapeGameChallenge.objects.filter(pin_number=pin)
 	remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, challenge__in=challenges)
 	if not remote_pin:
-		logger.error("Could not find matching remote challenge pin: %d on Raspberry Pi: %s.local" % (pin, socket.gethostname()))
+		print("Could not find matching remote challenge pin: %d on Raspberry Pi: %s.local" % (pin, socket.gethostname()))
 		return
 
 	url_callback_reset = remote_pin.url_callback_reset
 	url_callback_validate = remote_pin.url_callback_validate
 
-	logger.info("Polling for GPIO pin %d" % pin)
+	print("Polling for GPIO pin %d" % pin)
 	while True:
 
 		try:
@@ -41,10 +41,10 @@ def poll_gpio(pin):
 
 			callback_url = (status == 0 and url_callback_reset or url_callback_validate)
 
-			logger.info("Performing request GET %s" % callback_url)
+			print("Performing request GET %s" % callback_url)
 			libraspi.do_get(callback_url)
 
 		except Exception as err:
-			logger.error(err)
+			print(err)
 
 		time.sleep(1)

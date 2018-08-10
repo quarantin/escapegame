@@ -29,7 +29,7 @@ def do_get(url):
 
 def do_post(url, data):
 	try:
-		logger.info("Performing request POST %s data=%s" % (url, data))
+		print("Performing request POST %s data=%s" % (url, data))
 		response = request.post(url, data=data)
 		if not response:
 			raise Exception("requests.port(url=%s, data=%s) failed!" % (url, data))
@@ -53,7 +53,7 @@ def play_video(video_path):
 	try:
 		video_path = os.path.join(config.VIDEO_PATH, video_path)
 
-		logger.info("Playing video '%s'" % video_path)
+		print("Playing video '%s'" % video_path)
 		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
 
 	except Exception as err:
@@ -62,7 +62,7 @@ def play_video(video_path):
 def stop_video(video_path):
 
 	try:
-		logger.info("Stopping video '%s'" % video_path)
+		print("Stopping video '%s'" % video_path)
 		return subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
 	except Exception as err:
@@ -77,7 +77,7 @@ def get_pin_state(pin):
 			GPIO.setup(pin, GPIO.IN)
 			state = GPIO.input(pin)
 
-		logger.info("Getting pin state on pin %d = %s" % (pin, state))
+		print("Getting pin state on pin %d = %s" % (pin, state))
 		return state, 'Success'
 
 	except Exception as err:
@@ -93,7 +93,7 @@ def set_door_locked(pin, locked):
 			GPIO.output(pin, state)
 
 		state = (state and 'Opening' or 'Closing')
-		logger.info("%s door on pin %d" % (state, pin))
+		print("%s door on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:
@@ -109,7 +109,7 @@ def set_led_status(pin, onoff):
 			GPIO.output(pin, state)
 
 		state = (state and 'on' or 'off')
-		logger.info("Turning %s led on pin %d" % (state, pin))
+		print("Turning %s led on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:

@@ -189,7 +189,7 @@ class EscapeGameRoom(models.Model):
 
 	def set_door_locked(self, locked):
 		try:
-			logger.info('set_door_lock(%s) [%s]' % (locked, self))
+			print('set_door_lock(%s) [%s]' % (locked, self))
 			status, message = libraspi.set_door_locked(self.door_pin, locked)
 			if status == 0:
 				self.door_locked = locked

@@ -13,6 +13,10 @@ import socket
 
 logger = AppConfig.logger
 
+import pprint
+pp = pprint.PrettyPrinter()
+pp.pprint(logger)
+
 urlpatterns = [
 
 	# Challenge controls
@@ -40,11 +44,11 @@ try:
 				verbose_name = '%s.tasks.poll.gpio.%d' % (AppConfig.name, challenge.pin_number)
 				task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
 				if task:
-					logger.info("Not adding background task %s, already present in db" % task.task_name)
+					print("Not adding background task %s, already present in db" % task.task_name)
 					continue
 
 			except Exception as err:
-				logger.error('Error: %s' % err)
+				print('Error: %s' % err)
 
 			tasks.poll_gpio(challenge.pin_number, verbose_name=verbose_name)
 
@@ -66,4 +70,4 @@ except Exception as err:
 
 	# We want to see other errors
 	else:
-		logger.error("Adding background tasks failed! (Error: %s)" % err)
+		print("Adding background tasks failed! (Error: %s)" % err)
