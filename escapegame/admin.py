@@ -170,8 +170,6 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		return None
 
 	def get_app_list(self, request):
-		import pprint
-		pp = pprint.PrettyPrinter()
 		app_dict = self._build_app_dict(request)
 
 		for app in app_dict:
@@ -180,7 +178,10 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 				for model in app_dict[app]['models']:
 					model['admin_url'] = model['admin_url'].replace('jsonexport', 'json')
 
-		pp.pprint(app_dict)
+		#import pprint
+		#pp = pprint.PrettyPrinter()
+		#pp.pprint(app_dict)
+
 		# Sort the apps alphabetically.
 		app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
 
