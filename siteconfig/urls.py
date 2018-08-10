@@ -22,6 +22,8 @@ from django.urls import include, path
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
+from escapegame import admin as myadmin
+
 urlpatterns = [
 
 	# Landing page
@@ -30,8 +32,11 @@ urlpatterns = [
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
-	# Admin pages
+	# Django admin pages
 	path('admin/', admin.site.urls),
+
+	# Escape game admin pages
+	path('admin/escapegame/', myadmin.site.urls),
 
 	# REST API
 	path('api/', include('api.urls')),

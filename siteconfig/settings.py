@@ -89,8 +89,15 @@ TEMPLATES = [
 				'django.contrib.auth.context_processors.auth',
 				'django.contrib.messages.context_processors.messages',
 			],
+			'libraries': {
+				'customtags': 'siteconfig.templatetags.customtags',
+			},
 		},
 	},
+]
+
+TEMPLATES_CONTEXT_PROCESSOR = [
+	'django.template.context_processors.request',
 ]
 
 WSGI_APPLICATION = 'siteconfig.wsgi.application'
