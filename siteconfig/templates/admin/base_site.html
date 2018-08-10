@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% load customtags %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+
+	{% if request.path|path:2 == 'admin/escapegame' %}
+
+	<a href="/admin/">{{ site_header|default:_('Django administration') }}</a>
+	/
+	<u><a href="/admin/escapegame/">Escape game administration</a></u>
+
+	{% else %}
+
+	<u><a href="/admin/">{{ site_header|default:_('Django administration') }}</a></u>
+	/
+	<a href="/admin/escapegame/">Escape game administration</a>
+
+	{% endif %}
+
+</h1>
+
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
