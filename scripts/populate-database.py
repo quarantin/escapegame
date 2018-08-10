@@ -71,7 +71,7 @@ chall_lampe.save()
 
 # Raspberry Pis Stranger Things
 
-raspi_stranger_things = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80)
+raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local', port=80)
 raspi_stranger_things.save()
 
 #
