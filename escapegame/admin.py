@@ -150,7 +150,7 @@ class RemoteLedPinAdmin(admin.ModelAdmin):
 
 class EscapeGameAdminSite(admin.sites.AdminSite):
 
-	index_template = 'admin/index.html'
+	index_template = 'admin/escapegame/index.html'
 
 	def get_urls(self):
 		from django.urls import path
