@@ -13,10 +13,6 @@ import socket
 
 logger = AppConfig.logger
 
-import pprint
-pp = pprint.PrettyPrinter()
-pp.pprint(logger)
-
 urlpatterns = [
 
 	# Challenge controls
@@ -41,7 +37,7 @@ try:
 			try:
 				challenge = remote_pin.challenge
 				task_name = 'api.tasks.poll_gpio'
-				verbose_name = '%s.tasks.poll.gpio.%d' % (AppConfig.name, challenge.pin_number)
+				verbose_name = '%s.tasks.poll.gpio.%d' % (AppConfig.name, challenge.challenge_pin)
 				task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
 				if task:
 					print("Not adding background task %s, already present in db" % task.task_name)
@@ -50,7 +46,7 @@ try:
 			except Exception as err:
 				print('Error: %s' % err)
 
-			tasks.poll_gpio(challenge.pin_number, verbose_name=verbose_name)
+			tasks.poll_gpio(challenge.challenge_pin, verbose_name=verbose_name)
 
 except Exception as err:
 

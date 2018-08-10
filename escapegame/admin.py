@@ -67,14 +67,14 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'slug', 'door_locked' )
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
-	list_display = ( 'challenge_name', 'room', 'pin_number', 'solved' )
+	list_display = ( 'challenge_name', 'room', 'challenge_pin', 'solved' )
 	prepoluated_fields = { 'slug': ( 'challenge_name', )}
 	fieldset = (
 		('General', { 'fields': (
 			'challenge_name',
 			'slug',
 			'room',
-			'pin_number',
+			'challenge_pin',
 			)}),
 		('Status', { 'fields': (
 			'solved',

@@ -18,7 +18,7 @@ def poll_gpio(pin):
 		print("Could not find matching Raspberry Pi: %s.local" % socket.gethostname())
 		return
 
-	challenges = EscapeGameChallenge.objects.filter(pin_number=pin)
+	challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
 	remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, challenge__in=challenges)
 	if not remote_pin:
 		print("Could not find matching remote challenge pin: %d on Raspberry Pi: %s.local" % (pin, socket.gethostname()))

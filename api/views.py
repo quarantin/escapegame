@@ -33,7 +33,7 @@ def set_challenge_state(request, action, pin):
 
 		if config.IS_SLAVE:
 			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-			challenges = EscapeGameChallenge.objects.filter(pin_number=pin)
+			challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
 			remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, challenge__in=challenges)
 			callback_url = (validated and remote_pin.url_callback_validate or remote_pin.url_callback_reset)
 
@@ -78,7 +78,7 @@ def set_door_locked(request, action, pin):
 
 		if config.IS_SLAVE:
 			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-			challenges = EscapeGameChallenge.objects.filter(pin_number=pin)
+			challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
 			remote_pin = RemoteDoorPin.objects.get(raspberrypi=myself, challenge__in=challenges)
 			callback_url = (locked and remote_pin.url_callback_lock or remote_pin.url_callback_unlock)
 

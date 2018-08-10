@@ -206,9 +206,9 @@ class EscapeGameChallenge(models.Model):
 	challenge_name = models.CharField(max_length=255, default='')
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
-	pin_number = models.IntegerField(default=31)
-
+	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
+
 	challenge_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_CHALL })
 
 	def __str__(self):
