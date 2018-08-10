@@ -79,6 +79,7 @@ TEMPLATES = [
 	{
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
 		'DIRS': [
+			os.path.join(BASE_DIR, 'jsonexport', 'templates'),
 			os.path.join(BASE_DIR, 'siteconfig', 'templates'),
 			os.path.join(BASE_DIR, 'web', 'templates'),
 		],
@@ -107,21 +108,24 @@ WSGI_APPLICATION = 'siteconfig.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+DATABASE_MYSQL = {
+	'ENGINE': 'django.db.backends.mysql',
+	'NAME': 'escapegame',
+	'USER': 'escapegame',
+	'PASSWORD': 'escapegame',
+	'HOST': 'localhost',
+	'OPTIONS': {
+		'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+	},
+}
+
+DATABASE_SQLITE3 = {
+	'ENGINE': 'django.db.backends.sqlite3',
+	'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+}
+
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'escapegame',
-		'USER': 'escapegame',
-		'PASSWORD': 'escapegame',
-		'HOST': 'localhost',
-		'OPTIONS': {
-			'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-	},
-	},
-	'sqlite3': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-	}
+	'default': 	DATABASE_MYSQL,
 }
 
 
