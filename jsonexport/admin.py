@@ -76,7 +76,7 @@ class JsonImportConfig(object):
 
 		@property
 		def app_config(self):
-			return apps.get_app_config('%sexport' % self.app_label)
+			return apps.get_app_config('%s' % self.app_label)
 
 		@property
 		def label(self):
