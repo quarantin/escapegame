@@ -22,7 +22,7 @@ from django.urls import include, path
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
-from siteconfig.views import json_import_export_view, json_export_view, json_import_view
+from escapegame import admin as myadmin
 
 urlpatterns = [
 
@@ -34,17 +34,11 @@ urlpatterns = [
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
-	# Admin pages
+	# Django admin pages
 	path('admin/', admin.site.urls),
 
-	# Import / Export index page
-	path('admin/json/', json_import_export_view),
-
-	# Export page
-	path('admin/json/export/', json_export_view),
-
-	# Import page
-	path('admin/json/import/', json_import_view),
+	# Escape games admin pages
+	path('admin/escapegame/', myadmin.site.urls),
 
 	# REST API (slave)
 	path('api/', include('api.urls')),
