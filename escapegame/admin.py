@@ -210,8 +210,6 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 
 				app['models'] = new_models
 
-			print("DEBUG app=%s models=%s" % (app, app['models']))
-
 		return app_list
 
 
