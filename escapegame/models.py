@@ -254,7 +254,6 @@ class RemoteChallengePin(models.Model):
 	name = models.CharField(max_length=255)
 	challenge = models.ForeignKey(EscapeGameChallenge, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
-	pin_number = models.IntegerField(default=7)
 	url_callback_validate = models.URLField(max_length=255)
 	url_callback_reset = models.URLField(max_length=255)
 
@@ -285,7 +284,6 @@ class RemoteDoorPin(models.Model):
 	name = models.CharField(max_length=255)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
-	pin_number = models.IntegerField(default=7)
 	url_callback_lock = models.URLField(max_length=255)
 	url_callback_unlock = models.URLField(max_length=255)
 

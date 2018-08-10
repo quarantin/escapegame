@@ -100,13 +100,12 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 	)
 
 class RemoteChallengePinAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'challenge', 'pin_number', 'raspberrypi', 'url_callback_validate', 'url_callback_reset' )
+	list_display = ( 'name', 'challenge', 'raspberrypi', 'url_callback_validate', 'url_callback_reset' )
 	fieldsets = (
 		('General', { 'fields': (
 			'name',
 			'challenge',
 			'raspberrypi',
-			'pin_number',
 			'url_callback_validate',
 			'url_callback_reset',
 			)}),
@@ -116,13 +115,12 @@ class RemoteChallengePinAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'url_callback_validate', 'url_callback_reset' )
 
 class RemoteDoorPinAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'room', 'pin_number', 'raspberrypi', 'url_callback_lock', 'url_callback_unlock' )
+	list_display = ( 'name', 'room', 'raspberrypi', 'url_callback_lock', 'url_callback_unlock' )
 	fieldsets = (
 		('General', { 'fields': (
 			'name',
 			'room',
 			'raspberrypi',
-			'pin_number',
 			'url_callback_lock',
 			'url_callback_unlock',
 			)}),

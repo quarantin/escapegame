@@ -35,8 +35,9 @@ try:
 		remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
 		for remote_pin in remote_pins:
 			try:
+				challenge = remote_pin.challenge
 				task_name = 'api.tasks.poll_gpio'
-				verbose_name = '%s.tasks.poll.gpio.%d' % (AppConfig.name, remote_pin.pin_number)
+				verbose_name = '%s.tasks.poll.gpio.%d' % (AppConfig.name, challenge.pin_number)
 				task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
 				if task:
 					logger.info("Not adding background task %s, already present in db" % task.task_name)
@@ -45,7 +46,7 @@ try:
 			except Exception as err:
 				logger.error('Error: %s' % err)
 
-			tasks.poll_gpio(remote_pin.pin_number, verbose_name=verbose_name)
+			tasks.poll_gpio(challenge.pin_number, verbose_name=verbose_name)
 
 except Exception as err:
 
