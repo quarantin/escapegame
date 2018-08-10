@@ -207,6 +207,7 @@ CORS_ALLOW_CREDENTIALS = False
 #	'.local',
 #]
 
+"""
 LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': False,
@@ -263,3 +264,4 @@ LOGGING = {
 		},
 	}
 }
+"""
