@@ -1,4 +1,4 @@
-{% extends "siteconfig/base.html" %}
+{% extends "web/base.html" %}
 {% load static %}
 {% block content %}
 	<div class="title">
@@ -62,13 +62,13 @@
 {% else %}
 	{% for room in rooms %}
 	<div class="col head_block" id="{{ room.slug }}">
-		<label class="head_block head_border">Salle &laquo;&nbsp;{{ room.room_name }}&nbsp;&raquo;</label>
+		<label class="head_block head_border">&laquo;&nbsp;{{ room.room_name }}&nbsp;&raquo;</label>
 		<div class="row head_block">
-			<div class="col" id="{{ room.slug }}-data">
+			<div class="col-8 challenge-status" id="{{ room.slug }}-data">
 				<!-- Placeholder for room status -->
 				Data will be refreshed soon!
 			</div>
-			<div class="col">
+			<div class="col-4">
 				<button id="lock-{{ room.slug }}" value="{{ room.url_callback_unlock }}" class="lock-button" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock room door">

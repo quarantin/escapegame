@@ -120,11 +120,11 @@ $(document).ready(function() {
 					for (var subindex in room.challenges) {
 						var chall = room.challenges[subindex];
 						var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
-						html += '\t<tr>\n\t\t<td>' + chall.name + "</td>\n\t\t<td>" + solved + '</td>\n\t</tr>\n';
+						html += '\t<tr>\n\t\t<td width="80%">' + chall.name + '</td>\n\t\t<td width="20%">' + solved + '</td>\n\t</tr>\n';
 
 					}
 
-					html = '<table>\n' + html + '</table>\n';
+					html = '<table class="challenge-status">\n' + html + '</table>\n';
 				}
 
 				statusdiv.html(html);
