@@ -1,0 +1,47 @@
+siteconfig/:			Configuration du site
+		settings.py: 	Fichier de configuration static du site
+		urls.py: 		Aiguilleurs d'URLs pour le master
+		slave_urls.py: 	Aiguilleurs d'URLs pour les slaves
+
+		static/:		Tous les fichiers statics, CSS, JS, Images
+
+		templates/:		Repertoire qui contient toutes les templates propre au site
+
+		templatetags/:	Repertoire qui contient des filtre et des tags de template personnalisés
+
+
+escapegape/:			Module de base du site escape game
+						Les modeles de base du site escape games, rooms, challenges, raspberry pi, les remote pin
+	models.py:			Fichier qui contient les modeles
+	admin.py:			Fichier qui contient le mapping des modeles pour l'admin et le custom SiteAdmin
+	libraspi.py:		Bibliotheque de fonctions pour interragir avec les pins des Raspberry Pis
+
+api/:					Partie slave API REST
+	tasks.py: 			Contient les taches de fond (module background_tasks) qui monitorent l'état des pin sur
+						les Rasberry Pis en fonction de la configuration en base de données
+	urls.py:			Contient l'aiguillage des URLs du module:
+						- /api/challenge/<action>/<pin>/ (action: validate|reset)
+						- /api/door/<action>/<pin>/ (action: lock|unlock)
+						- /api/led/<action>/<pin>/ (action: on/off)
+						Contient egalement le code responsable d'ajouter les taches de fond pour chaque pin du Raspberry Pi
+	views.py:			Les vues du module api, a savoir l'implementation des méthodes REST
+
+web/:					Partie master Interface web du gamemaster
+	urls.py				Aiguilleurs d'URLs pour la partie web
+						- /: Renvoi vers l'index pour choisir l'escape game (WEB)
+						- /<game-slug>/: Renvoi vers la page de controle de l'escape game qui correspond au game-slug (WEB)
+						- /<game-slug>/start/: Déclenche la lecture la video, puis ouvre les portes SAS et Couloir lorsque la lecture est terminée (REST)
+						- /<game-slug>/reset/: Réinitialise l'escape game (fermeture de toutes les portes, état des challenges passe a non-résolu, etc) (REST)
+						- /<game-slug>/status/: Renvoi un fichier JSON décrivant létat de l'escape game en cours (portes, resolution des challenges) (REST)
+						- /<slug:game_slug>/video/<str:action>/: (action: start|stop) Déclenche la lecture de la vidéo (REST)
+						- /<slug:game_slug>/<slug:room_slug>/<str:action>/: (action: lock|unlock) Active l'ouverture ou la fermeture de la porte de la piece qui correspond au room-slug (REST)
+						- /<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/<str:action>/: (action: validate|reset) Permet de changer l'état de résolution d'un challenge (REST)
+	views.py:			Les vues du modules web
+
+conf/:					Contient des templates de fichiers de configuration systeme pour Nginx et UWSGI.
+
+scripts/:				Contient tous les scripts systemes, de provisioning, de tests etc.
+
+jsonexport/:			Module d'import/export JSON pour la configuration des escape games etc.
+
+multimedia/:			Module pour gerer les modeles multimedia (Images, Videos, VideoPlayers)
