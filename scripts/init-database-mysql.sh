@@ -11,13 +11,21 @@ DBHOST='localhost'
 
 echo "[client]" > "${HOME}/.my.cnf"
 
+MYSQL_VERSION=$(sudo mysql -s -N -e "select @@version")
+VERSION_PREFIX=$(echo $MYSQL_VERSION | tr '.' '\n' | head -n 2 | tr '\n' '.' | sed 's/\.$//')
+SUPPORT_IF_EXISTS=$(echo "$VERSION_PREFIX>=5.7" | bc)
+echo $SUPPORT_IF_EXISTS
+IF_EXISTS=''
+if [ "$SUPPORT_IF_EXISTS" -eq '1' ]; then
+	IF_EXISTS='IF EXISTS '
+fi
+
 # Only the MySQL root user can drop or create the database, insert users etc
-sudo mysql -u root -e "
-	DROP DATABASE IF EXISTS ${DBNAME};
-	DROP USER IF EXISTS '${DBUSER}'@'${DBHOST}';
-	CREATE DATABASE ${DBNAME} CHARACTER SET utf8;
-	CREATE USER '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}';
-	GRANT ALL PRIVILEGES ON escapegame.* TO '${DBUSER}'@'${DBHOST}';"
+sudo mysql -u root -e "DROP USER $IF_EXISTS '${DBUSER}'@'${DBHOST}'"
+sudo mysql -u root -e "DROP DATABASE IF EXISTS ${DBNAME}"
+sudo mysql -u root -e "CREATE DATABASE ${DBNAME} CHARACTER SET utf8"
+sudo mysql -u root -e "CREATE USER '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'"
+sudo mysql -u root -e "GRANT ALL PRIVILEGES ON escapegame.* TO '${DBUSER}'@'${DBHOST}'"
 
 # Create MySQL user config
 cat <<EOF > ${HOME}/.my.cnf
