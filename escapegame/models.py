@@ -4,21 +4,16 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from constance import config
 
-from jsonexport.util import generic_json_import, generic_json_import_list
+from escapegame import libraspi
 
 from multimedia.models import *
 
 from controllers.models import *
 
+from jsonexport.util import generic_json_import, generic_json_import_list
+
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
-
-from escapegame import libraspi
-
-import os
-import socket
-import requests
-import traceback
 
 
 # Escape game classes
@@ -53,20 +48,19 @@ class EscapeGame(models.Model):
 		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(**kwargs)
 
-	def set_door_locked(self, door, locked):
+	def set_door_locked(self, door_pin, locked):
 		try:
-			if door == 'sas':
-				door_pin = self.sas_door_pin
-
-			elif door == 'corridor':
-				door_pin = self.corridor_door_pin
-
-			else:
-				raise Exception('Invalid door \'%s\'' % door)
+			if door_pin not in [ self.sas_door_pin, self.corridor_door_pin ]:
+				raise Exception('Invalid door pin: %d' % door_pin)
 
 			status, message = libraspi.set_door_locked(door_pin, locked)
 			if status == 0:
-				self.sas_door_locked = locked
+
+				if door_pin == self.sas_door_pin:
+					self.sas_door_locked = locked
+				elif door_pin == self.corridor_door_pin:
+					self.corridor_door_locked = locked
+
 				self.save()
 
 			return status, message

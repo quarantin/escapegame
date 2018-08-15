@@ -122,7 +122,7 @@ def escapegame_reset(request, game_slug):
 			})
 
 		# Close SAS door
-		status, message = game.set_sas_door_locked(True)
+		status, message = game.set_door_locked(game.sas_door_pin, True)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -130,7 +130,7 @@ def escapegame_reset(request, game_slug):
 			})
 
 		# Close corridor door
-		status, message = game.set_corridor_door_locked(True)
+		status, message = game.set_door_locked(game.corridor_door_pin, True)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
