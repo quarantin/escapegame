@@ -57,7 +57,7 @@ except Exception as err:
 		pass
 
 	# MySQL
-	if err.startswith('(1146, "Table \'escapegame.escapegame_raspberrypi\' doesn\'t exist")'):
+	if err.startswith('(1146, "Table \'escapegame.controllers_raspberrypi\' doesn\'t exist")'):
 		pass
 
 	# No Raspberry Pi yet in database, or we are the master
