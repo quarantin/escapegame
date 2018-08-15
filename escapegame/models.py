@@ -10,7 +10,7 @@ from multimedia.models import *
 
 from controllers.models import *
 
-from jsonexport.util import generic_json_import, generic_json_import_list
+from jsonexport.decorators import json_import
 
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
@@ -18,6 +18,7 @@ logger = AppConfig.logger
 
 # Escape game classes
 
+@json_import
 class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -37,12 +38,6 @@ class EscapeGame(models.Model):
 
 	def __str__(self):
 		return self.escapegame_name
-
-	def json_import(jsondata):
-		return generic_json_import(EscapeGame, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(EscapeGame, jsondata)
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
@@ -68,6 +63,7 @@ class EscapeGame(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
+@json_import
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -83,12 +79,6 @@ class EscapeGameRoom(models.Model):
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
-
-	def json_import(jsondata):
-		return generic_json_import(EscapeGameRoom, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(EscapeGameRoom, jsondata)
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.room_name)
@@ -107,6 +97,7 @@ class EscapeGameRoom(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
+@json_import
 class EscapeGameChallenge(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -120,12 +111,6 @@ class EscapeGameChallenge(models.Model):
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
-
-	def json_import(jsondata):
-		return generic_json_import(EscapeGameChallenge, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(EscapeGameChallenge, jsondata)
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.challenge_name)

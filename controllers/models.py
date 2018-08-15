@@ -1,10 +1,11 @@
 from django.db import models
 from constance import config
 
-from jsonexport.util import generic_json_import, generic_json_import_list
+from jsonexport.decorators import json_import
 
 # Controllers classes
 
+@json_import
 class RaspberryPi(models.Model):
 
 	name = models.CharField(max_length=255)
@@ -14,16 +15,11 @@ class RaspberryPi(models.Model):
 	def __str__(self):
 		return self.name
 
-	def json_import(jsondata):
-		return generic_json_import(RaspberryPi, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(RaspberryPi, jsondata)
-
 	class Meta:
 		verbose_name = 'Raspberry Pi'
 		verbose_name_plural = 'Raspberry Pis'
 
+@json_import
 class RemoteChallengePin(models.Model):
 	
 	name = models.CharField(max_length=255)
@@ -34,12 +30,6 @@ class RemoteChallengePin(models.Model):
 
 	def __str__(self):
 		return self.name
-
-	def json_import(jsondata):
-		return generic_json_import(RemoteChallengePin, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(RemoteChallengePin, jsondata)
 
 	def save(self, **kwargs):
 
@@ -54,6 +44,7 @@ class RemoteChallengePin(models.Model):
 
 		super(RemoteChallengePin, self).save(**kwargs)
 
+@json_import
 class RemoteDoorPin(models.Model):
 
 	name = models.CharField(max_length=255)
@@ -64,12 +55,6 @@ class RemoteDoorPin(models.Model):
 
 	def __str__(self):
 		return self.name
-
-	def json_import(jsondata):
-		return generic_json_import(RemoteDoorPin, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(RemoteDoorPin, jsondata)
 
 	def save(self, **kwargs):
 
@@ -83,6 +68,7 @@ class RemoteDoorPin(models.Model):
 
 		super(RemoteDoorPin, self).save(**kwargs)
 
+@json_import
 class RemoteLedPin(models.Model):
 
 	name = models.CharField(max_length=255)
@@ -93,12 +79,6 @@ class RemoteLedPin(models.Model):
 
 	def __str__(self):
 		return self.name
-
-	def json_import(jsondata):
-		return generic_json_import(RemoteLedPin, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(RemoteLedPin, jsondata)
 
 	def save(self, **kwargs):
 
