@@ -147,8 +147,10 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 
 			app_dict['models'] = new_models
 
-		# For app jsonexport, we want to change the 'jsonexport' URL part to simply 'json'
+		# For app jsonexport, we want the models in reverse order,
+		# and we want to change the 'jsonexport' URL part to simply 'json'
 		elif app == 'jsonexport':
+			app_dict['models'] = reversed(models)
 			app_dict['app_url'] = app_dict['app_url'].replace('jsonexport', 'json')
 			for model in models:
 				if 'admin_url' in model:
