@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 	'api',
 	'web',
 	'escapegame',
+	'controllers',
 	'multimedia',
 	'jsonexport',
 	'corsheaders',
