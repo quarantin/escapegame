@@ -14,7 +14,6 @@ echo "[client]" > "${HOME}/.my.cnf"
 MYSQL_VERSION=$(sudo mysql -s -N -e "select @@version")
 VERSION_PREFIX=$(echo $MYSQL_VERSION | tr '.' '\n' | head -n 2 | tr '\n' '.' | sed 's/\.$//')
 SUPPORT_IF_EXISTS=$(echo "$VERSION_PREFIX>=5.7" | bc)
-echo $SUPPORT_IF_EXISTS
 IF_EXISTS=''
 if [ "$SUPPORT_IF_EXISTS" -eq '1' ]; then
 	IF_EXISTS='IF EXISTS '
