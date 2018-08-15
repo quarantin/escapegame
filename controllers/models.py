@@ -1,6 +1,8 @@
 from django.db import models
 from constance import config
 
+from jsonexport.util import generic_json_import, generic_json_import_list
+
 # Controllers classes
 
 class RaspberryPi(models.Model):
