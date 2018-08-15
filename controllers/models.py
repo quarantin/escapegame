@@ -18,6 +18,10 @@ class RaspberryPi(models.Model):
 	def json_import_list(jsondata):
 		return generic_json_import_list(RaspberryPi, jsondata)
 
+	class Meta:
+		verbose_name = 'Raspberry Pi'
+		verbose_name_plural = 'Raspberry Pis'
+
 class RemoteChallengePin(models.Model):
 	
 	name = models.CharField(max_length=255)
@@ -104,3 +108,6 @@ class RemoteLedPin(models.Model):
 
 		super(RemoteLedPin, self).save(**kwargs)
 
+	class Meta:
+		verbose_name = 'Remote LED pin'
+		verbose_name_plural = 'Remote LED pins'
