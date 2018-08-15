@@ -7,6 +7,8 @@ from .models import JsonImportForm, JsonExportForm
 
 import json
 
+import traceback
+
 @csrf_exempt
 def json_index(request):
 
@@ -16,7 +18,7 @@ def json_index(request):
 		return HttpResponse(template.render(context, request))
 
 	except Exception as err:
-		return HttpResponseServerError('Error: %s' % err)
+		return HttpResponseServerError('Error: %s' % traceback.format_exc())
 
 @csrf_exempt
 def json_import(request):
@@ -43,8 +45,6 @@ def json_import(request):
 
 	except Exception as err:
 		return HttpResponseServerError('Error: %s' % traceback.format_exc())
-
-import traceback
 
 @csrf_exempt
 def json_export(request):
