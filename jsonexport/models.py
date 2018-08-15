@@ -68,6 +68,9 @@ def get_sorted_query_set(queryset, excluded_fields):
 
 	return result
 
+
+# JSON Import/Export models and forms
+
 class JsonImport(models.Model):
 	json_configuration = models.FileField()
 
