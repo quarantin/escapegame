@@ -1,4 +1,5 @@
 from escapegame.models import *
+from multimedia.models import *
 
 #VideoPlayer(video_player_name='Media Player', video_player_path='/usr/bin/mpv').save()
 #VideoPlayer(video_player_name='OMX Player', video_player_path='/usr/bin/omxplayer').save()

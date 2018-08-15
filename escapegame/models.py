@@ -4,6 +4,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from constance import config
 
+from multimedia.models import Image, Video
+
+from jsonexport.util import generic_json_import, generic_json_import_list
+
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
@@ -13,99 +17,6 @@ import os
 import socket
 import requests
 import traceback
-
-# Generic JSON import/export
-
-def generic_json_import(model, dic):
-
-	try:
-		fin = open('/tmp/debug-wtf.log', 'w+')
-		try:
-			obj = model.objects.get(id=dic['id'])
-			for key, val in dic.items():
-				setattr(obj, key, val)
-		except:
-			obj = model(**dic)
-
-		obj.save()
-
-		fin.close()
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s<br>\n%s' % (err, traceback.format_exc().replace('\n', '<br>\n'))
-
-def generic_json_import_list(model, listdic):
-
-	try:
-		for dic in listdic:
-			status, message = generic_json_import(model, dic)
-			if status != 0:
-				return status, message
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-
-# Media classes
-
-class Image(models.Model):
-
-	TYPE_CHALL = 'challenge'
-	TYPE_DOOR  = 'door'
-	TYPE_MAP   = 'map'
-	TYPE_ROOM  = 'room'
-
-	IMAGE_TYPE_CHOICES = (
-		(TYPE_CHALL, 'Challenge'),
-		(TYPE_DOOR,  'Door'),
-		(TYPE_MAP,   'Map'),
-		(TYPE_ROOM,  'Room'),
-	)
-
-	image_name = models.CharField(max_length=255)
-	image_type = models.CharField(max_length=255, choices=IMAGE_TYPE_CHOICES, default=TYPE_ROOM)
-	image_path = models.ImageField(upload_to=config.UPLOAD_PATH)
-
-	def __str__(self):
-		return '%s [%s] (%s)' % (self.image_name, self.image_type, self.image_path)
-
-	def json_import(jsondata):
-		return generic_json_import(Image, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(Image, jsondata)
-
-class Video(models.Model):
-
-	video_name = models.CharField(max_length=255)
-	video_path = models.CharField(max_length=255)
-
-	def __str__(self):
-		return '%s (%s)' % (self.video_name, self.video_path)
-
-	def json_import(jsondata):
-		return generic_json_import(Video, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(Video, jsondata)
-
-class VideoPlayer(models.Model):
-
-	video_player_name = models.CharField(max_length=255)
-	video_player_path = models.CharField(max_length=255)
-
-	def __str__(self):
-		return '%s (%s)' % (self.video_player_name, self.video_player_path)
-
-	def json_import(jsondata):
-		return generic_json_import(VideoPlayer, jsondata)
-
-	def json_import_list(jsondata):
-		return generic_json_import_list(VideoPlayer, jsondata)
 
 
 # Escape game classes
