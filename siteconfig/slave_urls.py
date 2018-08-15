@@ -34,11 +34,11 @@ urlpatterns = [
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
-	# Django admin pages
-	path('admin/', admin.site.urls),
-
 	# Escape games admin pages
-	path('admin/escapegame/', myadmin.site.urls),
+	path('admin/', myadmin.site.urls),
+
+	# Django admin pages
+	path('admin/django/', admin.site.urls),
 
 	# REST API (slave)
 	path('api/', include('api.urls')),
