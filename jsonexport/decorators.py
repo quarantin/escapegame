@@ -1,33 +1,39 @@
+"""
+	Implement decorator `json_import`
+"""
+def json_import(model):
 
-# Generic JSON import functions
+	def json_import (self, dic):
 
-def generic_json_import(model, dic):
-
-	try:
 		try:
-			obj = model.objects.get(id=dic['id'])
-			for key, val in dic.items():
-				setattr(obj, key, val)
-		except:
-			obj = model(**dic)
+			try:
+				obj = self.model.objects.get(id=dic['id'])
+				for key, val in dic.items():
+					setattr(obj, key, val)
+			except:
+				obj = self.model(**dic)
 
-		obj.save()
+			obj.save()
 
-		return 0, 'Success'
+			return 0, 'Success'
 
-	except Exception as err:
-		return 1, 'Error: %s<br>\n%s' % (err, traceback.format_exc().replace('\n', '<br>\n'))
+		except Exception as err:
+			return 1, 'Error: %s<br>\n%s' % err
 
-def generic_json_import_list(model, listdic):
+	def json_import_list(self, listdic):
 
-	try:
-		for dic in listdic:
-			status, message = generic_json_import(model, dic)
-			if status != 0:
-				return status, message
+		try:
+			for dic in listdic:
+				status, message = self.json_import(dic)
+				if status != 0:
+					return status, message
 
-		return 0, 'Success'
+			return 0, 'Success'
 
-	except Exception as err:
-		return 1, 'Error: %s' % err
+		except Exception as err:
+			return 1, 'Error: %s' % err
 
+	model.json_import = json_import
+	model.json_import_list = json_import_list
+
+	return model
