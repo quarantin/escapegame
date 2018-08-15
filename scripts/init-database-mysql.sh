@@ -35,6 +35,9 @@ password = ${DBPASS}
 default-character-set = utf8
 EOF
 
+# Clean all existings migrations to avoid conflicts
+rm -f */migrations/0*.py
+
 # Create database
 ${PYTHON} manage.py makemigrations
 ${PYTHON} manage.py migrate
