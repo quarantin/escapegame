@@ -131,7 +131,7 @@ chall.save()
 #url_lock = 'http://escapegame.local/1001-nuits/fontaine/lock/'
 #url_unlock = 'http://escapegame.local/1001-nuits/fontaine/unlock/'
 #remote_pin = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi_1001_nuits, room=room1, url_callback_lock=url_lock, url_callback_unlock=url_unlock)
-remote_door_pin_fontaine = RemoteDoorPin(name='Pin 1001-nuits porte fontaine', raspberrypi=raspi_1001_nuits, room=room_fontaine)
+remote_door_pin_fontaine = RemoteDoorPin(name='Remote Door Pin: 1001-nuits / fontaine', raspberrypi=raspi_1001_nuits, room=room_fontaine)
 remote_door_pin_fontaine.save()
 
 # Remote challenge pin Les 1001 nuits / La fontaine / La fontaine
@@ -139,6 +139,6 @@ remote_door_pin_fontaine.save()
 #url_validate = 'http://escapegame.local/1001-nuits/fontaine/room1-chall1/validate/'
 #url_reset = 'http://escapegame.local/1001-nuits/fontaine/room1-chall1/reset/'
 #remote_pin = RemoteChallengePin(name='Pin 1001-nuits salle fontaine chall 1', raspberrypi=raspi_1001_nuits, challenge=chall1)
-remote_challenge_pin_fontaine = RemoteChallengePin(name='Pin 1001-nuits salle fontaine chall 1', raspberrypi=raspi_1001_nuits, challenge=chall_fontaine)
+remote_challenge_pin_fontaine = RemoteChallengePin(name='Remote Challenge Pin: 1001-nuits / fontaine', raspberrypi=raspi_1001_nuits, challenge=chall_fontaine)
 remote_challenge_pin_fontaine.save()
 
