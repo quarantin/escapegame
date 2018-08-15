@@ -26,8 +26,8 @@ from escapegame import admin as myadmin
 
 urlpatterns = [
 
-	# TODO Just for debug, must redirect to /admin for production
 	# Landing page
+	# TODO Just for debug, must redirect to /admin for production
 	#path('', RedirectView.as_view(url='/admin', permanent=False)),
 	path('', RedirectView.as_view(url='/web/', permanent=False)),
 
@@ -40,9 +40,13 @@ urlpatterns = [
 	# Django admin pages
 	path('admin/django/', admin.site.urls),
 
+	# JSON Import / Export admin pages
+	path('admin/json/', include('jsonexport.urls')),
+
 	# REST API (slave)
 	path('api/', include('api.urls')),
 
+	# Web interface
 	# TODO Just for debug, must be removed for production
 	path('web/', include('web.urls')),
 

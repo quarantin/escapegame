@@ -8,7 +8,7 @@ from .models import JsonImportForm, JsonExportForm
 import json
 
 @csrf_exempt
-def json_index_view(request):
+def json_index(request):
 
 	try:
 		context = {}
@@ -19,7 +19,7 @@ def json_index_view(request):
 		return HttpResponseServerError('Error: %s' % err)
 
 @csrf_exempt
-def json_import_view(request):
+def json_import(request):
 
 	try:
 		if request.method == 'POST':
@@ -47,7 +47,7 @@ def json_import_view(request):
 import traceback
 
 @csrf_exempt
-def json_export_view(request):
+def json_export(request):
 
 	try:
 		if request.method == 'POST':

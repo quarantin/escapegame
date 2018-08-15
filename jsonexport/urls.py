@@ -22,29 +22,17 @@ from django.urls import include, path
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
-from escapegame import admin as myadmin
+from . import views
 
 urlpatterns = [
 
-	# Landing page
-	path('', RedirectView.as_view(url='/web/', permanent=False)),
+	# JSON Import/Export index
+	path('', views.json_index, name='json_index'),
 
-	# Authentication pages
-	path('accounts/', include('django.contrib.auth.urls')),
+	# JSON Export
+	path('export/', views.json_export, name='json_export'),
 
-	# Escape games admin pages
-	path('admin/', myadmin.site.urls),
+	# JSON Import
+	path('import/', views.json_import, name='json_import'),
 
-	# Django admin pages
-	path('admin/django/', admin.site.urls),
-
-	# JSON Import / Export admin pages
-	path('admin/json/', include('jsonexport.urls')),
-
-	# REST API (slave)
-	path('api/', include('api.urls')),
-
-	# Web interface
-	path('web/', include('web.urls')),
-
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

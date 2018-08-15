@@ -77,6 +77,10 @@ class JsonImport(models.Model):
 	def save(self, *args, **kwargs):
 		pass
 
+	class Meta:
+		verbose_name = 'JSON Import'
+		verbose_name_plural = 'JSON Import'
+
 class JsonImportForm(forms.ModelForm):
 
 	class Meta:
@@ -123,6 +127,10 @@ class JsonExport(models.Model):
 
 	def save(self, *args, **kwargs):
 		pass
+
+	class Meta:
+		verbose_name = 'JSON Export'
+		verbose_name_plural = 'JSON Export'
 
 class JsonExportForm(forms.ModelForm):
 

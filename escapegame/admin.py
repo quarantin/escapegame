@@ -6,8 +6,6 @@ from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.urls import reverse
 
-from jsonexport.views import json_index_view, json_import_view, json_export_view
-
 from .models import *
 
 from collections import OrderedDict
@@ -153,14 +151,16 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		elif app == 'jsonexport':
 			app_dict['app_url'] = app_dict['app_url'].replace('jsonexport', 'json')
 			for model in models:
-				model['admin_url'] = model['admin_url'].replace('jsonexport', 'json')
+				if 'admin_url' in model:
+					model['admin_url'] = model['admin_url'].replace('jsonexport/jsonexport', 'json/export')
+					model['admin_url'] = model['admin_url'].replace('jsonexport/jsonimport', 'json/import')
 
 		return app_dict
 
 	"""
 		Method to sort all applications and models according to different rules depending on the application
 	"""
-	def prepare_apps_dict(self, app_dict):
+	def prepare_app_list_dict(self, app_dict):
 
 		# Create new ordered dictionary to replace app dictionary
 		ordered_dict = OrderedDict()
@@ -181,21 +181,6 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		return app_dict
 
 	"""
-		Overrides `get_urls` to add our JSON import/export URLs.
-
-		Method: AdminSite.get_urls(self)
-		File: django/contrib/admin/sites.py
-	"""
-	def get_urls(self):
-		from django.urls import path
-
-		return super().get_urls() + [
-			path('json/', json_index_view),
-			path('json/import/', json_import_view),
-			path('json/export/', json_export_view),
-		]
-
-	"""
 		Overrides `get_app_list` so we can sort the app list to our liking on the main index page.
 
 		Method: AdminSite.get_app_list(self, request)
@@ -207,9 +192,9 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		app_dict = self._build_app_dict(request)
 
 		if 'app_label' in app_dict:
-			self.prepare_app_dict(app_dict)
+			app_dict = self.prepare_app_dict(app_dict)
 		else:
-			app_dict = self.prepare_apps_dict(app_dict)
+			app_dict = self.prepare_app_list_dict(app_dict)
 
 		#import pprint
 		#pp = pprint.PrettyPrinter()
@@ -228,7 +213,7 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		if not app_dict:
 			raise Http404('The requested admin page does not exist.')
 		# Sort the models alphabetically within each app.
-		self.prepare_app_dict(app_dict)
+		app_dict = self.prepare_app_dict(app_dict)
 		app_name = apps.get_app_config(app_label).verbose_name
 		context = dict(
 			self.each_context(request),
@@ -246,15 +231,16 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		], context)
 
 
-# Register all admin classes to our custom admin site
 
+# Create our custom admin site
 site = EscapeGameAdminSite(name='escapegame')
 
+# Register our models to our custom admin site
 site.register(EscapeGame, EscapeGameAdmin)
 site.register(EscapeGameRoom, EscapeGameRoomAdmin)
 site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)
 
-# Import Constance into our custom admin site
+# Register Constance to our custom admin site
 from constance.admin import Config as ConstanceConfig, ConstanceAdmin
 site.register([ConstanceConfig], ConstanceAdmin)
 admin.site.unregister([ConstanceConfig])

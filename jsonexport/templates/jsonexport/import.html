@@ -5,14 +5,11 @@
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo;
-{% for app in app_list %}
-{{ app.name }}
-{% endfor %}
-<a href="/admin/json/">{% trans 'JSON' %}</a>
-&rsaquo;
-Import
+	<a href="{% url 'escapegame:index' %}">{% trans 'Home' %}</a>
+	&rsaquo;
+	<a href="{% url 'json_index' %}">{% trans 'JSON' %}</a>
+	&rsaquo;
+	Import
 </div>
 {% endblock %}
 
