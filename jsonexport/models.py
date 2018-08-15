@@ -18,9 +18,9 @@ model_mapping = [
 	('rooms', EscapeGameRoom),
 	('challenges', EscapeGameChallenge),
 	('raspberry_pis', RaspberryPi),
+	('remote_door_pins', RemoteDoorPin),
 	('remote_challenge_pins', RemoteChallengePin),
-	('remote_door_pins', RemoteChallengePin),
-	('remote_led_pins', RemoteChallengePin),
+	('remote_led_pins', RemoteLedPin),
 ]
 
 top_fields = [
@@ -176,6 +176,6 @@ class JsonExportForm(forms.ModelForm):
 
 		for jsonkey, model in model_mapping:
 			if post.get(jsonkey):
-				config[jsonkey] = get_sorted_query_set(model.objects.all().order_by('id').values(), [ 'door_locked', 'state' ])
+				config[jsonkey] = get_sorted_query_set(model.objects.all().order_by('id').values(), [ 'door_locked', 'solved' ])
 
 		return config
