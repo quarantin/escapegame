@@ -31,7 +31,7 @@ class RestToken(Token):
 		token, expire = RestToken.__generate_token(host, user)
 		if token and token.has_expired():
 			token.delete()
-			token, expire = RestToken.__generate_token(user)
+			token, expire = RestToken.__generate_token(host, user)
 
 		return token, expire
 
