@@ -1,6 +1,6 @@
 from django.template import loader
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseServerError
 
 from .models import JsonImportForm, JsonExportForm
@@ -9,7 +9,7 @@ import json
 
 import traceback
 
-@csrf_exempt
+@login_required
 def json_index(request):
 
 	try:
@@ -20,7 +20,7 @@ def json_index(request):
 	except Exception as err:
 		return HttpResponseServerError('Error: %s' % traceback.format_exc())
 
-@csrf_exempt
+@login_required
 def json_import(request):
 
 	try:
@@ -46,7 +46,7 @@ def json_import(request):
 	except Exception as err:
 		return HttpResponseServerError('Error: %s' % traceback.format_exc())
 
-@csrf_exempt
+@login_required
 def json_export(request):
 
 	try:
