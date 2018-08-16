@@ -5,7 +5,7 @@
 TIMEZONE='Europe/Paris'
 DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' 'mysql-server' 'nginx-light' 'uwsgi' 'uwsgi-plugin-python3' )
 
-PIP_PACKAGES=( 'django' 'django-cors-headers' 'django-background-tasks' 'django-constance[database]' 'mysqlclient' )
+PIP_PACKAGES=( 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-rest-framework' 'mysqlclient' )
 
 # Install Debian packages
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"

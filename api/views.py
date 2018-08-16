@@ -1,14 +1,62 @@
 # -*- coding: utf-8 -*-
 
-from constance import config
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
+from constance import config
 
 from escapegame import libraspi
 from escapegame.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
 
-import os, socket, subprocess
+from .models import RestToken
+
+import json, socket, traceback
+
+
+"""
+	REST Token Authentication
+"""
+@csrf_exempt
+def get_token(request):
+
+	method = 'get_auth_token'
+
+	try:
+		jsondata = json.loads(request.body.decode('utf-8'))
+
+		username = jsondata['username']
+		password = jsondata['password']
+
+		message = 'Info: Invalid username or password supplied'
+		user = authenticate(request, username=username, password=password)
+		if user:
+
+			message = 'Info: Token generation failed for user `%s`' % username
+			token, expire = RestToken.get_token(request.META['REMOTE_ADDR'], user)
+			print("TOKEN: %s, CREATED: %s, EXPIRE: %s, HOST: %s" % (token, token.created, expire, token.host))
+			if token:
+				return JsonResponse({
+					'status': 0,
+					'message': 'Success',
+					'method': method,
+					'expire': expire,
+					'token': token.key,
+				})
+
+		return JsonResponse({
+				'status': 1,
+				'message': message,
+				'method': method,
+			})
+
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'message': 'Error: %s' % traceback.format_exc(),
+			'method': method,
+		})
 
 """
 	Challenge controls, no login required for now (REST API)

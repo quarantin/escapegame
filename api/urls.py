@@ -15,6 +15,9 @@ logger = AppConfig.logger
 
 urlpatterns = [
 
+	# REST Token Authentication
+	path('get-token/', views.get_token),
+
 	# Challenge controls
 	path('challenge/<str:action>/<int:pin>/', views.set_challenge_state),
 
