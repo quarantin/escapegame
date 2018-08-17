@@ -33,7 +33,7 @@ game_1001_nuits.save()
 
 # Room La fontaine
 
-room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits, door_image=map_door_room_fontain)
+room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits, door_unlocked_image=map_door_room_fontain)
 room_fontaine.save()
 
 # Challenge: La fontaine

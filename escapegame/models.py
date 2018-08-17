@@ -91,9 +91,9 @@ class EscapeGame(models.Model):
 			for room in rooms:
 
 				# Draw room door if it's opened
-				if not room.door_locked and room.door_image:
-					door_image = PIL.open(room.door_image.image_path.path)
-					map_image.paste(door_image, (0, 0), door_image)
+				if not room.door_locked and room.door_unlocked_image:
+					door_unlocked_image = PIL.open(room.door_unlocked_image.image_path.path)
+					map_image.paste(door_unlocked_image, (0, 0), door_unlocked_image)
 
 				# For each challenge in this room...
 				challs = EscapeGameChallenge.objects.filter(room=room)
@@ -128,7 +128,7 @@ class EscapeGameRoom(models.Model):
 	door_locked = models.BooleanField(default=True)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image')
-	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='door_image')
+	door_unlocked_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='door_unlocked_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -161,6 +161,7 @@ class EscapeGameChallenge(models.Model):
 	solved = models.BooleanField(default=False)
 
 	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_image')
+	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_solved_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)

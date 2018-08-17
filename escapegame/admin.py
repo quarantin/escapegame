@@ -27,6 +27,9 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'corridor_door_pin',
 		'sas_door_locked',
 		'corridor_door_locked',
+		'map_image',
+		'sas_door_image',
+		'corridor_door_image',
 	]
 	fieldsets = (
 		('General', { 'fields': (
@@ -60,6 +63,8 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'raspberrypi',
 		'door_pin',
 		'door_locked',
+		'room_image',
+		'door_unlocked_image',
 	]
 	fieldsets = (
 		('General', { 'fields': (
@@ -74,7 +79,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			)}),
 		('Maps', { 'fields': (
 			'room_image',
-			'door_image',
+			'door_unlocked_image',
 			)})
 	)
 
@@ -82,8 +87,16 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'slug', )
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
-	list_display = ( 'challenge_name', 'slug', 'room', 'challenge_pin', 'solved' )
 	prepoluated_fields = { 'slug': ( 'challenge_name', )}
+	list_display = [
+		'challenge_name',
+		'slug',
+		'room',
+		'challenge_pin',
+		'solved',
+		'challenge_image',
+		'challenge_solved_image',
+	]
 	fieldset = (
 		('General', { 'fields': (
 			'challenge_name',
@@ -96,6 +109,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			)}),
 		('Maps', { 'fields': (
 			'challenge_image',
+			'challenge_solved_image',
 			)}),
 	)
 
