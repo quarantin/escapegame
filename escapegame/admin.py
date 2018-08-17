@@ -49,7 +49,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', 'sas_door_locked', 'corridor_door_locked' )
+		return self.readonly_fields + ( 'slug', )
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	prepoluated_fields = { 'slug': ( 'room_name', )}
@@ -79,7 +79,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', 'door_locked' )
+		return self.readonly_fields + ( 'slug', )
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	list_display = ( 'challenge_name', 'slug', 'room', 'challenge_pin', 'solved' )
@@ -100,7 +100,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', 'solved' )
+		return self.readonly_fields + ( 'slug', )
 
 
 # Register admin site
