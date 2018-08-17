@@ -42,9 +42,9 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'corridor_door_locked',
 			)}),
 		('Maps', { 'fields': (
-			'map_image_path',
-			'sas_door_image_path',
-			'corridor_door_image_path',
+			'map_image',
+			'sas_door_image',
+			'corridor_door_image',
 			)}),
 	)
 
@@ -73,8 +73,8 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'door_locked',
 			)}),
 		('Maps', { 'fields': (
-			'room_image_path',
-			'door_image_path',
+			'room_image',
+			'door_image',
 			)})
 	)
 
@@ -95,7 +95,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			'solved',
 			)}),
 		('Maps', { 'fields': (
-			'challenge_image_path',
+			'challenge_image',
 			)}),
 	)
 
