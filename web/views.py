@@ -10,7 +10,7 @@ from escapegame import libraspi
 
 from constance import config
 
-import os, subprocess
+import os, subprocess, traceback
 
 """
 	Escape Game Operator Pages
@@ -215,6 +215,16 @@ def escapegame_status(request, game_slug):
 			'status': 1,
 			'message': 'Error: %s' % err,
 		});
+
+def escapegame_map(request, game_slug):
+
+	try:
+		game = EscapeGame.objects.get(slug=game_slug)
+
+		return HttpResponse(game.draw_map(), content_type='image/png')
+
+	except Exception as err:
+		return HttpResponse('Error: %s' % traceback.format_exc(), status=500)
 
 """
 	Video controls, no login required for now (REST API)

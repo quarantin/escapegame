@@ -86,4 +86,16 @@
 	</div>
 	{% endfor %}
 {% endif %}
+
+	<div class="col head_block">
+		<label class="head_block head_border">Plan &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
+		<div class="col head_block">
+			{% if not game.map_image %}
+			<span>No map data available</span>
+			{% else %}
+			<img class="map" src="map.png">
+			{% endif %}
+		</div>
+	</div>
+
 {% endblock %}

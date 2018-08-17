@@ -4,6 +4,17 @@ from multimedia.models import *
 #VideoPlayer(video_player_name='Media Player', video_player_path='/usr/bin/mpv').save()
 #VideoPlayer(video_player_name='OMX Player', video_player_path='/usr/bin/omxplayer').save()
 
+# Images
+
+map_image = Image(image_name='Full Map', image_path='uploads/map-base.png')
+map_image.save()
+
+sas_door_image = Image(image_name='SAS Door', image_path='uploads/map-sas-door.png')
+sas_door_image.save()
+
+map_door_room_fontain = Image(image_name='Door Room Fontain', image_path='uploads/map-door-room-fontain.png')
+map_door_room_fontain.save()
+
 # Videos
 
 video_brief = Video(video_name='Video demo', video_path='test.h264')
@@ -17,12 +28,12 @@ raspi_1001_nuits.save()
 #
 # Escape game: Les 1001 nuits
 #
-game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video_brief=video_brief)
+game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video_brief=video_brief, map_image=map_image, sas_door_image=sas_door_image)
 game_1001_nuits.save()
 
 # Room La fontaine
 
-room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits)
+room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits, door_image=map_door_room_fontain)
 room_fontaine.save()
 
 # Challenge: La fontaine

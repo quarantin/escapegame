@@ -12,6 +12,10 @@ from controllers.models import *
 
 from jsonexport.decorators import json_import
 
+from PIL import Image as PIL
+
+from io import BytesIO
+
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
@@ -63,6 +67,55 @@ class EscapeGame(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
+	def draw_map(self):
+		try:
+			# If this escape game doesn't have a map image, then there is nothing to draw
+			if not self.map_image:
+				return None
+
+			# Draw the base map with locked door and unsolved challenges
+			map_image = PIL.open(self.map_image.image_path.path)
+
+			# Draw SAS door if it's opened
+			if not self.sas_door_locked and self.sas_door_image:
+				sas_door_image = PIL.open(self.sas_door_image.image_path.path)
+				map_image.paste(sas_door_image, (0, 0), sas_door_image)
+
+			# Draw corridor door if it's opened
+			if not self.corridor_door_locked and self.corridor_door_image:
+				corridor_door_image = PIL.open(self.corridor_door_image.image_path.path)
+				map_image.paste(corridor_door_image, (0, 0), corridor_door_image)
+
+			# For each room of this escape game...
+			rooms = EscapeGameRoom.objects.filter(escapegame=self)
+			for room in rooms:
+
+				# Draw room door if it's opened
+				if not room.door_locked and room.door_image:
+					door_image = PIL.open(room.door_image.image_path.path)
+					map_image.paste(door_image, (0, 0), door_image)
+
+				# For each challenge in this room...
+				challs = EscapeGameChallenge.objects.filter(room=room)
+				for chall in challs:
+
+					# Draw the challenge if it's solved
+					if chall.solved and chall.challenge_image:
+						chall_image = PIL.open(chall.challenge_image.image_path.path)
+						map_image.paste(chall_image, (0, 0), chall_image)
+
+			# Prepare a byte buffer
+			bytes_io = BytesIO()
+
+			# Save the image to our byte buffer
+			map_image.save(bytes_io, 'PNG')
+
+			# Return the content of our byte buffer which is the raw image data
+			return bytes_io.getvalue()
+
+		except Exception as err:
+			return 1, 'Error: %s' % err
+
 @json_import
 class EscapeGameRoom(models.Model):
 
@@ -75,7 +128,7 @@ class EscapeGameRoom(models.Model):
 	door_locked = models.BooleanField(default=True)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image')
-	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_door_image')
+	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='door_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -107,7 +160,7 @@ class EscapeGameChallenge(models.Model):
 	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
 
-	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image')
+	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
