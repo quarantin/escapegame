@@ -173,9 +173,9 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, "siteconfig", "static"),
-]
+#STATICFILES_DIRS = [
+#	os.path.join(BASE_DIR, "siteconfig", "static"),
+#]
 
 HOME = os.environ.get('HOME') or '/home/pi'
 MEDIA_ROOT = os.path.join(HOME, 'media')
