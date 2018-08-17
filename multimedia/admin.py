@@ -9,7 +9,6 @@ from .models import *
 class ImageAdmin(admin.ModelAdmin):
 	list_display = [
 		'image_name',
-		'image_type',
 		'image_path',
 	]
 

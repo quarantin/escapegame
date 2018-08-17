@@ -32,9 +32,9 @@ class EscapeGame(models.Model):
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
 
-	map_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='game_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_MAP })
-	sas_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
-	corridor_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+	map_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='game_map_image_path')
+	sas_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image_path')
+	corridor_door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image_path')
 
 	def __str__(self):
 		return self.escapegame_name
@@ -74,8 +74,8 @@ class EscapeGameRoom(models.Model):
 	door_pin = models.IntegerField(default=5)
 	door_locked = models.BooleanField(default=True)
 
-	room_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image_path', limit_choices_to={ 'image_type': Image.TYPE_ROOM })
-	door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_door_image_path', limit_choices_to={ 'image_type': Image.TYPE_DOOR })
+	room_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image_path')
+	door_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_door_image_path')
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -107,7 +107,7 @@ class EscapeGameChallenge(models.Model):
 	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
 
-	challenge_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path', limit_choices_to={ 'image_type': Image.TYPE_CHALL })
+	challenge_image_path = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='chall_map_image_path')
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
