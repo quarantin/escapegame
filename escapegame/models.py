@@ -19,6 +19,9 @@ from io import BytesIO
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
+def paste_image(to_image, from_image_field):
+	from_image = PIL.open(from_image_field.image_path.path)
+	to_image.paste(from_image, (0, 0), from_image)
 
 # Escape game classes
 
@@ -78,31 +81,16 @@ class EscapeGame(models.Model):
 
 			# Draw SAS door if it's opened
 			if not self.sas_door_locked and self.sas_door_image:
-				sas_door_image = PIL.open(self.sas_door_image.image_path.path)
-				map_image.paste(sas_door_image, (0, 0), sas_door_image)
+				paste_image(map_image, self.sas_door_image)
 
 			# Draw corridor door if it's opened
 			if not self.corridor_door_locked and self.corridor_door_image:
-				corridor_door_image = PIL.open(self.corridor_door_image.image_path.path)
-				map_image.paste(corridor_door_image, (0, 0), corridor_door_image)
+				paste_image(map_image, self.corridor_door_image)
 
-			# For each room of this escape game...
+			# Draw each room of this escape game onto the map image
 			rooms = EscapeGameRoom.objects.filter(escapegame=self)
 			for room in rooms:
-
-				# Draw room door if it's opened
-				if not room.door_locked and room.door_unlocked_image:
-					door_unlocked_image = PIL.open(room.door_unlocked_image.image_path.path)
-					map_image.paste(door_unlocked_image, (0, 0), door_unlocked_image)
-
-				# For each challenge in this room...
-				challs = EscapeGameChallenge.objects.filter(room=room)
-				for chall in challs:
-
-					# Draw the challenge if it's solved
-					if chall.solved and chall.challenge_image:
-						chall_image = PIL.open(chall.challenge_image.image_path.path)
-						map_image.paste(chall_image, (0, 0), chall_image)
+				room.draw_map(map_image)
 
 			# Prepare a byte buffer
 			bytes_io = BytesIO()
@@ -150,6 +138,21 @@ class EscapeGameRoom(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
+	def draw_map(self, map_image):
+
+		# Draw room if there's an image for it
+		if self.room_image:
+			paste_image(map_image, self.room_image)
+
+		# Draw room door if it's unlocked
+		if not self.door_locked and self.door_unlocked_image:
+			paste_image(map_image, self.door_unlocked_image)
+
+		# Draw each challenge in this room onto the map
+		challs = EscapeGameChallenge.objects.filter(room=self)
+		for chall in challs:
+			chall.draw_map(map_image)
+
 @json_import
 class EscapeGameChallenge(models.Model):
 
@@ -178,3 +181,13 @@ class EscapeGameChallenge(models.Model):
 
 		except Exeption as err:
 			return 1, 'Error: %s' % err
+
+	def draw_map(self, map_image):
+
+		# Draw the challenge if there's an image for it
+		if self.challenge_image:
+			paste_image(map_image, self.challenge_image)
+
+		# Draw the challenge if it's solved
+		if self.solved and self.challenge_solved_image:
+			paste_image(map_image, self.challenge_solved_image)
