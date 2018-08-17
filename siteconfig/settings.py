@@ -169,17 +169,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-#STATICFILES_DIRS = [
-#	os.path.join(BASE_DIR, "siteconfig", "static"),
-#]
+# Media files (Uploaded)
 
-HOME = os.environ.get('HOME') or '/home/pi'
-MEDIA_ROOT = os.path.join(HOME, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# Constance settings
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
@@ -204,6 +204,9 @@ CONSTANCE_CONFIG = {
 	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
 	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
 }
+
+
+# CORS settings
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
