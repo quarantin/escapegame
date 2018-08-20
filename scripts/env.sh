@@ -11,3 +11,5 @@ SCRIPTDIR="$(dirname "${0}")"
 ROOTDIR="$(realpath "${SCRIPTDIR}/..")"
 
 HOSTNAME="$(hostname).local"
+
+MYSQL_ARCHIVE=/tmp/mysql-lib-folder.tar.gz
