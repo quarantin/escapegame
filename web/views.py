@@ -72,9 +72,27 @@ def escapegame_index(request, game_slug):
 
 	return HttpResponse(template.render(context, request))
 
+
 """
 	REST API (no authentication required for now)
 """
+
+def escapegame_pause(request, game_slug):
+
+	try:
+		game = EscapeGame.objects.get(slug=game_slug)
+
+		status, message = libraspi.video_control('pause', game.video)
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'message': 'Error: %s' % err,
+		})
 
 def escapegame_start(request, game_slug):
 
@@ -107,7 +125,7 @@ def escapegame_start(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
-def escapegame_reset(request, game_slug):
+def escapegame_stop(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -115,7 +133,7 @@ def escapegame_reset(request, game_slug):
 
 		# Stop video player
 		status, message = libraspi.video_control('stop', game.video)
-		if status != 0:
+		if message != 'Success':
 			return JsonResponse({
 				'status': status,
 				'message': message,

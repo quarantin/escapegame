@@ -1,0 +1,105 @@
+.logo > img {
+	width: 160px;
+	height: 200px;
+	text-align: center;
+}
+.title > h1 {
+	font-family: Avenir;
+	text-align: center;
+	margin-bottom: 50px;
+}
+
+.play_img {
+	background-image: url(img/icons8-play-100.png);
+}
+
+.reset_img {
+	background-image: url(img/icons8-stop-100.png);
+}
+
+.head_border {
+	border: solid black 1px;
+}
+
+.head_block {
+	text-align: center;
+	width: 50%;
+	margin: 10px auto !important;
+}
+
+button {
+	background: #FFF;
+	border:0;
+}
+
+.time {
+	margin-top: 30px;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.card {
+}
+
+.navbar {
+	margin-bottom: 40px;
+}
+
+table {
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+table, th, td {
+	text-align: center;
+	padding: 5px;
+	border: 1px solid black;
+}
+
+.image-with-caption {
+	/* width of logo images */
+	width: 100px;
+	margin-left: 10px;
+}
+
+.image-with-caption p {
+	height: 30px;
+	font-size: 75%;
+	text-align: center;
+}
+
+.image-with-caption img {
+	display: block;
+	margin: 0 auto;
+}
+
+div.import-export {
+	width: 50%;
+	margin: 0 auto;
+}
+
+input[type=file].import-export {
+	margin-bottom: 10px;
+}
+
+input[type=checkbox].import-export {
+	margin-top: 5px;
+	margin-right: 10px;
+}
+
+div.challenge-status {
+	width: 500px;
+}
+
+table.challenge-status {
+	margin-bottom: 30px;
+}
+
+img.map {
+	display: block;
+	padding: 5px;
+	border: 1px solid #021a40;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+}

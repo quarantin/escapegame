@@ -17,8 +17,8 @@ map_door_room_fontain.save()
 
 # Videos
 
-video_brief = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
-video_brief.save()
+video = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
+video.save()
 
 # Raspberry Pis Les 1001 nuits
 
@@ -28,7 +28,7 @@ raspi_1001_nuits.save()
 #
 # Escape game: Les 1001 nuits
 #
-game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video_brief=video_brief, map_image=map_image, sas_door_image=sas_door_image)
+game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, map_image=map_image, sas_door_image=sas_door_image)
 game_1001_nuits.save()
 
 # Room La fontaine
@@ -89,7 +89,7 @@ raspi_stranger_things.save()
 #
 # Escape game: Stranger Things
 #
-game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video_brief=video_brief)
+game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video)
 game_stranger_things.save()
 
 # Room: La salle claire

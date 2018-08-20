@@ -9,6 +9,8 @@ from constance import config
 from escapegame import libraspi
 from escapegame.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
 
+from multimedia.models import Video
+
 from .models import RestToken
 
 import json, socket, traceback
@@ -54,7 +56,7 @@ def get_token(request):
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % traceback.format_exc(),
+			'message': 'Error: %s' % err,
 			'method': method,
 		})
 
@@ -185,21 +187,11 @@ def set_video_state(request, video_slug, action):
 
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` for method set_video_state().' % action)
+			raise Exception('Invalid action `%s` for method api.views.set_video_state().' % action)
 
 		video = Video.objects.get(slug=video_slug)
 
-		if action == 'pause':
-			status, message = libraspi.video_control('pause', video)
-
-		elif action == 'play':
-			status, message = libraspi.video_control('play', video)
-
-		elif action == 'stop':
-			status, message = libraspi.video_control('stop', video)
-
-		else:
-			raise Exception('Action`%s` not implemented for method set_video_state' % action)
+		status, message = libraspi.video_control(action, video)
 
 		return JsonResponse({
 			'status': status,

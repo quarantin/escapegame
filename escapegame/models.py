@@ -30,8 +30,8 @@ class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
 	escapegame_name = models.CharField(max_length=255, default='')
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
-	video_brief = models.ForeignKey(Video, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
+	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL)
 
 	sas_door_pin = models.IntegerField(default=7)
 	corridor_door_pin = models.IntegerField(default=10)
@@ -39,9 +39,9 @@ class EscapeGame(models.Model):
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
 
-	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='game_map_image')
-	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='sas_door_image')
-	corridor_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='corridor_door_image')
+	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
+	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='sas_door_image')
+	corridor_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='corridor_door_image')
 
 	def __str__(self):
 		return self.escapegame_name
@@ -122,13 +122,13 @@ class EscapeGameRoom(models.Model):
 	slug = models.SlugField(max_length=255)
 	room_name = models.CharField(max_length=255, default='')
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 
 	door_pin = models.IntegerField(default=5)
 	door_locked = models.BooleanField(default=True)
 
-	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='room_image')
-	door_unlocked_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='door_unlocked_image')
+	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
+	door_unlocked_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_unlocked_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -175,8 +175,8 @@ class EscapeGameChallenge(models.Model):
 	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
 
-	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_image')
-	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_solved_image')
+	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
+	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)

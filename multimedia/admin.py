@@ -13,12 +13,23 @@ class ImageAdmin(admin.ModelAdmin):
 	]
 
 class VideoAdmin(admin.ModelAdmin):
-	prepopulated_fields = { 'slug': ( 'video_name', )}
+	#prepopulated_fields = { 'slug': ( 'video_name', )}
 	list_display = [
 		'video_name',
+		'slug',
 		'video_path',
 		'raspberrypi',
 	]
+	fieldsets = (
+		('General', { 'fields': (
+			'video_name',
+			'slug',
+			'video_path',
+			)}),
+		('Remote controls', { 'fields': (
+			'raspberrypi',
+			)})
+	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', )

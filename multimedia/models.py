@@ -23,12 +23,12 @@ class Image(models.Model):
 class Video(models.Model):
 
 	slug = models.SlugField(max_length=255)
-	video_name = models.CharField(max_length=255)
+	video_name = models.CharField(max_length=255, default='')
 	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
-		return self.video_path.path
+		return self.video_path.url
 
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.video_name)

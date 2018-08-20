@@ -18,12 +18,20 @@
 					<p>Start escape game</p>
 				</div>
 			</button>
+			<button id="pause-escapegame" type="submit">
+				<div class="image-with-caption">
+					<img src="{% static 'img/icons8-pause-100.png' %}" title="Pause escape game">
+					<p>Pause escape game</p>
+				</div>
+			</button>
 			<button id="stop-escapegame" type="submit">
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-stop-100.png' %}" title="Reset escape game">
 					<p>Reset escape game</p>
 				</div>
 			</button>
+		</div>
+		<div class="row head_block">
 			<button class="lock-button" id="lock-sas-{{ game.slug }}" value="{{ game.url_callback_unlock_sas }}" type="submit"> 
 				<div class="image-with-caption">
 					<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock SAS door">

@@ -36,6 +36,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
 	'127.0.0.1',
 	'localhost',
+	socket.gethostname(),
 	'%s.local' % socket.gethostname(),
 ]
 
@@ -166,17 +167,22 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Media files (Uploaded)
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = '/static/'
 
-
-# Media files (Uploaded)
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'siteconfig', 'static'),)
+#STATICFILES_DIR = [
+#	os.path.join(BASE_DIR, 'static'),
+#]
 
 
 # Constance settings

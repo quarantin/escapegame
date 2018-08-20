@@ -8,6 +8,9 @@ from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
 import os, sys, subprocess, time
+
+import socket
+import traceback
 import requests
 
 if config.RUNNING_ON_PI:
@@ -18,6 +21,7 @@ def is_running_on_pi():
 
 def do_get(url):
 	try:
+		print('libraspi.do_get(url=%s)' % url)
 		response = requests.get(url)
 		if not response:
 			raise Exception("requests.get(url=%s) failed!" % url)
@@ -52,29 +56,33 @@ def local_video_control(action, video):
 
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` in method video_control()' % action)
+			raise Exception('Invalid action `%s` in method local_video_control()' % action)
 
 		fifo = '/tmp/%s.fifo' % video.slug
 
+		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+
 		if action == 'pause':
 
-			fout = open(fifo, 'w')
-			if not fout:
-				return 1, 'No such file or directory: %s' % fifo
+			print("Pausing local video '%s'" % video_path)
+			if os.path.exists(fifo):
 
-			fout.write('p')
-			fout.close()
+				data = '%s\n' % (config.VIDEO_PLAYER == '/usr/bin/mpv' and 'pause' or 'p')
+
+				fout = open(fifo, 'w')
+				fout.write(data)
+				fout.close()
 
 			return 0, 'Success'
 
 		elif action == 'play':
 
-			video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+			if os.path.exists(fifo):
+				os.remove(fifo)
 
-			if not os.path.exists(fifo):
-				os.mkfifo(fifo)
+			os.mkfifo(fifo)
 
-			print("Playing video '%s'" % video_path)
+			print("Playing local video '%s'" % video_path)
 			if config.VIDEO_PLAYER == '/usr/bin/mpv':
 				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
 			else:
@@ -82,15 +90,17 @@ def local_video_control(action, video):
 				status = subprocess.call([ config.VIDEO_PLAYER, video_path ], stdin=process.stdout)
 				process.wait()
 
+			os.remove(fifo)
+
 			return status, 'Success'
 
 		elif action == 'stop':
-			print("Stopping video '%s'" % video_path)
+			print("Stopping local video '%s'" % video.video_path.url)
 			status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
 			return status, 'Success'
 
 	except Exception as err:
-		return 1, 'Error: %s' % err
+		return 1, 'Error: %s' % traceback.format_exc()
 
 def remote_video_control(action, video):
 
@@ -100,23 +110,26 @@ def remote_video_control(action, video):
 
 		raspi = video.raspberrypi
 
-		host = raspi.host
+		host = raspi.hostname
 		port = raspi.port != 80 and ':%d' % raspi.port or ''
 
-		url = 'http://%s%s/video/%s/%s/' % (host, port, video.slug, action)
+		url = 'http://%s%s/api/video/%s/%s/' % (host, port, video.slug, action)
 
 		return do_get(url)
 
 	except Exception as err:
-		return 1, 'Error: %s' % err
+		return 1, 'Error: %s' % traceback.format_exc()
 
 def video_control(action, video):
 
+	raspi = video.raspberrypi
 	method = local_video_control
-	if video.raspberrypi:
+	if raspi:
 		method = remote_video_control
+		if raspi.hostname == socket.gethostname():
+			method = local_video_control
 
-	method(action, video)
+	return method(action, video)
 
 def get_pin_state(pin):
 
