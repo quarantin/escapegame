@@ -6,13 +6,13 @@ from multimedia.models import *
 
 # Images
 
-map_image = Image(image_name='Full Map', image_path='uploads/map-base.png')
+map_image = Image(image_name='Full Map', image_path='uploads/images/map-base.png')
 map_image.save()
 
-sas_door_image = Image(image_name='SAS Door', image_path='uploads/map-sas-door.png')
+sas_door_image = Image(image_name='SAS Door', image_path='uploads/images/map-sas-door.png')
 sas_door_image.save()
 
-map_door_room_fontain = Image(image_name='Door Room Fontain', image_path='uploads/map-door-room-fontain.png')
+map_door_room_fontain = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
 map_door_room_fontain.save()
 
 # Videos
