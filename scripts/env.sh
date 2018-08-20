@@ -13,3 +13,5 @@ ROOTDIR="$(realpath "${SCRIPTDIR}/..")"
 HOSTNAME="$(hostname).local"
 
 MYSQL_ARCHIVE=/tmp/mysql-lib-folder.tar.gz
+
+PLAYER_FIFO=/tmp/video-control.fifo
