@@ -3,7 +3,7 @@
 . $(dirname $0)/env.sh
 
 TIMEZONE='Europe/Paris'
-DEBIAN_PACKAGES=( 'sqlite3' 'vim' 'screen' 'mysql-server' 'nginx-light' 'uwsgi' 'uwsgi-plugin-python3' )
+DEBIAN_PACKAGES=( 'bc' 'screen' 'sqlite3' 'mysql-server' 'nginx-light' 'uwsgi' 'uwsgi-plugin-python3' 'vim' )
 
 PIP_PACKAGES=( 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-rest-framework' 'mysqlclient' )
 
