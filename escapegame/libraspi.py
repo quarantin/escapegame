@@ -48,55 +48,75 @@ def git_version():
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def play_video(video_filename):
+def local_video_control(action, video):
 
 	try:
-		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video_filename)
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` in method video_control()' % action)
 
-		print("Playing video '%s'" % video_path)
-		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
+		fifo = '/tmp/%s.fifo' % video.slug
+
+		if action == 'pause':
+
+			fout = open(fifo, 'w')
+			if not fout:
+				return 1, 'No such file or directory: %s' % fifo
+
+			fout.write('p')
+			fout.close()
+
+			return 0, 'Success'
+
+		elif action == 'play':
+
+			video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+
+			if not os.path.exists(fifo):
+				os.mkfifo(fifo)
+
+			print("Playing video '%s'" % video_path)
+			if config.VIDEO_PLAYER == '/usr/bin/mpv':
+				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
+			else:
+				process = subprocess.Popen([ '/bin/cat', fifo ], stdout=subprocess.PIPE)
+				status = subprocess.call([ config.VIDEO_PLAYER, video_path ], stdin=process.stdout)
+				process.wait()
+
+			return status, 'Success'
+
+		elif action == 'stop':
+			print("Stopping video '%s'" % video_path)
+			status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
+			return status, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def stop_video(video_path):
+def remote_video_control(action, video):
 
 	try:
-		print("Stopping video '%s'" % video_path)
-		return subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` in method remote_video_control()' % action)
 
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-def play_remote_video(video):
-
-	try:
 		raspi = video.raspberrypi
 
 		host = raspi.host
 		port = raspi.port != 80 and ':%d' % raspi.port or ''
 
-		url = 'http://%s%s/video/%s/play/' % (host, port, video.slug)
+		url = 'http://%s%s/video/%s/%s/' % (host, port, video.slug, action)
 
 		return do_get(url)
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def stop_remote_video(video):
+def video_control(action, video):
 
-	try:
-		raspi = video.raspberrypi
+	method = local_video_control
+	if video.raspberrypi:
+		method = remote_video_control
 
-		host = raspi.host
-		port = raspi.port != 80 and ':%d' % raspi.port or ''
-
-		url = 'http://%s%s/video/%s/stop/' % (host, port, video.slug)
-
-		return do_get(url)
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
+	method(action, video)
 
 def get_pin_state(pin):
 

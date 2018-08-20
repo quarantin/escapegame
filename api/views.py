@@ -189,18 +189,14 @@ def set_video_state(request, video_slug, action):
 
 		video = Video.objects.get(slug=video_slug)
 
-		if action == 'play':
+		if action == 'pause':
+			status, message = libraspi.video_control('pause', video)
 
-			if video.raspberrypi:
-				status, message = libraspi.play_remote_video(video)
-			else:
-				status, message = libraspi.play_video(video.video_path.path)
+		elif action == 'play':
+			status, message = libraspi.video_control('play', video)
 
 		elif action == 'stop':
-			if video.raspberrypi:
-				status, message = libraspi.stop_remote_video(video)
-			else:
-				status, message = libraspi.stop_video(video.video_path.path)
+			status, message = libraspi.video_control('stop', video)
 
 		else:
 			raise Exception('Action`%s` not implemented for method set_video_state' % action)

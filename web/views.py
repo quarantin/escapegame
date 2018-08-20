@@ -81,7 +81,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = libraspi.play_video(game.video_brief.video_path.path)
+		status, message = libraspi.video_control('play', game.video)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -114,8 +114,8 @@ def escapegame_reset(request, game_slug):
 		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
 		# Stop video player
-		status, message = libraspi.stop_video(game.video_brief.video_path.path)
-		if message != 'Success':
+		status, message = libraspi.video_control('stop', game.video)
+		if status != 0:
 			return JsonResponse({
 				'status': status,
 				'message': message,
