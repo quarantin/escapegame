@@ -50,8 +50,20 @@ class EscapeGame(models.Model):
 		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(**kwargs)
 
+	def get_door_pin(self, slug):
+		if slug == 'sas':
+			return self.sas_door_pin
+
+		elif slug == 'corridor':
+			return self.corridor_door_pin
+
+		raise Exception('Invalid door `%s`' % slug)
+
 	def set_door_locked(self, door_pin, locked):
 		try:
+			if type(door_pin) is str:
+				door_pin = self.get_door_pin(door_pin)
+
 			if door_pin not in [ self.sas_door_pin, self.corridor_door_pin ]:
 				raise Exception('Invalid door pin: %d' % door_pin)
 
