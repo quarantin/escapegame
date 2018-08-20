@@ -81,7 +81,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = libraspi.play_video(game.video_brief.video_path)
+		status, message = libraspi.play_video(game.video_brief.video_path.path)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -114,7 +114,7 @@ def escapegame_reset(request, game_slug):
 		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
 		# Stop video player
-		status, message = libraspi.stop_video(game.video_brief.video_path)
+		status, message = libraspi.stop_video(game.video_brief.video_path.path)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -233,14 +233,19 @@ def escapegame_map(request, game_slug):
 def set_video_state(request, game_slug, action):
 
 	try:
-		play = (action == 'play')
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` for method set_video_state().' % action)
 
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		if play:
-			status, message = libraspi.play_video(game.video_brief.video_path)
+		if action == 'play':
+			status, message = libraspi.play_video(game.video_brief.video_path.path)
+
+		elif action == 'stop':
+			status, message = libraspi.stop_video(game.video_brief.video_path.path)
+
 		else:
-			status, message = libraspi.stop_video(game.video_brief.video_path)
+			raise Exception('Action`%s` not implemented for method set_video_state' % action)
 
 		return JsonResponse({
 			'status': status,
