@@ -88,14 +88,14 @@ def escapegame_start(request, game_slug):
 				'message': message,
 			})
 
-		status, message = game.set_door_locked('sas', False)
+		status, message = game.set_door_locked(game.sas_door_pin, False)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
 				'message': message,
 			})
 
-		status, message = game.set_door_locked('corridor', False)
+		status, message = game.set_door_locked(game.corridor_door_pin, False)
 		return JsonResponse({
 			'status': status,
 			'message': message,
