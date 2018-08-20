@@ -200,8 +200,8 @@ CONSTANCE_CONFIG = {
 	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests, in seconds.'),
 	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
 	'TOKEN_TIMEOUT': (15, 'The default expiration timeout for authentication tokens, in minutes.'),
-	'UPLOAD_PATH': ('uploads', 'The directory to upload user files, images, etc.', 'text_field'),
-	'VIDEO_PATH': ('/opt/vc/src/hello_pi/hello_video', 'The directory containing the videos.', 'text_field'),
+	'UPLOAD_IMAGE_PATH': ('uploads/images', 'The directory to upload images.', 'text_field'),
+	'UPLOAD_VIDEO_PATH': ('uploads/videos', 'The directory to upload videos.', 'text_field'),
 	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
 }
 

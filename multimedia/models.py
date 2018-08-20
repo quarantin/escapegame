@@ -12,7 +12,7 @@ from jsonexport.decorators import json_import
 class Image(models.Model):
 
 	image_name = models.CharField(max_length=255)
-	image_path = models.ImageField(upload_to=config.UPLOAD_PATH)
+	image_path = models.ImageField(upload_to=config.UPLOAD_IMAGE_PATH)
 
 	def __str__(self):
 		return self.image_path.url
@@ -21,10 +21,10 @@ class Image(models.Model):
 class Video(models.Model):
 
 	video_name = models.CharField(max_length=255)
-	video_path = models.CharField(max_length=255)
+	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
 
 	def __str__(self):
-		return self.video_path
+		return self.video_path.path
 
 @json_import
 class VideoPlayer(models.Model):

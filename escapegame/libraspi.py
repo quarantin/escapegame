@@ -48,10 +48,10 @@ def git_version():
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def play_video(video_path):
+def play_video(video_filename):
 
 	try:
-		video_path = os.path.join(config.VIDEO_PATH, video_path)
+		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video_filename)
 
 		print("Playing video '%s'" % video_path)
 		return subprocess.call([ config.VIDEO_PLAYER, video_path ]), 'Success'
