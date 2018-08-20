@@ -16,6 +16,7 @@ class VideoAdmin(admin.ModelAdmin):
 	list_display = [
 		'video_name',
 		'video_path',
+		'raspberrypi',
 	]
 
 class VideoPlayerAdmin(admin.ModelAdmin):

@@ -4,6 +4,7 @@ from django.db import models
 
 from constance import config
 
+from controllers.models import RaspberryPi
 from jsonexport.decorators import json_import
 
 # Multimedia classes
@@ -22,6 +23,7 @@ class Video(models.Model):
 
 	video_name = models.CharField(max_length=255)
 	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
+	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.video_path.path
