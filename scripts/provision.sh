@@ -3,9 +3,13 @@
 . $(dirname $0)/env.sh
 
 TIMEZONE='Europe/Paris'
-DEBIAN_PACKAGES=( 'bc' 'screen' 'sqlite3' 'mysql-server' 'nginx-light' 'uwsgi' 'uwsgi-plugin-python3' 'vim' )
+DEBIAN_PACKAGES=( 'bc' 'screen' 'sqlite3' 'mysql-server' 'nginx-full' 'redis-server' 'uwsgi' 'uwsgi-plugin-python3' 'vim' )
 
-PIP_PACKAGES=( 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-rest-framework' 'mysqlclient' )
+PIP_PACKAGES=( 'channels' 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-rest-framework' 'django-websocket-redis' 'mysqlclient' )
+
+NGINX_CONF=django.conf
+DJANGO_CONF=django.ini
+WEBSOCKET_CONF=websocket.ini
 
 # Install Debian packages
 sudo apt-get install "${DEBIAN_PACKAGES[@]}"
@@ -33,21 +37,23 @@ sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
 sudo rm -f /etc/uwsgi/apps-enabled/*
 sudo rm -f /etc/nginx/sites-enabled/*
 
-# Deply our custom nginx and uwsgi configs
-sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.ini" /etc/uwsgi/apps-available/escapegame.ini
-sudo cp "${ROOTDIR}/conf/escapegame.nginx.conf" /etc/nginx/sites-available/escapegame.conf
+# Deploy our custom nginx and uwsgi configs
+sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.django.ini" /etc/uwsgi/apps-available/${DJANGO_CONF}
+sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.websocket.ini" /etc/uwsgi/apps-available/${WEBSOCKET_CONF}
+sudo cp "${ROOTDIR}/conf/escapegame.nginx.conf" /etc/nginx/sites-available/${NGINX_CONF}
 
 # Replace <ROOTDIR> placeholder with correct root folder (django root)
-sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/uwsgi/apps-available/escapegame.ini
-sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/nginx/sites-available/escapegame.conf
-sudo sed -i "s#<HOSTNAME>#$(hostname).local#" /etc/nginx/sites-available/escapegame.conf
+sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/uwsgi/apps-available/*
+sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/nginx/sites-available/${NGINX_CONF}
+sudo sed -i "s#<HOSTNAME>#$(hostname).local#" /etc/nginx/sites-available/${NGINX_CONF}
 
 # Disable server tokens for nginx (hide the version)
 sudo sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 
 # Creates corresponding symlinks
-sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/escapegame.ini
-sudo ln -s -r -t /etc/nginx/sites-enabled/ /etc/nginx/sites-available/escapegame.conf
+sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/${DJANGO_CONF}
+sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/${WEBSOCKET_CONF}
+sudo ln -s -r -t /etc/nginx/sites-enabled/ /etc/nginx/sites-available/${NGINX_CONF}
 
 # Enable uwsgi and nginx init scripts at boot time
 sudo update-rc.d uwsgi defaults
