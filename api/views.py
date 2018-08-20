@@ -177,3 +177,42 @@ def set_led_state(request, action, pin):
 			'method': method,
 		})
 
+"""
+	Video controls, no login required for now (REST API)
+"""
+
+def set_video_state(request, video_slug, action):
+
+	try:
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` for method set_video_state().' % action)
+
+		video = Video.objects.get(slug=video_slug)
+
+		if action == 'play':
+
+			if video.raspberrypi:
+				status, message = libraspi.play_remote_video(video)
+			else:
+				status, message = libraspi.play_video(video.video_path.path)
+
+		elif action == 'stop':
+			if video.raspberrypi:
+				status, message = libraspi.stop_remote_video(video)
+			else:
+				status, message = libraspi.stop_video(video.video_path.path)
+
+		else:
+			raise Exception('Action`%s` not implemented for method set_video_state' % action)
+
+		return JsonResponse({
+			'status': status,
+			'message': message,
+		})
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'message': 'Error: %s' % err,
+		})
+

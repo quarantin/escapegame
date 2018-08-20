@@ -17,7 +17,7 @@ map_door_room_fontain.save()
 
 # Videos
 
-video_brief = Video(video_name='Video demo', video_path='test.h264')
+video_brief = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
 video_brief.save()
 
 # Raspberry Pis Les 1001 nuits

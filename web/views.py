@@ -227,38 +227,6 @@ def escapegame_map(request, game_slug):
 		return HttpResponse('Error: %s' % traceback.format_exc(), status=500)
 
 """
-	Video controls, no login required for now (REST API)
-"""
-
-def set_video_state(request, game_slug, action):
-
-	try:
-		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` for method set_video_state().' % action)
-
-		game = EscapeGame.objects.get(slug=game_slug)
-
-		if action == 'play':
-			status, message = libraspi.play_video(game.video_brief.video_path.path)
-
-		elif action == 'stop':
-			status, message = libraspi.stop_video(game.video_brief.video_path.path)
-
-		else:
-			raise Exception('Action`%s` not implemented for method set_video_state' % action)
-
-		return JsonResponse({
-			'status': status,
-			'message': message,
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'message': 'Error: %s' % err,
-		})
-
-"""
 	Door controls (SAS, Corridor), no login required for now (REST API)
 """
 

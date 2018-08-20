@@ -13,11 +13,15 @@ class ImageAdmin(admin.ModelAdmin):
 	]
 
 class VideoAdmin(admin.ModelAdmin):
+	prepopulated_fields = { 'slug': ( 'video_name', )}
 	list_display = [
 		'video_name',
 		'video_path',
 		'raspberrypi',
 	]
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', )
 
 class VideoPlayerAdmin(admin.ModelAdmin):
 	list_display = [

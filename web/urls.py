@@ -23,9 +23,6 @@ urlpatterns = [
 	# Escape game map
 	path('<slug:game_slug>/map.png', views.escapegame_map),
 
-	# Video controls
-	path('<slug:game_slug>/video/<str:action>/', views.set_video_state),
-
 	# Door controls
 	path('<slug:game_slug>/<slug:room_slug>/<str:action>/', views.set_door_locked),
 

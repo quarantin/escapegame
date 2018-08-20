@@ -68,6 +68,36 @@ def stop_video(video_path):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
+def play_remote_video(video):
+
+	try:
+		raspi = video.raspberrypi
+
+		host = raspi.host
+		port = raspi.port != 80 and ':%d' % raspi.port or ''
+
+		url = 'http://%s%s/video/%s/play/' % (host, port, video.slug)
+
+		return do_get(url)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+def stop_remote_video(video):
+
+	try:
+		raspi = video.raspberrypi
+
+		host = raspi.host
+		port = raspi.port != 80 and ':%d' % raspi.port or ''
+
+		url = 'http://%s%s/video/%s/stop/' % (host, port, video.slug)
+
+		return do_get(url)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
 def get_pin_state(pin):
 
 	try:
