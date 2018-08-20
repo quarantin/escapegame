@@ -115,7 +115,7 @@ def escapegame_reset(request, game_slug):
 
 		# Stop video player
 		status, message = libraspi.stop_video(game.video_brief.video_path.path)
-		if status != 0:
+		if message != 'Success':
 			return JsonResponse({
 				'status': status,
 				'message': message,
