@@ -1,7 +1,12 @@
 #!/bin/bash
 
+APPS=(
+	django
+	websocket
+)
+
 sudo killall -9 uwsgi
 
-sleep 1
-
-sudo uwsgi --ini /etc/uwsgi/apps-enabled/escapegame.ini
+for APP in "${APPS[@]}"; do
+	sudo uwsgi --ini "/etc/uwsgi/apps-enabled/uwsgi.ini:$APP"
+done

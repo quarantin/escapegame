@@ -1,21 +1,31 @@
-#!/bin/bash
+#!/bin/bash -x
 
 . $(dirname $0)/env.sh
 
 TIMEZONE='Europe/Paris'
 DEBIAN_PACKAGES=( 'bc' 'screen' 'sqlite3' 'mysql-server' 'nginx-full' 'redis-server' 'uwsgi' 'uwsgi-plugin-python3' 'vim' )
 
-PIP_PACKAGES=( 'channels' 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-rest-framework' 'django-websocket-redis' 'mysqlclient' )
+PIP_PACKAGES=( 'channels' 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-redis-sessions' 'django-rest-framework' 'django-websocket-redis' 'mysqlclient' )
 
-NGINX_CONF=django.conf
-DJANGO_CONF=django.ini
-WEBSOCKET_CONF=websocket.ini
+DJANGO='django'
+WEBSOCKET='websocket'
+
+SOCKET_DJANGO="/tmp/uwsgi.${DJANGO}.socket"
+SOCKET_WEBSOCKET="/tmp/uwsgi.${WEBSOCKET}.socket"
+
+NGINX_CONF='nginx.conf'
+NGINX_SITES_ENABLED='/etc/nginx/sites-enabled'
+NGINX_SITES_AVAILABLE='/etc/nginx/sites-available'
+
+UWSGI_CONF='uwsgi.ini'
+UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
+UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
 
 # Install Debian packages
-sudo apt-get install "${DEBIAN_PACKAGES[@]}"
+sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 
 # Install pip packages
-sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
+sudo -H ${PIP} install --quiet "${PIP_PACKAGES[@]}"
 
 # Creates default ~/.vimrc
 if [ "$USER" = "pi" ]; then
@@ -33,32 +43,49 @@ sudo timedatectl set-timezone "${TIMEZONE}"
 # Hide GNU screen startup message
 sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
 
-# Remote default and old configs of nginx and uwsgi
-sudo rm -f /etc/uwsgi/apps-enabled/*
-sudo rm -f /etc/nginx/sites-enabled/*
-
-# Deploy our custom nginx and uwsgi configs
-sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.django.ini" /etc/uwsgi/apps-available/${DJANGO_CONF}
-sudo cp "${ROOTDIR}/conf/escapegame.uwsgi.websocket.ini" /etc/uwsgi/apps-available/${WEBSOCKET_CONF}
-sudo cp "${ROOTDIR}/conf/escapegame.nginx.conf" /etc/nginx/sites-available/${NGINX_CONF}
-
-# Replace <ROOTDIR> placeholder with correct root folder (django root)
-sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/uwsgi/apps-available/*
-sudo sed -i "s#<ROOTDIR>#${ROOTDIR}#" /etc/nginx/sites-available/${NGINX_CONF}
-sudo sed -i "s#<HOSTNAME>#$(hostname).local#" /etc/nginx/sites-available/${NGINX_CONF}
-
 # Disable server tokens for nginx (hide the version)
 sudo sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
 
-# Creates corresponding symlinks
-sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/${DJANGO_CONF}
-sudo ln -s -r -t /etc/uwsgi/apps-enabled/ /etc/uwsgi/apps-available/${WEBSOCKET_CONF}
-sudo ln -s -r -t /etc/nginx/sites-enabled/ /etc/nginx/sites-available/${NGINX_CONF}
+# Remove default and old configs of nginx and uwsgi
+sudo rm -f                     \
+	${NGINX_SITES_ENABLED}/*   \
+	${NGINX_SITES_AVAILABLE}/* \
+	${UWSGI_APPS_ENABLED}/*    \
+	${UWSGI_APPS_AVAILABLE}/*
 
-# Enable uwsgi and nginx init scripts at boot time
-sudo update-rc.d uwsgi defaults
+# Deploy our custom nginx and uwsgi configs
+sudo cp "${ROOTDIR}/conf/${UWSGI_CONF}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+sudo cp "${ROOTDIR}/conf/${NGINX_CONF}" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+
+CONFIGS=(
+	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+	"${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+)
+
+# Substitue our placeholder variables
+for CONFIG in "${CONFIGS[@]}"; do
+
+	sudo sed -i                                        \
+		-e "s#<ROOTDIR>#${ROOTDIR}#"                   \
+		-e "s#<HOSTNAME>#${HOSTNAME}#"                 \
+		-e "s#<SOCKET_DJANGO>#${SOCKET_DJANGO}#"       \
+		-e "s#<SOCKET_WEBSOCKET>#${SOCKET_WEBSOCKET}#" \
+		$CONFIG
+done
+
+
+# Creates corresponding symlinks
+sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+sudo ln -s -r -t "${NGINX_SITES_ENABLED}/" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+
+# Enable nginx service at boot time
 sudo update-rc.d nginx defaults
 
-# Restart uwsgi and nginx services
-sudo /etc/init.d/uwsgi restart
+# Restart nginx service
 sudo /etc/init.d/nginx restart
+
+# Enable uwsgi services at boot time
+"${ROOTDIR}/scripts/set-crontab.sh"
+
+# Restart uwsgi services
+"${ROOTDIR}/scripts/restart-uwsgi.sh"

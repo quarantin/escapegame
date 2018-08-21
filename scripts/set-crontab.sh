@@ -2,10 +2,17 @@
 
 . $(dirname $0)/env.sh
 
+APPS=(
+	django
+	websocket
+)
+
 CRONTAB=$(mktemp)
 
-echo "@reboot sudo /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/django.ini" >> "${CRONTAB}"
-echo "@reboot sudo /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/websocket.ini" >> "${CRONTAB}"
+for APP in "${APPS[@]}"; do
+	echo "@reboot sudo /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/uwsgi.ini:${APP}" >> "${CRONTAB}"
+done
+
 echo "@reboot ${ROOTDIR}/scripts/django-background-service.sh" >> "${CRONTAB}"
 
 crontab "${CRONTAB}"
