@@ -9,7 +9,7 @@ import os
 
 delay = os.getenv('WEBSOCKET_DELAY') or 1
 
-redis_publisher = RedisPublisher(facility='w00t', broadcast=True)
+redis_publisher = RedisPublisher(facility='notify', broadcast=True)
 
 while True:
 
