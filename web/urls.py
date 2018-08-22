@@ -21,9 +21,6 @@ urlpatterns = [
 	path('<slug:game_slug>/stop/', views.escapegame_stop),
 	path('<slug:game_slug>/status/', views.escapegame_status),
 
-	# Escape game map
-	path('<slug:game_slug>/map.png', views.escapegame_map),
-
 	# Door controls
 	path('<slug:game_slug>/<slug:room_slug>/<str:action>/', views.set_door_locked),
 
