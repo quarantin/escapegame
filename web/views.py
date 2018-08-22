@@ -4,6 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
+from multimedia.models import Image
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
 
 from escapegame import libraspi
@@ -11,6 +12,7 @@ from escapegame import libraspi
 from constance import config
 
 import os, subprocess, traceback
+
 
 """
 	Escape Game Operator Pages
@@ -188,61 +190,47 @@ def escapegame_stop(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
+def populate_images(obj, key):
+	pk = '%s_id' % key
+	if pk in obj and obj[pk]:
+		obj[key] = Image.objects.values().get(pk=obj[pk])
+		del obj[key]['id']
+		del obj[pk]
+
 def escapegame_status(request, game_slug):
 
 	try:
-		game = EscapeGame.objects.get(slug=game_slug)
+		game = EscapeGame.objects.values().get(slug=game_slug)
+		game['rooms'] = []
 
-		result = {}
-		result['name'] = game.escapegame_name
-		result['slug'] = game.slug
-		result['sas_door_locked'] = game.sas_door_locked
-		result['corridor_door_locked'] = game.corridor_door_locked
-		result['rooms'] = []
+		image_keys = [
+			'map_image',
+			'sas_door_image',
+			'corridor_door_image',
+		]
 
-		rooms = EscapeGameRoom.objects.filter(escapegame=game)
+		for key in image_keys:
+			populate_images(game, key)
+
+		rooms = EscapeGameRoom.objects.filter(escapegame=game['id']).values()
 		for room in rooms:
 
-			newroom = {}
-			newroom['challenges'] = []
-
-			challs = EscapeGameChallenge.objects.filter(room=room)
+			room['challenges'] = []
+			challs = EscapeGameChallenge.objects.filter(room=room['id']).values()
 			for chall in challs:
+				populate_images(chall, 'challenge_solved_image')
+				room['challenges'].append(chall)
 
-				newchall = {}
-				newchall['name'] = chall.challenge_name
-				newchall['slug'] = chall.slug
-				newchall['solved'] = chall.solved
+			populate_images(room, 'door_unlocked_image')
+			game['rooms'].append(room)
 
-				newroom['challenges'].append(newchall)
-
-			newroom['name'] = room.room_name
-			newroom['slug'] = room.slug
-			newroom['door_pin'] = room.door_pin
-			newroom['door_locked'] = room.door_locked
-
-			result['rooms'].append(newroom)
-
-		result['status'] = 0
-		result['message'] = 'Success'
-
-		return JsonResponse(result)
+		return JsonResponse(game)
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
+			'message': 'Error: %s' % traceback.format_exc(),
 		});
-
-def escapegame_map(request, game_slug):
-
-	try:
-		game = EscapeGame.objects.get(slug=game_slug)
-
-		return HttpResponse(game.draw_map(), content_type='image/png')
-
-	except Exception as err:
-		return HttpResponse('Error: %s' % traceback.format_exc(), status=500)
 
 """
 	Door controls (SAS, Corridor), no login required for now (REST API)

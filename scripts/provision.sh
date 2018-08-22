@@ -18,6 +18,7 @@ NGINX_SITES_ENABLED='/etc/nginx/sites-enabled'
 NGINX_SITES_AVAILABLE='/etc/nginx/sites-available'
 
 UWSGI_CONF='uwsgi.ini'
+UWSGI_CONF_DEFAULT='defaults.ini'
 UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
 UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
 
@@ -54,12 +55,14 @@ sudo rm -f                     \
 	${UWSGI_APPS_AVAILABLE}/*
 
 # Deploy our custom nginx and uwsgi configs
-sudo cp "${ROOTDIR}/conf/${UWSGI_CONF}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
 sudo cp "${ROOTDIR}/conf/${NGINX_CONF}" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+sudo cp "${ROOTDIR}/conf/${UWSGI_CONF}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+sudo cp "${ROOTDIR}/conf/${UWSGI_CONF_DEFAULT}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
 
 CONFIGS=(
-	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
 	"${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
 )
 
 # Substitue our placeholder variables
@@ -75,8 +78,9 @@ done
 
 
 # Creates corresponding symlinks
-sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
 sudo ln -s -r -t "${NGINX_SITES_ENABLED}/" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
+sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
+sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
 
 # Enable nginx service at boot time
 sudo update-rc.d nginx defaults

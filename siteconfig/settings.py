@@ -58,10 +58,12 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.sessions',
 	'django.contrib.staticfiles',
+	'channels',
 	'constance',
 	'constance.backends.database',
 	'django_extensions',
 	'rest_framework.authtoken',
+	'ws4redis',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +97,7 @@ TEMPLATES = [
 				'django.template.context_processors.request',
 				'django.contrib.auth.context_processors.auth',
 				'django.contrib.messages.context_processors.messages',
+				'ws4redis.context_processors.default',
 			],
 			'libraries': {
 				'customtags': 'siteconfig.templatetags.customtags',
@@ -106,8 +109,6 @@ TEMPLATES = [
 TEMPLATES_CONTEXT_PROCESSOR = [
 	'django.template.context_processors.request',
 ]
-
-WSGI_APPLICATION = 'siteconfig.wsgi.application'
 
 
 # Database
@@ -180,9 +181,39 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'siteconfig', 'static'),)
-#STATICFILES_DIR = [
-#	os.path.join(BASE_DIR, 'static'),
-#]
+
+
+# The following directive is required during development and ignored in production environments.
+# It overrides Django’s internal main loop and adds a URL dispatcher in front of the request handler.
+# https://django-websocket-redis.readthedocs.io/en/latest/installation.html#configuration
+
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+
+
+# Websocket URLs
+# https://django-websocket-redis.readthedocs.io/en/latest/installation.html#configuration
+
+WEBSOCKET_URL = '/ws/'
+
+
+# Use Redis as the session engine
+# https://django-websocket-redis.readthedocs.io/en/latest/installation.html#replace-memcached-with-redis
+
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_PREFIX = 'session'
+
+
+# Channels
+
+CHANNEL_LAYER = {
+	"default": {
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [("127.0.0.1", 6379)],
+		},
+		"ROUTING": "siteconfig.routing.channel_routing",
+	},
+}
 
 
 # Constance settings
