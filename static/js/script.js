@@ -109,44 +109,105 @@ $(document).ready(function() {
 		});
 	});
 
-	$.ajax({
-		url: '/web/' + game_slug + '/status/',
-		crossDomain: true,
-		success: function(game) {
+	function drawImage(ctx, imageObj) {
+		console.log(imageObj);
+		image = new Image();
+		image.src = '/media/' + imageObj.image_path;
+		ctx.drawImage(image, 0, 0, imageObj.width, imageObj.height);
+	}
 
-			if (typeof game === 'undefined')
-				return;
+	function draw_map(game) {
 
-			switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, game.sas_door_locked);
-			switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, game.corridor_door_locked);
+		var canvas = $('canvas#map')[0];
+		var ctx = canvas.getContext('2d');
 
-			// For each room...
+		var map_image = new Image();
+
+		map_image.src = '/media/' + game.map_image.image_path;
+		map_image.onload = function () {
+
+			ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
+
+			if (game.sas_door_locked === false) {
+				drawImage(ctx, game.sas_door_image);
+			}
+
+			if (game.corridor_door_locked === false) {
+				drawImage(ctx, game.corridor_door_image);
+			}
+
 			for (var index in game.rooms) {
-
 				var room = game.rooms[index];
-
-				switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, room.door_locked);
-
-				var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
-				var statusdiv = $('div#' + room.slug + '-data');
-
-				if (room.challenges.length == 0) {
-					html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
+				if (room.door_locked == false) {
+					drawImage(ctx, room.door_unlocked_image);
 				}
-				else {
-					// For each challenge...
-					for (var subindex in room.challenges) {
-						var chall = room.challenges[subindex];
-						var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
-						html += '\t<tr>\n\t\t<td width="80%">' + chall.name + '</td>\n\t\t<td width="20%">' + solved + '</td>\n\t</tr>\n';
+			}
+		};
+	};
 
+	function refresh_page() {
+		$.ajax({
+			url: '/web/' + game_slug + '/status/',
+			crossDomain: true,
+			success: function(game) {
+
+				if (typeof game === 'undefined')
+					return;
+
+				switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, game.sas_door_locked);
+				switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, game.corridor_door_locked);
+
+				// For each room...
+				for (var index in game.rooms) {
+
+					var room = game.rooms[index];
+
+					switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, room.door_locked);
+
+					var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
+					var statusdiv = $('div#' + room.slug + '-data');
+
+					if (room.challenges.length == 0) {
+						html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
+					}
+					else {
+						// For each challenge...
+						for (var subindex in room.challenges) {
+							var chall = room.challenges[subindex];
+							var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
+							html += '\t<tr>\n\t\t<td width="80%">' + chall.challenge_name + '</td>\n\t\t<td width="20%">' + solved + '</td>\n\t</tr>\n';
+
+						}
+
+						html = '<table class="challenge-status">\n' + html + '</table>\n';
 					}
 
-					html = '<table class="challenge-status">\n' + html + '</table>\n';
+					statusdiv.html(html);
 				}
 
-				statusdiv.html(html);
-			}
-		},
-	});
+				draw_map(game);
+			},
+		});
+	}
+
+	refresh_page();
+
+	var ws = new WebSocket('ws://' + location.hostname + '/ws/notify?subscribe-broadcast')
+
+	ws.onopen = function() {
+		console.log("websocket connected");
+	};
+
+	ws.onmessage = function(e) {
+		console.log("websocket received data: " + e.data);
+		refresh_page();
+	};
+
+	ws.onerror = function(e) {
+		console.error(e);
+	};
+
+	ws.onclose = function(e) {
+		console.log("websocket closed");
+	};
 });
