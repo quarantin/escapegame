@@ -78,7 +78,9 @@ class EscapeGame(models.Model):
 			if door_pin not in [ self.sas_door_pin, self.corridor_door_pin ]:
 				raise Exception('Invalid door pin: %d' % door_pin)
 
-			status, message = libraspi.set_door_locked(door_pin, locked)
+			print('EscapeGame.set_door_locked(%d, %s) [%s]' % (door_pin, locked, self))
+			action = (locked and 'lock' or 'unlock')
+			status, message = libraspi.door_control(action, self, door_pin)
 			if status == 0:
 
 				action = (locked and 'Closing' or 'Opening')
@@ -127,8 +129,9 @@ class EscapeGameRoom(models.Model):
 
 	def set_door_locked(self, locked):
 		try:
-			print('set_door_lock(%s) [%s]' % (locked, self))
-			status, message = libraspi.set_door_locked(self.door_pin, locked)
+			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
+			action = (locked and 'lock' or 'unlock')
+			status, message = libraspi.door_control(action, self, self.door_pin)
 			if status == 0:
 				self.door_locked = locked
 

@@ -102,13 +102,30 @@ if RUNNING_ON_PI:
 		def rewind(self):
 			return self.__basic_control(keys.REWIND)
 
+def git_version():
+
+	try:
+		from siteconfig import settings
+		output = subprocess.check_output([ 'git', 'rev-parse', 'HEAD' ], cwd=settings.BASE_DIR)
+		return output.decode('utf-8').strip()
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+#
+# Web
+#
+#   - do_get
+#   - do_post
+#
+
 def do_get(url):
 	try:
 		print('libraspi.do_get(url=%s)' % url)
 		response = requests.get(url)
 		if not response:
 			raise Exception("requests.get(url=%s) failed!" % url)
-		
+
 		return 0, 'Success'
 
 	except Exception as err:
@@ -126,83 +143,87 @@ def do_post(url, data):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def git_version():
+#
+# Video controls:
+#
+#   - __local_video_control_pause
+#   - __local_video_control_play
+#   - __local_video_control_stop
+#   - __local_video_control
+#   - __remote_video_control
+#   - video_control
+
+def __local_video_control_pause(fifo):
+
+	if RUNNING_ON_PI:
+		status, message = OMXPlayer().pause()
+
+	else:
+		status, message = 1, 'Fifo %s could not be found' % fifo
+		if os.path.exists(fifo):
+			fout = open(fifo, 'w')
+			fout.write('pause\n')
+			fout.close()
+			status, message = 0, 'Success'
+
+	return status, message
+
+def __local_video_control_play(fifo, video_path):
+
+	if RUNNING_ON_PI:
+		OMXPlayer(video_path)
+		status = 0
+
+	else:
+		if os.path.exists(fifo):
+			os.remove(fifo)
+
+		os.mkfifo(fifo)
+
+		from constance import config
+		status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
+
+		os.remove(fifo)
+
+	return status, 'Success'
+
+def __local_video_control_stop():
+
+	if RUNNING_ON_PI:
+		status, message = OMXPlayer().stop()
+
+	else:
+		from constance import config
+		status, message = subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
+
+	return status, message
+
+def __local_video_control(action, video):
 
 	try:
-		from siteconfig import settings
-		output = subprocess.check_output([ 'git', 'rev-parse', 'HEAD' ], cwd=settings.BASE_DIR)
-		return output.decode('utf-8').strip()
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-def local_video_control(action, video):
-
-	try:
-		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` in method local_video_control()' % action)
-
 		fifo = '/tmp/%s.fifo' % video.slug
 
 		from constance import config
 		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
 
 		if action == 'pause':
-
 			print("Pausing local video '%s'" % video_path)
-			if RUNNING_ON_PI:
-				status, message = OMXPlayer().pause()
-
-			else:
-				status, message = 1, 'Fifo %s could not be found' % fifo
-				if os.path.exists(fifo):
-					fout = open(fifo, 'w')
-					fout.write('pause\n')
-					fout.close()
-					status, message = 0, 'Success'
-
-			return status, message
+			return __local_video_control_pause(fifo)
 
 		elif action == 'play':
-
 			print("Playing local video '%s'" % video_path)
-
-			if RUNNING_ON_PI:
-				OMXPlayer(video)
-				status = 0
-
-			else:
-				if os.path.exists(fifo):
-					os.remove(fifo)
-
-				os.mkfifo(fifo)
-
-				from constance import config
-				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
-
-				os.remove(fifo)
-
-			return status, 'Success'
+			return __local_video_control_play(fifo, video_path)
 
 		elif action == 'stop':
 			print("Stopping local video '%s'" % video.video_path.url)
-			if RUNNING_ON_PI:
-				status, message = OMXPlayer().stop()
-			else:
-				from constance import config
-				status, message = subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
-
-			return status, message
+			return __local_video_control_stop()
 
 	except Exception as err:
 		return 1, 'Error: %s' % traceback.format_exc()
 
-def remote_video_control(action, video):
+def __remote_video_control(action, video):
 
 	try:
-		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` in method remote_video_control()' % action)
-
 		raspi = video.raspberrypi
 
 		host = raspi.hostname
@@ -217,34 +238,30 @@ def remote_video_control(action, video):
 
 def video_control(action, video):
 
+	if action not in [ 'pause', 'play', 'stop' ]:
+		raise Exception('Invalid action `%s` in method video_control()' % action)
+
 	raspi = video.raspberrypi
-	method = local_video_control
+	method = __local_video_control
 	if raspi:
-		method = remote_video_control
-		if raspi.hostname == socket.gethostname():
-			method = local_video_control
+		method = __remote_video_control
+		if socket.gethostname() == raspi.hostname.replace('.local', ''):
+			method = __local_video_control
 
 	return method(action, video)
 
-def get_pin_state(pin):
+#
+# Door controls:
+#
+#   - __local_door_control
+#   - __remote_door_control
+#   - door_control
+#
+
+def __local_door_control(action, room, pin):
 
 	try:
-		state = 0
-		if RUNNING_ON_PI:
-			GPIO.setmode(GPIO.BOARD)
-			GPIO.setup(pin, GPIO.IN)
-			state = GPIO.input(pin)
-
-		print("Getting pin state on pin %d = %s" % (pin, state))
-		return state, 'Success'
-
-	except Exception as err:
-		return -1, 'Error: %s' % err
-
-def set_door_locked(pin, locked):
-
-	try:
-		state = not locked
+		state = (action != 'lock')
 		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
@@ -256,6 +273,45 @@ def set_door_locked(pin, locked):
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
+
+def __remote_door_control(action, room, pin):
+
+	try:
+		raspi = room.raspberrypi
+
+		host = raspi.hostname
+		port = raspi.port != 80 and ':%d' % raspi.port or ''
+
+		url = 'http://%s%s/api/door/%s/%d/' % (host, port, action, pin)
+
+		do_get(url)
+
+	except Exception as err:
+		return 1, 'Error: %s' % traceback.format_exc()
+
+def door_control(action, room, pin):
+
+	if action not in [ 'lock', 'unlock' ]:
+		raise Exception('Invalid action `%s` in method door_control()' % action)
+
+	method = __local_door_control
+	if room is not None:
+		raspi = room.raspberypi
+		if raspi:
+			method = __remote_door_control
+			if socket.gethostname() == raspi.hostname.replace('.local', ''):
+				method = __local_door_control
+
+	return method(action, room, pin)
+
+
+#
+# PINs and LEDs controls
+#
+#   - set_led_status
+#   - get_pin_state
+#   - wait_for_pin_state_change
+#
 
 def set_led_status(pin, onoff):
 
@@ -272,6 +328,21 @@ def set_led_status(pin, onoff):
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
+
+def get_pin_state(pin):
+
+	try:
+		state = 0
+		if RUNNING_ON_PI:
+			GPIO.setmode(GPIO.BOARD)
+			GPIO.setup(pin, GPIO.IN)
+			state = GPIO.input(pin)
+
+		print("Getting pin state on pin %d = %s" % (pin, state))
+		return state, 'Success'
+
+	except Exception as err:
+		return -1, 'Error: %s' % err
 
 def wait_for_pin_state_change(pin, timeout=-1):
 

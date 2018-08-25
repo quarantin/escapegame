@@ -18,7 +18,7 @@ import os, subprocess, traceback
 	Escape Game Operator Pages
 """
 
-#@login_required
+@login_required
 def selector_index(request):
 
 	context = {
@@ -29,7 +29,7 @@ def selector_index(request):
 
 	return HttpResponse(template.render(context, request))
 
-#@login_required
+@login_required
 def escapegame_index(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
@@ -38,11 +38,15 @@ def escapegame_index(request, game_slug):
 	host = config.MASTER_HOSTNAME
 	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
 
-	game.url_callback_lock_sas = 'http://%s%s/web/%s/sas/lock/' % (host, port, game_slug)
-	game.url_callback_unlock_sas = 'http://%s%s/web/%s/sas/unlock/' % (host, port, game_slug)
+	#game.url_callback_lock_sas = 'http://%s%s/web/%s/sas/lock/' % (host, port, game_slug)
+	#game.url_callback_unlock_sas = 'http://%s%s/web/%s/sas/unlock/' % (host, port, game_slug)
+	game.url_callback_lock_sas = '/web/%s/sas/lock/' % (game_slug)
+	game.url_callback_unlock_sas = '/web/%s/sas/unlock/' % (game_slug)
 
-	game.url_callback_lock_corridor = 'http://%s%s/web/%s/corridor/lock/' % (host, port, game_slug)
-	game.url_callback_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock/' % (host, port, game_slug)
+	#game.url_callback_lock_corridor = 'http://%s%s/web/%s/corridor/lock/' % (host, port, game_slug)
+	#game.url_callback_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock/' % (host, port, game_slug)
+	game.url_callback_lock_corridor = '/web/%s/corridor/lock/' % (game_slug)
+	game.url_callback_unlock_corridor = '/web/%s/corridor/unlock/' % (game_slug)
 
 	for room in rooms:
 
@@ -50,20 +54,28 @@ def escapegame_index(request, game_slug):
 		if room.raspberrypi:
 			raspberrypi = room.raspberrypi
 
+		"""
 		if raspberrypi:
 			remote_pins = RemoteDoorPin.objects.filter(room=room)
 			for remote_pin in remote_pins:
 				host = raspberrypi.hostname
 				port = raspberrypi.port != 80 and ':%d' % raspberrypi.port or ''
 
-				room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-				room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+				#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
+				#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+				room.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, room.escapegame.slug, room.slug)
+				room.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, room.escapegame.slug, room.slug)
 		else:
-			host = config.MASTER_HOSTNAME
-			port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
+		"""
+		host = config.MASTER_HOSTNAME
+		port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
 
-			room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-			room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+		#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
+		#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
+		#room.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, room.escapegame.slug, room.slug)
+		#room.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, room.escapegame.slug, room.slug)
+		room.url_callback_lock = '/web/%s/%s/lock/' % (room.escapegame.slug, room.slug)
+		room.url_callback_unlock = '/web/%s/%s/unlock/' % (room.escapegame.slug, room.slug)
 
 	context = {
 		'game': game,
@@ -78,7 +90,7 @@ def escapegame_index(request, game_slug):
 """
 	REST API (no authentication required for now)
 """
-
+@login_required
 def escapegame_pause(request, game_slug):
 
 	try:
@@ -96,6 +108,7 @@ def escapegame_pause(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
+@login_required
 def escapegame_start(request, game_slug):
 
 	try:
@@ -127,6 +140,7 @@ def escapegame_start(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
+@login_required
 def escapegame_reset(request, game_slug):
 
 	try:
@@ -195,13 +209,14 @@ def escapegame_reset(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
-def populate_images(obj, key):
+def __populate_images(obj, key):
 	pk = '%s_id' % key
 	if pk in obj and obj[pk]:
 		obj[key] = Image.objects.values().get(pk=obj[pk])
 		del obj[key]['id']
 		del obj[pk]
 
+@login_required
 def escapegame_status(request, game_slug):
 
 	try:
@@ -215,7 +230,7 @@ def escapegame_status(request, game_slug):
 		]
 
 		for key in image_keys:
-			populate_images(game, key)
+			__populate_images(game, key)
 
 		rooms = EscapeGameRoom.objects.filter(escapegame=game['id']).values()
 		for room in rooms:
@@ -238,18 +253,16 @@ def escapegame_status(request, game_slug):
 		});
 
 """
-	Door controls (SAS, Corridor), no login required for now (REST API)
+	Door callback, no login required for now (REST API)
 """
+def door_callback(request, game_slug, room_slug, action):
 
-def set_door_locked(request, game_slug, room_slug, action):
-
-	method = 'set_door_locked'
+	method = 'web.views.door_callback'
+	locked = (action == 'lock')
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
-			raise Exception('Invalid action \'%s\'' % action)
-
-		locked = (action == 'lock')
+			raise Exception('Invalid action `%s`' % action)
 
 		game = EscapeGame.objects.get(slug=game_slug)
 
@@ -275,19 +288,16 @@ def set_door_locked(request, game_slug, room_slug, action):
 		})
 
 """
-	Challenge controls, no login requried for now (REST API)
+	Challenge callback, no login requried for now (REST API)
 """
+def challenge_callback(request, game_slug, room_slug, challenge_slug, action):
 
-#@login_required
-def set_challenge_status(request, game_slug, room_slug, challenge_slug, action):
-
-	method = 'set_challenge_status'
+	method = 'web.views.challenge_callback'
+	solved = (action == 'validate')
 
 	try:
 		if action not in [ 'validate', 'reset' ]:
 			raise Exception('Invalid action \'%s\'' % action)
-
-		solved = (action == 'validate')
 
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)

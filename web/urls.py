@@ -21,9 +21,9 @@ urlpatterns = [
 	path('<slug:game_slug>/reset/', views.escapegame_reset),
 	path('<slug:game_slug>/status/', views.escapegame_status),
 
-	# Door controls
-	path('<slug:game_slug>/<slug:room_slug>/<str:action>/', views.set_door_locked),
+	# Door callback
+	path('<slug:game_slug>/<slug:room_slug>/<str:action>/', views.door_callback),
 
-	# Challenge controls
-	path('<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/<str:action>/', views.set_challenge_status),
+	# Challenge callback
+	path('<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/<str:action>/', views.challenge_callback),
 ]

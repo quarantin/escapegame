@@ -26,5 +26,6 @@ while True:
 		print("Sending `%s`" % message)
 		redis_publisher.publish_message(RedisMessage(message))
 
+	print("Sending `notify`")
 	redis_publisher.publish_message(RedisMessage('notify'))
 	time.sleep(delay)

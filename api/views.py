@@ -7,7 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from constance import config
 
 from escapegame import libraspi
-from escapegame.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
+from escapegame.models import EscapeGameRoom, EscapeGameChallenge
+
+from controllers.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
 
 from multimedia.models import Video
 
@@ -109,14 +111,14 @@ def set_challenge_state(request, action, pin):
 def set_door_locked(request, action, pin):
 
 	method = 'set_door_locked'
+	locked = (action == 'lock')
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
-			raise Exception('Invalid action: %s' % action)
+			raise Exception('Invalid action `%s`' % action)
 
-		locked = (action == 'lock')
-
-		status, message = libraspi.set_door_locked(pin, locked)
+		# Always local door controls when second parameter (room) is None
+		status, message = libraspi.door_control(action, None, pin)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -126,14 +128,14 @@ def set_door_locked(request, action, pin):
 				'locked': locked,
 			})
 
+		# The master doesn't need to callback itself.
 		if config.IS_SLAVE:
 			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-			challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
-			remote_pin = RemoteDoorPin.objects.get(raspberrypi=myself, challenge__in=challenges)
+			rooms = EscapeGameRoom.objects.filter(door_pin=pin)
+			remote_pin = RemoteDoorPin.objects.get(raspberrypi=myself, room__in=rooms)
 			callback_url = (locked and remote_pin.url_callback_lock or remote_pin.url_callback_unlock)
 
 			status, message = libraspi.do_get(callback_url)
-			# TODO validate status and message (the content of response)
 
 		return JsonResponse({
 			'status': status,
