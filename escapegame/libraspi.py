@@ -15,6 +15,74 @@ import requests
 
 if config.RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
+	from omxplayer import keys, player
+	from omxplayer.bus_finder import BusFinder
+	import dbus
+
+	DBUS_NAME = 'org.mpris.MediaPlayer2.omxplayer'
+
+	class OMXPlayer:
+
+		dbus_name = None
+		controls = None
+		properties = None
+
+		def __init__(self, video=None, dbus_name=DBUS_NAME):
+
+			# Store dbus name
+			self.dbus_name = dbus_name
+
+			# If a video was supplied, start playing it now
+			if video:
+				self.play(video)
+
+			# Initialize DBUS controls and properties
+			self.__init_controls()
+
+		def __init_controls(self):
+
+			# Get the bus connection of omxplayer
+			bus = dbus.bus.BusConnection(BusFinder().get_address())
+
+			# Retrieve omxplayer dbus handle
+			handle = bus.get_object(self.dbus_name, '/org/mpris/MediaPlayer2', introspect=False)
+
+			# Retrieve omxplayer controls and properties through dbus handle
+			self.controls = dbus.Interface(handle, 'org.mpris.MediaPlayer2.Player')
+			self.properties = dbus.Interface(handle, 'org.freedesktop.DBus.Properties')
+
+		def __basic_control(self, key):
+			try:
+				self.controls.Action(key)
+			except Exception as err:
+				print('Error: %s' % err)
+
+		def __basic_property(self, key):
+			try:
+				return self.properties.Get(key)
+			except Exception as err:
+				print('Error: %s' % err)
+
+		def duration(self):
+			return self.__basic_property('Duration')
+
+		def fast_forward(self):
+			self.__basic_control(keys.FAST_FORWARD)
+
+		def pause(self):
+			self.__basic_control(keys.PAUSE)
+
+		def play(self, video):
+			player.OMXPlayer(video, pause=True, dbus_name=self.dbus_name, args=[ '--no-osd' ])
+
+		def position(self):
+			return self.__basic_property('Position')
+
+		def stop(self):
+			self.__basic_control(keys.STOP)
+
+		def rewind(self):
+			self.__basic_control(keys.REWIND)
 
 def is_running_on_pi():
 	return ' '.join(os.uname()).strip().endswith('armv7l')
@@ -65,38 +133,47 @@ def local_video_control(action, video):
 		if action == 'pause':
 
 			print("Pausing local video '%s'" % video_path)
-			if os.path.exists(fifo):
+			if config.RUNNING_ON_PI:
+				OMXPlayer().pause()
 
-				data = '%s\n' % (config.VIDEO_PLAYER == '/usr/bin/mpv' and 'pause' or 'p')
+			else:
+				if os.path.exists(fifo):
 
-				fout = open(fifo, 'w')
-				fout.write(data)
-				fout.close()
+					data = '%s\n' % (config.VIDEO_PLAYER == '/usr/bin/mpv' and 'pause' or 'p')
+
+					fout = open(fifo, 'w')
+					fout.write(data)
+					fout.close()
 
 			return 0, 'Success'
 
 		elif action == 'play':
 
-			if os.path.exists(fifo):
-				os.remove(fifo)
-
-			os.mkfifo(fifo)
-
 			print("Playing local video '%s'" % video_path)
-			if config.VIDEO_PLAYER == '/usr/bin/mpv':
-				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
-			else:
-				process = subprocess.Popen([ '/bin/cat', fifo ], stdout=subprocess.PIPE)
-				status = subprocess.call([ config.VIDEO_PLAYER, video_path ], stdin=process.stdout)
-				process.wait()
 
-			os.remove(fifo)
+			if config.RUNNING_ON_PI:
+				OMXPlayer(video)
+
+			else:
+				if os.path.exists(fifo):
+					os.remove(fifo)
+
+				os.mkfifo(fifo)
+
+				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
+
+				os.remove(fifo)
 
 			return status, 'Success'
 
 		elif action == 'stop':
+			status = 0
 			print("Stopping local video '%s'" % video.video_path.url)
-			status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
+			if config.RUNNING_ON_PI:
+				OMXPlayer().stop()
+			else:
+				status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
+
 			return status, 'Success'
 
 	except Exception as err:
