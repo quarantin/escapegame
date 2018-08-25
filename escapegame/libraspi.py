@@ -7,7 +7,6 @@ import traceback
 import requests
 
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
-
 if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
 	from omxplayer import keys, player
@@ -38,25 +37,47 @@ if RUNNING_ON_PI:
 
 		def __init_controls(self):
 
-			# Get the bus connection of omxplayer
-			bus = dbus.bus.BusConnection(BusFinder().get_address())
+			try:
+				# Get the bus connection of omxplayer
+				bus = dbus.bus.BusConnection(BusFinder().get_address())
 
-			# Retrieve omxplayer dbus handle
-			handle = bus.get_object(self.dbus_name, '/org/mpris/MediaPlayer2', introspect=False)
+				# Retrieve omxplayer dbus handle
+				handle = bus.get_object(self.dbus_name, '/org/mpris/MediaPlayer2', introspect=False)
 
-			# Retrieve omxplayer controls and properties through dbus handle
-			self.controls = dbus.Interface(handle, 'org.mpris.MediaPlayer2.Player')
-			self.properties = dbus.Interface(handle, 'org.freedesktop.DBus.Properties')
+				# Retrieve omxplayer controls and properties through dbus handle
+				self.controls = dbus.Interface(handle, 'org.mpris.MediaPlayer2.Player')
+				self.properties = dbus.Interface(handle, 'org.freedesktop.DBus.Properties')
+
+			except Exception as err:
+				pass
 
 		def __basic_control(self, key):
+
 			try:
+				if not self.controls:
+
+					self.__init_controls()
+					if not self.controls:
+						return 1, 'No video running'
+
 				self.controls.Action(key)
+				return 0, 'Success'
+
 			except Exception as err:
 				print('Error: %s' % err)
+				return 1, str(err)
 
 		def __basic_property(self, key):
+
 			try:
+				if not self.properties:
+
+					self.__init_controls()
+					if not self.properties:
+						return
+
 				return self.properties.Get(key)
+
 			except Exception as err:
 				print('Error: %s' % err)
 
@@ -64,10 +85,10 @@ if RUNNING_ON_PI:
 			return self.__basic_property('Duration')
 
 		def fast_forward(self):
-			self.__basic_control(keys.FAST_FORWARD)
+			return self.__basic_control(keys.FAST_FORWARD)
 
 		def pause(self):
-			self.__basic_control(keys.PAUSE)
+			return self.__basic_control(keys.PAUSE)
 
 		def play(self, video):
 			player.OMXPlayer(video, pause=True, dbus_name=self.dbus_name, args=[ '--no-osd' ])
@@ -76,10 +97,10 @@ if RUNNING_ON_PI:
 			return self.__basic_property('Position')
 
 		def stop(self):
-			self.__basic_control(keys.STOP)
+			return self.__basic_control(keys.STOP)
 
 		def rewind(self):
-			self.__basic_control(keys.REWIND)
+			return self.__basic_control(keys.REWIND)
 
 def do_get(url):
 	try:
@@ -130,15 +151,17 @@ def local_video_control(action, video):
 
 			print("Pausing local video '%s'" % video_path)
 			if RUNNING_ON_PI:
-				OMXPlayer().pause()
+				status, message = OMXPlayer().pause()
 
 			else:
+				status, message = 1, 'Fifo %s could not be found' % fifo
 				if os.path.exists(fifo):
 					fout = open(fifo, 'w')
 					fout.write('pause\n')
 					fout.close()
+					status, message = 0, 'Success'
 
-			return 0, 'Success'
+			return status, message
 
 		elif action == 'play':
 
@@ -162,15 +185,14 @@ def local_video_control(action, video):
 			return status, 'Success'
 
 		elif action == 'stop':
-			status = 0
 			print("Stopping local video '%s'" % video.video_path.url)
 			if RUNNING_ON_PI:
-				OMXPlayer().stop()
+				status, message = OMXPlayer().stop()
 			else:
 				from constance import config
-				status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
+				status, message = subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
-			return status, 'Success'
+			return status, message
 
 	except Exception as err:
 		return 1, 'Error: %s' % traceback.format_exc()
