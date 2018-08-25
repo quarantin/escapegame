@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from constance import config
-
-from siteconfig import settings
-
-from escapegame.apps import EscapegameConfig as AppConfig
-logger = AppConfig.logger
-
 import os, sys, subprocess, time
 
 import socket
 import traceback
 import requests
 
-if config.RUNNING_ON_PI:
+RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+
+if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
 	from omxplayer import keys, player
 	from omxplayer.bus_finder import BusFinder
@@ -34,7 +29,9 @@ if config.RUNNING_ON_PI:
 
 			# If a video was supplied, start playing it now
 			if video:
-				self.play(video)
+				from constance import config
+				video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+				self.play(video_path)
 
 			# Initialize DBUS controls and properties
 			self.__init_controls()
@@ -84,9 +81,6 @@ if config.RUNNING_ON_PI:
 		def rewind(self):
 			self.__basic_control(keys.REWIND)
 
-def is_running_on_pi():
-	return ' '.join(os.uname()).strip().endswith('armv7l')
-
 def do_get(url):
 	try:
 		print('libraspi.do_get(url=%s)' % url)
@@ -114,6 +108,7 @@ def do_post(url, data):
 def git_version():
 
 	try:
+		from siteconfig import settings
 		output = subprocess.check_output([ 'git', 'rev-parse', 'HEAD' ], cwd=settings.BASE_DIR)
 		return output.decode('utf-8').strip()
 
@@ -128,21 +123,19 @@ def local_video_control(action, video):
 
 		fifo = '/tmp/%s.fifo' % video.slug
 
+		from constance import config
 		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
 
 		if action == 'pause':
 
 			print("Pausing local video '%s'" % video_path)
-			if config.RUNNING_ON_PI:
+			if RUNNING_ON_PI:
 				OMXPlayer().pause()
 
 			else:
 				if os.path.exists(fifo):
-
-					data = '%s\n' % (config.VIDEO_PLAYER == '/usr/bin/mpv' and 'pause' or 'p')
-
 					fout = open(fifo, 'w')
-					fout.write(data)
+					fout.write('pause\n')
 					fout.close()
 
 			return 0, 'Success'
@@ -151,8 +144,9 @@ def local_video_control(action, video):
 
 			print("Playing local video '%s'" % video_path)
 
-			if config.RUNNING_ON_PI:
+			if RUNNING_ON_PI:
 				OMXPlayer(video)
+				status = 0
 
 			else:
 				if os.path.exists(fifo):
@@ -160,6 +154,7 @@ def local_video_control(action, video):
 
 				os.mkfifo(fifo)
 
+				from constance import config
 				status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
 
 				os.remove(fifo)
@@ -169,9 +164,10 @@ def local_video_control(action, video):
 		elif action == 'stop':
 			status = 0
 			print("Stopping local video '%s'" % video.video_path.url)
-			if config.RUNNING_ON_PI:
+			if RUNNING_ON_PI:
 				OMXPlayer().stop()
 			else:
+				from constance import config
 				status = subprocess.call([ 'killall', config.VIDEO_PLAYER ])
 
 			return status, 'Success'
@@ -212,7 +208,7 @@ def get_pin_state(pin):
 
 	try:
 		state = 0
-		if config.RUNNING_ON_PI:
+		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
 			state = GPIO.input(pin)
@@ -227,7 +223,7 @@ def set_door_locked(pin, locked):
 
 	try:
 		state = not locked
-		if config.RUNNING_ON_PI:
+		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			GPIO.output(pin, state)
@@ -243,7 +239,7 @@ def set_led_status(pin, onoff):
 
 	try:
 		state = not onoff
-		if config.RUNNING_ON_PI:
+		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			GPIO.output(pin, state)
@@ -259,7 +255,7 @@ def wait_for_pin_state_change(pin, timeout=-1):
 
 	try:
 		ret = pin
-		if config.RUNNING_ON_PI:
+		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
 			ret = GPIO.wait_for_edge(pin, GPIO.BOTH, timeout=timeout)

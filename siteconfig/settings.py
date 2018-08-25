@@ -14,11 +14,13 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os, socket
 
+from escapegame.libraspi import RUNNING_ON_PI
+
 DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
 
 IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
 
-RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+#RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
