@@ -3,9 +3,32 @@
 . $(dirname $0)/env.sh
 
 TIMEZONE='Europe/Paris'
-DEBIAN_PACKAGES=( 'bc' 'screen' 'sqlite3' 'mysql-server' 'nginx-full' 'redis-server' 'uwsgi' 'uwsgi-plugin-python3' 'vim' )
 
-PIP_PACKAGES=( 'channels' 'django' 'django-background-tasks' 'django-constance[database]' 'django-cors-headers' 'django-extensions' 'django-redis-sessions' 'django-rest-framework' 'django-websocket-redis' 'mysqlclient' 'service_identity' )
+DEBIAN_PACKAGES=(
+	bc
+	screen
+	sqlite3
+	mysql-server
+	nginx-full
+	redis-server
+	uwsgi
+	uwsgi-plugin-python3
+	vim
+)
+
+PIP_PACKAGES=(
+	channels
+	django
+	django-background-tasks
+	django-constance[database]
+	django-cors-headers
+	django-extensions
+	django-redis-sessions
+	django-rest-framework
+	django-websocket-redis==0.5.2
+	mysqlclient
+	service_identity
+)
 
 DJANGO='django'
 WEBSOCKET='websocket'
