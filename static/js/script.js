@@ -142,20 +142,22 @@ $(document).ready(function() {
 		map_image.src = '/media/' + game.map_image.image_path;
 		map_image.onload = function () {
 
-			ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
+			if (game.map_image) {
+				ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
+			}
 
-			if (game.sas_door_locked === false) {
+			if (game.sas_door_image && game.sas_door_locked === false) {
 				drawImage(ctx, game.sas_door_image);
 			}
 
-			if (game.corridor_door_locked === false) {
+			if (game.corridor_door_image && game.corridor_door_locked === false) {
 				drawImage(ctx, game.corridor_door_image);
 			}
 
 			for (var index in game.rooms) {
 				var room = game.rooms[index];
-				if (room.door_locked == false) {
-					drawImage(ctx, room.door_unlocked_image);
+				if (room.door_image && room.door_locked == false) {
+					drawImage(ctx, room.door_image);
 				}
 			}
 		};
