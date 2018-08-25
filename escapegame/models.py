@@ -80,7 +80,7 @@ class EscapeGame(models.Model):
 
 			print('EscapeGame.set_door_locked(%d, %s) [%s]' % (door_pin, locked, self))
 			action = (locked and 'lock' or 'unlock')
-			status, message = libraspi.door_control(action, self, door_pin)
+			status, message = libraspi.door_control(action, None, door_pin)
 			if status == 0:
 
 				action = (locked and 'Closing' or 'Opening')
@@ -131,7 +131,7 @@ class EscapeGameRoom(models.Model):
 		try:
 			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
 			action = (locked and 'lock' or 'unlock')
-			status, message = libraspi.door_control(action, self, self.door_pin)
+			status, message = libraspi.door_control(action, None, self.door_pin)
 			if status == 0:
 				self.door_locked = locked
 
