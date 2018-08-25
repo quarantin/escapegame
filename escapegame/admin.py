@@ -64,7 +64,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'door_pin',
 		'door_locked',
 		'room_image',
-		'door_unlocked_image',
+		'door_image',
 	]
 	fieldsets = (
 		('General', { 'fields': (
@@ -79,7 +79,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			)}),
 		('Maps', { 'fields': (
 			'room_image',
-			'door_unlocked_image',
+			'door_image',
 			)})
 	)
 

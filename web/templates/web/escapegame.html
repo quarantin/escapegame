@@ -6,7 +6,19 @@
 			<h1>{{ game.escapegame_name }}</h1>
 		</div>
 
-		<input id="game-slug" type="hidden" value="{{ game.slug }}">
+		<!-- Escape game counter -->
+		<div class="col head_block">
+			<label class="head_block head_border">Time elapsed</label>
+			<div class="row head_block" style="text-align: center;">
+				<div class="col">
+					<font size="18">
+						<div id="counter">
+							0:00:00
+						</div>
+					</font>
+				</div>
+			</div>
+		</div>
 
 		<!-- Escape game controls -->
 		<div class="col head_block">

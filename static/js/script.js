@@ -205,24 +205,48 @@ $(document).ready(function() {
 		});
 	}
 
+	function create_websocket() {
+
+		var port;
+		var protocol;
+
+		if (location.protocol == 'http:') {
+			port = (location.port == 80 ? '' : ':' + location.port);
+			protocol = 'ws:';
+		}
+		else if (location.protocol == 'https:') {
+			port = (location.port == 443 ? '' : ':' + location.port);
+			protocol = 'wss:';
+		}
+		else {
+			console.log('Unsupported protocol: ' + location.protocol);
+			return;
+		}
+
+		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify?subscribe-broadcast');
+
+		ws.onopen = function() {
+			console.log('websocket connected');
+		};
+
+		ws.onmessage = function(e) {
+			console.log('websocket received data: ' + e.data);
+			if (e.data.startsWith('notify'))
+				refresh_page();
+			else
+				$('div#counter').text(e.data);
+		};
+
+		ws.onerror = function(e) {
+			console.error(e);
+		};
+
+		ws.onclose = function(e) {
+			console.log('websocket closed');
+		};
+	}
+
 	refresh_page();
 
-	var ws = new WebSocket('ws://' + location.hostname + '/ws/notify?subscribe-broadcast')
-
-	ws.onopen = function() {
-		console.log('websocket connected');
-	};
-
-	ws.onmessage = function(e) {
-		console.log('websocket received data: ' + e.data);
-		refresh_page();
-	};
-
-	ws.onerror = function(e) {
-		console.error(e);
-	};
-
-	ws.onclose = function(e) {
-		console.log('websocket closed');
-	};
+	create_websocket();
 });

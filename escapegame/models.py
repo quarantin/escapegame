@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.utils import timezone
 from django.template.defaultfilters import slugify
+
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
+
 from constance import config
 
 from escapegame import libraspi
@@ -43,12 +48,18 @@ class EscapeGame(models.Model):
 	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='sas_door_image')
 	corridor_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='corridor_door_image')
 
+	start_time = models.DateTimeField(blank=True, null=True)
+
 	def __str__(self):
 		return self.escapegame_name
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(**kwargs)
+
+	def notify_frontend(self, message='notify'):
+		redis_publisher = RedisPublisher(facility='notify', broadcast=True)
+		redis_publisher.publish_message(RedisMessage(message))
 
 	def get_door_pin(self, slug):
 		if slug == 'sas':
@@ -70,48 +81,23 @@ class EscapeGame(models.Model):
 			status, message = libraspi.set_door_locked(door_pin, locked)
 			if status == 0:
 
+				action = (locked and 'Closing' or 'Opening')
+
 				if door_pin == self.sas_door_pin:
 					self.sas_door_locked = locked
+					print("%s SAS door of escape game `%s`" % (action, self.escapegame_name))
+
 				elif door_pin == self.corridor_door_pin:
 					self.corridor_door_locked = locked
+					print("%s corridor door of escape game `%s`" % (action, self.escapegame_name))
+
+				if locked == False:
+					self.start_time = timezone.localtime()
 
 				self.save()
+				self.notify_frontend()
 
 			return status, message
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
-
-	def draw_map(self):
-		try:
-			# If this escape game doesn't have a map image, then there is nothing to draw
-			if not self.map_image:
-				return None
-
-			# Draw the base map with locked door and unsolved challenges
-			map_image = PIL.open(self.map_image.image_path.path)
-
-			# Draw SAS door if it's opened
-			if not self.sas_door_locked and self.sas_door_image:
-				paste_image(map_image, self.sas_door_image)
-
-			# Draw corridor door if it's opened
-			if not self.corridor_door_locked and self.corridor_door_image:
-				paste_image(map_image, self.corridor_door_image)
-
-			# Draw each room of this escape game onto the map image
-			rooms = EscapeGameRoom.objects.filter(escapegame=self)
-			for room in rooms:
-				room.draw_map(map_image)
-
-			# Prepare a byte buffer
-			bytes_io = BytesIO()
-
-			# Save the image to our byte buffer
-			map_image.save(bytes_io, 'PNG')
-
-			# Return the content of our byte buffer which is the raw image data
-			return bytes_io.getvalue()
 
 		except Exception as err:
 			return 1, 'Error: %s' % err
@@ -128,7 +114,9 @@ class EscapeGameRoom(models.Model):
 	door_locked = models.BooleanField(default=True)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
-	door_unlocked_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_unlocked_image')
+	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
+
+	start_time = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -143,27 +131,19 @@ class EscapeGameRoom(models.Model):
 			status, message = libraspi.set_door_locked(self.door_pin, locked)
 			if status == 0:
 				self.door_locked = locked
+
+				action = (locked and 'Closing' or 'Opening')
+				print("%s door of room `%s / %s`" % (action, self.escapegame, self.room_name))
+
+				if locked == False:
+					self.start_time = timezone.localtime()
+
 				self.save()
 
 			return status, message
 
 		except Exception as err:
 			return 1, 'Error: %s' % err
-
-	def draw_map(self, map_image):
-
-		# Draw room if there's an image for it
-		if self.room_image:
-			paste_image(map_image, self.room_image)
-
-		# Draw room door if it's unlocked
-		if not self.door_locked and self.door_unlocked_image:
-			paste_image(map_image, self.door_unlocked_image)
-
-		# Draw each challenge in this room onto the map
-		challs = EscapeGameChallenge.objects.filter(room=self)
-		for chall in challs:
-			chall.draw_map(map_image)
 
 @json_import
 class EscapeGameChallenge(models.Model):
@@ -193,13 +173,3 @@ class EscapeGameChallenge(models.Model):
 
 		except Exeption as err:
 			return 1, 'Error: %s' % err
-
-	def draw_map(self, map_image):
-
-		# Draw the challenge if there's an image for it
-		if self.challenge_image:
-			paste_image(map_image, self.challenge_image)
-
-		# Draw the challenge if it's solved
-		if self.solved and self.challenge_solved_image:
-			paste_image(map_image, self.challenge_solved_image)

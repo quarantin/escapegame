@@ -10,7 +10,7 @@ class RaspberryPi(models.Model):
 
 	name = models.CharField(max_length=255)
 	hostname = models.CharField(max_length=32)
-	port = models.IntegerField(default=8000)
+	port = models.IntegerField(default=80)
 
 	def __str__(self):
 		return self.name

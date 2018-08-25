@@ -133,6 +133,11 @@ def escapegame_reset(request, game_slug):
 		game = EscapeGame.objects.get(slug=game_slug)
 		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
+		# Reset start time of game
+		game.start_time = None
+		game.save()
+		game.notify_frontend('0:00:00')
+
 		# Stop video player
 		status, message = libraspi.video_control('stop', game.video)
 		if message != 'Success':
@@ -221,7 +226,7 @@ def escapegame_status(request, game_slug):
 				populate_images(chall, 'challenge_solved_image')
 				room['challenges'].append(chall)
 
-			populate_images(room, 'door_unlocked_image')
+			populate_images(room, 'door_image')
 			game['rooms'].append(room)
 
 		return JsonResponse(game)

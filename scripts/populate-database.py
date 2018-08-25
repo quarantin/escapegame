@@ -1,5 +1,6 @@
 from escapegame.models import *
 from multimedia.models import *
+from controllers.models import *
 
 #VideoPlayer(video_player_name='Media Player', video_player_path='/usr/bin/mpv').save()
 #VideoPlayer(video_player_name='OMX Player', video_player_path='/usr/bin/omxplayer').save()
@@ -12,28 +13,37 @@ map_image.save()
 sas_door_image = Image(image_name='SAS Door', image_path='uploads/images/map-sas-door.png')
 sas_door_image.save()
 
-map_door_room_fontain = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
-map_door_room_fontain.save()
+corridor_door_1_image = Image(image_name='Corridor Door 1', image_path='uploads/images/map-corridor-door-1.png')
+corridor_door_1_image.save()
+
+corridor_door_2_image = Image(image_name='Corridor Door 2', image_path='uploads/images/map-corridor-door-2.png')
+corridor_door_2_image.save()
+
+sas1_door_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
+sas1_door_image.save()
+
+room_fontain_door_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
+room_fontain_door_image.save()
 
 # Videos
 
 video = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
 video.save()
 
-# Raspberry Pis Les 1001 nuits
+# Raspberry Pi: Les 1001 nuits
 
-raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local', port=80)
+raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local')
 raspi_1001_nuits.save()
 
 #
 # Escape game: Les 1001 nuits
 #
-game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, map_image=map_image, sas_door_image=sas_door_image)
+game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_1_image)
 game_1001_nuits.save()
 
-# Room La fontaine
+# Room: La fontaine
 
-room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits, door_unlocked_image=map_door_room_fontain)
+room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, raspberrypi=raspi_1001_nuits, door_image=room_fontain_door_image)
 room_fontaine.save()
 
 # Challenge: La fontaine
@@ -46,7 +56,7 @@ chall_fontaine.save()
 chall_dalles = EscapeGameChallenge(challenge_name='Les dalles', room=room_fontaine)
 chall_dalles.save()
 
-# Room La caverne
+# Room: La caverne
 
 room_caverne = EscapeGameRoom(room_name='La caverne', escapegame=game_1001_nuits, door_pin=12)
 room_caverne.save()
@@ -81,15 +91,15 @@ room_lampe.save()
 chall_lampe = EscapeGameChallenge(challenge_name='La lampe', room=room_lampe)
 chall_lampe.save()
 
-# Raspberry Pis Stranger Things
+# Raspberry Pi: Stranger Things
 
-raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local', port=80)
+raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local')
 raspi_stranger_things.save()
 
 #
 # Escape game: Stranger Things
 #
-game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video)
+game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_2_image)
 game_stranger_things.save()
 
 # Room: La salle claire
