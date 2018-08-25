@@ -4,12 +4,17 @@
 
 TIMEZONE='Europe/Paris'
 
+NGINX_PKG=nginx-full
+if [ "$RUNNING_ON_PI" = true ]; then
+	NGINX_PKG=nginx-light
+fi
+
 DEBIAN_PACKAGES=(
+	$NGINX_PKG
 	bc
 	screen
 	sqlite3
 	mysql-server
-	nginx-full
 	redis-server
 	uwsgi
 	uwsgi-plugin-python3
