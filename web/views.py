@@ -154,11 +154,15 @@ def escapegame_reset(request, game_slug):
 
 		# Stop video player
 		status, message = libraspi.video_control('stop', game.video)
-		if message != 'Success':
-			return JsonResponse({
-				'status': status,
-				'message': message,
-			})
+		# We don't want to return an error if the stop action failed,
+		# because maybe there was no video running, in which case this
+		# call should fail and we still want to continue.
+		#
+		#if message != 'Success':
+		#	return JsonResponse({
+		#		'status': status,
+		#		'message': message,
+		#	})
 
 		# Close SAS door
 		status, message = game.set_door_locked(game.sas_door_pin, True)
@@ -238,10 +242,10 @@ def escapegame_status(request, game_slug):
 			room['challenges'] = []
 			challs = EscapeGameChallenge.objects.filter(room=room['id']).values()
 			for chall in challs:
-				populate_images(chall, 'challenge_solved_image')
+				__populate_images(chall, 'challenge_solved_image')
 				room['challenges'].append(chall)
 
-			populate_images(room, 'door_image')
+			__populate_images(room, 'door_image')
 			game['rooms'].append(room)
 
 		return JsonResponse(game)
