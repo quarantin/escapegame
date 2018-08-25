@@ -18,7 +18,7 @@ urlpatterns = [
 	# Escape game controls
 	path('<slug:game_slug>/pause/', views.escapegame_pause),
 	path('<slug:game_slug>/start/', views.escapegame_start),
-	path('<slug:game_slug>/stop/', views.escapegame_stop),
+	path('<slug:game_slug>/reset/', views.escapegame_reset),
 	path('<slug:game_slug>/status/', views.escapegame_status),
 
 	# Door controls

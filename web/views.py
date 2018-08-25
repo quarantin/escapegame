@@ -127,7 +127,7 @@ def escapegame_start(request, game_slug):
 			'message': 'Error: %s' % err,
 		})
 
-def escapegame_stop(request, game_slug):
+def escapegame_reset(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)

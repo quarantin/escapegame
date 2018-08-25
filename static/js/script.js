@@ -1,85 +1,101 @@
-
-function switch_elements(selector1, selector2, state)
-{
-	// Just for debug
-	//alert("Switching '" + selector1 + "' with '" + selector2 + "' " + state);
-
-	if (state) {
-		$(selector1).show();
-		$(selector2).hide();
-	}
-	else {
-		$(selector1).hide();
-		$(selector2).show();
-	}
-}
-
 $(document).ready(function() {
 
-	// The slug of the current escape game
-	game_slug = $('input#game-slug').val();
-	if (game_slug === undefined)
-		return;
+	/*
+	 * Escape game controls:
+	 *   - start
+	 *   - reset
+	 */
 
-	//switch_elements('button#start-escapegame', 'button#pause-escapegame', true);
+	// Handler for the button to start the escape game
+	$('button#start-escapegame').click(function() {
 
-	// Handler for the button to start the video
-	start_but = $('button#start-escapegame');
-	start_but.show();
-	start_but.click(function() {
-
-		//switch_elements('button#start-escapegame', 'button#pause-escapegame', false);
+		ok = confirm('Are you really sure you want to start a new escape game?\nThis will reset all challenge state and current score.');
+		if (ok !== true)
+			return;
 
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/web/' + game_slug + '/start/',
+			url: '/web/' + this.value + '/start/',
+			crossDomain: true,
+		});
+	});
+
+	// Handler for the button to reset the escape game
+	$('button#reset-escapegame').click(function() {
+
+		ok = confirm('Are you really sure you want to reset the current escape game?\nThis will reset all challenge state and current score.');
+		if (ok !== true)
+			return;
+
+		$.ajax({
+			xhrFields: {
+				withCredentials: false
+			},
+			url: '/web/' + this.value + '/reset/',
+			crossDomain: true,
+		});
+	});
+
+	/*
+	 * Video controls:
+	 *   - play
+	 *   - pause
+	 *   - stop
+	 */
+
+	// Handler for the button to start the video
+	$('button#video-play').click(function() {
+
+		$('button#video-play').toggleClass('d-none');
+		$('button#video-pause').toggleClass('d-none');
+
+		$.ajax({
+			xhrFields: {
+				withCredentials: false
+			},
+			url: '/api/video/' + this.value + '/play/',
 			crossDomain: true,
 		});
 	});
 
 	// Handler for the button to pause the video
-	pause_but = $('button#pause-escapegame');
-	pause_but.show();
-	pause_but.click(function() {
+	$('button#video-pause').click(function() {
 
-		//switch_elements('button#start-escapegame', 'button#pause-escapegame', true);
+		$('button#video-play').toggleClass('d-none');
+		$('button#video-pause').toggleClass('d-none');
 
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/web/' + game_slug + '/pause/',
+			url: '/api/video/' + this.value + '/pause/',
 			crossDomain: true,
 		});
 	});
 
 	// Handler for the button to stop the video
-	stop_but = $('button#stop-escapegame');
-	stop_but.show();
-	stop_but.click(function() {
-
-		//switch_elements('button#start-escapegame', 'button#stop-escapegame', false);
+	$('button#video-stop').click(function() {
 
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/web/' + game_slug + '/stop/',
+			url: '/api/video/' + this.value + '/stop/',
 			crossDomain: true,
 		});
 	});
 
 	// Handler for lock buttons
-	lock_buts = $('button.lock-button');
-	lock_buts.click(function() {
+	$('button.lock-button').click(function() {
 
 		ok = confirm('Are you really sure you want to unlock the door?');
 		if (ok !== true)
 			return;
 
-		switch_elements('button#' + this.id, 'button#un' + this.id, false);
+		$('button#'   + this.id).toggleClass('d-none');
+		$('button#un' + this.id).toggleClass('d-none');
 
 		$.ajax({
 			xhrFields: {
@@ -91,14 +107,14 @@ $(document).ready(function() {
 	});
 
 	// Handler for unlock buttons
-	unlock_buts = $('button.unlock-button');
-	unlock_buts.click(function() {
+	$('button.unlock-button').click(function() {
 
 		ok = confirm('Are you really sure you want to lock the door?');
 		if (ok !== true)
 			return;
 
-		switch_elements('button#' + this.id, 'button#' + this.id.substring(2), false);
+		$('button#' + this.id             ).toggleClass('d-none');
+		$('button#' + this.id.substring(2)).toggleClass('d-none');
 
 		$.ajax({
 			xhrFields: {
@@ -146,6 +162,9 @@ $(document).ready(function() {
 	};
 
 	function refresh_page() {
+
+		var game_slug = $('button#start-escapegame').val();
+
 		$.ajax({
 			url: '/web/' + game_slug + '/status/',
 			crossDomain: true,
@@ -154,15 +173,10 @@ $(document).ready(function() {
 				if (typeof game === 'undefined')
 					return;
 
-				switch_elements('button#lock-sas-' + game.slug, 'button#unlock-sas-' + game.slug, game.sas_door_locked);
-				switch_elements('button#lock-corridor-' + game.slug, 'button#unlock-corridor-' + game.slug, game.corridor_door_locked);
-
 				// For each room...
 				for (var index in game.rooms) {
 
 					var room = game.rooms[index];
-
-					switch_elements('button#lock-' + room.slug, 'button#unlock-' + room.slug, room.door_locked);
 
 					var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
 					var statusdiv = $('div#' + room.slug + '-data');
@@ -176,7 +190,6 @@ $(document).ready(function() {
 							var chall = room.challenges[subindex];
 							var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
 							html += '\t<tr>\n\t\t<td width="80%">' + chall.challenge_name + '</td>\n\t\t<td width="20%">' + solved + '</td>\n\t</tr>\n';
-
 						}
 
 						html = '<table class="challenge-status">\n' + html + '</table>\n';
@@ -195,11 +208,11 @@ $(document).ready(function() {
 	var ws = new WebSocket('ws://' + location.hostname + '/ws/notify?subscribe-broadcast')
 
 	ws.onopen = function() {
-		console.log("websocket connected");
+		console.log('websocket connected');
 	};
 
 	ws.onmessage = function(e) {
-		console.log("websocket received data: " + e.data);
+		console.log('websocket received data: ' + e.data);
 		refresh_page();
 	};
 
@@ -208,6 +221,6 @@ $(document).ready(function() {
 	};
 
 	ws.onclose = function(e) {
-		console.log("websocket closed");
+		console.log('websocket closed');
 	};
 });
