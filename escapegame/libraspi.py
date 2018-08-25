@@ -97,7 +97,7 @@ if RUNNING_ON_PI:
 			return self.__basic_property('Position')
 
 		def stop(self):
-			return self.__basic_control(keys.STOP)
+			return self.__basic_control(keys.EXIT)
 
 		def rewind(self):
 			return self.__basic_control(keys.REWIND)
