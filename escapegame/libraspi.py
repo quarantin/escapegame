@@ -21,15 +21,13 @@ if RUNNING_ON_PI:
 		controls = None
 		properties = None
 
-		def __init__(self, video=None, dbus_name=DBUS_NAME):
+		def __init__(self, video_path=None, dbus_name=DBUS_NAME):
 
 			# Store dbus name
 			self.dbus_name = dbus_name
 
 			# If a video was supplied, start playing it now
-			if video:
-				from constance import config
-				video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+			if video_path:
 				self.play(video_path)
 
 			# Initialize DBUS controls and properties
@@ -296,7 +294,7 @@ def door_control(action, room, pin):
 
 	method = __local_door_control
 	if room is not None:
-		raspi = room.raspberypi
+		raspi = room.raspberrypi
 		if raspi:
 			method = __remote_door_control
 			if socket.gethostname() == raspi.hostname.replace('.local', ''):
