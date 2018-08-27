@@ -262,7 +262,9 @@ $(document).ready(function() {
 			return;
 		}
 
-		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify?subscribe-broadcast');
+		var game_slug = $('button#start-escapegame').val();
+
+		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify-' + game_slug + '?subscribe-broadcast');
 
 		ws.onopen = function() {
 			console.log('websocket connected');
