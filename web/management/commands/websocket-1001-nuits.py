@@ -28,8 +28,8 @@ class Command(BaseCommand):
 		redis_publisher = RedisPublisher(facility='notify-%s' % game.slug, broadcast=True)
 		redis_publisher.publish_message(RedisMessage(message))
 
-	#def reset_counter(self):
-	#	self.send_message('0:00:00')
+	def reset_counter(self):
+		self.send_message('0:00:00')
 
 	def publish_counter(self, start_time, finish_time=None):
 		if not finish_time:
@@ -54,13 +54,17 @@ class Command(BaseCommand):
 
 				start_time = room.start_time
 
-				if game.finish_time:
+				if start_time and game.finish_time:
 					started = False
 					self.publish_counter(start_time, game.finish_time)
 
 				elif start_time:
 					started = True
 					self.publish_counter(start_time)
+
+				elif started:
+					started = False
+					self.reset_counter()
 
 				else:
 					self.stdout.write('  No message to send')
