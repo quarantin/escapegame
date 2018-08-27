@@ -98,15 +98,34 @@ class Command(BaseCommand):
 		# Rooms
 		#
 		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
-		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
+		#
+		# Escape Game SAS (3)
+		#
 		# Room: SAS les 1001 nuits
-		room_sas_1001_nuits = EscapeGameRoom(room_name='SAS les 1001 nuits', escapegame=game_1001_nuits, door_pin=5, door_image=sas1_door_image)
+		room_sas_1001_nuits = EscapeGameRoom(room_name='SAS - Les 1001 nuits', escapegame=game_1001_nuits, door_pin=7, door_image=sas1_door_image)
 		room_sas_1001_nuits.save()
+		# Room: SAS Stranger Things - Salle Claire
+		room_sas_salle_claire = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=7)
+		room_sas_salle_claire.save()
+		# Room: SAS Stranger Things - Salle Obscure
+		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=9)
+		room_sas_salle_obscure.save()
+
+
 		# Challenge: Premier challenge du SAS les 1001 nuits
 		room_sas_1001_nuits_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_1001_nuits)
 		room_sas_1001_nuits_chall.save()
+		# Challenge: début du jeu Stranger Things - Salle Claire
+		room_sas_salle_claire_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_claire)
+		room_sas_salle_claire_chall.save()
+		# Challenge: début du jeu Stranger Things - Salle Obscure
+		room_sas_salle_obscure_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_obscure)
+		room_sas_salle_obscure_chall.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
 
 		# Room: La fontaine
 		room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, door_image=room_fontain_door_image)
@@ -141,13 +160,6 @@ class Command(BaseCommand):
 		chall_lampe = EscapeGameChallenge(challenge_name='La lampe', room=room_lampe)
 		chall_lampe.save()
 
-		# Room: SAS Stranger Things - Salle Claire
-		room_sas_salle_claire = EscapeGameRoom(room_name='SAS Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=3)
-		room_sas_salle_claire.save()
-		# Challenge: début du jeu Stranger Things - Salle Claire
-		room_sas_salle_claire_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_claire)
-		room_sas_salle_claire_chall.save()
-
 		# Room: La salle claire
 		room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=7)
 		room.save()
@@ -157,13 +169,6 @@ class Command(BaseCommand):
 		# Challenge: 2 (Stranger Things / La salle claire)
 		chall = EscapeGameChallenge(challenge_name='chall2', room=room)
 		chall.save()
-
-		# Room: SAS Stranger Things - Salle Obscure
-		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=3)
-		room_sas_salle_obscure.save()
-		# Challenge: début du jeu Stranger Things - Salle Obscure
-		room_sas_salle_obscure_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_obscure)
-		room_sas_salle_obscure_chall.save()
 
 		# Room: La salle obscure
 		room = EscapeGameRoom(room_name='La salle obscure', escapegame=game_stranger_things, door_pin=12)
