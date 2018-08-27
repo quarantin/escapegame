@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from multimedia.models import Image
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
 
+from escapegame.models import notify_frontend
+
 from escapegame import libraspi
 
 from constance import config
@@ -146,18 +148,19 @@ def escapegame_reset(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 		rooms = EscapeGameRoom.objects.filter(escapegame=game)
+		print('Reseting escape game %s' % game.escapegame_name)
 
 		# Reset start time of game
 		game.start_time = None
 		game.save()
-		game.notify_frontend('0:00:00')
+		notify_frontend()
+		notify_frontend('0:00:00')
 
 		# Stop video player
 		status, message = libraspi.video_control('stop', game.video)
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
 		# call should fail and we still want to continue.
-		#
 		#if message != 'Success':
 		#	return JsonResponse({
 		#		'status': status,
@@ -165,6 +168,7 @@ def escapegame_reset(request, game_slug):
 		#	})
 
 		# Close SAS door
+		print('Closing SAS door')
 		status, message = game.set_door_locked(game.sas_door_pin, True)
 		if status != 0:
 			return JsonResponse({
@@ -173,6 +177,7 @@ def escapegame_reset(request, game_slug):
 			})
 
 		# Close corridor door
+		print('Closing corridor door')
 		status, message = game.set_door_locked(game.corridor_door_pin, True)
 		if status != 0:
 			return JsonResponse({
@@ -180,10 +185,14 @@ def escapegame_reset(request, game_slug):
 				'message': message,
 			})
 
+		print('Closing room doors')
+
 		# For each room
 		for room in rooms:
 
 			# Close the door
+			print('Closing door for room %s' % room.room_name)
+			room.start_time = None
 			status, message = room.set_door_locked(True)
 			if status != 0:
 				return JsonResponse({
@@ -191,10 +200,13 @@ def escapegame_reset(request, game_slug):
 					'message': message,
 				})
 
+			print('Reseting challenges')
+
 			# Reset all challenges
 			challenges = EscapeGameChallenge.objects.filter(room=room)
 			for chall in challenges:
 
+				print('Reseting challenge %s' % chall.challenge_name)
 				status, message = chall.set_solved(False)
 				if status != 0:
 					return JsonResponse({
@@ -202,12 +214,15 @@ def escapegame_reset(request, game_slug):
 						'message': message,
 					})
 
+		print('Done reseting escapegame %s' % game.escapegame_name)
+
 		return JsonResponse({
 			'status': 0,
 			'message': 'Success',
 		})
 
 	except Exception as err:
+		print('Failed reseting escapegame %s' % game.escapegame_name)
 		return JsonResponse({
 			'status': 1,
 			'message': 'Error: %s' % err,
