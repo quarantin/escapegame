@@ -1,4 +1,6 @@
+from django.core.management.base import BaseCommand
 from django.utils import timezone
+
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
@@ -11,44 +13,62 @@ import time
 import os
 
 
-delay = os.getenv('WEBSOCKET_DELAY') or 1
+class Command(BaseCommand):
+	help = 'Websocket process for escape game `Stranger Things`'
 
-def send_message(message):
-	print('Sending `%s`' % message)
-	redis_publisher = RedisPublisher(facility='notify', broadcast=True)
-	redis_publisher.publish_message(RedisMessage(message))
+	def get_game(self):
+		return EscapeGame.objects.all().order_by('id').last()
 
-def reset_counter():
-	send_message('0:00:00')
+	def get_trigger_rooms(self, game):
+		rooms = EscapeGameRoom.objects.filter(escapegame=game).order_by('id')
+		room1 = rooms[0]
+		room2 = rooms[1]
+		return room1, room2
 
-def publish_counter(start_time):
-	now = timezone.localtime()
-	message = ('%s' % (now - start_time)).split('.')[0]
-	send_message(message)
+	def send_message(self, message):
+		game = self.get_game()
+		self.stdout.write('  Sending %s' % message)
+		redis_publisher = RedisPublisher(facility='notify-%s' % game.escapegame_name, broadcast=True)
+		redis_publisher.publish_message(RedisMessage(message))
 
-started = True
-while True:
+	def reset_counter(self):
+		self.send_message('0:00:00')
 
-	try:
-		game = EscapeGame.objects.get(slug='stranger-things')
-		rooms = EscapeGameRoom.objects.filter(escapegame=game).order_by('id')[0:2]
+	def publish_counter(self, start_time):
+		now = timezone.localtime()
+		message = ('%s' % (now - start_time)).split('.')[0]
+		self.send_message(message)
 
-		start_time = None
-		if rooms[0].start_time and rooms[1].start_time:
-			start_time = max(rooms[0].start_time, rooms[1].start_time)
 
-		if start_time:
-			started = True
-			publish_counter(start_time)
+	def handle(self, *args, **options):
 
-		elif started:
-			started = False
-			reset_counter()
+		game = self.get_game()
+		self.stdout.write(self.style.MIGRATE_HEADING('Starting websocket for `%s`' % game.escapegame_name))
+		delay = os.getenv('WEBSOCKET_DELAY') or 1
 
-		else:
-			print('No message to send')
+		started = True
+		while True:
 
-	except:
-		print(traceback.format_exc())
+			try:
+				game = self.get_game()
+				room1, room2 = self.get_trigger_rooms(game)
 
-	time.sleep(delay)
+				start_time = None
+				if room1.start_time and room2.start_time:
+					start_time = max(room1.start_time, room2.start_time)
+
+				if start_time:
+					started = True
+					self.publish_counter(start_time)
+
+				elif started:
+					started = False
+					self.reset_counter()
+
+				else:
+					self.stdout.write('  No message to send')
+
+			except:
+				self.stdout.write(traceback.format_exc())
+
+			time.sleep(delay)

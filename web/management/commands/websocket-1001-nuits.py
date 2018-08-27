@@ -16,9 +16,16 @@ import os
 class Command(BaseCommand):
 	help = 'Websocket process for escape game `Les 1001 nuits`'
 
+	def get_game(self):
+		return EscapeGame.objects.all().order_by('id').first()
+
+	def get_trigger_room(self, game):
+		return EscapeGameRoom.objects.filter(escapegame=game).order_by('id').first()
+
 	def send_message(self, message):
-		self.stdout.write('Sending `%s`' % message, ending='')
-		redis_publisher = RedisPublisher(facility='notify', broadcast=True)
+		game = self.get_game()
+		self.stdout.write('  Sending %s' % message)
+		redis_publisher = RedisPublisher(facility='notify-%s' % game.slug, broadcast=True)
 		redis_publisher.publish_message(RedisMessage(message))
 
 	def reset_counter(self):
@@ -31,15 +38,19 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
-		self.stdout.write('WTFFFFF', ending='')
+		game = self.get_game()
+		self.stdout.write(self.style.MIGRATE_HEADING('Starting websocket for `%s`' % game.escapegame_name))
+
 		delay = os.getenv('WEBSOCKET_DELAY') or 1
 
 		started = True
 		while True:
 
+			#self.stdout.write('WTF')
+
 			try:
-				game = EscapeGame.objects.all().order_by('id').first()
-				room = EscapeGameRoom.objects.filter(escapegame=game).order_by('id').first()
+				game = self.get_game()
+				room = self.get_trigger_room(game)
 
 				start_time = room.start_time
 
@@ -52,9 +63,9 @@ class Command(BaseCommand):
 					self.reset_counter()
 
 				else:
-					self.stdout.write('No message to send', ending='')
+					self.stdout.write('  No message to send')
 
 			except:
-				self.stdout.write(traceback.format_exc(), ending='')
+				self.stdout.write(traceback.format_exc())
 
 			time.sleep(delay)
