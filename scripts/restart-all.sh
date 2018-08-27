@@ -5,6 +5,9 @@
 echo 'Restarting nginx...'
 ${ROOTDIR}/scripts/restart-nginx.sh
 
+echo 'Restarting redis...'
+${ROOTDIR}/scripts/restart-redis.sh
+
 echo 'Restarting uwsgi...'
 ${ROOTDIR}/scripts/restart-uwsgi.sh
 
