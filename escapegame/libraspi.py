@@ -36,6 +36,9 @@ if RUNNING_ON_PI:
 		def __init_controls(self):
 
 			try:
+				if not os.path.exists('/tmp/omxplayerdbus.pi'):
+					return
+
 				# Get the bus connection of omxplayer
 				bus = dbus.bus.BusConnection(BusFinder().get_address())
 
