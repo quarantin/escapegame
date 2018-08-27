@@ -153,8 +153,7 @@ def escapegame_reset(request, game_slug):
 		# Reset start time of game
 		game.start_time = None
 		game.save()
-		notify_frontend()
-		notify_frontend('0:00:00')
+		notify_frontend(game)
 
 		# Stop video player
 		status, message = libraspi.video_control('stop', game.video)
