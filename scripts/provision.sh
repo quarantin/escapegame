@@ -13,7 +13,6 @@ DEBIAN_PACKAGES=(
 	$NGINX_PKG
 	bc
 	screen
-	sqlite3
 	mysql-server
 	redis-server
 	uwsgi
