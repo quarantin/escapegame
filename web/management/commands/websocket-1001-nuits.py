@@ -34,7 +34,6 @@ class Command(BaseCommand):
 	def publish_counter(self, start_time, finish_time=None):
 		if not finish_time:
 			finish_time = timezone.localtime()
-
 		message = ('%s' % (finish_time - start_time)).split('.')[0]
 		self.send_message(message)
 
