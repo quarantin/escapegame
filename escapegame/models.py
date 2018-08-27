@@ -70,6 +70,7 @@ class EscapeGame(models.Model):
 
 	def finish(self):
 		self.finish_time = timezone.localtime()
+		self.save()
 
 	def get_door_pin(self, slug):
 		if slug == 'sas':
@@ -153,7 +154,7 @@ class EscapeGameRoom(models.Model):
 			return False
 
 	def is_last_room(self):
-		last_room = EscapeGame.objects.filter(escapegame=self.escapegame).order_by('id').last()
+		last_room = EscapeGameRoom.objects.filter(escapegame=self.escapegame).order_by('id').last()
 		return last_room == self
 
 	def set_door_locked(self, locked):
@@ -209,18 +210,18 @@ class EscapeGameChallenge(models.Model):
 			if self.room.all_challenge_validated():
 				print('This was the last remaining challenge to solved, opening door for %s' % self.room.room_name)
 				self.room.set_door_locked(False)
+
+				if self.room.is_last_room():
+					print('This was the last room, stopping escape game counter')
+					self.room.escapegame.finish()
+				else:
+					print('Still some rooms to explore')
 			else:
 				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
-
-			if self.room.is_last_room():
-				print('This was the last room, stopping escape game counter')
-				self.room.escapegame.finish()
-			else:
-				print('Still some rooms to explore')
 
 			notify_frontend(self.room.escapegame)
 
 			return 0, 'Success'
 
-		except Exeption as err:
+		except Exception as err:
 			return 1, 'Error: %s' % err
