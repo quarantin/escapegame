@@ -34,10 +34,14 @@ urls_stranger_things = [
 urls = urls_1001_nuits
 
 if len(sys.argv) > 1:
+
 	game = sys.argv[1]
+
 	if game == '1001-nuits':
 		urls = urls_1001_nuits
+
 	elif game == 'stranger-things':
+		urls = urls_stranger_things
 
 	else:
 		print('Invalid game: `%s` (Must be one of 1001-nuits or stranger-things)' % game)
