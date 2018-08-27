@@ -109,7 +109,7 @@ class Command(BaseCommand):
 		room_sas_salle_claire = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=7)
 		room_sas_salle_claire.save()
 		# Room: SAS Stranger Things - Salle Obscure
-		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=9)
+		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=10)
 		room_sas_salle_obscure.save()
 
 
