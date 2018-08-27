@@ -21,27 +21,33 @@ class Command(BaseCommand):
 		]
 
 		for model in all_models:
+			self.stdout.write('  Flushing model `%s`' % model.__name__, ending='')
 			model.objects.all().delete()
+			self.stdout.write(self.style.SUCCESS(' OK'))
 
 	def handle(self, *args, **options):
 
-		self.stdout.write('Populating database...')
-
 		# We want to clear the database before populating it to avoid duplicate entries.
+		self.stdout.write(self.style.MIGRATE_HEADING('Flushing database:'))
 		self.flush_database()
+
+		self.stdout.write(self.style.MIGRATE_HEADING('Populating database:'))
 
 		#
 		# Videos
 		#
 
 		# Video demo
+		self.stdout.write('  Populating model `Video`', ending='')
 		video = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
 		video.save()
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		#
 		# Images
 		#
 
+		self.stdout.write('  Populating model `Image`', ending='')
 		# Full map image
 		map_image = Image(image_name='Full Map', image_path='uploads/images/map-base.png')
 		map_image.save()
@@ -60,33 +66,41 @@ class Command(BaseCommand):
 		# Room "La fontaine" door image
 		room_fontain_door_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
 		room_fontain_door_image.save()
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		#
 		# Raspberry Pis
 		#
 
+		self.stdout.write('  Populating model `RaspberryPi`', ending='')
 		# Raspberry Pi: Les 1001 nuits
 		raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local')
 		raspi_1001_nuits.save()
 		# Raspberry Pi: Stranger Things
 		raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local')
 		raspi_stranger_things.save()
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		#
 		# Escape games
 		#
 
+		self.stdout.write('  Populating model `EscapeGame`', ending='')
 		# Escape game: Les 1001 nuits
 		game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, raspberrypi=raspi_1001_nuits, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_1_image)
 		game_1001_nuits.save()
 		# Escape game: Stranger Things
 		game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, raspberrypi=raspi_stranger_things, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_2_image)
 		game_stranger_things.save()
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		#
 		# Rooms
 		#
+		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
+		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
 		# Room: SAS les 1001 nuits
 		room_sas_1001_nuits = EscapeGameRoom(room_name='SAS les 1001 nuits', escapegame=game_1001_nuits, door_pin=5, door_image=sas1_door_image)
 		room_sas_1001_nuits.save()
@@ -170,6 +184,8 @@ class Command(BaseCommand):
 		# Challenge: 2 (Stranger Things / La forêt)
 		chall = EscapeGameChallenge(challenge_name='chall2', room=room)
 		chall.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		# Remote door pin Les 1001 nuits / La fontaine
 		#remote_door_pin_fontaine = RemoteDoorPin(name='Remote Door Pin: 1001-nuits / fontaine', raspberrypi=raspi_1001_nuits, room=room_fontaine)
