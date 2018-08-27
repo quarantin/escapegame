@@ -6,20 +6,6 @@
 			<h1>{{ game.escapegame_name }}</h1>
 		</div>
 
-		<!-- Escape game counter -->
-		<div class="col head_block">
-			<label class="head_block head_border">Time elapsed</label>
-			<div class="row head_block" style="text-align: center;">
-				<div class="col">
-					<font size="18">
-						<div id="counter">
-							0:00:00
-						</div>
-					</font>
-				</div>
-			</div>
-		</div>
-
 		<!-- Escape game controls -->
 		<div class="col head_block">
 			<label class="head_block head_border">Escape Game Controls &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
@@ -30,31 +16,31 @@
 						<p>Start escape game</p>
 					</div>
 				</button>
-				<button id="stop-escapegame" value="{{ game.slug }}" type="submit">
+				<button id="reset-escapegame" value="{{ game.slug }}" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-stop-100.png' %}" title="Reset escape game">
 						<p>Reset escape game</p>
 					</div>
 				</button>
-				<button class="lock-button{% if not game.sas_door_locked %} d-none{% endif %}" id="lock-sas-{{ game.slug }}" value="{{ game.url_callback_unlock_sas }}" type="submit">
+				<button class="lock-button{% if not game.sas_door_locked %} d-none{% endif %}" id="lock-game-sas-{{ game.slug }}" value="{{ game.url_callback_unlock_sas }}" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock SAS door">
 						<p>Unlock SAS door</p>
 					</div>
 				</button>
-				<button class="unlock-button{% if game.sas_door_locked %} d-none{% endif %}" id="unlock-sas-{{ game.slug }}" value="{{ game.url_callback_lock_sas }}" type="submit">
+				<button class="unlock-button{% if game.sas_door_locked %} d-none{% endif %}" id="unlock-game-sas-{{ game.slug }}" value="{{ game.url_callback_lock_sas }}" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock SAS door">
 						<p>Lock SAS door</p>
 					</div>
 				</button>
-				<button class="lock-button{% if not game.corridor_door_locked %} d-none{% endif %}" id="lock-corridor-{{ game.slug }}" value="{{ game.url_callback_unlock_corridor }}" type="submit">
+				<button class="lock-button{% if not game.corridor_door_locked %} d-none{% endif %}" id="lock-game-corridor-{{ game.slug }}" value="{{ game.url_callback_unlock_corridor }}" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock corridor door">
 						<p>Unlock corridor door</p>
 					</div>
 				</button>
-				<button class="unlock-button{% if game.corridor_door_locked %} d-none{% endif %}" id="unlock-corridor-{{ game.slug }}" value="{{ game.url_callback_lock_corridor }}" type="submit">
+				<button class="unlock-button{% if game.corridor_door_locked %} d-none{% endif %}" id="unlock-game-corridor-{{ game.slug }}" value="{{ game.url_callback_lock_corridor }}" type="submit">
 					<div class="image-with-caption">
 						<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock corridor door">
 						<p>Lock corridor door</p>
@@ -85,6 +71,20 @@
 						<p>Stop video</p>
 					</div>
 				</button>
+			</div>
+		</div>
+
+		<!-- Escape game counter -->
+		<div class="col head_block">
+			<label class="head_block head_border">Time elapsed</label>
+			<div class="row head_block" style="text-align: center;">
+				<div class="col">
+					<font size="18">
+						<div id="counter">
+							0:00:00
+						</div>
+					</font>
+				</div>
 			</div>
 		</div>
 {% if rooms|length < 1 %}
