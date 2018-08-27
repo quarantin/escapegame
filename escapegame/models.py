@@ -59,6 +59,7 @@ class EscapeGame(models.Model):
 	corridor_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='corridor_door_image')
 
 	start_time = models.DateTimeField(blank=True, null=True)
+	finish_time = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return self.escapegame_name
@@ -66,6 +67,9 @@ class EscapeGame(models.Model):
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(**kwargs)
+
+	def finish(self):
+		self.finish_time = timezone.localtime()
 
 	def get_door_pin(self, slug):
 		if slug == 'sas':
@@ -148,6 +152,10 @@ class EscapeGameRoom(models.Model):
 			print('Error: %s' % err)
 			return False
 
+	def is_last_room(self):
+		last_room = EscapeGame.objects.filter(escapegame=self.escapegame).order_by('id').last()
+		return last_room == self
+
 	def set_door_locked(self, locked):
 		try:
 			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
@@ -203,6 +211,12 @@ class EscapeGameChallenge(models.Model):
 				self.room.set_door_locked(False)
 			else:
 				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
+
+			if self.room.is_last_room():
+				print('This was the last room, stopping escape game counter')
+				self.room.escapegame.finish()
+			else:
+				print('Still some rooms to explore')
 
 			notify_frontend(self.room.escapegame)
 

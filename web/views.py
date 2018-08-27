@@ -152,8 +152,10 @@ def escapegame_reset(request, game_slug):
 
 		# Reset start time of game
 		game.start_time = None
+		game.finish_time = None
 		game.save()
 		notify_frontend(game)
+		notify_frontend('0:00:00')
 
 		# Close SAS door
 		print('Closing SAS door')
