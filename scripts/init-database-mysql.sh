@@ -51,4 +51,4 @@ mysql -u ${DBUSER} -e "
 	INSERT INTO auth_user VALUES(1,'${PASS}',NULL,1,'${LOGIN}','','','${MAIL}',1,1,'${DATE}');" ${DBNAME}
 
 # Populate database
-${PYTHON} manage.py shell < ./scripts/populate-database.py
+${PYTHON} manage.py populate-database
