@@ -155,17 +155,6 @@ def escapegame_reset(request, game_slug):
 		game.save()
 		notify_frontend(game)
 
-		# Stop video player
-		status, message = libraspi.video_control('stop', game.video)
-		# We don't want to return an error if the stop action failed,
-		# because maybe there was no video running, in which case this
-		# call should fail and we still want to continue.
-		#if message != 'Success':
-		#	return JsonResponse({
-		#		'status': status,
-		#		'message': message,
-		#	})
-
 		# Close SAS door
 		print('Closing SAS door')
 		status, message = game.set_door_locked(game.sas_door_pin, True)
@@ -212,6 +201,17 @@ def escapegame_reset(request, game_slug):
 						'status': status,
 						'message': message,
 					})
+
+		# Stop video player
+		status, message = libraspi.video_control('stop', game.video)
+		# We don't want to return an error if the stop action failed,
+		# because maybe there was no video running, in which case this
+		# call should fail and we still want to continue.
+		#if message != 'Success':
+		#	return JsonResponse({
+		#		'status': status,
+		#		'message': message,
+		#	})
 
 		print('Done reseting escapegame %s' % game.escapegame_name)
 
