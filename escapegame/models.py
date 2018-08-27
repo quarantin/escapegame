@@ -24,9 +24,16 @@ from io import BytesIO
 from escapegame.apps import EscapegameConfig as AppConfig
 logger = AppConfig.logger
 
+
 def paste_image(to_image, from_image_field):
 	from_image = PIL.open(from_image_field.image_path.path)
 	to_image.paste(from_image, (0, 0), from_image)
+
+def notify_frontend(message='notify'):
+	redis_publisher = RedisPublisher(facility='notify', broadcast=True)
+	redis_publisher.publish_message(RedisMessage(message))
+	print('notify_frontend("%s")' % message)
+
 
 # Escape game classes
 
@@ -56,10 +63,6 @@ class EscapeGame(models.Model):
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
 		super(EscapeGame, self).save(**kwargs)
-
-	def notify_frontend(self, message='notify'):
-		redis_publisher = RedisPublisher(facility='notify', broadcast=True)
-		redis_publisher.publish_message(RedisMessage(message))
 
 	def get_door_pin(self, slug):
 		if slug == 'sas':
@@ -97,7 +100,8 @@ class EscapeGame(models.Model):
 					self.start_time = timezone.localtime()
 
 				self.save()
-				self.notify_frontend()
+
+			notify_frontend()
 
 			return status, message
 
@@ -127,6 +131,20 @@ class EscapeGameRoom(models.Model):
 		self.slug = slugify(self.room_name)
 		super(EscapeGameRoom, self).save(**kwargs)
 
+	def all_challenge_validated(self):
+		try:
+			valid = True
+			challs = EscapeGameChallenge.objects.filter(room=self)
+			for chall in challs:
+				if not chall.solved:
+					valid = False
+
+			return valid
+
+		except Exception as err:
+			print('Error: %s' % err)
+			return False
+
 	def set_door_locked(self, locked):
 		try:
 			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
@@ -138,10 +156,12 @@ class EscapeGameRoom(models.Model):
 				action = (locked and 'Closing' or 'Opening')
 				print("%s door of room `%s / %s`" % (action, self.escapegame, self.room_name))
 
-				if locked == False:
+				if not locked:
 					self.start_time = timezone.localtime()
 
 				self.save()
+
+			notify_frontend()
 
 			return status, message
 
@@ -170,8 +190,19 @@ class EscapeGameChallenge(models.Model):
 
 	def set_solved(self, solved):
 		try:
+			action = (solved and 'Solving' or 'Reseting')
+			print('%s challenge %s / %s / %s' % (action, self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name))
 			self.solved = solved
 			self.save()
+
+			if self.room.all_challenge_validated():
+				print('This was the last remaining challenge to solved, opening door for %s' % self.room.room_name)
+				self.room.set_door_locked(False)
+			else:
+				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
+
+			notify_frontend()
+
 			return 0, 'Success'
 
 		except Exeption as err:
