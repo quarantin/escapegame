@@ -164,7 +164,7 @@ class EscapeGameRoom(models.Model):
 
 				self.save()
 
-			notify_frontend(self.game)
+			notify_frontend(self.escapegame)
 
 			return status, message
 
@@ -204,7 +204,7 @@ class EscapeGameChallenge(models.Model):
 			else:
 				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
 
-			notify_frontend(self.room.game)
+			notify_frontend(self.room.escapegame)
 
 			return 0, 'Success'
 
