@@ -28,22 +28,23 @@ class Command(BaseCommand):
 	def send_message(self, message):
 		game = self.get_game()
 		self.stdout.write('  Sending %s' % message)
-		redis_publisher = RedisPublisher(facility='notify-%s' % game.escapegame_name, broadcast=True)
+		redis_publisher = RedisPublisher(facility='notify-%s' % game.slug, broadcast=True)
 		redis_publisher.publish_message(RedisMessage(message))
 
 	def reset_counter(self):
 		self.send_message('0:00:00')
 
-	def publish_counter(self, start_time):
-		now = timezone.localtime()
-		message = ('%s' % (now - start_time)).split('.')[0]
+	def publish_counter(self, start_time, finish_time=None):
+		if not finish_time:
+			finish_time = timezone.localtime()
+		message = ('%s' % (finish_time - start_time)).split('.')[0]
 		self.send_message(message)
-
 
 	def handle(self, *args, **options):
 
 		game = self.get_game()
 		self.stdout.write(self.style.MIGRATE_HEADING('Starting websocket for `%s`' % game.escapegame_name))
+
 		delay = os.getenv('WEBSOCKET_DELAY') or 1
 
 		started = True
@@ -57,7 +58,11 @@ class Command(BaseCommand):
 				if room1.start_time and room2.start_time:
 					start_time = max(room1.start_time, room2.start_time)
 
-				if start_time:
+				if start_time and game.finish_time:
+					started = False
+					self.publish_counter(start_time, game.finish_time)
+
+				elif start_time:
 					started = True
 					self.publish_counter(start_time)
 
