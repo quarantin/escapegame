@@ -9,7 +9,7 @@ $(document).ready(function() {
 	// Handler for the button to start the escape game
 	$('button#start-escapegame').click(function() {
 
-		ok = confirm('Are you really sure you want to start a new escape game?\nThis will reset all challenge state and current score.');
+		ok = confirm('Are you really sure you want to start a new escape game?\n\nThis will reset all challenge state and current score.');
 		if (ok !== true)
 			return;
 
@@ -25,7 +25,7 @@ $(document).ready(function() {
 	// Handler for the button to reset the escape game
 	$('button#reset-escapegame').click(function() {
 
-		ok = confirm('Are you really sure you want to reset the current escape game?\nThis will reset all challenge state and current score.');
+		ok = confirm('Are you really sure you want to reset the current escape game?\n\nThis will reset all challenge state and current score.');
 		if (ok !== true)
 			return;
 
