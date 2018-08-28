@@ -51,5 +51,5 @@ if len(sys.argv) > 1:
 input('Press enter to start validating the challenges for escape game %s' % game)
 
 for url in urls:
-	time.sleep(2)
+	time.sleep(3)
 	requests.get(url)
