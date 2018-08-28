@@ -1,11 +1,9 @@
 from django.db import models
 from constance import config
 
-from jsonexport.decorators import json_import
 
 # Controllers classes
 
-@json_import
 class RaspberryPi(models.Model):
 
 	name = models.CharField(max_length=255)
@@ -19,7 +17,6 @@ class RaspberryPi(models.Model):
 		verbose_name = 'Raspberry Pi'
 		verbose_name_plural = 'Raspberry Pis'
 
-@json_import
 class RemoteChallengePin(models.Model):
 	
 	name = models.CharField(max_length=255)
@@ -44,7 +41,6 @@ class RemoteChallengePin(models.Model):
 
 		super(RemoteChallengePin, self).save(**kwargs)
 
-@json_import
 class RemoteDoorPin(models.Model):
 
 	name = models.CharField(max_length=255)
@@ -68,7 +64,6 @@ class RemoteDoorPin(models.Model):
 
 		super(RemoteDoorPin, self).save(**kwargs)
 
-@json_import
 class RemoteLedPin(models.Model):
 
 	name = models.CharField(max_length=255)

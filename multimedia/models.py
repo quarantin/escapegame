@@ -6,12 +6,10 @@ from django.template.defaultfilters import slugify
 from constance import config
 
 from controllers.models import RaspberryPi
-from jsonexport.decorators import json_import
 
 
 # Multimedia classes
 
-@json_import
 class Image(models.Model):
 
 	image_name = models.CharField(max_length=255)
@@ -30,7 +28,6 @@ class Image(models.Model):
 	def natural_key(self):
 		return ( self.image_name, self.image_path.url, self.width, self.height )
 
-@json_import
 class Video(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -45,7 +42,6 @@ class Video(models.Model):
 		self.slug = slugify(self.video_name)
 		super(Video, self).save(*args, **kwargs)
 
-@json_import
 class VideoPlayer(models.Model):
 
 	video_player_name = models.CharField(max_length=255)

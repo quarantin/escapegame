@@ -14,10 +14,10 @@ import json
 model_mapping = [
 	('images', Image),
 	('videos', Video),
+	('raspberry_pis', RaspberryPi),
 	('escapegames', EscapeGame),
 	('rooms', EscapeGameRoom),
 	('challenges', EscapeGameChallenge),
-	('raspberry_pis', RaspberryPi),
 	('remote_door_pins', RemoteDoorPin),
 	('remote_challenge_pins', RemoteChallengePin),
 	('remote_led_pins', RemoteLedPin),
@@ -89,6 +89,36 @@ class JsonImportForm(forms.ModelForm):
 			'json_configuration',
 		]
 
+	def json_import (self, model, dic):
+
+		try:
+			try:
+				obj = model.objects.get(id=dic['id'])
+				for key, val in dic.items():
+					setattr(obj, key, val)
+			except:
+				obj = model(**dic)
+
+			obj.save()
+
+			return 0, 'Success'
+
+		except Exception as err:
+			return 1, 'Error: %s<br>\n%s' % err
+
+	def json_import_list(self, model, listdic):
+
+		try:
+			for dic in listdic:
+				status, message = self.json_import(model, dic)
+				if status != 0:
+					return status, message
+
+			return 0, 'Success'
+
+		except Exception as err:
+			return 1, 'Error: %s' % err
+
 	def load(self, json_configuration):
 
 		try:
@@ -101,7 +131,7 @@ class JsonImportForm(forms.ModelForm):
 
 			for jsonkey, model in model_mapping:
 				if jsonkey in config:
-					status, message = model.json_import_list(config[jsonkey])
+					status, message = self.json_import_list(model, config[jsonkey])
 					if status != 0:
 						return status, message
 

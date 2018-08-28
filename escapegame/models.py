@@ -15,8 +15,6 @@ from multimedia.models import *
 
 from controllers.models import *
 
-from jsonexport.decorators import json_import
-
 from PIL import Image as PIL
 
 from io import BytesIO
@@ -40,7 +38,6 @@ def notify_frontend(game, message='notify'):
 
 # Escape game classes
 
-@json_import
 class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -116,7 +113,6 @@ class EscapeGame(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
-@json_import
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255)
@@ -180,7 +176,6 @@ class EscapeGameRoom(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
-@json_import
 class EscapeGameChallenge(models.Model):
 
 	slug = models.SlugField(max_length=255)
