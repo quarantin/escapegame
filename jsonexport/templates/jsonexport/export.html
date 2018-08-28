@@ -18,7 +18,7 @@
 		<h1>Export configuration</h1>
 	</div>
 	<div class="import-export">
-		<form method="POST">
+		<form method="POST">{% csrf_token %}
 			<div class="col">
 				<div class="row">
 					<input id="indent" name="indent" class="import-export" type="checkbox" checked />
