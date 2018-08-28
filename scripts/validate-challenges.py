@@ -21,16 +21,17 @@ urls_1001_nuits = [
 urls_stranger_things = [
 	'http://escapegame.local/web/stranger-things/sas-stranger-things-salle-claire/debut-du-jeu/validate/',
 	'http://escapegame.local/web/stranger-things/sas-stranger-things-salle-obscure/debut-du-jeu/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-claire/chall-1/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-claire/chall-2/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall-1/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall-2/validate/',
-	'http://escapegame.local/web/stranger-things/la-foret/chall-1/validate/',
-	'http://escapegame.local/web/stranger-things/la-foret/chall-2/validate/',
+	'http://escapegame.local/web/stranger-things/la-salle-claire/chall1/validate/',
+	'http://escapegame.local/web/stranger-things/la-salle-claire/chall2/validate/',
+	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall1/validate/',
+	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall2/validate/',
+	'http://escapegame.local/web/stranger-things/la-foret/chall1/validate/',
+	'http://escapegame.local/web/stranger-things/la-foret/chall2/validate/',
 ]
 
 
 
+game = '1001-nuits'
 urls = urls_1001_nuits
 
 if len(sys.argv) > 1:
