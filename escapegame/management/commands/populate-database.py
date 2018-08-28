@@ -60,12 +60,28 @@ class Command(BaseCommand):
 		# Corridor door 2 image
 		corridor_door_2_image = Image(image_name='Corridor Door 2', image_path='uploads/images/map-corridor-door-2.png')
 		corridor_door_2_image.save()
+		# Corridor door 3 image
+		corridor_door_3_image = Image(image_name='Corridor Door 3', image_path='uploads/images/map-corridor-door-3.png')
+		corridor_door_3_image.save()
 		# SAS 1 door image
 		sas1_door_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
 		sas1_door_image.save()
+		# SAS 2 door image
+		sas2_door_image = Image(image_name='SAS 2 Door', image_path='uploads/images/map-sas2-door.png')
+		sas2_door_image.save()
+		# SAS 3 door image
+		sas3_door_image = Image(image_name='SAS 3 Door', image_path='uploads/images/map-sas3-door.png')
+		sas3_door_image.save()
 		# Room "La fontaine" door image
 		room_fontain_door_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
 		room_fontain_door_image.save()
+		# Room "Salle claire" door image
+		room_salle_claire_door_image = Image(image_name='Door Room Salle Claire', image_path='uploads/images/map-door-room-salle-claire.png')
+		room_salle_claire_door_image.save()
+		# Room "Salle obscure" door image
+		room_salle_obscure_door_image = Image(image_name='Door Room Salle Obscure', image_path='uploads/images/map-door-room-salle-obscure.png')
+		room_salle_obscure_door_image.save()
+
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 		#
@@ -106,10 +122,10 @@ class Command(BaseCommand):
 		room_sas_1001_nuits = EscapeGameRoom(room_name='SAS - Les 1001 nuits', escapegame=game_1001_nuits, door_pin=7, door_image=sas1_door_image)
 		room_sas_1001_nuits.save()
 		# Room: SAS Stranger Things - Salle Claire
-		room_sas_salle_claire = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=7)
+		room_sas_salle_claire = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=7, door_image=sas2_door_image)
 		room_sas_salle_claire.save()
 		# Room: SAS Stranger Things - Salle Obscure
-		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=10)
+		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=10, door_image=sas3_door_image)
 		room_sas_salle_obscure.save()
 
 
@@ -161,7 +177,7 @@ class Command(BaseCommand):
 		chall_lampe.save()
 
 		# Room: La salle claire
-		room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=7)
+		room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=7, door_image=room_salle_claire_door_image)
 		room.save()
 		# Challenge: 1 (Stranger Things / La salle claire)
 		chall = EscapeGameChallenge(challenge_name='chall1', room=room)
@@ -171,7 +187,7 @@ class Command(BaseCommand):
 		chall.save()
 
 		# Room: La salle obscure
-		room = EscapeGameRoom(room_name='La salle obscure', escapegame=game_stranger_things, door_pin=12)
+		room = EscapeGameRoom(room_name='La salle obscure', escapegame=game_stranger_things, door_pin=12, door_image=room_salle_obscure_door_image)
 		room.save()
 		# Challenge: 1 (Stranger Things / La salle obscure)
 		chall = EscapeGameChallenge(challenge_name='chall1', room=room)
