@@ -273,7 +273,7 @@ def __local_door_control(action, room, pin):
 			GPIO.output(pin, state)
 
 		state = (state and 'Opening' or 'Closing')
-		print("%s door on pin %d" % (state, pin))
+		print("%s door on PIN %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:
@@ -390,7 +390,7 @@ def get_pin_state(pin):
 			GPIO.setup(pin, GPIO.IN)
 			state = GPIO.input(pin)
 
-		print("Getting pin state on pin %d = %s" % (pin, state))
+		print("Getting pin state on PIN %d = %s" % (pin, state))
 		return state, 'Success'
 
 	except Exception as err:
