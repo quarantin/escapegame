@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 
 from ws4redis.publisher import RedisPublisher
@@ -60,6 +61,19 @@ class EscapeGame(models.Model):
 
 	def __str__(self):
 		return self.escapegame_name
+
+	def clean(self):
+
+		if not libraspi.is_valid_pin(self.sas_door_pin):
+			raise ValidationError({
+				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.sas_door_pin,
+			})
+
+		if not libraspi.is_valid_pin(self.corridor_door_pin):
+			raise ValidationError({
+				'corridor_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.corridor_door_pin,
+			})
+
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
@@ -131,6 +145,12 @@ class EscapeGameRoom(models.Model):
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
 
+	def clean(self):
+		if not libraspi.is_valid_pin(self.door_pin):
+			raise ValidationError({
+				'door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.door_pin,
+			})
+
 	def save(self, **kwargs):
 		self.slug = slugify(self.room_name)
 		super(EscapeGameRoom, self).save(**kwargs)
@@ -190,6 +210,12 @@ class EscapeGameChallenge(models.Model):
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
+
+	def clean(self):
+		if not libraspi.is_valid_pin(self.challenge_pin):
+			raise ValidationError({
+				'challenge_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.challenge_pin,
+			})
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.challenge_name)
