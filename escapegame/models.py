@@ -46,14 +46,15 @@ class EscapeGame(models.Model):
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
 	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL)
 
-	cube_pin = models.IntegerField(default=7)
+	cube_delay = models.IntegerField(default=50)
 
+	cube_pin = models.IntegerField(default=7)
 	sas_door_pin = models.IntegerField(default=11)
 	corridor_door_pin = models.IntegerField(default=12)
 
+	cube_raised = models.BooleanField(default=False)
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
-
 
 	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='sas_door_image')

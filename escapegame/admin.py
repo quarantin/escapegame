@@ -23,6 +23,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'slug',
 		'raspberrypi',
 		'video',
+		'cube_delay',
 		'cube_pin',
 		'sas_door_pin',
 		'corridor_door_pin',
@@ -40,6 +41,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'video',
 			)}),
 		('Door controls', { 'fields': (
+			'cube_delay',
 			'cube_pin',
 			'sas_door_pin',
 			'corridor_door_pin',
