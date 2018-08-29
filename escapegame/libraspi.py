@@ -296,18 +296,22 @@ def __remote_door_control(action, room, pin):
 
 def door_control(action, room, pin):
 
-	if action not in [ 'lock', 'unlock' ]:
-		raise Exception('Invalid action `%s` in method door_control()' % action)
+	try:
+		if action not in [ 'lock', 'unlock' ]:
+			raise Exception('Invalid action `%s` in method door_control()' % action)
 
-	method = __local_door_control
-	if room is not None:
-		raspi = room.raspberrypi
-		if raspi:
-			method = __remote_door_control
-			if socket.gethostname() == raspi.hostname.replace('.local', ''):
-				method = __local_door_control
+		method = __local_door_control
+		if room is not None:
+			raspi = room.raspberrypi
+			if raspi:
+				method = __remote_door_control
+				if socket.gethostname() == raspi.hostname.replace('.local', ''):
+					method = __local_door_control
 
-	return method(action, room, pin)
+		return method(action, room, pin)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
 
 
 #
