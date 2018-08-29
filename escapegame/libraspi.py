@@ -313,6 +313,31 @@ def door_control(action, room, pin):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
+#
+# Cube controls
+#   - cube_control
+#
+
+def cube_control(action, pin):
+
+	try:
+		if action not in [ 'lower', 'raise' ]:
+			raise Exception('Invalid action `%s` in method cube_control()' % action)
+
+		state = (action == 'raise')
+		signal = (action == 'raise' and 'HIGH' or 'LOW')
+
+		print('Sending signal %s to pin number %d' % (signal, pin))
+
+		from django.utils import timezone
+		fin = open('/tmp/w00t.txt', 'a+')
+		fin.write('%s Sending signal %s to pin number %d\n' % (timezone.localtime(), signal, pin))
+		fin.close()
+
+		return set_pin_state(pin, state)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
 
 #
 # PINs and LEDs controls
@@ -345,17 +370,17 @@ invalid_pins = [
 def is_valid_pin(pin):
 	return pin not in invalid_pins
 
-def set_led_status(pin, onoff):
+def set_pin_state(pin, state):
 
 	try:
-		state = not onoff
+		#signal = (state and 'HIGH' or 'LOW')
+		#print("Sending signal %s to pin %d" % (signal, pin))
+
 		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			GPIO.output(pin, state)
 
-		state = (state and 'on' or 'off')
-		print("Turning %s led on pin %d" % (state, pin))
 		return 0, 'Success'
 
 	except Exception as err:
