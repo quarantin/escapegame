@@ -123,6 +123,10 @@ def escapegame_start(request, game_slug):
 				'message': message,
 			})
 
+		# CHANGE REQUEST:
+		# Don't open SAS and corridor doors automatically at the end of
+		# the video, they will be opened manually by the game master.
+		"""
 		status, message = game.set_door_locked(game.sas_door_pin, False)
 		if status != 0:
 			return JsonResponse({
@@ -131,6 +135,7 @@ def escapegame_start(request, game_slug):
 			})
 
 		status, message = game.set_door_locked(game.corridor_door_pin, False)
+		"""
 		return JsonResponse({
 			'status': status,
 			'message': message,
