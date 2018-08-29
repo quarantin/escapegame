@@ -4,6 +4,8 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
+from constance import config
+
 from multimedia.models import Image
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
 
@@ -11,7 +13,7 @@ from escapegame.models import notify_frontend
 
 from escapegame import libraspi
 
-from constance import config
+from .tasks import cube_control
 
 import os, subprocess, traceback
 
@@ -136,9 +138,14 @@ def escapegame_start(request, game_slug):
 
 		status, message = game.set_door_locked(game.corridor_door_pin, False)
 		"""
+
+		# Raise the cube: Create a background task to delay call to:
+		# libraspi.cube_control('raise', game.cube.pin)
+		cube_control('raise', game.cube_pin, schedule=game.cube_delay)
+
 		return JsonResponse({
-			'status': status,
-			'message': message,
+			'status': 0,
+			'message': 'Success',
 		})
 
 	except Exception as err:
@@ -161,6 +168,9 @@ def escapegame_reset(request, game_slug):
 		game.save()
 		notify_frontend(game)
 		notify_frontend(game, '0:00:00')
+
+		# Lower the cube (no need for delay)
+		cube_control('lower', game.cube_pin, schedule=0)
 
 		# Close SAS door
 		print('Closing SAS door')
