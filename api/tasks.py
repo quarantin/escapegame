@@ -1,17 +1,12 @@
 from background_task import background
+
 from escapegame.models import *
-from escapegame.apps import EscapegameConfig as AppConfig
 
 import socket, time
 
+
 @background(schedule=0)
 def poll_gpio(pin):
-
-	fin = open('/tmp/w00t-BBQ', 'w+')
-	fin.write('w00t')
-	fin.close()
-
-	logger = AppConfig.taskLogger(pin=pin)
 
 	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
 	if not myself:
