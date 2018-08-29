@@ -92,7 +92,7 @@ if RUNNING_ON_PI:
 			return self.__basic_control(keys.PAUSE)
 
 		def play(self, video):
-			player.OMXPlayer(video, pause=True, dbus_name=self.dbus_name, args=[ '--no-osd' ])
+			player.OMXPlayer(video, pause=False, dbus_name=self.dbus_name, args=[ '--no-osd' ])
 
 		def position(self):
 			return self.__basic_property('Position')
