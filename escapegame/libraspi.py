@@ -329,11 +329,6 @@ def cube_control(action, pin):
 
 		print('Sending signal %s to pin number %d' % (signal, pin))
 
-		from django.utils import timezone
-		fin = open('/tmp/w00t.txt', 'a+')
-		fin.write('%s Sending signal %s to pin number %d\n' % (timezone.localtime(), signal, pin))
-		fin.close()
-
 		return set_pin_state(pin, state)
 
 	except Exception as err:
