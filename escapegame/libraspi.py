@@ -3,6 +3,7 @@
 import os, sys, subprocess, time
 
 import socket
+import getpass
 import traceback
 import requests
 
@@ -36,8 +37,11 @@ if RUNNING_ON_PI:
 		def __init_controls(self):
 
 			try:
-				if not os.path.exists('/tmp/omxplayerdbus.pi'):
-					return
+				socket_path = '/tmp/omxplayerdbus.%s' % getpass.getuser()
+				if not os.path.exists(socket_path):
+					socket_path = '/tmp/omxplayerdbus.root'
+					if not os.path.exists(socket_path):
+						return
 
 				# Get the bus connection of omxplayer
 				bus = dbus.bus.BusConnection(BusFinder().get_address())
