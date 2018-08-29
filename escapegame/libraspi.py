@@ -312,11 +312,34 @@ def door_control(action, room, pin):
 
 #
 # PINs and LEDs controls
-#
+#   - is_valid_pin
 #   - set_led_status
 #   - get_pin_state
 #   - wait_for_pin_state_change
 #
+
+invalid_pins = [
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	8,
+	9,
+	14,
+	17,
+	20,
+	25,
+	27,
+	28,
+	30,
+	34,
+	39,
+]
+
+def is_valid_pin(pin):
+	return pin not in invalid_pins
 
 def set_led_status(pin, onoff):
 
