@@ -19,6 +19,10 @@ $(document).ready(function() {
 			},
 			url: '/web/' + this.value + '/start/',
 			crossDomain: true,
+			success: function() {
+				$('button#video-play').addClass('d-none');
+				$('button#video-pause').removeClass('d-none');
+			},
 		});
 	});
 
@@ -35,6 +39,10 @@ $(document).ready(function() {
 			},
 			url: '/web/' + this.value + '/reset/',
 			crossDomain: true,
+			success: function() {
+				$('button#video-play').removeClass('d-none');
+				$('button#video-pause').addClass('d-none');
+			},
 		});
 	});
 
@@ -55,7 +63,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + this.value + '/play/',
+			url: '/api/video/' + this.value + '/pause/',
 			crossDomain: true,
 		});
 	});
