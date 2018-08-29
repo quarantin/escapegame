@@ -46,11 +46,14 @@ class EscapeGame(models.Model):
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
 	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL)
 
-	sas_door_pin = models.IntegerField(default=7)
-	corridor_door_pin = models.IntegerField(default=10)
+	cube_pin = models.IntegerField(default=7)
+
+	sas_door_pin = models.IntegerField(default=11)
+	corridor_door_pin = models.IntegerField(default=12)
 
 	sas_door_locked = models.BooleanField(default=True)
 	corridor_door_locked = models.BooleanField(default=True)
+
 
 	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='sas_door_image')
@@ -64,19 +67,24 @@ class EscapeGame(models.Model):
 
 	def clean(self):
 
+		if not libraspi.is_valid_pin(self.cube_pin):
+			raise ValidationError({
+				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.cube_pin,
+			})
+
 		if not libraspi.is_valid_pin(self.sas_door_pin):
 			raise ValidationError({
-				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.sas_door_pin,
+				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.sas_door_pin,
 			})
 
 		if not libraspi.is_valid_pin(self.corridor_door_pin):
 			raise ValidationError({
-				'corridor_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.corridor_door_pin,
+				'corridor_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.corridor_door_pin,
 			})
-
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
+		self.clean()
 		super(EscapeGame, self).save(**kwargs)
 
 	def finish(self):
@@ -134,7 +142,7 @@ class EscapeGameRoom(models.Model):
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 
-	door_pin = models.IntegerField(default=5)
+	door_pin = models.IntegerField(default=11)
 	door_locked = models.BooleanField(default=True)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
@@ -148,11 +156,12 @@ class EscapeGameRoom(models.Model):
 	def clean(self):
 		if not libraspi.is_valid_pin(self.door_pin):
 			raise ValidationError({
-				'door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.door_pin,
+				'door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.door_pin,
 			})
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.room_name)
+		self.clean()
 		super(EscapeGameRoom, self).save(**kwargs)
 
 	def all_challenge_validated(self):
@@ -214,11 +223,12 @@ class EscapeGameChallenge(models.Model):
 	def clean(self):
 		if not libraspi.is_valid_pin(self.challenge_pin):
 			raise ValidationError({
-				'challenge_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi 3' % self.challenge_pin,
+				'challenge_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.challenge_pin,
 			})
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.challenge_name)
+		self.clean()
 		super(EscapeGameChallenge, self).save(**kwargs)
 
 	def set_solved(self, solved):
