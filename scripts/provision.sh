@@ -7,14 +7,16 @@ TIMEZONE='Europe/Paris'
 NGINX_PKG=nginx-full
 if [ "$RUNNING_ON_PI" = true ]; then
 	NGINX_PKG=nginx-light
+	GOLANG=golang-1.8
 fi
 
 DEBIAN_PACKAGES=(
-	$NGINX_PKG
 	bc
-	screen
+	$GOLANG
 	mysql-server
+	$NGINX_PKG
 	redis-server
+	screen
 	uwsgi
 	uwsgi-plugin-python3
 	vim
@@ -57,6 +59,17 @@ sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 
 # Install pip packages
 sudo -H ${PIP} install --quiet "${PIP_PACKAGES[@]}"
+
+# Install golang 1.11
+GOLANG_DIR='go1.11.linux-arm64'
+GOLANG_PKG="${GOLANG_DIR}.tar.gz"
+GOLANG_URL="https://storage.googleapis.com/golang/${GOLANG_PKG}"
+cd /tmp
+wget -q -O $GOLANG_PKG $GOLANG_URL
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xf $GOLANG_PKG
+rm -f ${GOLANG_PKG}
+cd ${ROOTDIR}
 
 # Creates default ~/.vimrc
 if [ "$USER" = "pi" ]; then
