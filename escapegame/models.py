@@ -187,7 +187,7 @@ class EscapeGameRoom(models.Model):
 		return last_room == self
 
 	def get_controller(self):
-		return self.raspberrypi and self.raspberrypi or self.escapegame.get_controller():
+		return self.raspberrypi and self.raspberrypi or self.escapegame.get_controller()
 
 	def set_door_locked(self, locked):
 		try:
