@@ -96,6 +96,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'challenge_name',
 		'slug',
 		'room',
+		'video',
 		'challenge_pin',
 		'solved',
 		'challenge_image',
@@ -106,9 +107,10 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			'challenge_name',
 			'slug',
 			'room',
-			'challenge_pin',
+			'video',
 			)}),
-		('Status', { 'fields': (
+		('Challenge Controls', { 'fields': (
+			'challenge_pin',
 			'solved',
 			)}),
 		('Maps', { 'fields': (

@@ -44,7 +44,7 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255)
 	escapegame_name = models.CharField(max_length=255, default='')
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
-	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL)
+	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_video')
 
 	cube_delay = models.IntegerField(default=50)
 
@@ -211,6 +211,7 @@ class EscapeGameChallenge(models.Model):
 	slug = models.SlugField(max_length=255)
 	challenge_name = models.CharField(max_length=255, default='')
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
+	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_video')
 
 	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
@@ -238,6 +239,9 @@ class EscapeGameChallenge(models.Model):
 			print('%s challenge %s / %s / %s' % (action, self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name))
 			self.solved = solved
 			self.save()
+
+			if self.solved and self.video:
+				libraspi.video_control('play', None, video)
 
 			if self.room.all_challenge_validated():
 				print('This was the last remaining challenge to solved, opening door for %s' % self.room.room_name)
