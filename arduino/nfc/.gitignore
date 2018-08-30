@@ -1,0 +1,3 @@
+# Ignore ELF and HEX files produced by arduino-cli
+*.elf
+*.hex
