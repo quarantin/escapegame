@@ -64,6 +64,14 @@ void arduino_reset()
 }
 
 /**
+ * LED sequence.
+ */
+void led_sequence()
+{
+	// TODO implement LED sequence
+}
+
+/**
  * Raise the cube.
  */
 void raise_cube()
@@ -86,34 +94,13 @@ void lower_cube()
 }
 
 /**
- * Check the version of our PN532 chip.
- */
-void check_version()
-{
-	uint32_t version= nfc.getFirmwareVersion();
-	if (!version) {
-		Serial.println("Could not find PN532 board");
-		halt();
-	}
-
-	Serial.print("Found chip PN5");
-	Serial.println((version >> 24) & 0xff, HEX);
-
-	Serial.print("Firmware ver.");
-	Serial.println((version >> 16) & 0xff, DEC);
-
-	Serial.print(".");
-	Serial.println((version >>  8) & 0xff, DEC);
-}
-
-/**
  * Read NFC tag and copy tag ID in buf.
  */
 int read_nfc_tag(char *buf, size_t bufsz)
 {
 	int success;
 
-	blink(3);
+	blink(2);
 
 	success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, buf, bufsz);
 
@@ -147,17 +134,37 @@ int readline(char *buf, size_t bufsz)
 }
 
 /**
+ * Check the version of our PN532 chip.
+ */
+void check_version()
+{
+	uint32_t version = nfc.getFirmwareVersion();
+	if (!version) {
+		Serial.println("Could not find PN532 board");
+		//halt();
+	}
+
+	Serial.print("Found chip PN5");
+	Serial.println((version >> 24) & 0xff, HEX);
+
+	Serial.print("Firmware ver.");
+	Serial.print((version >> 16) & 0xff, DEC);
+
+	Serial.print(".");
+	Serial.println((version >>  8) & 0xff, DEC);
+}
+
+/**
  * Setup function.
  */
 void setup()
 {
 	Serial.begin(SERIAL_BAUDS);
 
-	while (!Serial) {
-		; // wait for serial port to connect. Needed for native USB port only
-	}
-
-	Serial.println("Hello Serial!");
+	// Wait for serial port to connect.
+	// Needed for native USB port only.
+	while (!Serial)
+		;
 
 	pinMode(LED_BUILTIN, OUTPUT);
 	pinMode(PIN_TABLE, OUTPUT);
@@ -178,12 +185,12 @@ void setup()
  */
 void loop()
 {
-	int err, count;
+	int err, length;
 	char command[32];
 
 	// Check if the master sent us some commands
-	count = readline(command, sizeof(command));
-	if (count > 0) {
+	length = readline(command, sizeof(command));
+	if (length > 0) {
 
 		// Reset the arduino state
 		if (!strcmp(command, "reset"))
