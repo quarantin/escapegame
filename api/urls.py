@@ -24,9 +24,6 @@ urlpatterns = [
 	# Door controls
 	path('door/<str:action>/<int:pin>/', views.set_door_locked),
 
-	# Led controls
-	path('led/<str:action>/<int:pin>/', views.set_led_state),
-
 	# Video controls
 	path('video/<slug:video_slug>/<str:action>/', views.set_video_state),
 ]

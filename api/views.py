@@ -154,34 +154,6 @@ def set_door_locked(request, action, pin):
 		})
 
 """
-	Led controls, no login required for now (REST API)
-"""
-def set_led_state(request, action, pin):
-
-	method = 'set_led_state'
-
-	try:
-		if action not in [ 'on', 'off' ]:
-			raise Exception('Invalid action: %s' % action)
-
-		onoff = (action == 'on')
-
-		status, message = libraspi.set_led_state(pin, onff)
-
-		return JsonResponse({
-			'status': status,
-			'message': message,
-			'method': method,
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'message': 'Error: %s' % err,
-			'method': method,
-		})
-
-"""
 	Video controls, no login required for now (REST API)
 """
 

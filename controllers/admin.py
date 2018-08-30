@@ -46,22 +46,7 @@ class RemoteDoorPinAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'url_callback_lock', 'url_callback_unlock' )
 
-class RemoteLedPinAdmin(admin.ModelAdmin):
-	list_display = ( 'name', 'pin_number', 'raspberrypi', 'url_on', 'url_off' )
-	fieldsets = (
-		('General', { 'fields': (
-			'name',
-			'raspberrypi',
-			'pin_number',
-			'url_on',
-			'url_off',
-			)}),
-	)
-
-	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'url_on', 'url_off' )
 
 site.register(RaspberryPi, RaspberryPiAdmin)
 site.register(RemoteChallengePin, RemoteChallengePinAdmin)
 site.register(RemoteDoorPin, RemoteDoorPinAdmin)
-site.register(RemoteLedPin, RemoteLedPinAdmin)

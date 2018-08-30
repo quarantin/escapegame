@@ -63,28 +63,3 @@ class RemoteDoorPin(models.Model):
 		self.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, game_slug, room_slug)
 
 		super(RemoteDoorPin, self).save(**kwargs)
-
-class RemoteLedPin(models.Model):
-
-	name = models.CharField(max_length=255)
-	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
-	pin_number = models.IntegerField(default=7)
-	url_on = models.URLField(max_length=255)
-	url_off = models.URLField(max_length=255)
-
-	def __str__(self):
-		return self.name
-
-	def save(self, **kwargs):
-
-		host = self.raspberrypi.hostname
-		port = (self.raspberrypi.port != 80 and ':%d' % self.raspberrypi.port or '')
-
-		self.url_on = 'http://%s%s/api/led/on/%d/' % (host, port, self.pin_number)
-		self.url_off = 'http://%s%s/api/led/off/%d/' % (host, port, self.pin_number)
-
-		super(RemoteLedPin, self).save(**kwargs)
-
-	class Meta:
-		verbose_name = 'Remote LED pin'
-		verbose_name_plural = 'Remote LED pins'

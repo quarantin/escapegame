@@ -20,7 +20,6 @@ model_mapping = [
 	('challenges', EscapeGameChallenge),
 	('remote_door_pins', RemoteDoorPin),
 	('remote_challenge_pins', RemoteChallengePin),
-	('remote_led_pins', RemoteLedPin),
 ]
 
 top_fields = [
@@ -153,7 +152,6 @@ class JsonExport(models.Model):
 	raspberry_pis = models.BooleanField(default=True)
 	remote_challenge_pins = models.BooleanField(default=True)
 	remote_door_pins = models.BooleanField(default=True)
-	remote_led_pins = models.BooleanField(default=True)
 
 	def save(self, *args, **kwargs):
 		pass
@@ -179,7 +177,6 @@ class JsonExportForm(forms.ModelForm):
 			'raspberry_pis',
 			'remote_challenge_pins',
 			'remote_door_pins',
-			'remote_led_pins',
 		]
 
 	def dump(self, post):

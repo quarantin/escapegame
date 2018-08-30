@@ -162,7 +162,7 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		# For app controllers, we want a specific order for the models
 		elif app == 'controllers':
 			new_models = []
-			for model in [ 'RaspberryPi', 'RemoteDoorPin', 'RemoteChallengePin', 'RemoteLedPin' ]:
+			for model in [ 'RaspberryPi', 'RemoteDoorPin', 'RemoteChallengePin' ]:
 				new_models.append(self.get_model_by_name(model, models))
 
 			app_dict['models'] = new_models

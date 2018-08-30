@@ -17,7 +17,6 @@ class Command(BaseCommand):
 			RaspberryPi,
 			RemoteDoorPin,
 			RemoteChallengePin,
-			RemoteLedPin,
 		]
 
 		for model in all_models:
