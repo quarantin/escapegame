@@ -101,6 +101,9 @@ class EscapeGame(models.Model):
 
 		raise Exception('Invalid door `%s`' % slug)
 
+	def get_controller(self):
+		return self.raspberrypi
+
 	def set_door_locked(self, door_pin, locked):
 		try:
 			if type(door_pin) is str:
@@ -183,6 +186,9 @@ class EscapeGameRoom(models.Model):
 		last_room = EscapeGameRoom.objects.filter(escapegame=self.escapegame).order_by('id').last()
 		return last_room == self
 
+	def get_controller(self):
+		return self.raspberrypi and self.raspberrypi or self.escapegame.get_controller():
+
 	def set_door_locked(self, locked):
 		try:
 			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
@@ -232,6 +238,9 @@ class EscapeGameChallenge(models.Model):
 		self.slug = slugify(self.challenge_name)
 		self.clean()
 		super(EscapeGameChallenge, self).save(**kwargs)
+
+	def get_controller(self):
+		return self.room.get_controller()
 
 	def set_solved(self, solved):
 		try:
