@@ -4,15 +4,15 @@
 
 TIMEZONE='Europe/Paris'
 
+ARCH=amd64
 NGINX_PKG=nginx-full
 if [ "$RUNNING_ON_PI" = true ]; then
+	ARCH=armv6l
 	NGINX_PKG=nginx-light
-	GOLANG=golang-1.8
 fi
 
 DEBIAN_PACKAGES=(
 	bc
-	$GOLANG
 	mysql-server
 	$NGINX_PKG
 	redis-server
@@ -61,15 +61,13 @@ sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 sudo -H ${PIP} install --quiet "${PIP_PACKAGES[@]}"
 
 # Install golang 1.11
-GOLANG_DIR='go1.11.linux-arm64'
-GOLANG_PKG="${GOLANG_DIR}.tar.gz"
+GOLANG_VERSION=1.11
+GOLANG_PKG="go${GOLANG_VERSION}.linux-${ARCH}.tar.gz"
 GOLANG_URL="https://storage.googleapis.com/golang/${GOLANG_PKG}"
-cd /tmp
-wget -q -O $GOLANG_PKG $GOLANG_URL
+wget -q -O "/tmp/${GOLANG_PKG}" "${GOLANG_URL}"
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf $GOLANG_PKG
-rm -f ${GOLANG_PKG}
-cd ${ROOTDIR}
+sudo tar -C /usr/local -xf "/tmp/${GOLANG_PKG}"
+rm -f "/tmp/${GOLANG_PKG}"
 
 # Creates default ~/.vimrc
 if [ "$USER" = "pi" ]; then
