@@ -69,6 +69,28 @@ sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xf "/tmp/${GOLANG_PKG}"
 rm -f "/tmp/${GOLANG_PKG}"
 
+# Install arduino-cli
+GO_DIR=~/golang
+rm -rf ${GO_DIR}
+mkdir -p ${GO_DIR}
+export GOPATH=${GO_DIR}
+go get -u github.com/arduino/arduino-cli
+mkdir -p ~/.arduino15
+${GO_DIR}/bin/arduino-cli core update-index
+${GO_DIR}/bin/arduino-cli core install arduino:avr
+
+# Install github.com/elechouse/PN532 (NFC library for Arduino)
+PN532_PKG=PN532_HSU.zip
+PN532_URL="https://github.com/elechouse/PN532/archive/${PN532_PKG}"
+ARDUINO_LIBS=~/Arduino/libraries/
+mkdir -p ${ARDUINO_LIBS}
+rm -rf ${ARDUINO_LIBS}/*
+wget -q -O "/tmp/${PN532_PKG}" "${PN532_URL}"
+unzip -q "/tmp/${PN532_PKG}" -d ${ARDUINO_LIBS}
+rm -f "/tmp/${PN532_PKG}"
+mv ${ARDUINO_LIBS}/PN532-PN532_HSU/* ${ARDUINO_LIBS}
+rmdir "${ARDUINO_LIBS}/PN532-PN532_HSU"
+
 # Creates default ~/.vimrc
 if [ "$USER" = "pi" ]; then
 cat << EOF > ~/.vimrc
