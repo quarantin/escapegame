@@ -10,18 +10,18 @@ SKETCH     := nfc/
 
 arduino/uno: uno_compile uno_install
 
+arduino/mega: mega_compile mega_install
+
 uno_compile:
 	$(ARDUINO) compile -b $(BOARD_UNO) $(SKETCH)
-
-uno_install:
-	$(ARDUINO) upload -b $(BOARD_UNO) -p $(PORT_UNO) $(SKETCH)
-
-arduino/mega: mega_compile mega_install
 
 mega_compile:
 	$(ARDUINO) compile -b $(BOARD_MEGA) $(SKETCH)
 
+uno_install:
+	$(ARDUINO) upload -b $(BOARD_UNO) -p $(PORT_UNO) $(SKETCH)
+
 mega_install:
 	$(ARDUINO) upload -b $(BOARD_MEGA) -p $(PORT_MEGA) $(SKETCH)
 
-.PHONY: all arduino/uno arduino/mega
+.PHONY: arduino/uno arduino/mega
