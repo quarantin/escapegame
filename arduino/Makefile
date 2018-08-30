@@ -1,12 +1,27 @@
-ARDUINO := arduino-cli
+ARDUINO    := ~/golang/bin/arduino-cli
 
-BOARD := arduino:avr:mega:cpu=atmega2560
-SKETCH := nfc/
+BOARD_UNO  := arduino:avr:uno
+PORT_UNO   := /dev/ttyUSB0
 
-PORT := /dev/ttyACM0
+BOARD_MEGA := arduino:avr:mega:cpu=atmega2560
+PORT_MEGA  := /dev/ttyACM0
 
-all:
-	$(ARDUINO) compile -b $(BOARD) $(SKETCH)
+SKETCH     := nfc/
 
-install:
-	$(ARDUINO) upload -b $(BOARD) -p $(PORT) $(SKETCH)
+arduino/uno: uno_compile uno_install
+
+uno_compile:
+	$(ARDUINO) compile -b $(BOARD_UNO) $(SKETCH)
+
+uno_install:
+	$(ARDUINO) upload -b $(BOARD_UNO) -p $(PORT_UNO) $(SKETCH)
+
+arduino/mega: mega_compile mega_install
+
+mega_compile:
+	$(ARDUINO) compile -b $(BOARD_MEGA) $(SKETCH)
+
+mega_install:
+	$(ARDUINO) upload -b $(BOARD_MEGA) -p $(PORT_MEGA) $(SKETCH)
+
+.PHONY: all arduino/uno arduino/mega
