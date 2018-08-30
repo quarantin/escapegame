@@ -1,7 +1,14 @@
+#include <Wire.h>
+#include "PN532_I2C.h"
+#include <PN532.h>
+#include <NfcAdapter.h>
+
 #define BLINK_DELAY 100
 #define SERIAL_BAUDS 9600
 #define MSG_TAG_ENTER "TAG-ENTER-"
 #define MSG_TAG_LEAVE "TAG-LEAVE"
+
+#define PIN_TABLE 12
 
 #define debug() Serial.println(__func__)
 
@@ -10,13 +17,14 @@ int saved_cube_present;
 
 char *last_command, tag[5];
 
+PN532_I2C pn532i2c(Wire);
+PN532 nfc(pn532i2c);
+
 /**
  * Blink the Arduino LED n times.
  */
 void blink(int n)
 {
-	debug();
-
 	while (n--) {
 
 		digitalWrite(LED_BUILTIN, HIGH);
@@ -30,11 +38,21 @@ void blink(int n)
 }
 
 /**
+ * Halt the Arduino (infinite loop, with LED blinking).
+ */
+void halt()
+{
+	while (1)
+		blink(1);
+}
+
+/**
  * Reset the state of the Arduino.
  */
 void arduino_reset()
 {
 	debug();
+	blink(10);
 
 	cube_present = 0;
 
@@ -43,8 +61,6 @@ void arduino_reset()
 	last_command = NULL;
 
 	memset(tag, 0, sizeof(tag));
-
-	blink(10);
 }
 
 /**
@@ -53,10 +69,9 @@ void arduino_reset()
 void raise_cube()
 {
 	debug();
+	blink(10);
 
-	// TODO
-	// raise the cube table
-	blink(2);
+	digitalWrite(PIN_TABLE, HIGH);
 }
 
 /**
@@ -65,10 +80,30 @@ void raise_cube()
 void lower_cube()
 {
 	debug();
+	blink(10);
 
-	// TODO
-	// lower the cube table
-	blink(3);
+	digitalWrite(PIN_TABLE, LOW);
+}
+
+/**
+ * Check the version of our PN532 chip.
+ */
+void check_version()
+{
+	uint32_t version= nfc.getFirmwareVersion();
+	if (!version) {
+		Serial.println("Could not find PN532 board");
+		halt();
+	}
+
+	Serial.print("Found chip PN5");
+	Serial.println((version >> 24) & 0xff, HEX);
+
+	Serial.print("Firmware ver.");
+	Serial.println((version >> 16) & 0xff, DEC);
+
+	Serial.print(".");
+	Serial.println((version >>  8) & 0xff, DEC);
 }
 
 /**
@@ -76,12 +111,13 @@ void lower_cube()
  */
 int read_nfc_tag(char *buf, size_t bufsz)
 {
-	debug();
+	int success;
 
-	// TODO
-	// get NFC tag with reader, timeout should be less than a second.
-	blink(4);
-	return -1;
+	blink(3);
+
+	success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, buf, bufsz);
+
+	return !success;
 }
 
 /**
@@ -91,8 +127,6 @@ int readline(char *buf, size_t bufsz)
 {
 	int i;
 	char c;
-
-	debug();
 
 	for (i = 0; i < bufsz; i++)
 		buf[i] = 0;
@@ -126,8 +160,17 @@ void setup()
 	Serial.println("Hello Serial!");
 
 	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(PIN_TABLE, OUTPUT);
 
 	arduino_reset();
+
+	nfc.begin();
+
+	check_version();
+
+	nfc.setPassiveActivationRetries(0xff);
+
+	nfc.SAMConfig();
 }
 
 /**
