@@ -79,6 +79,7 @@ class EscapeGameRoom(models.Model):
 	room_name = models.CharField(max_length=255, default='')
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
+	has_cube = models.BooleanField(default=False)
 
 	door_pin = models.IntegerField(default=11)
 	door_locked = models.BooleanField(default=True)
