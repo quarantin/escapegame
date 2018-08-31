@@ -5,9 +5,9 @@
 cd /var/lib/
 
 echo 'Copying mysql archive from master host'
-scp pi@escapegame.local:"${MYSQL_ARCHIVE}" /tmp
+scp pi@${MASTER_HOSTNAME}:"${MYSQL_ARCHIVE}" /tmp
 if [ "$?" -ne "0" ]; then
-	echo "Failed to download archive ${MYSQL_ARCHIVE} from host escapegame.local"
+	echo "Failed to download archive ${MYSQL_ARCHIVE} from host ${MASTER_HOSTNAME}"
 	exit
 fi
 
