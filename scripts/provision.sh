@@ -33,6 +33,7 @@ PIP_PACKAGES=(
 	django-rest-framework
 	django-websocket-redis==0.5.2
 	mysqlclient
+	omxplayer-wrapper
 	service_identity
 )
 
