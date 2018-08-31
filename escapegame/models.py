@@ -51,6 +51,7 @@ class EscapeGame(models.Model):
 		if not libraspi.is_valid_pin(self.cube_pin):
 			raise ValidationError({
 				'cube_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.cube_pin,
+			})
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
