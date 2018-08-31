@@ -4,10 +4,11 @@
 
 cd "${ROOTDIR}"
 
-DBUSER='escapegame'
-DBNAME='escapegame'
-DBPASS='escapegame'
-DBHOST='localhost'
+DBUSER=escapegame
+DBNAME=escapegame
+DBPASS=escapegame
+DBHOST=localhost
+DBPORT=3306
 
 echo "[client]" > "${HOME}/.my.cnf"
 
@@ -23,12 +24,14 @@ fi
 sudo mysql -u root -e "DROP USER $IF_EXISTS '${DBUSER}'@'${DBHOST}'"
 sudo mysql -u root -e "DROP DATABASE IF EXISTS ${DBNAME}"
 sudo mysql -u root -e "CREATE DATABASE ${DBNAME} CHARACTER SET utf8"
-sudo mysql -u root -e "CREATE USER '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'"
+sudo mysql -u root -e "CREATE USER '${DBUSER}'@'${DBHOST}' IDENTIFIED BY '${DBPASS}'"
 sudo mysql -u root -e "GRANT ALL PRIVILEGES ON escapegame.* TO '${DBUSER}'@'${DBHOST}'"
 
 # Create MySQL user config
 cat <<EOF > ${HOME}/.my.cnf
 [client]
+host = ${DBHOST}
+port = ${DBPORT}
 database = ${DBNAME}
 user = ${DBUSER}
 password = ${DBPASS}
