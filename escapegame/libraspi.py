@@ -235,116 +235,114 @@ def __local_video_control_stop():
 
 	return status, message
 
-def __local_video_control(action, video):
+def video_control(action, video):
 
 	try:
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` in method video_control()' % action)
+
 		fifo = '/tmp/%s.fifo' % video.slug
 
-		from constance import config
-		video_path = os.path.join(config.UPLOAD_VIDEO_PATH, video.video_path.path)
+		host, port = get_master()
+
+		video_url = 'http://%s%s/media%s' % (host, port, video.video_path.url)
+		print("DEBUG WTF: Video URL: %s" % video_url)
 
 		if action == 'pause':
-			print("Pausing local video '%s'" % video_path)
+			print("Pausing video '%s'" % video.video_name)
 			return __local_video_control_pause(fifo)
 
 		elif action == 'play':
-			print("Playing local video '%s'" % video_path)
+			print("Playing video '%s'" % video.video_name)
 			return __local_video_control_play(fifo, video_path)
 
 		elif action == 'stop':
-			print("Stopping local video '%s'" % video.video_path.url)
+			print("Stopping video '%s'" % video.video_path.url)
 			return __local_video_control_stop()
 
 	except Exception as err:
 		return 1, 'Error: %s' % traceback.format_exc()
 
-def __remote_video_control(action, video):
-
-	try:
-		raspi = video.raspberrypi
-
-		host = raspi.hostname
-		port = raspi.port != 80 and ':%d' % raspi.port or ''
-
-		url = 'http://%s%s/api/video/%s/%s/' % (host, port, video.slug, action)
-
-		return do_get(url)
-
-	except Exception as err:
-		return 1, 'Error: %s' % traceback.format_exc()
-
-def video_control(action, video):
-
-	from constance import config
-
-	if action not in [ 'pause', 'play', 'stop' ]:
-		raise Exception('Invalid action `%s` in method video_control()' % action)
-
-	raspi = video.raspberrypi
-	method = __local_video_control
-	if raspi:
-		method = __remote_video_control
-		if raspi.hostname == config.HOSTNAME:
-			method = __local_video_control
-
-	return method(action, video)
-
 #
 # Door controls:
 #
-#   - __local_door_control
-#   - __remote_door_control
 #   - door_control
 #
 
-def __local_door_control(action, room, pin):
-
-	try:
-		state = (action != 'lock')
-		if RUNNING_ON_PI:
-			GPIO.setmode(GPIO.BOARD)
-			GPIO.setup(pin, GPIO.OUT)
-			GPIO.output(pin, state)
-
-		state = (state and 'Opening' or 'Closing')
-		print("%s door on PIN %d" % (state, pin))
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-def __remote_door_control(action, room, pin):
-
-	try:
-		raspi = room.raspberrypi
-
-		host = raspi.hostname
-		port = raspi.port != 80 and ':%d' % raspi.port or ''
-
-		url = 'http://%s%s/api/door/%s/%d/' % (host, port, action, pin)
-
-		do_get(url)
-
-	except Exception as err:
-		return 1, 'Error: %s' % traceback.format_exc()
-
 def door_control(action, room, pin):
-
-	from constance import config
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action `%s` in method door_control()' % action)
 
-		method = __local_door_control
-		if room is not None:
-			raspi = room.raspberrypi
-			if raspi:
-				method = __remote_door_control
-				if raspi.hostname == config.HOSTNAME:
-					method = __local_door_control
+		locked = (action != 'lock')
 
-		return method(action, room, pin)
+		host, port = get_master()
+
+		# Get the controller of the room
+		controller = room and room.get_controller()
+
+		# If the room has no controllers, it means we're running on the master
+		if not controller:
+
+			# So we create the callback URL to notify web frontend
+			url = 'http://%s%s/web/%s/%s/%s/' % (host, port, room.escapegame.slug, room.slug, action)
+
+			# TODO fix URL to call API then call new URL then notify frontend
+
+		# Otherwise we're running on a slave
+		else:
+
+			# Only perform physical door opening if we are the room controller.
+			# Since we are a dedicated escape game controller, callback to master.
+			if controller.is_myself():
+				if RUNNING_ON_PI:
+					GPIO.setmode(GPIO.BOARD)
+					GPIO.setup(pin, GPIO.OUT)
+					GPIO.output(pin, locked)
+
+			# Otherwise we want to notify the change to the room controller which
+			# will be responsible for propagating the change to the master.
+			else:
+				host, port = get_net_info(controller.hostname, controller.port)
+
+			# Create the callback URL to notify next controller backend
+			url = 'http://%s%s/api/door/%s/%d/' % (host, port, action, pin)
+
+		action = (locked and 'Opening' or 'Closing')
+		print("%s door on PIN %d" % (action, pin))
+
+		# Perform call to callback URL to inform next controller
+		return do_get(url)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+#
+# Challenge controls
+#   - challenge_control
+#
+#
+
+def challenge_control(action, challenge):
+
+	try:
+		if action not in [ 'validate', 'reset' ]:
+			raise Exception('Invalid action `%s` in method challenge_control()' % action)
+
+		solved = (action == 'validate')
+
+		controller = challenge.get_controller()
+
+		if not controller:
+
+			host, port = get_master()
+
+			url = 'http://%s%s/web/%s/%s/%s/' % (host, port, challenge.room.escapegame.slug, challenge.room.slug, challenge.slug)
+
+			# TODO
+
+		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
