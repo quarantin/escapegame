@@ -62,6 +62,14 @@ class EscapeGame(models.Model):
 		self.finish_time = timezone.localtime()
 		self.save()
 
+	def reset(self):
+		self.start_time = None
+		self.finish_time = None
+		# TODO lower the cube
+		rooms = EscapeGameRoom.objects.filter(escapegame=self)
+		for room in rooms:
+			room.reset()
+
 	def get_controller(self):
 		return self.raspberrypi
 
@@ -78,7 +86,7 @@ class EscapeGameRoom(models.Model):
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
 	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
 
-	start_time = models.DateTimeField(blank=True, null=True)
+	unlock_time = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return '%s / %s' % (self.escapegame, self.room_name)
@@ -114,6 +122,14 @@ class EscapeGameRoom(models.Model):
 
 	def get_controller(self):
 		return self.raspberrypi and self.raspberrypi or self.escapegame.get_controller()
+
+	def reset(self):
+		self.unlock_time = None
+		self.set_door_locked(True)
+		# TODO lower the cube
+		challs = EscapeGameChallenge.objects.filter(room=self)
+		for chall in challs:
+			chall.reset()
 
 	def set_door_locked(self, locked):
 		try:
@@ -151,7 +167,7 @@ class EscapeGameChallenge(models.Model):
 	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
 	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
-	start_time = models.DateTimeField(blank=True, null=True)
+	solved_time = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
@@ -170,6 +186,11 @@ class EscapeGameChallenge(models.Model):
 	def get_controller(self):
 		return self.room.get_controller()
 
+	def reset(self):
+		self.solved = False
+		self.solved_time = None
+		self.save()
+
 	def set_solved(self, solved):
 		try:
 			action = (solved and 'Solving' or 'Reseting')
@@ -178,7 +199,7 @@ class EscapeGameChallenge(models.Model):
 			self.save()
 
 			if self.solved:
-				self.start_time = timezone.localtime()
+				self.solved_time = timezone.localtime()
 				if self.video:
 					libraspi.video_control('play', video)
 
