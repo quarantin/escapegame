@@ -1,8 +1,8 @@
 from django.db import models
 
-from escapegame import libraspi
+from constance import config
 
-import socket
+from escapegame import libraspi
 
 
 # Controllers classes
@@ -16,8 +16,8 @@ class RaspberryPi(models.Model):
 	def __str__(self):
 		return self.name
 
-	def is_local(self, hostname)
-		return socket.gethostname() == hostname.replace('.local', '')
+	def is_local(self, hostname):
+		return hostname == config.HOSTNAME
 
 	def is_myself(self):
 		return self.is_local(self.hostname)
