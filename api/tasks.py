@@ -1,5 +1,7 @@
 from background_task import background
 
+from constance import config
+
 from escapegame.models import *
 
 import socket, time
@@ -8,15 +10,15 @@ import socket, time
 @background(schedule=0)
 def poll_gpio(pin):
 
-	myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
+	myself = RaspberryPi.objects.get(hostname=config.HOSTNAME)
 	if not myself:
-		print("Could not find matching Raspberry Pi: %s.local" % socket.gethostname())
+		print("Could not find matching Raspberry Pi: %s" % config.HOSTNAME)
 		return
 
 	challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
 	remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, challenge__in=challenges)
 	if not remote_pin:
-		print("Could not find matching remote challenge pin: %d on Raspberry Pi: %s.local" % (pin, socket.gethostname()))
+		print("Could not find matching remote challenge pin: %d on Raspberry Pi: %s" % (pin, config.HOSTNAME))
 		return
 
 	url_callback_reset = remote_pin.url_callback_reset
