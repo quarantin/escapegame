@@ -128,7 +128,7 @@ DATABASE_MYSQL = {
 	'NAME': 'escapegame',
 	'USER': 'escapegame',
 	'PASSWORD': 'escapegame',
-	'HOST': MASTER_HOSTNAME,
+	'HOST': IS_MASTER and 'localhost' or MASTER_HOSTNAME,
 	'OPTIONS': {
 		'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 	},
