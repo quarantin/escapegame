@@ -46,19 +46,11 @@ class EscapeGame(models.Model):
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
 	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_video')
 
-	cube_delay = models.IntegerField(default=50)
-
 	cube_pin = models.IntegerField(default=7)
-	sas_door_pin = models.IntegerField(default=11)
-	corridor_door_pin = models.IntegerField(default=12)
-
+	cube_delay = models.IntegerField(default=50)
 	cube_raised = models.BooleanField(default=False)
-	sas_door_locked = models.BooleanField(default=True)
-	corridor_door_locked = models.BooleanField(default=True)
 
 	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
-	sas_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='sas_door_image')
-	corridor_door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='corridor_door_image')
 
 	start_time = models.DateTimeField(blank=True, null=True)
 	finish_time = models.DateTimeField(blank=True, null=True)
@@ -67,20 +59,9 @@ class EscapeGame(models.Model):
 		return self.escapegame_name
 
 	def clean(self):
-
 		if not libraspi.is_valid_pin(self.cube_pin):
 			raise ValidationError({
-				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.cube_pin,
-			})
-
-		if not libraspi.is_valid_pin(self.sas_door_pin):
-			raise ValidationError({
-				'sas_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.sas_door_pin,
-			})
-
-		if not libraspi.is_valid_pin(self.corridor_door_pin):
-			raise ValidationError({
-				'corridor_door_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.corridor_door_pin,
+				'cube_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.cube_pin,
 			})
 
 	def save(self, **kwargs):
@@ -92,52 +73,8 @@ class EscapeGame(models.Model):
 		self.finish_time = timezone.localtime()
 		self.save()
 
-	def get_door_pin(self, slug):
-		if slug == 'sas':
-			return self.sas_door_pin
-
-		elif slug == 'corridor':
-			return self.corridor_door_pin
-
-		raise Exception('Invalid door `%s`' % slug)
-
 	def get_controller(self):
 		return self.raspberrypi
-
-	def set_door_locked(self, door_pin, locked):
-		try:
-			if type(door_pin) is str:
-				door_pin = self.get_door_pin(door_pin)
-
-			if door_pin not in [ self.sas_door_pin, self.corridor_door_pin ]:
-				raise Exception('Invalid door pin: %d' % door_pin)
-
-			print('EscapeGame.set_door_locked(%d, %s) [%s]' % (door_pin, locked, self))
-			action = (locked and 'lock' or 'unlock')
-			status, message = libraspi.door_control(action, None, door_pin)
-			if status == 0:
-
-				action = (locked and 'Closing' or 'Opening')
-
-				if door_pin == self.sas_door_pin:
-					self.sas_door_locked = locked
-					print("%s SAS door of escape game `%s`" % (action, self.escapegame_name))
-
-				elif door_pin == self.corridor_door_pin:
-					self.corridor_door_locked = locked
-					print("%s corridor door of escape game `%s`" % (action, self.escapegame_name))
-
-				if locked == False:
-					self.start_time = timezone.localtime()
-
-				self.save()
-
-			notify_frontend(self)
-
-			return status, message
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
 
 class EscapeGameRoom(models.Model):
 

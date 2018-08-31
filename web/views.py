@@ -42,16 +42,6 @@ def escapegame_index(request, game_slug):
 	host = config.MASTER_HOSTNAME
 	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
 
-	#game.url_callback_lock_sas = 'http://%s%s/web/%s/sas/lock/' % (host, port, game_slug)
-	#game.url_callback_unlock_sas = 'http://%s%s/web/%s/sas/unlock/' % (host, port, game_slug)
-	game.url_callback_lock_sas = '/web/%s/sas/lock/' % (game_slug)
-	game.url_callback_unlock_sas = '/web/%s/sas/unlock/' % (game_slug)
-
-	#game.url_callback_lock_corridor = 'http://%s%s/web/%s/corridor/lock/' % (host, port, game_slug)
-	#game.url_callback_unlock_corridor = 'http://%s%s/web/%s/corridor/unlock/' % (host, port, game_slug)
-	game.url_callback_lock_corridor = '/web/%s/corridor/lock/' % (game_slug)
-	game.url_callback_unlock_corridor = '/web/%s/corridor/unlock/' % (game_slug)
-
 	for room in rooms:
 
 		raspberrypi = game.raspberrypi
@@ -125,20 +115,6 @@ def escapegame_start(request, game_slug):
 				'message': message,
 			})
 
-		# CHANGE REQUEST:
-		# Don't open SAS and corridor doors automatically at the end of
-		# the video, they will be opened manually by the game master.
-		"""
-		status, message = game.set_door_locked(game.sas_door_pin, False)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'message': message,
-			})
-
-		status, message = game.set_door_locked(game.corridor_door_pin, False)
-		"""
-
 		# Raise the cube: Create a background task to delay call to:
 		# libraspi.cube_control('raise', game.cube.pin)
 		cube_control('raise', game.cube_pin, schedule=game.cube_delay)
@@ -171,24 +147,6 @@ def escapegame_reset(request, game_slug):
 
 		# Lower the cube (no need for delay)
 		cube_control('lower', game.cube_pin, schedule=0)
-
-		# Close SAS door
-		print('Closing SAS door')
-		status, message = game.set_door_locked(game.sas_door_pin, True)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'message': message,
-			})
-
-		# Close corridor door
-		print('Closing corridor door')
-		status, message = game.set_door_locked(game.corridor_door_pin, True)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'message': message,
-			})
 
 		print('Closing room doors')
 
@@ -258,14 +216,7 @@ def escapegame_status(request, game_slug):
 		game = EscapeGame.objects.values().get(slug=game_slug)
 		game['rooms'] = []
 
-		image_keys = [
-			'map_image',
-			'sas_door_image',
-			'corridor_door_image',
-		]
-
-		for key in image_keys:
-			__populate_images(game, key)
+		__populate_images(game, 'map_image')
 
 		rooms = EscapeGameRoom.objects.filter(escapegame=game['id']).values()
 		for room in rooms:
@@ -300,13 +251,9 @@ def door_callback(request, game_slug, room_slug, action):
 			raise Exception('Invalid action `%s`' % action)
 
 		game = EscapeGame.objects.get(slug=game_slug)
+		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 
-		if room_slug in [ 'sas', 'corridor' ]:
-			status, message = game.set_door_locked(room_slug, locked)
-
-		else:
-			room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
-			status, message = room.set_door_locked(locked)
+		status, message = room.set_door_locked(locked)
 
 		return JsonResponse({
 			'status': status,

@@ -50,18 +50,6 @@ class Command(BaseCommand):
 		# Full map image
 		map_image = Image(image_name='Full Map', image_path='uploads/images/map-base.png')
 		map_image.save()
-		# SAS door image
-		sas_door_image = Image(image_name='SAS Door', image_path='uploads/images/map-sas-door.png')
-		sas_door_image.save()
-		# Corridor door 1 image
-		corridor_door_1_image = Image(image_name='Corridor Door 1', image_path='uploads/images/map-corridor-door-1.png')
-		corridor_door_1_image.save()
-		# Corridor door 2 image
-		corridor_door_2_image = Image(image_name='Corridor Door 2', image_path='uploads/images/map-corridor-door-2.png')
-		corridor_door_2_image.save()
-		# Corridor door 3 image
-		corridor_door_3_image = Image(image_name='Corridor Door 3', image_path='uploads/images/map-corridor-door-3.png')
-		corridor_door_3_image.save()
 		# SAS 1 door image
 		sas1_door_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
 		sas1_door_image.save()
@@ -102,10 +90,10 @@ class Command(BaseCommand):
 
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
 		# Escape game: Les 1001 nuits
-		game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, raspberrypi=raspi_1001_nuits, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_1_image)
+		game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, raspberrypi=raspi_1001_nuits, map_image=map_image)
 		game_1001_nuits.save()
 		# Escape game: Stranger Things
-		game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, raspberrypi=raspi_stranger_things, map_image=map_image, sas_door_image=sas_door_image, corridor_door_image=corridor_door_2_image)
+		game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, raspberrypi=raspi_stranger_things, map_image=map_image)
 		game_stranger_things.save()
 		self.stdout.write(self.style.SUCCESS(' OK'))
 

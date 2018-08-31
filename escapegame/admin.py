@@ -25,13 +25,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'video',
 		'cube_delay',
 		'cube_pin',
-		'sas_door_pin',
-		'corridor_door_pin',
-		'sas_door_locked',
-		'corridor_door_locked',
 		'map_image',
-		'sas_door_image',
-		'corridor_door_image',
 	]
 	fieldsets = (
 		('General', { 'fields': (
@@ -40,18 +34,12 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'raspberrypi',
 			'video',
 			)}),
-		('Door controls', { 'fields': (
+		('Cube controls', { 'fields': (
 			'cube_delay',
 			'cube_pin',
-			'sas_door_pin',
-			'corridor_door_pin',
-			'sas_door_locked',
-			'corridor_door_locked',
 			)}),
 		('Maps', { 'fields': (
 			'map_image',
-			'sas_door_image',
-			'corridor_door_image',
 			)}),
 	)
 

@@ -154,14 +154,6 @@ $(document).ready(function() {
 				ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
 			}
 
-			if (game.sas_door_image && game.sas_door_locked === false) {
-				drawImage(ctx, game.sas_door_image);
-			}
-
-			if (game.corridor_door_image && game.corridor_door_locked === false) {
-				drawImage(ctx, game.corridor_door_image);
-			}
-
 			for (var index in game.rooms) {
 				var room = game.rooms[index];
 				if (room.door_image && room.door_locked == false) {
@@ -172,26 +164,6 @@ $(document).ready(function() {
 	};
 
 	function toggle_locks(game) {
-
-		// Toggle SAS door lock buttons
-		if (game.sas_door_locked) {
-			$('button#lock-game-sas-'   + game.slug).removeClass('d-none');
-			$('button#unlock-game-sas-' + game.slug).addClass('d-none');
-		}
-		else {
-			$('button#lock-game-sas-'   + game.slug).addClass('d-none');
-			$('button#unlock-game-sas-' + game.slug).removeClass('d-none');
-		}
-
-		// Toggle corridor door lock buttons
-		if (game.corridor_door_locked) {
-			$('button#lock-game-corridor-'   + game.slug).removeClass('d-none');
-			$('button#unlock-game-corridor-' + game.slug).addClass('d-none');
-		}
-		else {
-			$('button#lock-game-corridor-'   + game.slug).addClass('d-none');
-			$('button#unlock-game-corridor-' + game.slug).removeClass('d-none');
-		}
 
 		// Toggle room door lock buttons
 		for (index in game.rooms) {
