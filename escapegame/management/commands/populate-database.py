@@ -19,186 +19,232 @@ class Command(BaseCommand):
 			RemoteChallengePin,
 		]
 
+		self.stdout.write(self.style.MIGRATE_HEADING('Flushing database:'))
+
 		for model in all_models:
+
 			self.stdout.write('  Flushing model `%s`' % model.__name__, ending='')
-			model.objects.all().delete()
-			self.stdout.write(self.style.SUCCESS(' OK'))
+
+			try:
+				model.objects.all().delete()
+				self.stdout.write(self.style.SUCCESS(' OK'))
+			except:
+				self.stdout.write(self.style.SUCCESS(' MISSING'))
 
 	def handle(self, *args, **options):
 
 		# We want to clear the database before populating it to avoid duplicate entries.
-		self.stdout.write(self.style.MIGRATE_HEADING('Flushing database:'))
 		self.flush_database()
 
 		self.stdout.write(self.style.MIGRATE_HEADING('Populating database:'))
 
-		#
-		# Videos
-		#
-
-		# Video demo
+#
+# Videos
+#
 		self.stdout.write('  Populating model `Video`', ending='')
+
+		# Demo video
 		video = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
 		video.save()
+
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		#
-		# Images
-		#
-
+#
+# Images
+#
 		self.stdout.write('  Populating model `Image`', ending='')
+
 		# Full map image
 		map_image = Image(image_name='Full Map', image_path='uploads/images/map-base.png')
 		map_image.save()
+
 		# SAS 1 door image
-		sas1_door_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
-		sas1_door_image.save()
+		door_sas1_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
+		door_sas1_image.save()
+
 		# SAS 2 door image
-		sas2_door_image = Image(image_name='SAS 2 Door', image_path='uploads/images/map-sas2-door.png')
-		sas2_door_image.save()
+		door_sas2_image = Image(image_name='SAS 2 Door', image_path='uploads/images/map-sas2-door.png')
+		door_sas2_image.save()
+
 		# SAS 3 door image
-		sas3_door_image = Image(image_name='SAS 3 Door', image_path='uploads/images/map-sas3-door.png')
-		sas3_door_image.save()
+		door_sas3_image = Image(image_name='SAS 3 Door', image_path='uploads/images/map-sas3-door.png')
+		door_sas3_image.save()
+
 		# Room "La fontaine" door image
-		room_fontain_door_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
-		room_fontain_door_image.save()
+		door_room_fontain_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
+		door_room_fontain_image.save()
+
 		# Room "Salle claire" door image
-		room_salle_claire_door_image = Image(image_name='Door Room Salle Claire', image_path='uploads/images/map-door-room-salle-claire.png')
-		room_salle_claire_door_image.save()
+		door_room_claire_image = Image(image_name='Door Room Salle Claire', image_path='uploads/images/map-door-room-salle-claire.png')
+		door_room_claire_image.save()
+
 		# Room "Salle obscure" door image
-		room_salle_obscure_door_image = Image(image_name='Door Room Salle Obscure', image_path='uploads/images/map-door-room-salle-obscure.png')
-		room_salle_obscure_door_image.save()
+		door_room_obscure_image = Image(image_name='Door Room Salle Obscure', image_path='uploads/images/map-door-room-salle-obscure.png')
+		door_room_obscure_image.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		#
-		# Raspberry Pis
-		#
-
+#
+# Raspberry Pis
+#
 		self.stdout.write('  Populating model `RaspberryPi`', ending='')
+
 		# Raspberry Pi: Les 1001 nuits
 		raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local')
 		raspi_1001_nuits.save()
+
 		# Raspberry Pi: Stranger Things
 		raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local')
 		raspi_stranger_things.save()
+
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		#
-		# Escape games
-		#
-
+#
+# Escape games
+#
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
+
 		# Escape game: Les 1001 nuits
 		game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, raspberrypi=raspi_1001_nuits, map_image=map_image)
 		game_1001_nuits.save()
+
 		# Escape game: Stranger Things
 		game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, raspberrypi=raspi_stranger_things, map_image=map_image)
 		game_stranger_things.save()
+
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		#
-		# Rooms
-		#
+#
+# Rooms
+#
 		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
 
-		#
-		# Escape Game SAS (3)
-		#
-		# Room: SAS les 1001 nuits
-		room_sas_1001_nuits = EscapeGameRoom(room_name='SAS - Les 1001 nuits', escapegame=game_1001_nuits, door_pin=7, door_image=sas1_door_image)
-		room_sas_1001_nuits.save()
-		# Room: SAS Stranger Things - Salle Claire
-		room_sas_salle_claire = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Claire ', escapegame=game_stranger_things, door_pin=7, door_image=sas2_door_image)
-		room_sas_salle_claire.save()
-		# Room: SAS Stranger Things - Salle Obscure
-		room_sas_salle_obscure = EscapeGameRoom(room_name='SAS - Stranger Things - Salle Obscure', escapegame=game_stranger_things, door_pin=10, door_image=sas3_door_image)
-		room_sas_salle_obscure.save()
-
-
-		# Challenge: Premier challenge du SAS les 1001 nuits
-		room_sas_1001_nuits_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_1001_nuits)
-		room_sas_1001_nuits_chall.save()
-		# Challenge: début du jeu Stranger Things - Salle Claire
-		room_sas_salle_claire_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_claire)
-		room_sas_salle_claire_chall.save()
-		# Challenge: début du jeu Stranger Things - Salle Obscure
-		room_sas_salle_obscure_chall = EscapeGameChallenge(challenge_name='Début du jeu', room=room_sas_salle_obscure)
-		room_sas_salle_obscure_chall.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
+		# Room: SAS 1 - Les 1001 nuits
+		room_sas_1 = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=7, door_image=door_sas1_image, room_name='SAS 1 - Les 1001 nuits')
+		room_sas_1.has_cube = True
+		room_sas_1.save()
 
 		# Room: La fontaine
-		room_fontaine = EscapeGameRoom(room_name='La fontaine', escapegame=game_1001_nuits, door_pin=7, door_image=room_fontain_door_image)
+		room_fontaine = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=11, door_image=door_room_fontain_image, room_name='La fontaine')
 		room_fontaine.save()
-		# Challenge: La fontaine
-		chall_fontaine = EscapeGameChallenge(challenge_name='La fontaine', room=room_fontaine)
-		chall_fontaine.save()
-		# Challenge: Les dalles
-		chall_dalles = EscapeGameChallenge(challenge_name='Les dalles', room=room_fontaine)
-		chall_dalles.save()
 
 		# Room: La caverne
-		room_caverne = EscapeGameRoom(room_name='La caverne', escapegame=game_1001_nuits, door_pin=12)
+		room_caverne = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=12, door_image=None, room_name='La caverne')
 		room_caverne.save()
-		# Challenge: Le marchand
-		chall_marchand = EscapeGameChallenge(challenge_name='Le marchand', room=room_caverne)
-		chall_marchand.save()
-		# Challenge: Le lanceur de couteaux
-		chall_couteux = EscapeGameChallenge(challenge_name='Le lanceur de couteaux', room=room_caverne)
-		chall_couteux.save()
-		# Challenge: Le charmeur de serpents
-		chall_serpents = EscapeGameChallenge(challenge_name='Le charmeur de serpents', room=room_caverne)
-		chall_serpents.save()
-		# Challenge: Le fakir
-		chall_fakir = EscapeGameChallenge(challenge_name='Le fakir', room=room_caverne)
-		chall_fakir.save()
 
 		# Room: La lampe
-		room_lampe = EscapeGameRoom(room_name='La lampe', escapegame=game_1001_nuits, door_pin=13)
+		room_lampe = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=13, door_image=None, room_name='La lampe')
 		room_lampe.save()
-		# Challenge La lampe
-		chall_lampe = EscapeGameChallenge(challenge_name='La lampe', room=room_lampe)
-		chall_lampe.save()
+
+		# Room: SAS 2 - Stranger Things - Salle Claire
+		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=7, door_image=door_sas2_image, room_name='SAS 2 - Stranger Things - Salle Claire ')
+		room_sas_2.has_cube = True
+		room_sas_2.save()
+
+		# Room: SAS 3 - Stranger Things - Salle Obscure
+		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=11, door_image=door_sas3_image, room_name='SAS 3 - Stranger Things - Salle Obscure')
+		room_sas_3.has_cube = True
+		room_sas_3.save()
 
 		# Room: La salle claire
-		room = EscapeGameRoom(room_name='La salle claire', escapegame=game_stranger_things, door_pin=7, door_image=room_salle_claire_door_image)
-		room.save()
-		# Challenge: 1 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(challenge_name='chall1', room=room)
-		chall.save()
-		# Challenge: 2 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(challenge_name='chall2', room=room)
-		chall.save()
+		room_claire = EscapeGameRoom(escapegame=game_stranger_things, door_pin=12, door_image=door_room_claire_image, room_name='La salle claire')
+		room_claire.save()
 
 		# Room: La salle obscure
-		room = EscapeGameRoom(room_name='La salle obscure', escapegame=game_stranger_things, door_pin=12, door_image=room_salle_obscure_door_image)
-		room.save()
-		# Challenge: 1 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(challenge_name='chall1', room=room)
-		chall.save()
-		# Challenge: 2 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(challenge_name='chall2', room=room)
-		chall.save()
+		room_obscure = EscapeGameRoom(escapegame=game_stranger_things, door_pin=13, door_image=door_room_obscure_image, room_name='La salle obscure')
+		room_obscure.save()
 
 		# Room: La forêt
-		room = EscapeGameRoom(room_name='La forêt', escapegame=game_stranger_things, door_pin=13)
-		room.save()
-		# Challenge: 1 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(challenge_name='chall1', room=room)
+		room_foret = EscapeGameRoom(escapegame=game_stranger_things, door_pin=15, room_name='La forêt')
+		room_foret.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+#
+# Timers
+#
+		self.stdout.write('  Populating model `EscapeGameChallenge` (timers)', ending='')
+
+		# Challenge: Timer, premier challenge du SAS Les 1001 nuits
+		chall_sas_1_timer = EscapeGameChallenge(room=room_sas_1, challenge_name='Début du jeu \'Les 1001 nuits\'')
+		chall_sas_1_timer.save()
+
+		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle claire
+		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, challenge_name='Début du jeu \'Stanger Things - Salle claire\'')
+		chall_sas_2_timer.save()
+
+		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle obscure
+		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, challenge_name='Début du jeu \'Stranger Things - Salle obscure\'')
+		chall_sas_3_timer.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+#
+# Challenges
+#
+		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
+
+		# Challenge: La fontaine
+		chall_fontaine = EscapeGameChallenge(room=room_fontaine, challenge_name='La fontaine')
+		chall_fontaine.save()
+
+		# Challenge: Les dalles
+		chall_dalles = EscapeGameChallenge(room=room_fontaine, challenge_name='Les dalles')
+		chall_dalles.save()
+
+		# Challenge: Le marchand
+		chall_marchand = EscapeGameChallenge(room=room_caverne, challenge_name='Le marchand')
+		chall_marchand.save()
+
+		# Challenge: Le lanceur de couteaux
+		chall_couteux = EscapeGameChallenge(room=room_caverne, challenge_name='Le lanceur de couteaux')
+		chall_couteux.save()
+
+		# Challenge: Le charmeur de serpents
+		chall_serpents = EscapeGameChallenge(room=room_caverne, challenge_name='Le charmeur de serpents')
+		chall_serpents.save()
+
+		# Challenge: Le fakir
+		chall_fakir = EscapeGameChallenge(room=room_caverne, challenge_name='Le fakir')
+		chall_fakir.save()
+
+		# Challenge La lampe
+		chall_lampe = EscapeGameChallenge(room=room_lampe, challenge_name='La lampe')
+		chall_lampe.save()
+
+		# Challenge: 1 (Stranger Things / La salle claire)
+		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall1')
 		chall.save()
+
+		# Challenge: 2 (Stranger Things / La salle claire)
+		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall2')
+		chall.save()
+
+		# Challenge: 1 (Stranger Things / La salle obscure)
+		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall1')
+		chall.save()
+
+		# Challenge: 2 (Stranger Things / La salle obscure)
+		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall2')
+		chall.save()
+
+		# Challenge: 1 (Stranger Things / La forêt)
+		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1')
+		chall.save()
+
 		# Challenge: 2 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(challenge_name='chall2', room=room)
+		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall2')
 		chall.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
-		# Remote door pin Les 1001 nuits / La fontaine
-		#remote_door_pin_fontaine = RemoteDoorPin(name='Remote Door Pin: 1001-nuits / fontaine', raspberrypi=raspi_1001_nuits, room=room_fontaine)
-		#remote_door_pin_fontaine.save()
+#
+# Remote Challenge PINs
+#
+		self.stdout.write('  Populating model `RemoteChallengePin`', ending='')
 
-		# Remote challenge pin Les 1001 nuits / La fontaine / La fontaine
-		#remote_challenge_pin_fontaine = RemoteChallengePin(name='Remote Challenge Pin: 1001-nuits / fontaine', raspberrypi=raspi_1001_nuits, challenge=chall_fontaine)
-		#remote_challenge_pin_fontaine.save()
+		# Remote challenge pin Les 1001 nuits / SAS 1 / Début du jeu
+		remote_challenge_pin_sas_1_timer = RemoteChallengePin(name='Remote Challenge Pin: 1001-nuits / Début du jeu', raspberrypi=raspi_1001_nuits, challenge=chall_sas_1_timer)
+		remote_challenge_pin_sas_1_timer.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
