@@ -5,9 +5,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
-
 from constance import config
 
 from escapegame import libraspi
@@ -27,14 +24,6 @@ logger = AppConfig.logger
 def paste_image(to_image, from_image_field):
 	from_image = PIL.open(from_image_field.image_path.path)
 	to_image.paste(from_image, (0, 0), from_image)
-
-def notify_frontend(game, message='notify'):
-
-	facility = 'notify-%s' % game.slug
-
-	redis_publisher = RedisPublisher(facility=facility, broadcast=True)
-	redis_publisher.publish_message(RedisMessage(message))
-	print('notify_frontend("%s")' % message)
 
 
 # Escape game classes
@@ -62,7 +51,6 @@ class EscapeGame(models.Model):
 		if not libraspi.is_valid_pin(self.cube_pin):
 			raise ValidationError({
 				'cube_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.cube_pin,
-			})
 
 	def save(self, **kwargs):
 		self.slug = slugify(self.escapegame_name)
@@ -142,7 +130,7 @@ class EscapeGameRoom(models.Model):
 
 				self.save()
 
-			notify_frontend(self.escapegame)
+			libraspi.notify_frontend(self.escapegame)
 
 			return status, message
 
@@ -161,6 +149,8 @@ class EscapeGameChallenge(models.Model):
 
 	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
 	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
+
+	start_time = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return '%s / %s' % (self.room, self.challenge_name)
@@ -186,8 +176,10 @@ class EscapeGameChallenge(models.Model):
 			self.solved = solved
 			self.save()
 
-			if self.solved and self.video:
-				libraspi.video_control('play', None, video)
+			if self.solved:
+				self.start_time = timezone.localtime()
+				if self.video:
+					libraspi.video_control('play', video)
 
 			if self.room.all_challenge_validated():
 				print('This was the last remaining challenge to solved, opening door for %s' % self.room.room_name)
@@ -201,7 +193,7 @@ class EscapeGameChallenge(models.Model):
 			else:
 				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
 
-			notify_frontend(self.room.escapegame)
+			libraspi.notify_frontend(self.room.escapegame)
 
 			return 0, 'Success'
 

@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, subprocess, time
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
+import os
+import sys
+import time
 import socket
 import getpass
-import traceback
 import requests
+import traceback
+import subprocess
+
 
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 if RUNNING_ON_PI:
@@ -107,6 +113,7 @@ if RUNNING_ON_PI:
 		def rewind(self):
 			return self.__basic_control(keys.REWIND)
 
+
 def git_version():
 
 	try:
@@ -117,11 +124,29 @@ def git_version():
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
+
+def get_port_string(port):
+
+	return port != 80 and ':%d' % port or ''
+
+
+def get_net_info(host, port):
+
+	return (host, get_port_string(port))
+
+
+def get_master():
+
+	from constance import config
+
+	return get_net_info(config.MASTER_HOSTNAME, config.MASTER_PORT)
+
 #
 # Web
 #
 #   - do_get
 #   - do_post
+#   - notify_frontend
 #
 
 def do_get(url):
@@ -147,6 +172,14 @@ def do_post(url, data):
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
+
+def notify_frontend(game, message='notify'):
+
+	facility = 'notify-%s' % game.slug
+
+	redis_publisher = RedisPublisher(facility=facility, broadcast=True)
+	redis_publisher.publish_message(RedisMessage(message))
+	print('notify_frontend("%s")' % message)
 
 #
 # Video controls:

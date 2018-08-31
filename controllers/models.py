@@ -1,6 +1,8 @@
 from django.db import models
 from constance import config
 
+from escapegame import libraspi
+
 
 # Controllers classes
 
@@ -30,8 +32,8 @@ class RemoteChallengePin(models.Model):
 
 	def save(self, **kwargs):
 
-		host = config.MASTER_HOSTNAME
-		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
+		host, port = libraspi.get_master()
+
 		game_slug = self.challenge.room.escapegame.slug
 		room_slug = self.challenge.room.slug
 		chall_slug = self.challenge.slug
@@ -54,8 +56,8 @@ class RemoteDoorPin(models.Model):
 
 	def save(self, **kwargs):
 
-		host = config.MASTER_HOSTNAME
-		port = (config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or '')
+		host, port = libraspi.get_master()
+
 		game_slug = self.room.escapegame.slug
 		room_slug = self.room.slug
 

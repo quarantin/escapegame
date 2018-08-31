@@ -4,12 +4,8 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from constance import config
-
 from multimedia.models import Image
 from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
-
-from escapegame.models import notify_frontend
 
 from escapegame import libraspi
 
@@ -39,8 +35,7 @@ def escapegame_index(request, game_slug):
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
-	host = config.MASTER_HOSTNAME
-	port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
+	host, port = libraspi.get_master()
 
 	for room in rooms:
 
@@ -52,17 +47,14 @@ def escapegame_index(request, game_slug):
 		if raspberrypi:
 			remote_pins = RemoteDoorPin.objects.filter(room=room)
 			for remote_pin in remote_pins:
-				host = raspberrypi.hostname
-				port = raspberrypi.port != 80 and ':%d' % raspberrypi.port or ''
-
+				host, port = libraspi.get_net_info(raspberrypi.hostname, raspberrypi.port)
 				#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
 				#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
 				room.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, room.escapegame.slug, room.slug)
 				room.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, room.escapegame.slug, room.slug)
 		else:
 		"""
-		host = config.MASTER_HOSTNAME
-		port = config.MASTER_PORT != 80 and ':%d' % config.MASTER_PORT or ''
+		host, port = libraspi.get_master()
 
 		#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
 		#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
@@ -142,8 +134,9 @@ def escapegame_reset(request, game_slug):
 		game.start_time = None
 		game.finish_time = None
 		game.save()
-		notify_frontend(game)
-		notify_frontend(game, '0:00:00')
+
+		libraspi.notify_frontend(game)
+		libraspi.notify_frontend(game, '0:00:00')
 
 		# Lower the cube (no need for delay)
 		cube_control('lower', game.cube_pin, schedule=0)
