@@ -1,0 +1,2 @@
+HOSTNAME='escapegame'
+TLD='.local'
