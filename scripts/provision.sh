@@ -49,6 +49,9 @@ UWSGI_CONF_DEFAULT='defaults.ini'
 UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
 UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
 
+REDIS_CONFIG='/etc/redis/redis.conf'
+MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
+
 # Install Debian packages
 sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 
@@ -103,6 +106,11 @@ for CONFIG in "${CONFIGS[@]}"; do
 		$CONFIG
 done
 
+# Configure mysql to listen on the network
+sudo sed -i 's/^bind-address        = 127.0.0.1$/bind = 0.0.0.0/' "${MYSQL_CONFIG}" || true
+
+# Configure redis to listen on the network
+sudo sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' "${REDIS_CONFIG}" || true
 
 # Creates corresponding symlinks
 sudo ln -s -r -t "${NGINX_SITES_ENABLED}/" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
@@ -112,11 +120,8 @@ sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF
 # Enable nginx service at boot time
 sudo update-rc.d nginx defaults
 
-# Restart nginx service
-sudo /etc/init.d/nginx restart
-
 # Enable uwsgi services at boot time
 "${ROOTDIR}/scripts/set-crontab.sh"
 
-# Restart uwsgi services
-"${ROOTDIR}/scripts/restart-uwsgi.sh"
+# Restart all services
+"${ROOTDIR}/scripts/restart-all.sh"
