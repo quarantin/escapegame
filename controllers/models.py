@@ -1,7 +1,8 @@
 from django.db import models
-from constance import config
 
 from escapegame import libraspi
+
+import socket
 
 
 # Controllers classes
@@ -14,6 +15,16 @@ class RaspberryPi(models.Model):
 
 	def __str__(self):
 		return self.name
+
+	def is_local(self, hostname)
+		return socket.gethostname() == hostname.replace('.local', '')
+
+	def is_myself(self):
+		return self.is_local(self.hostname)
+
+	def is_master(self):
+		host, port = libraspi.get_master()
+		return self.is_local(host)
 
 	class Meta:
 		verbose_name = 'Raspberry Pi'
