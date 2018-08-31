@@ -59,13 +59,15 @@ class EscapeGame(models.Model):
 		super(EscapeGame, self).save(**kwargs)
 
 	def finish(self):
-		self.finish_time = timezone.localtime()
-		self.save()
+		if not self.finish_time:
+			self.finish_time = timezone.localtime()
+			self.save()
 
 	def reset(self):
 		self.start_time = None
 		self.finish_time = None
-		# TODO lower the cube
+		self.save()
+		# TODO lower the cube in the briefing room
 		rooms = EscapeGameRoom.objects.filter(escapegame=self)
 		for room in rooms:
 			room.reset()
@@ -122,12 +124,12 @@ class EscapeGameRoom(models.Model):
 		return last_room == self
 
 	def get_controller(self):
-		return self.raspberrypi and self.raspberrypi or self.escapegame.get_controller()
+		return self.raspberrypi or self.escapegame.get_controller()
 
 	def reset(self):
 		self.unlock_time = None
 		self.set_door_locked(True)
-		# TODO lower the cube
+		# TODO lower the cube in this room
 		challs = EscapeGameChallenge.objects.filter(room=self)
 		for chall in challs:
 			chall.reset()
@@ -136,17 +138,18 @@ class EscapeGameRoom(models.Model):
 		try:
 			print('EscapeGameRoom.set_door_locked(%s) [%s]' % (locked, self))
 			action = (locked and 'lock' or 'unlock')
-			status, message = libraspi.door_control(action, None, self.door_pin)
+
+			status, message = libraspi.door_control(action, self)
 			if status == 0:
 				self.door_locked = locked
 
 				action = (locked and 'Closing' or 'Opening')
 				print("%s door of room `%s / %s`" % (action, self.escapegame, self.room_name))
 
-				if not locked:
-					self.start_time = timezone.localtime()
-
 				self.save()
+
+			if not locked and not self.unlock_time:
+				self.unlock_time = timezone.localtime()
 
 			libraspi.notify_frontend(self.escapegame)
 
@@ -196,21 +199,29 @@ class EscapeGameChallenge(models.Model):
 		try:
 			action = (solved and 'Solving' or 'Reseting')
 			print('%s challenge %s / %s / %s' % (action, self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name))
+
 			self.solved = solved
+
+			if self.solved and self.solved_time:
+				self.solved_time = timezone.localtime()
+
 			self.save()
 
-			if self.solved:
-				self.solved_time = timezone.localtime()
-				if self.video:
-					libraspi.video_control('play', video)
+			if self.solved and self.video:
+				libraspi.video_control('play', video)
 
+			# Did the challenge solve all the challenge in this room?
 			if self.room.all_challenge_validated():
-				print('This was the last remaining challenge to solved, opening door for %s' % self.room.room_name)
+
+				print('This was the last remaining challenge to solve, opening door for %s' % self.room.room_name)
 				self.room.set_door_locked(False)
 
+				# Is this the last room of this game?
 				if self.room.is_last_room():
+
 					print('This was the last room, stopping escape game counter')
 					self.room.escapegame.finish()
+
 				else:
 					print('Still some rooms to explore')
 			else:

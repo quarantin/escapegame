@@ -269,7 +269,7 @@ def video_control(action, video):
 #   - door_control
 #
 
-def door_control(action, room, pin):
+def door_control(action, room):
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
@@ -279,8 +279,10 @@ def door_control(action, room, pin):
 
 		host, port = get_master()
 
+		pin = room.door_pin
+
 		# Get the controller of the room
-		controller = room and room.get_controller()
+		controller = room.get_controller()
 
 		# If the room has no controllers, it means we're running on the master
 		if not controller:
