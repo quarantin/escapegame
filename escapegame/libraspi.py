@@ -6,7 +6,6 @@ from ws4redis.redis_store import RedisMessage
 import os
 import sys
 import time
-import socket
 import getpass
 import requests
 import traceback

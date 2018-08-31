@@ -13,7 +13,8 @@ from controllers.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
 
 from multimedia.models import Video
 
-import json, socket, traceback
+import json
+import traceback
 
 
 """

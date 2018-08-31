@@ -12,7 +12,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os, imp, socket
+import os
+import imp
+import socket
 
 
 # Quick-start development settings - unsuitable for production

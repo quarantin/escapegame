@@ -12,7 +12,6 @@ from escapegame.models import RaspberryPi, RemoteChallengePin
 from . import tasks
 from . import views
 
-import socket
 
 logger = AppConfig.logger
 

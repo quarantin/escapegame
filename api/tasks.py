@@ -4,7 +4,7 @@ from constance import config
 
 from escapegame.models import *
 
-import socket, time
+import time
 
 
 @background(schedule=0)
