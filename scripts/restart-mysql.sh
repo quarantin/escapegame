@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo /etc/init.d/mysql-server restart
+sudo /etc/init.d/mysql restart
