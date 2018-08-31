@@ -15,14 +15,11 @@ logger = AppConfig.logger
 
 urlpatterns = [
 
-	# REST Token Authentication
-	path('get-token/', views.get_token),
-
 	# Challenge controls
-	path('challenge/<str:action>/<int:pin>/', views.set_challenge_state),
+	path('challenge/<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/<str:action>/', views.set_challenge_state),
 
 	# Door controls
-	path('door/<str:action>/<int:pin>/', views.set_door_locked),
+	path('door/<slug:game_slug>/<slug:room_slug>/<str:action>/', views.set_door_locked),
 
 	# Video controls
 	path('video/<slug:video_slug>/<str:action>/', views.set_video_state),

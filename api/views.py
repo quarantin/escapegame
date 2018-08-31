@@ -13,61 +13,15 @@ from controllers.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
 
 from multimedia.models import Video
 
-from .models import RestToken
-
 import json, socket, traceback
 
 
 """
-	REST Token Authentication
-"""
-@csrf_exempt
-def get_token(request):
-
-	method = 'get_auth_token'
-
-	try:
-		jsondata = json.loads(request.body.decode('utf-8'))
-
-		username = jsondata['username']
-		password = jsondata['password']
-
-		message = 'Info: Invalid username or password supplied'
-		user = authenticate(request, username=username, password=password)
-		if user:
-
-			message = 'Info: Token generation failed for user `%s`' % username
-			token, expire = RestToken.get_token(request.META['REMOTE_ADDR'], user)
-			print("TOKEN: %s, CREATED: %s, EXPIRE: %s, HOST: %s" % (token, token.created, expire, token.host))
-			if token:
-				return JsonResponse({
-					'status': 0,
-					'message': 'Success',
-					'method': method,
-					'expire': expire,
-					'token': token.key,
-				})
-
-		return JsonResponse({
-				'status': 1,
-				'message': message,
-				'method': method,
-			})
-
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'message': 'Error: %s' % err,
-			'method': method,
-		})
-
-"""
 	Challenge controls, no login required for now (REST API)
 """
-def set_challenge_state(request, action, pin):
+def set_challenge_state(request, game_slug, room_slug, challenge_slug, action):
 
-	method = 'set_challenge_state'
+	method = 'api.views.set_challenge_state'
 
 	try:
 		if action not in [ 'validate', 'reset' ]:
@@ -75,22 +29,11 @@ def set_challenge_state(request, action, pin):
 
 		validated = (action == 'validate')
 
-		#status, message = libraspi.set_challenge_state(pin, validated)
-		#if status != 0:
-		#	return JsonResponse({
-		#		'status': status,
-		#		'message': message,
-		#		'method': method,
-		#	})
+		game = EscapeGame.objects.get(slug=game_slug)
+		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
+		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
-		if config.IS_SLAVE:
-			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-			challenges = EscapeGameChallenge.objects.filter(challenge_pin=pin)
-			remote_pin = RemoteChallengePin.objects.get(raspberrypi=myself, challenge__in=challenges)
-			callback_url = (validated and remote_pin.url_callback_validate or remote_pin.url_callback_reset)
-
-			status, message = libraspi.do_get(callback_url)
-			# TODO validate status and message (the content of response)
+		status_message = chall.set_solved(validated)
 
 		return JsonResponse({
 			'status': status,
@@ -108,34 +51,19 @@ def set_challenge_state(request, action, pin):
 """
 	Door controls, no login required for now (REST API)
 """
-def set_door_locked(request, action, pin):
+def set_door_locked(request, game_slug, room_slug, action):
 
-	method = 'set_door_locked'
+	method = 'api.views.set_door_locked'
 	locked = (action == 'lock')
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action `%s`' % action)
 
-		# Always local door controls when second parameter (room) is None
-		status, message = libraspi.door_control(action, None, pin)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'message': message,
-				'method': method,
-				'pin': pin,
-				'locked': locked,
-			})
+		game = EscapeGame.objects.get(slug=game_slug)
+		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 
-		# The master doesn't need to callback itself.
-		if config.IS_SLAVE:
-			myself = RaspberryPi.objects.get(hostname='%s.local' % socket.gethostname())
-			rooms = EscapeGameRoom.objects.filter(door_pin=pin)
-			remote_pin = RemoteDoorPin.objects.get(raspberrypi=myself, room__in=rooms)
-			callback_url = (locked and remote_pin.url_callback_lock or remote_pin.url_callback_unlock)
-
-			status, message = libraspi.do_get(callback_url)
+		status, message = room.set_door_locked(locked)
 
 		return JsonResponse({
 			'status': status,
@@ -144,7 +72,6 @@ def set_door_locked(request, action, pin):
 			'pin': pin,
 			'locked': locked,
 		})
-
 
 	except Exception as err:
 		return JsonResponse({
@@ -159,6 +86,8 @@ def set_door_locked(request, action, pin):
 
 def set_video_state(request, video_slug, action):
 
+	method = 'api.views.set_video_state'
+
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:
 			raise Exception('Invalid action `%s` for method api.views.set_video_state().' % action)
@@ -170,11 +99,13 @@ def set_video_state(request, video_slug, action):
 		return JsonResponse({
 			'status': status,
 			'message': message,
+			'method': method,
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
 			'message': 'Error: %s' % err,
+			'method': method,
 		})
 
