@@ -1,35 +1,44 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
+import os
+import imp
 import sys
-
 import time
-
 import requests
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MASTER_FILE = 'master-hostname.txt'
+
+MASTER = imp.load_source(MASTER_FILE, os.path.join(BASE_DIR, MASTER_FILE))
+
+
 urls_1001_nuits = [
-	'http://escapegame.local/web/les-1001-nuits/sas-les-1001-nuits/debut-du-jeu/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-fontaine/la-fontaine/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-fontaine/les-dalles/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-caverne/le-marchand/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-caverne/le-lanceur-de-couteaux/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-caverne/le-charmeur-de-serpents/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-caverne/le-fakir/validate/',
-	'http://escapegame.local/web/les-1001-nuits/la-lampe/la-lampe/validate/',
+	'web/les-1001-nuits/sas-les-1001-nuits/debut-du-jeu/validate/',
+	'web/les-1001-nuits/la-fontaine/la-fontaine/validate/',
+	'web/les-1001-nuits/la-fontaine/les-dalles/validate/',
+	'web/les-1001-nuits/la-caverne/le-marchand/validate/',
+	'web/les-1001-nuits/la-caverne/le-lanceur-de-couteaux/validate/',
+	'web/les-1001-nuits/la-caverne/le-charmeur-de-serpents/validate/',
+	'web/les-1001-nuits/la-caverne/le-fakir/validate/',
+	'web/les-1001-nuits/la-lampe/la-lampe/validate/',
 ]
 
 urls_stranger_things = [
-	'http://escapegame.local/web/stranger-things/sas-stranger-things-salle-claire/debut-du-jeu/validate/',
-	'http://escapegame.local/web/stranger-things/sas-stranger-things-salle-obscure/debut-du-jeu/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-claire/chall1/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-claire/chall2/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall1/validate/',
-	'http://escapegame.local/web/stranger-things/la-salle-obscure/chall2/validate/',
-	'http://escapegame.local/web/stranger-things/la-foret/chall1/validate/',
-	'http://escapegame.local/web/stranger-things/la-foret/chall2/validate/',
+	'web/stranger-things/sas-stranger-things-salle-claire/debut-du-jeu/validate/',
+	'web/stranger-things/sas-stranger-things-salle-obscure/debut-du-jeu/validate/',
+	'web/stranger-things/la-salle-claire/chall1/validate/',
+	'web/stranger-things/la-salle-claire/chall2/validate/',
+	'web/stranger-things/la-salle-obscure/chall1/validate/',
+	'web/stranger-things/la-salle-obscure/chall2/validate/',
+	'web/stranger-things/la-foret/chall1/validate/',
+	'web/stranger-things/la-foret/chall2/validate/',
 ]
 
-
+host = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
+port = ''
 
 game = '1001-nuits'
 urls = urls_1001_nuits
@@ -52,4 +61,6 @@ input('Press enter to start validating the challenges for escape game %s' % game
 
 for url in urls:
 	time.sleep(3)
-	requests.get(url)
+	fullurl = 'http://%s%s/%s' % (host, port, url)
+	print('Requesting URL %s' % fullurl)
+	requests.get(fullurl)
