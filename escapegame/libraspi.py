@@ -276,6 +276,8 @@ def __remote_video_control(action, video):
 
 def video_control(action, video):
 
+	from constance import config
+
 	if action not in [ 'pause', 'play', 'stop' ]:
 		raise Exception('Invalid action `%s` in method video_control()' % action)
 
@@ -283,7 +285,7 @@ def video_control(action, video):
 	method = __local_video_control
 	if raspi:
 		method = __remote_video_control
-		if socket.gethostname() == raspi.hostname.replace('.local', ''):
+		if raspi.hostname == config.HOSTNAME:
 			method = __local_video_control
 
 	return method(action, video)
@@ -329,6 +331,8 @@ def __remote_door_control(action, room, pin):
 
 def door_control(action, room, pin):
 
+	from constance import config
+
 	try:
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action `%s` in method door_control()' % action)
@@ -338,7 +342,7 @@ def door_control(action, room, pin):
 			raspi = room.raspberrypi
 			if raspi:
 				method = __remote_door_control
-				if socket.gethostname() == raspi.hostname.replace('.local', ''):
+				if raspi.hostname == config.HOSTNAME:
 					method = __local_door_control
 
 		return method(action, room, pin)
