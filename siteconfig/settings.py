@@ -20,14 +20,14 @@ import socket
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 # Whether we are running on a Raspberry Pi or not
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
@@ -45,6 +45,10 @@ MASTER_HOSTNAME = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
 # My hostname
 HOSTNAME = '%s%s' % (socket.gethostname(), MASTER.TLD)
 
+# Root URL configuration
+ROOT_URLCONF = 'siteconfig.urls'
+
+# List of accepted vhosts
 ALLOWED_HOSTS = [
 	'127.0.0.1',
 	'localhost',
@@ -87,11 +91,6 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-if IS_MASTER:
-	ROOT_URLCONF = 'siteconfig.urls'
-else:
-	ROOT_URLCONF = 'siteconfig.slave_urls'
 
 TEMPLATES = [
 	{
