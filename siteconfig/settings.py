@@ -12,22 +12,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os, socket
-
-from escapegame.libraspi import RUNNING_ON_PI
-
-DEFAULT_MASTER_HOSTNAME = 'escapegame.local'
-
-IS_MASTER = ('%s.local' % socket.gethostname() == DEFAULT_MASTER_HOSTNAME)
-
-#RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import os, imp, socket
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
@@ -35,11 +27,26 @@ SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Whether we are running on a Raspberry Pi or not
+RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+
+# Load python code with the extension .py
+MASTER_FILE = 'master-hostname.txt'
+MASTER = imp.load_source(MASTER_FILE, os.path.join(BASE_DIR, MASTER_FILE))
+
+# Whether we are the master game controller
+IS_MASTER = (socket.gethostname() == MASTER.HOSTNAME)
+
+# Build full hostname by appending master hostname with master TLD
+MASTER_HOSTNAME = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
+
+# My hostname
+HOSTNAME = '%s%s' % (socket.gethostname(), MASTER.TLD)
+
 ALLOWED_HOSTS = [
 	'127.0.0.1',
 	'localhost',
-	socket.gethostname(),
-	'%s.local' % socket.gethostname(),
+	HOSTNAME,
 ]
 
 
@@ -121,7 +128,7 @@ DATABASE_MYSQL = {
 	'NAME': 'escapegame',
 	'USER': 'escapegame',
 	'PASSWORD': 'escapegame',
-	'HOST': 'localhost',
+	'HOST': MASTER_HOSTNAME,
 	'OPTIONS': {
 		'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 	},
@@ -229,7 +236,11 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 CONSTANCE_CONFIG = {
 	'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
 	'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
-	'MASTER_HOSTNAME': (DEFAULT_MASTER_HOSTNAME, 'The domain name of the Raspberry Pi acting as master.', 'text_field'),
+	'TLD': (MASTER.TLD, 'The TLD (Top-Level-Domain) of this host.', 'text_field'),
+	'HOSTNAME': (HOSTNAME, 'The full domain name of this host.', 'test_field'),
+	'MASTER_TLD': (MASTER.TLD, 'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field'),
+	'MASTER_HOSTNAME_SHORT': (MASTER.HOSTNAME, 'The hostname name of the Raspberry Pi acting as master.', 'text_field'),
+	'MASTER_HOSTNAME': (MASTER_HOSTNAME, 'The full domain name of the host acting as master.', 'text_field'),
 	'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
 	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests, in seconds.'),
 	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
