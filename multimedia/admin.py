@@ -37,11 +37,5 @@ class VideoAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', )
 
-class VideoPlayerAdmin(admin.ModelAdmin):
-	list_display = [
-		'video_player_name',
-		'video_player_path',
-	]
-
 site.register(Image, ImageAdmin)
 site.register(Video, VideoAdmin)
