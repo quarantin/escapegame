@@ -132,9 +132,6 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 	def prepare_app_dict(self, app_dict):
 
 		if 'app_label' not in app_dict:
-			import pprint
-			pp = pprint.PrettyPrinter()
-			pp.pprint(app_dict)
 			return app_dict
 
 		app = app_dict['app_label']
@@ -149,11 +146,7 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 
 		# For app controllers, we want a specific order for the models
 		elif app == 'controllers':
-			new_models = []
-			for model in [ 'RaspberryPi', 'RemoteDoorPin', 'RemoteChallengePin' ]:
-				new_models.append(self.get_model_by_name(model, models))
-
-			app_dict['models'] = new_models
+			app_dict['models'] = models
 
 		# For app jsonexport, we want the models in reverse order,
 		# and we want to change the 'jsonexport' URL part to simply 'json'
@@ -205,10 +198,6 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 			app_dict = self.prepare_app_dict(app_dict)
 		else:
 			app_dict = self.prepare_app_list_dict(app_dict)
-
-		#import pprint
-		#pp = pprint.PrettyPrinter()
-		#pp.pprint(app_dict)
 
 		return app_dict.values()
 

@@ -6,6 +6,16 @@ from .models import *
 
 # Controllers admin classes
 
+class ArduinoSketchAdmin(admin.ModelAdmin):
+	list_display = ( 'sketch_name', 'sketch_path' )
+
+	def get_readonly_fields(self, request, obj=None):
+		field = 'sketch_path'
+		if not obj or not obj.sketch_code:
+			field = 'sketch_code'
+
+		return self.readonly_fields + ( field, )
+
 class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'hostname', 'port' )
 	fieldsets = (
@@ -47,6 +57,7 @@ class RemoteDoorPinAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'url_callback_lock', 'url_callback_unlock' )
 
 
+site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)
 site.register(RemoteChallengePin, RemoteChallengePinAdmin)
 site.register(RemoteDoorPin, RemoteDoorPinAdmin)

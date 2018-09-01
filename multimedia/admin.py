@@ -4,6 +4,7 @@ from escapegame.admin import site
 
 from .models import *
 
+
 # Media admin classes
 
 class ImageAdmin(admin.ModelAdmin):
@@ -16,7 +17,6 @@ class ImageAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'width', 'height' )
 
 class VideoAdmin(admin.ModelAdmin):
-	#prepopulated_fields = { 'slug': ( 'video_name', )}
 	list_display = [
 		'video_name',
 		'slug',
