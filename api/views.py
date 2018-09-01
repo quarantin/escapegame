@@ -1,65 +1,54 @@
 # -*- coding: utf-8 -*-
 
-from django.template import loader
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
-from constance import config
+from django.http import JsonResponse
 
-from escapegame import libraspi
-from escapegame.models import EscapeGameRoom, EscapeGameChallenge
-
-from controllers.models import RaspberryPi, RemoteChallengePin, RemoteDoorPin
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from multimedia.models import Video
 
-import json
-import traceback
-
 
 """
-	Challenge controls, no login required for now (REST API)
+	REST challenge controls, no login required for now (REST API)
 """
-def set_challenge_state(request, game_slug, room_slug, challenge_slug, action):
+def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action):
 
-	method = 'api.views.set_challenge_state'
+	method = 'api.views.rest_challenge_control'
+	validated = (action == 'validate')
 
 	try:
 		if action not in [ 'validate', 'reset' ]:
-			raise Exception('Invalid action: %s' % action)
-
-		validated = (action == 'validate')
+			raise Exception('Invalid action: `%s` for method: `%s`' % (action, method))
 
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
-		status_message = chall.set_solved(validated)
+		status, message = chall.set_solved(validated)
 
 		return JsonResponse({
 			'status': status,
-			'message': message,
 			'method': method,
+			'message': message,
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
 			'method': method,
+			'message': 'Error: %s' % err,
 		})
 
 """
-	Door controls, no login required for now (REST API)
+	REST door controls, no login required for now (REST API)
 """
-def set_door_locked(request, game_slug, room_slug, action):
+def rest_door_control(request, game_slug, room_slug, action):
 
-	method = 'api.views.set_door_locked'
+	method = 'api.views.rest_door_control'
 	locked = (action == 'lock')
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
-			raise Exception('Invalid action `%s`' % action)
+			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
@@ -68,45 +57,46 @@ def set_door_locked(request, game_slug, room_slug, action):
 
 		return JsonResponse({
 			'status': status,
-			'message': message,
 			'method': method,
-			'pin': pin,
+			'message': message,
 			'locked': locked,
+			'pin': pin,
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
 			'method': method,
+			'message': 'Error: %s' % err,
 		})
 
 """
-	Video controls, no login required for now (REST API)
+	REST video controls, no login required for now (REST API)
 """
+def rest_video_control(request, video_slug, action):
 
-def set_video_state(request, video_slug, action):
-
-	method = 'api.views.set_video_state'
+	method = 'api.views.rest_video_control'
 
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` for method api.views.set_video_state().' % action)
+			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
 		video = Video.objects.get(slug=video_slug)
 
+		#status, message = video.control(action)
+		from escapegame import libraspi
 		status, message = libraspi.video_control(action, video)
 
 		return JsonResponse({
 			'status': status,
-			'message': message,
 			'method': method,
+			'message': message,
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
 			'method': method,
+			'message': 'Error: %s' % err,
 		})
 
