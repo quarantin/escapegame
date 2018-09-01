@@ -13,14 +13,22 @@ fi
 
 DEBIAN_PACKAGES=(
 	bc
-	mysql-server
 	$NGINX_PKG
-	redis-server
 	screen
 	uwsgi
 	uwsgi-plugin-python3
 	vim
 )
+
+SERVER_PACKAGES=(
+	mysql-server
+	redis-server
+)
+
+# Only the master needs mysql and redis
+if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
+	DEBIAN_PACKAGES+=( "${SERVER_PACKAGES[@]}" )
+fi
 
 PIP_PACKAGES=(
 	channels
@@ -51,9 +59,6 @@ UWSGI_CONF='uwsgi.ini'
 UWSGI_CONF_DEFAULT='defaults.ini'
 UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
 UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
-
-REDIS_CONFIG='/etc/redis/redis.conf'
-MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
 
 # Install Debian packages
 sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
@@ -140,11 +145,16 @@ for CONFIG in "${CONFIGS[@]}"; do
 		$CONFIG
 done
 
-# Configure mysql to listen on the network
-sudo sed -i 's/^bind-address        = 127.0.0.1$/bind = 0.0.0.0/' "${MYSQL_CONFIG}" || true
+if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 
-# Configure redis to listen on the network
-sudo sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' "${REDIS_CONFIG}" || true
+	# Configure mysql to listen on the network
+	MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
+	sudo sed -i 's/^bind-address        = 127.0.0.1$/bind = 0.0.0.0/' "${MYSQL_CONFIG}" || true
+
+	# Configure redis to listen on the network
+	REDIS_CONFIG='/etc/redis/redis.conf'
+	sudo sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' "${REDIS_CONFIG}" || true
+fi
 
 # Creates corresponding symlinks
 sudo ln -s -r -t "${NGINX_SITES_ENABLED}/" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"

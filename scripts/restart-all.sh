@@ -2,17 +2,15 @@
 
 . $(dirname $0)/env.sh
 
-echo 'Restarting mysql...'
-${ROOTDIR}/scripts/restart-mysql.sh
+if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 
-echo 'Restarting redis...'
-${ROOTDIR}/scripts/restart-redis.sh
+	${ROOTDIR}/scripts/restart-mysql.sh
 
-echo 'Restarting nginx...'
+	${ROOTDIR}/scripts/restart-redis.sh
+fi
+
 ${ROOTDIR}/scripts/restart-nginx.sh
 
-echo 'Restarting uwsgi...'
 ${ROOTDIR}/scripts/restart-uwsgi.sh
 
-echo 'Restarting django services...'
 ${ROOTDIR}/scripts/restart-django-services.sh
