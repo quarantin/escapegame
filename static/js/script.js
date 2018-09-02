@@ -26,6 +26,18 @@ $(document).ready(function() {
 		});
 	});
 
+	// Handler for the button to pause the video
+	$('button#pause-escapegame').click(function() {
+
+		$.ajax({
+			xhrFields: {
+				withCredentials: false
+			},
+			url: '/api/video/' + this.value + '/pause/',
+			crossDomain: true,
+		});
+	});
+
 	// Handler for the button to reset the escape game
 	$('button#reset-escapegame').click(function() {
 

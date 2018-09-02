@@ -193,7 +193,7 @@ class EscapeGameRoom(models.Model):
 			return 1, 'Error: %s' % err
 
 	class Meta:
-		ordering = [ 'room_name' ]
+		ordering = [ 'id', 'escapegame', 'room_name' ]
 
 class EscapeGameChallenge(models.Model):
 
@@ -273,4 +273,4 @@ class EscapeGameChallenge(models.Model):
 			return 1, 'Error: %s' % err
 
 	class Meta:
-		ordering = [ 'challenge_name' ]
+		ordering = [ 'id', 'room', 'challenge_name' ]
