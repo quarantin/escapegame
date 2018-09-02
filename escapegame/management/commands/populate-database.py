@@ -218,27 +218,27 @@ class Command(BaseCommand):
 		chall_lampe.save()
 
 		# Challenge: 1 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall1')
+		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall1 (salle claire)')
 		chall.save()
 
 		# Challenge: 2 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall2')
+		chall = EscapeGameChallenge(room=room_claire, challenge_name='chall2 (salle claire)')
 		chall.save()
 
 		# Challenge: 1 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall1')
+		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall1 (salle obscure)')
 		chall.save()
 
 		# Challenge: 2 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall2')
+		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall2 (salle obscure)')
 		chall.save()
 
 		# Challenge: 1 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1')
+		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1 (la forêt)')
 		chall.save()
 
 		# Challenge: 2 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall2')
+		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall2 (la forêt)')
 		chall.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
