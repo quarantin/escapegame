@@ -32,8 +32,8 @@ class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
 	escapegame_name = models.CharField(max_length=255, unique=True)
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
-	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_video')
+	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
+	video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='escapegame_video')
 
 	cube_pin = models.IntegerField(default=7)
 	cube_delay = models.IntegerField(default=50)
@@ -58,6 +58,7 @@ class EscapeGame(models.Model):
 			self.slug = slugify(self.escapegame_name)
 		self.clean()
 		super(EscapeGame, self).save(**kwargs)
+		libraspi.notify_frontend(self)
 
 	def finish(self):
 		if not self.finish_time:
@@ -73,15 +74,23 @@ class EscapeGame(models.Model):
 		for room in rooms:
 			room.reset()
 
-	def get_controller(self):
-		return self.raspberrypi
+	def get_challenges(self, controller=self.raspberrypi):
+		challenges = []
+		rooms = EscapeGameRoom.objects.filter(escapegame=self)
+		for room in rooms:
+			challs = EscapeGameChallenge.objects.filter(room=room)
+			for chall in challs:
+				if chall.get_controller() == controller:
+					challenges.append(chall)
+
+		return challenges
 
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True)
 	room_name = models.CharField(max_length=255, unique=True)
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
+	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
 	has_cube = models.BooleanField(default=False)
 
 	door_pin = models.IntegerField(default=11)
@@ -106,6 +115,7 @@ class EscapeGameRoom(models.Model):
 			self.slug = slugify(self.room_name)
 		self.clean()
 		super(EscapeGameRoom, self).save(**kwargs)
+		libraspi.notify_frontend(self.escapegame)
 
 	def all_challenge_validated(self):
 		try:
@@ -126,11 +136,12 @@ class EscapeGameRoom(models.Model):
 		return last_room == self
 
 	def get_controller(self):
-		return self.raspberrypi or self.escapegame.get_controller()
+		return self.raspberrypi or self.escapegame.raspberrypi
 
 	def reset(self):
 		self.unlock_time = None
 		self.set_door_locked(True)
+		self.save()
 		# TODO lower the cube in this room
 		challs = EscapeGameChallenge.objects.filter(room=self)
 		for chall in challs:
@@ -148,12 +159,10 @@ class EscapeGameRoom(models.Model):
 				action = (locked and 'Closing' or 'Opening')
 				print("%s door of room `%s / %s`" % (action, self.escapegame, self.room_name))
 
+				if not locked and not self.unlock_time:
+					self.unlock_time = timezone.localtime()
+
 				self.save()
-
-			if not locked and not self.unlock_time:
-				self.unlock_time = timezone.localtime()
-
-			libraspi.notify_frontend(self.escapegame)
 
 			return status, message
 
@@ -189,6 +198,7 @@ class EscapeGameChallenge(models.Model):
 			self.slug = slugify(self.challenge_name)
 		self.clean()
 		super(EscapeGameChallenge, self).save(**kwargs)
+		libraspi.notify_frontend(self.room.escapegame)
 
 	def get_controller(self):
 		return self.room.get_controller()
@@ -213,13 +223,13 @@ class EscapeGameChallenge(models.Model):
 			if self.solved and self.video:
 				libraspi.video_control('play', video)
 
-			# Did the challenge solve all the challenge in this room?
+			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
 
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.room_name)
 				self.room.set_door_locked(False)
 
-				# Is this the last room of this game?
+				# Was this the last room of this game?
 				if self.room.is_last_room():
 
 					print('This was the last room, stopping escape game counter')
@@ -228,9 +238,7 @@ class EscapeGameChallenge(models.Model):
 				else:
 					print('Still some rooms to explore')
 			else:
-				print('Still some unsolved challenge remaining in room %s' % self.room.room_name)
-
-			libraspi.notify_frontend(self.room.escapegame)
+				print('Still unsolved challenge in room %s' % self.room.room_name)
 
 			return 0, 'Success'
 
