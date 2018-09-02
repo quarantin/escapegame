@@ -12,9 +12,9 @@ import os
 
 class ArduinoSketch(models.Model):
 
-	sketch_name = models.CharField(max_length=255)
-	sketch_path = models.FileField(upload_to=config.UPLOAD_SKETCH_PATH)
+	sketch_name = models.CharField(max_length=255, unique=True)
 	sketch_code = models.TextField(max_length=10000)
+	sketch_path = models.FileField(upload_to=config.UPLOAD_SKETCH_PATH)
 
 	def __str(self):
 		return self.sketch_path.url
@@ -56,29 +56,32 @@ class ArduinoSketch(models.Model):
 
 class RaspberryPi(models.Model):
 
-	name = models.CharField(max_length=255)
-	hostname = models.CharField(max_length=32)
+	name = models.CharField(max_length=255, unique=True)
+	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
 
 	def __str__(self):
 		return self.name
 
-	def is_local(self, hostname):
-		return hostname == config.HOSTNAME
+	def get_myself():
+		try:
+			return RaspberryPi.objects.get(hostname=config.HOSTNAME)
+		except RaspberryPi.DoesNotExist:
+			return None
 
-	def is_myself(self):
-		return self.is_local(self.hostname)
+	def is_myself(self, hostname=config.HOSTNAME):
+		return hostname == self.hostname
 
 	def is_master(self):
 		host, port = libraspi.get_master()
-		return self.is_local(host)
+		return self.is_myself(host)
 
 	class Meta:
 		verbose_name = 'Raspberry Pi'
 		verbose_name_plural = 'Raspberry Pis'
 
 class RemoteChallengePin(models.Model):
-	
+
 	name = models.CharField(max_length=255)
 	challenge = models.ForeignKey('escapegame.EscapeGameChallenge', on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)

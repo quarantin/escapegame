@@ -31,7 +31,7 @@ def paste_image(to_image, from_image_field):
 class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
-	escapegame_name = models.CharField(max_length=255, default='')
+	escapegame_name = models.CharField(max_length=255, unique=True)
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_raspberrypi')
 	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='escapegame_video')
 
@@ -54,7 +54,8 @@ class EscapeGame(models.Model):
 			})
 
 	def save(self, **kwargs):
-		self.slug = slugify(self.escapegame_name)
+		if not self.slug:
+			self.slug = slugify(self.escapegame_name)
 		self.clean()
 		super(EscapeGame, self).save(**kwargs)
 
@@ -77,8 +78,8 @@ class EscapeGame(models.Model):
 
 class EscapeGameRoom(models.Model):
 
-	slug = models.SlugField(max_length=255)
-	room_name = models.CharField(max_length=255, default='')
+	slug = models.SlugField(max_length=255, unique=True)
+	room_name = models.CharField(max_length=255, unique=True)
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 	has_cube = models.BooleanField(default=False)
@@ -101,7 +102,8 @@ class EscapeGameRoom(models.Model):
 			})
 
 	def save(self, **kwargs):
-		self.slug = slugify(self.room_name)
+		if not self.slug:
+			self.slug = slugify(self.room_name)
 		self.clean()
 		super(EscapeGameRoom, self).save(**kwargs)
 
@@ -160,8 +162,8 @@ class EscapeGameRoom(models.Model):
 
 class EscapeGameChallenge(models.Model):
 
-	slug = models.SlugField(max_length=255)
-	challenge_name = models.CharField(max_length=255, default='')
+	slug = models.SlugField(max_length=255, unique=True)
+	challenge_name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_video')
 
@@ -183,7 +185,8 @@ class EscapeGameChallenge(models.Model):
 			})
 
 	def save(self, **kwargs):
-		self.slug = slugify(self.challenge_name)
+		if not self.slug:
+			self.slug = slugify(self.challenge_name)
 		self.clean()
 		super(EscapeGameChallenge, self).save(**kwargs)
 

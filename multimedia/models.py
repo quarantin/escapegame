@@ -15,7 +15,7 @@ import traceback
 
 class Image(models.Model):
 
-	image_name = models.CharField(max_length=255)
+	image_name = models.CharField(max_length=255, unique=True)
 	image_path = models.ImageField(upload_to=config.UPLOAD_IMAGE_PATH)
 	width = models.IntegerField()
 	height = models.IntegerField()
@@ -33,8 +33,8 @@ class Image(models.Model):
 
 class Video(models.Model):
 
-	slug = models.SlugField(max_length=255)
-	video_name = models.CharField(max_length=255)
+	slug = models.SlugField(max_length=255, unique=True)
+	video_name = models.CharField(max_length=255, unique=True)
 	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
 	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 
@@ -42,7 +42,9 @@ class Video(models.Model):
 		return self.video_path.url
 
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.video_name)
+		if not self.slug:
+			self.slug = slugify(self.video_name)
+		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
 	def __local_video_control_pause(fifo):
