@@ -72,7 +72,6 @@ class Video(models.Model):
 
 			os.mkfifo(fifo)
 
-			from constance import config
 			status = subprocess.call([ config.VIDEO_PLAYER, '--input-file', fifo, video_path ])
 
 			os.remove(fifo)
@@ -85,7 +84,6 @@ class Video(models.Model):
 			status, message = OMXPlayer().stop()
 
 		else:
-			from constance import config
 			status, message = subprocess.call([ 'killall', config.VIDEO_PLAYER ]), 'Success'
 
 		return status, message
