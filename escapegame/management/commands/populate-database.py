@@ -48,6 +48,10 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `Video`', ending='')
 
+		# Demo Video
+		demo_video = Video(video_name='Video Demo', video_path='uploads/videos/test.h264')
+		demo_video.save()
+
 		# Les 1001 nuits - Briefing Video
 		briefing_video_1001_nuits = Video(video_name='Les 100 nuits - Briefing', video_path='uploads/videos/test.h264')
 		briefing_video_1001_nuits.save()
@@ -222,11 +226,11 @@ class Command(BaseCommand):
 		chall_sas_1_timer.save()
 
 		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle claire
-		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, challenge_name='Début du jeu \'Stanger Things - Salle claire\'')
+		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, challenge_name='Début du jeu \'Salle claire\'')
 		chall_sas_2_timer.save()
 
 		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle obscure
-		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, challenge_name='Début du jeu \'Stranger Things - Salle obscure\'')
+		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, challenge_name='Début du jeu \'Salle obscure\'')
 		chall_sas_3_timer.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
