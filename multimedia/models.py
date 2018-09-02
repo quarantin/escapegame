@@ -7,8 +7,11 @@ from constance import config
 
 from controllers.models import RaspberryPi
 
+from escapegame import libraspi
+
 import os
 import traceback
+import subprocess
 
 
 # Multimedia classes
@@ -36,7 +39,6 @@ class Video(models.Model):
 	slug = models.SlugField(max_length=255, unique=True)
 	video_name = models.CharField(max_length=255, unique=True)
 	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
-	raspberrypi = models.ForeignKey(RaspberryPi, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
 		return self.video_path.url
@@ -47,9 +49,9 @@ class Video(models.Model):
 		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
-	def __local_video_control_pause(fifo):
+	def __local_video_control_pause(self, fifo):
 
-		if RUNNING_ON_PI:
+		if config.RUNNING_ON_PI:
 			status, message = OMXPlayer().pause()
 
 		else:
@@ -62,9 +64,9 @@ class Video(models.Model):
 
 		return status, message
 
-	def __local_video_control_play(fifo, video_path):
+	def __local_video_control_play(self, fifo, video_path):
 
-		if RUNNING_ON_PI:
+		if config.RUNNING_ON_PI:
 			OMXPlayer(video_path)
 			status = 0
 
@@ -80,9 +82,9 @@ class Video(models.Model):
 
 		return status, 'Success'
 
-	def __local_video_control_stop():
+	def __local_video_control_stop(self):
 
-		if RUNNING_ON_PI:
+		if config.RUNNING_ON_PI:
 			status, message = OMXPlayer().stop()
 
 		else:
@@ -90,29 +92,29 @@ class Video(models.Model):
 
 		return status, message
 
-	def control(action, video):
+	def control(self, action):
 
 		try:
 			if action not in [ 'pause', 'play', 'stop' ]:
 				raise Exception('Invalid action `%s` in method video_control()' % action)
 
-			fifo = '/tmp/%s.fifo' % video.slug
+			fifo = '/tmp/%s.fifo' % self.slug
 
-			host, port = get_master()
+			host, port = libraspi.get_master()
 
-			video_url = 'http://%s%s/media%s' % (host, port, video.video_path.url)
+			video_url = 'http://%s%s/media%s' % (host, port, self.video_path.url)
 
 			if action == 'pause':
-				print("Pausing video '%s'" % video.video_name)
-				return __local_video_control_pause(fifo)
+				print("Pausing video '%s'" % self.video_name)
+				return self.__local_video_control_pause(fifo)
 
 			elif action == 'play':
-				print("Playing video '%s'" % video.video_name)
-				return __local_video_control_play(fifo, video_path)
+				print("Playing video '%s'" % self.video_name)
+				return self.__local_video_control_play(fifo, video_url)
 
 			elif action == 'stop':
-				print("Stopping video '%s'" % video.video_path.url)
-				return __local_video_control_stop()
+				print("Stopping video '%s'" % video_url)
+				return self.__local_video_control_stop()
 
 		except Exception as err:
 			return 1, 'Error: %s' % traceback.format_exc()

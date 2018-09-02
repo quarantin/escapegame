@@ -5,13 +5,13 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from multimedia.models import Image
-from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge, RemoteDoorPin
+from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from escapegame import libraspi
 
 from .tasks import cube_control
 
-import os, subprocess, traceback
+import os, subprocess
 
 
 """
@@ -35,33 +35,14 @@ def escapegame_index(request, game_slug):
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
 
-	host, port = libraspi.get_master()
-
 	for room in rooms:
 
-		raspberrypi = game.raspberrypi
-		if room.raspberrypi:
-			raspberrypi = room.raspberrypi
+		host, port = libraspi.get_net_info(room.get_controller(), 80)
 
-		"""
-		if raspberrypi:
-			remote_pins = RemoteDoorPin.objects.filter(room=room)
-			for remote_pin in remote_pins:
-				host, port = libraspi.get_net_info(raspberrypi.hostname, raspberrypi.port)
-				#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-				#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
-				room.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, room.escapegame.slug, room.slug)
-				room.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, room.escapegame.slug, room.slug)
-		else:
-		"""
-		host, port = libraspi.get_master()
+		base_url = 'http://%s%s/api/door/%s/%s/' % (host, port, game.slug, room.slug)
 
-		#room.url_callback_lock = 'http://%s%s/api/door/lock/%d/' % (host, port, room.door_pin)
-		#room.url_callback_unlock = 'http://%s%s/api/door/unlock/%d/' % (host, port, room.door_pin)
-		#room.url_callback_lock = 'http://%s%s/web/%s/%s/lock/' % (host, port, room.escapegame.slug, room.slug)
-		#room.url_callback_unlock = 'http://%s%s/web/%s/%s/unlock/' % (host, port, room.escapegame.slug, room.slug)
-		room.url_callback_lock = '/web/%s/%s/lock/' % (room.escapegame.slug, room.slug)
-		room.url_callback_unlock = '/web/%s/%s/unlock/' % (room.escapegame.slug, room.slug)
+		room.url_callback_lock   = base_url + 'lock/'
+		room.url_callback_unlock = base_url + 'unlock/'
 
 	context = {
 		'game': game,
@@ -82,7 +63,7 @@ def escapegame_pause(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = libraspi.video_control('pause', game.video)
+		status, message = game.video.control('pause')
 		return JsonResponse({
 			'status': status,
 			'message': message,
@@ -100,7 +81,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = libraspi.video_control('play', game.video)
+		status, message = game.video.control('play')
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -171,7 +152,7 @@ def escapegame_reset(request, game_slug):
 					})
 
 		# Stop video player
-		status, message = libraspi.video_control('stop', game.video)
+		status, message = game.video.control('stop')
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
 		# call should fail and we still want to continue.
@@ -228,7 +209,7 @@ def escapegame_status(request, game_slug):
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % traceback.format_exc(),
+			'message': 'Error: %s' % err,
 		});
 
 """

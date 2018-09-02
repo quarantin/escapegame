@@ -18,8 +18,6 @@ class Command(BaseCommand):
 			EscapeGameRoom,
 			EscapeGameChallenge,
 			RaspberryPi,
-			RemoteDoorPin,
-			RemoteChallengePin,
 		]
 
 		self.stdout.write(self.style.MIGRATE_HEADING('Flushing database:'))
@@ -238,16 +236,5 @@ class Command(BaseCommand):
 		# Challenge: 2 (Stranger Things / La forêt)
 		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall2')
 		chall.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-#
-# Remote Challenge PINs
-#
-		self.stdout.write('  Populating model `RemoteChallengePin`', ending='')
-
-		# Remote challenge pin Les 1001 nuits / SAS 1 / Début du jeu
-		remote_challenge_pin_sas_1_timer = RemoteChallengePin(name='Remote Challenge Pin: 1001-nuits / Début du jeu', raspberrypi=raspi_1001_nuits, challenge=chall_sas_1_timer)
-		remote_challenge_pin_sas_1_timer.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

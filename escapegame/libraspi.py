@@ -94,47 +94,22 @@ def door_control(action, room):
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action `%s` in method door_control()' % action)
 
-		locked = (action != 'lock')
-
-		host, port = get_master()
-
-		pin = room.door_pin
+		locked = (action == 'lock')
 
 		# Get the controller of the room
 		controller = room.get_controller()
 
-		# If the room has no controllers, it means we're running on the master
-		if not controller:
-
-			# So we create the callback URL to notify web frontend
-			url = 'http://%s%s/web/%s/%s/%s/' % (host, port, room.escapegame.slug, room.slug, action)
-
-			# TODO fix URL to call API then call new URL then notify frontend
-
-		# Otherwise we're running on a slave
-		else:
-
-			# Only perform physical door opening if we are the room controller.
-			# Since we are a dedicated escape game controller, callback to master.
-			if controller.is_myself():
-				if RUNNING_ON_PI:
-					GPIO.setmode(GPIO.BOARD)
-					GPIO.setup(pin, GPIO.OUT)
-					GPIO.output(pin, locked)
-
-			# Otherwise we want to notify the change to the room controller which
-			# will be responsible for propagating the change to the master.
-			else:
-				host, port = get_net_info(controller.hostname, controller.port)
-
-			# Create the callback URL to notify next controller backend
-			url = 'http://%s%s/api/door/%s/%d/' % (host, port, action, pin)
+		# Only perform physical door opening if we are the room controller.
+		if controller.is_myself():
+			if RUNNING_ON_PI:
+				GPIO.setmode(GPIO.BOARD)
+				GPIO.setup(room.door_pin, GPIO.OUT)
+				GPIO.output(room.door_pin, locked)
 
 		action = (locked and 'Opening' or 'Closing')
-		print("%s door on PIN %d" % (action, pin))
+		print("%s door on PIN %d" % (action, room.door_pin))
 
-		# Perform call to callback URL to inform next controller
-		return do_get(url)
+		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err

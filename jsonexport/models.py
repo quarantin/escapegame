@@ -13,6 +13,7 @@ from escapegame.models import *
 
 import json
 
+
 model_mapping = [
 	('images', Image),
 	('videos', Video),
@@ -20,8 +21,6 @@ model_mapping = [
 	('escapegames', EscapeGame),
 	('rooms', EscapeGameRoom),
 	('challenges', EscapeGameChallenge),
-	('remote_door_pins', RemoteDoorPin),
-	('remote_challenge_pins', RemoteChallengePin),
 ]
 
 top_fields = [
@@ -147,13 +146,10 @@ class JsonExport(models.Model):
 	software_version = models.BooleanField(default=True)
 	images = models.BooleanField(default=True)
 	videos = models.BooleanField(default=True)
-	video_players = models.BooleanField(default=True)
 	escapegames = models.BooleanField(default=True)
 	rooms = models.BooleanField(default=True)
 	challenges = models.BooleanField(default=True)
 	raspberry_pis = models.BooleanField(default=True)
-	remote_challenge_pins = models.BooleanField(default=True)
-	remote_door_pins = models.BooleanField(default=True)
 
 	def save(self, *args, **kwargs):
 		pass
@@ -172,13 +168,10 @@ class JsonExportForm(forms.ModelForm):
 			'software_version',
 			'images',
 			'videos',
-			'video_players',
 			'escapegames',
 			'rooms',
 			'challenges',
 			'raspberry_pis',
-			'remote_challenge_pins',
-			'remote_door_pins',
 		]
 
 	def dump(self, post):

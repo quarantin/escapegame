@@ -77,7 +77,6 @@ def json_export(request):
 		}
 
 		template = loader.get_template('jsonexport/export.html')
-		#template = loader.get_template('admin/app_index.html')
 		return HttpResponse(template.render(context, request))
 
 	except Exception as err:
