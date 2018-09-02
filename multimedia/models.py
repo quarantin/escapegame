@@ -49,7 +49,7 @@ class Video(models.Model):
 		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
-	def __local_video_control_pause(self, fifo):
+	def __local_video_control_pause(fifo):
 
 		if config.RUNNING_ON_PI:
 			status, message = OMXPlayer().pause()
@@ -64,7 +64,7 @@ class Video(models.Model):
 
 		return status, message
 
-	def __local_video_control_play(self, fifo, video_path):
+	def __local_video_control_play(fifo, video_path):
 
 		if config.RUNNING_ON_PI:
 			OMXPlayer(video_path)
@@ -82,7 +82,7 @@ class Video(models.Model):
 
 		return status, 'Success'
 
-	def __local_video_control_stop(self):
+	def __local_video_control_stop():
 
 		if config.RUNNING_ON_PI:
 			status, message = OMXPlayer().stop()
@@ -92,7 +92,7 @@ class Video(models.Model):
 
 		return status, message
 
-	def control(self, action):
+	def control(action):
 
 		try:
 			if action not in [ 'pause', 'play', 'stop' ]:
@@ -106,15 +106,15 @@ class Video(models.Model):
 
 			if action == 'pause':
 				print("Pausing video '%s'" % self.video_name)
-				return self.__local_video_control_pause(fifo)
+				return __local_video_control_pause(fifo)
 
 			elif action == 'play':
 				print("Playing video '%s'" % self.video_name)
-				return self.__local_video_control_play(fifo, video_url)
+				return __local_video_control_play(fifo, video_url)
 
 			elif action == 'stop':
 				print("Stopping video '%s'" % video_url)
-				return self.__local_video_control_stop()
+				return __local_video_control_stop()
 
 		except Exception as err:
 			return 1, 'Error: %s' % traceback.format_exc()
