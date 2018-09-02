@@ -24,8 +24,6 @@ class BaseVideoPlayer():
 		self.socket = socket
 		self.video_url = video_url
 
-		self.play(self.video_url)
-
 	def get_available_actions(self):
 		return [
 			'pause',
@@ -82,10 +80,14 @@ class PlayerMPV(BaseVideoPlayer):
 		try:
 
 			socket_exists = os.path.exists(self.socket)
+			# TODO toggle play/pause
 			#if socket_exists and video_url is None or video_url == self.video_url:
 			#	return self.pause()
 
-			self.video_url = video_url
+			if video_url is not None:
+				self.video_url = video_url
+			else:
+				video_url = self.video_url
 
 			status, message = 1, 'Fifo %s could not be found' % self.socket
 			if socket_exists:
@@ -93,7 +95,8 @@ class PlayerMPV(BaseVideoPlayer):
 
 			os.mkfifo(self.socket)
 
-			p = subprocess.Popen([ config.VIDEO_PLAYER, '--input-file', self.socket, video_url ], stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+			#p = subprocess.Popen([ config.VIDEO_PLAYER, '--input-file', self.socket, video_url ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+			p = subprocess.Popen([ config.VIDEO_PLAYER, '--input-file', self.socket, video_url ], close_fds=True)
 			#p.wait()
 			#print('Flusing stderr from player:')
 			#print(p.stderr.read())
