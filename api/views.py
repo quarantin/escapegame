@@ -25,7 +25,7 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
-		status, message = chall.set_solved(validated)
+		status, message = chall.set_solved(request, validated)
 
 		return JsonResponse({
 			'status': status,

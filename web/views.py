@@ -157,7 +157,7 @@ def escapegame_reset(request, game_slug):
 			for chall in challenges:
 
 				print('Reseting challenge %s' % chall.challenge_name)
-				status, message = chall.set_solved(False)
+				status, message = chall.set_solved(request, False)
 				if status != 0:
 					return JsonResponse({
 						'status': status,
@@ -282,7 +282,7 @@ def challenge_callback(request, game_slug, room_slug, challenge_slug, action):
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
-		status, message = chall.set_solved(solved)
+		status, message = chall.set_solved(request, solved)
 
 		return JsonResponse({
 			'status': status,
