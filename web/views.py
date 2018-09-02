@@ -11,7 +11,7 @@ from escapegame import libraspi
 
 from .tasks import cube_control
 
-import os, subprocess
+import os, subprocess, traceback
 
 
 """
@@ -60,23 +60,30 @@ def escapegame_index(request, game_slug):
 @login_required
 def escapegame_pause(request, game_slug):
 
+	method = 'web.views.escapegame_pause'
+
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
 		status, message = game.video.control('pause')
 		return JsonResponse({
 			'status': status,
+			'method': method,
 			'message': message,
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
+			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 @login_required
 def escapegame_start(request, game_slug):
+
+	method = 'web.views.escapegame_start'
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -85,7 +92,9 @@ def escapegame_start(request, game_slug):
 		if status != 0:
 			return JsonResponse({
 				'status': status,
+				'method': method,
 				'message': message,
+				'traceback': traceback.format_exc(),
 			})
 
 		# Raise the cube: Create a background task to delay call to:
@@ -94,17 +103,22 @@ def escapegame_start(request, game_slug):
 
 		return JsonResponse({
 			'status': 0,
+			'method': method,
 			'message': 'Success',
 		})
 
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
+			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 @login_required
 def escapegame_reset(request, game_slug):
+
+	method = 'web.views.escapegame_reset'
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -134,7 +148,9 @@ def escapegame_reset(request, game_slug):
 			if status != 0:
 				return JsonResponse({
 					'status': status,
+					'method': method,
 					'message': message,
+					'traceback': traceback.format_exc(),
 				})
 
 			print('Reseting challenges')
@@ -148,7 +164,9 @@ def escapegame_reset(request, game_slug):
 				if status != 0:
 					return JsonResponse({
 						'status': status,
+						'method': method,
 						'message': message,
+						'traceback': traceback.format_exc(),
 					})
 
 		# Stop video player
@@ -166,6 +184,7 @@ def escapegame_reset(request, game_slug):
 
 		return JsonResponse({
 			'status': 0,
+			'method': method,
 			'message': 'Success',
 		})
 
@@ -173,7 +192,9 @@ def escapegame_reset(request, game_slug):
 		print('Failed reseting escapegame %s' % game.escapegame_name)
 		return JsonResponse({
 			'status': 1,
+			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 def __populate_images(obj, key):
@@ -185,6 +206,8 @@ def __populate_images(obj, key):
 
 @login_required
 def escapegame_status(request, game_slug):
+
+	method = 'web.views.escapegame_status'
 
 	try:
 		game = EscapeGame.objects.values().get(slug=game_slug)
@@ -209,7 +232,9 @@ def escapegame_status(request, game_slug):
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
+			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		});
 
 """
@@ -239,8 +264,9 @@ def door_callback(request, game_slug, room_slug, action):
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
 			'method': method,
+			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 """
@@ -271,6 +297,7 @@ def challenge_callback(request, game_slug, room_slug, challenge_slug, action):
 	except Exception as err:
 		return JsonResponse({
 			'status': 1,
-			'message': 'Error: %s' % err,
 			'method': method,
+			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})

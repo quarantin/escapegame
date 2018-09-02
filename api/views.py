@@ -6,6 +6,8 @@ from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from multimedia.models import Video
 
+import traceback
+
 
 """
 	REST challenge controls, no login required for now (REST API)
@@ -36,6 +38,7 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 			'status': 1,
 			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 """
@@ -59,8 +62,6 @@ def rest_door_control(request, game_slug, room_slug, action):
 			'status': status,
 			'method': method,
 			'message': message,
-			'locked': locked,
-			'pin': pin,
 		})
 
 	except Exception as err:
@@ -68,6 +69,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 			'status': 1,
 			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
 """
@@ -96,5 +98,6 @@ def rest_video_control(request, video_slug, action):
 			'status': 1,
 			'method': method,
 			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
 		})
 
