@@ -11,6 +11,25 @@ if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
 	GPIO.setmode(GPIO.BOARD)
 
+invalid_pins = [
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	8,
+	9,
+	14,
+	17,
+	20,
+	25,
+	27,
+	28,
+	30,
+	34,
+	39,
+]
 
 def git_version():
 
@@ -59,70 +78,6 @@ def notify_frontend(game, message='notify'):
 	redis_publisher.publish_message(RedisMessage(message))
 	print('notify_frontend("%s")' % message)
 
-#
-# Door controls
-#
-def door_control(action, room):
-
-	try:
-		if action not in [ 'lock', 'unlock' ]:
-			raise Exception('Invalid action `%s` in method door_control()' % action)
-
-		locked = (action == 'lock')
-
-		# Get the controller of the room
-		controller = room.get_controller()
-
-		# Only perform physical door opening if we are the room controller.
-		if controller.is_myself():
-			set_pin(room.door_pin, locked)
-
-		action = (locked and 'Opening' or 'Closing')
-		print("%s door on PIN %d" % (action, room.door_pin))
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-#
-# Cube controls
-#
-def cube_control(action, pin):
-
-	try:
-		if action not in [ 'lower', 'raise' ]:
-			raise Exception('Invalid action `%s` in method cube_control()' % action)
-
-		state = (action == 'raise')
-		signal = (action == 'raise' and 'HIGH' or 'LOW')
-
-		print('Sending signal %s to pin number %d' % (signal, pin))
-
-		return set_pin(pin, state)
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-invalid_pins = [
-	1,
-	2,
-	3,
-	4,
-	5,
-	6,
-	8,
-	9,
-	14,
-	17,
-	20,
-	25,
-	27,
-	28,
-	30,
-	34,
-	39,
-]
 
 def is_valid_pin(pin):
 	return pin not in invalid_pins
@@ -183,3 +138,48 @@ def wait_for_pin_state_change(pin, timeout=-1):
 
 	except Exception as err:
 		return -1, 'Error: %s' % err
+
+#
+# Cube controls
+#
+def cube_control(action, pin):
+
+	try:
+		if action not in [ 'lower', 'raise' ]:
+			raise Exception('Invalid action `%s` in method cube_control()' % action)
+
+		state = (action == 'raise')
+		signal = (action == 'raise' and 'HIGH' or 'LOW')
+
+		print('Sending signal %s to pin number %d' % (signal, pin))
+
+		return set_pin(pin, state)
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
+
+#
+# Door controls
+#
+def door_control(action, room):
+
+	try:
+		if action not in [ 'lock', 'unlock' ]:
+			raise Exception('Invalid action `%s` in method door_control()' % action)
+
+		locked = (action == 'lock')
+
+		# Get the controller of the room
+		controller = room.get_controller()
+
+		# Only perform physical door opening if we are the room controller.
+		if controller.is_myself():
+			set_pin(room.door_pin, locked)
+
+		action = (locked and 'Opening' or 'Closing')
+		print("%s door on PIN %d" % (action, room.door_pin))
+
+		return 0, 'Success'
+
+	except Exception as err:
+		return 1, 'Error: %s' % err
