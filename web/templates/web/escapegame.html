@@ -1,7 +1,9 @@
 {% extends "web/base.html" %}
 {% load static %}
+{% block header %}{% include "web/head.html" %}
+	<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}
 {% block content %}
-
 		<div class="title">
 			<h1>{{ game.escapegame_name }}</h1>
 		</div>
