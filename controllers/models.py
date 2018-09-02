@@ -65,11 +65,17 @@ class RaspberryPi(models.Model):
 	def __str__(self):
 		return self.name
 
-	def get_myself():
+	def get_by_name(hostname):
 		try:
-			return RaspberryPi.objects.get(hostname=config.HOSTNAME)
+			return RaspberryPi.objects.get(hostname=hostname)
 		except RaspberryPi.DoesNotExist:
 			return None
+
+	def get_master():
+		return RaspberryPi.get_by_name(config.MASTER_HOSTNAME)
+
+	def get_myself():
+		return RaspberryPi.get_by_name(config.HOSTNAME)
 
 	def is_myself(self, hostname=config.HOSTNAME):
 		return hostname == self.hostname
