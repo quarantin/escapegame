@@ -28,9 +28,6 @@
 			{% elif app.name == 'Escapegame' %}
 			<a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">Escape Games</a>
 
-			{% elif app.name == 'Controllers' %}
-			<a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">Remote Controllers</a>
-
 			{% else %}
 			<a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
 
