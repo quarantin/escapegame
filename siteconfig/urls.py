@@ -39,12 +39,8 @@ urlpatterns = [
 	# JSON Import / Export admin pages
 	path('admin/json/', include('jsonexport.urls')),
 
-	# REST API (slave)
-	path('api/', include('escapegame.urls')),
-
-	# Web interface
-	path('', include('web.urls')),
-
+	# Escape game interface
+	path('', include('escapegame.urls')),
 ]
 
 if settings.DEBUG:
