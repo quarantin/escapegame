@@ -19,7 +19,7 @@ import os, subprocess, traceback
 """
 
 @login_required
-def selector_index(request):
+def escapegame_index(request):
 
 	context = {
 		'games': EscapeGame.objects.all(),
@@ -30,7 +30,7 @@ def selector_index(request):
 	return HttpResponse(template.render(context, request))
 
 @login_required
-def escapegame_index(request, game_slug):
+def escapegame_detail(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
@@ -39,10 +39,7 @@ def escapegame_index(request, game_slug):
 
 		host, port, protocol = libraspi.get_net_info(request, room.get_controller())
 
-		base_url = 'http://%s%s/api/door/%s/%s/' % (host, port, game.slug, room.slug)
-
-		room.url_callback_lock   = base_url + 'lock/'
-		room.url_callback_unlock = base_url + 'unlock/'
+		room.url_callback = '%s://%s%s/api/door/%s/%s' % (protocol, host, port, game.slug, room.slug)
 
 	context = {
 		'game': game,
@@ -125,13 +122,7 @@ def escapegame_reset(request, game_slug):
 		rooms = EscapeGameRoom.objects.filter(escapegame=game)
 		print('Reseting escape game %s' % game.escapegame_name)
 
-		# Reset start time of game
-		game.start_time = None
-		game.finish_time = None
-		game.save()
-
-		# Lower the cube (no need for delay)
-		cube_control('lower', game.cube_pin, schedule=0)
+		game.reset()
 
 		print('Closing room doors')
 
@@ -233,68 +224,3 @@ def escapegame_status(request, game_slug):
 			'message': 'Error: %s' % err,
 			'traceback': traceback.format_exc(),
 		});
-
-"""
-	Door callback, no login required for now (REST API)
-"""
-def door_callback(request, game_slug, room_slug, action):
-
-	method = 'web.views.door_callback'
-	locked = (action == 'lock')
-
-	try:
-		if action not in [ 'lock', 'unlock' ]:
-			raise Exception('Invalid action `%s`' % action)
-
-		game = EscapeGame.objects.get(slug=game_slug)
-		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
-
-		status, message = room.set_door_locked(locked)
-
-		return JsonResponse({
-			'status': status,
-			'message': message,
-			'method': method,
-			'locked': locked,
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'method': method,
-			'message': 'Error: %s' % err,
-			'traceback': traceback.format_exc(),
-		})
-
-"""
-	Challenge callback, no login requried for now (REST API)
-"""
-def challenge_callback(request, game_slug, room_slug, challenge_slug, action):
-
-	method = 'web.views.challenge_callback'
-	solved = (action == 'validate')
-
-	try:
-		if action not in [ 'validate', 'reset' ]:
-			raise Exception('Invalid action \'%s\'' % action)
-
-		game = EscapeGame.objects.get(slug=game_slug)
-		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
-		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
-
-		status, message = chall.set_solved(request, solved)
-
-		return JsonResponse({
-			'status': status,
-			'message': message,
-			'method': method,
-			'solved': solved,
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'method': method,
-			'message': 'Error: %s' % err,
-			'traceback': traceback.format_exc(),
-		})

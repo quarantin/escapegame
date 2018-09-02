@@ -64,13 +64,13 @@
 					Data will be refreshed soon!
 				</div>
 				<div class="col-4">
-					<button class="lock-button{% if not room.door_locked %} d-none{% endif %}" id="lock-{{ room.slug }}" value="{{ room.url_callback_unlock }}" type="submit">
+					<button class="lock-button{% if not room.door_locked %} d-none{% endif %}" id="lock-{{ room.slug }}" value="{{ room.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="Unlock room door">
 							<p>Unlock room door</p>
 						</div>
 					</button>
-					<button class="unlock-button{% if room.door_locked %} d-none{% endif %}" id="unlock-{{ room.slug }}" value="{{ room.url_callback_lock }}" type="submit">
+					<button class="unlock-button{% if room.door_locked %} d-none{% endif %}" id="unlock-{{ room.slug }}" value="{{ room.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="Lock room door">
 							<p>Lock room door</p>
