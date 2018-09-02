@@ -4,16 +4,12 @@ from django.urls import path
 
 from background_task.models import Task
 
-from constance import config
-
 from escapegame.apps import EscapegameConfig as AppConfig
 from escapegame.models import RaspberryPi, RemoteChallengePin
 
 from . import tasks
 from . import views
 
-
-logger = AppConfig.logger
 
 urlpatterns = [
 
@@ -32,7 +28,7 @@ urlpatterns = [
 """
 
 try:
-	myself = RaspberryPi.objects.get(hostname=config.HOSTNAME)
+	myself = RaspberryPi.get_myself()
 	if myself:
 		remote_pins = RemoteChallengePin.objects.filter(raspberrypi=myself)
 		for remote_pin in remote_pins:
