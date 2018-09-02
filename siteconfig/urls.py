@@ -40,7 +40,7 @@ urlpatterns = [
 	path('admin/json/', include('jsonexport.urls')),
 
 	# REST API (slave)
-	path('api/', include('api.urls')),
+	path('api/', include('escapegame.urls')),
 
 	# Web interface
 	path('', include('web.urls')),

@@ -2,12 +2,11 @@
 
 from background_task import background
 
-from escapegame.models import EscapeGame, EscapeGameChallenge
+from .models import EscapeGame, EscapeGameChallenge
 
-from escapegame import libraspi
+from . import libraspi
 
 import time
-
 import traceback
 
 
@@ -67,7 +66,7 @@ def setup_background_tasks():
 				except task.DoesNotExist:
 
 					tasks.poll_gpio(challenge.id, verbose_name=verbose_name)
-					
+
 				except Exception as err:
 					print('Error: %s' % traceback.format_exc())
 

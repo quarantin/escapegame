@@ -59,7 +59,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-	'api',
 	'web',
 	'escapegame',
 	'controllers',

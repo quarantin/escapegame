@@ -2,7 +2,7 @@
 
 from django.http import JsonResponse
 
-from escapegame.models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
 from multimedia.models import Video
 
