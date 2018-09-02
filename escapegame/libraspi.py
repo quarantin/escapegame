@@ -22,31 +22,16 @@ def git_version():
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
+def get_port_string(request, port):
+	bind_port = request.is_secure() and 443 or 80
+	return port != bind_port and ':%d' % port or ''
 
-def get_port_string(port):
-
-	return port != 80 and ':%d' % port or ''
-
-
-def get_net_info(host, port):
-
-	return (host, get_port_string(port))
-
-
-def get_master():
-
-	from constance import config
-
-	return get_net_info(config.MASTER_HOSTNAME, config.MASTER_PORT)
+def get_net_info(request, controller):
+	return (controller.hostname, get_port_string(request, controller.port), request.scheme)
 
 #
-# Web
+# Perform HTTP GET request to URL
 #
-#   - do_get
-#   - do_post
-#   - notify_frontend
-#
-
 def do_get(url):
 	try:
 		print('libraspi.do_get(url=%s)' % url)
@@ -59,18 +44,9 @@ def do_get(url):
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def do_post(url, data):
-	try:
-		print("Performing request POST %s data=%s" % (url, data))
-		response = request.post(url, data=data)
-		if not response:
-			raise Exception("requests.port(url=%s, data=%s) failed!" % (url, data))
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
+#
+# Notify the game websocket frontend with supplied message
+#
 def notify_frontend(game, message='notify'):
 
 	from ws4redis.publisher import RedisPublisher
@@ -83,11 +59,8 @@ def notify_frontend(game, message='notify'):
 	print('notify_frontend("%s")' % message)
 
 #
-# Door controls:
+# Door controls
 #
-#   - door_control
-#
-
 def door_control(action, room):
 
 	try:
@@ -101,10 +74,7 @@ def door_control(action, room):
 
 		# Only perform physical door opening if we are the room controller.
 		if controller.is_myself():
-			if RUNNING_ON_PI:
-				GPIO.setmode(GPIO.BOARD)
-				GPIO.setup(room.door_pin, GPIO.OUT)
-				GPIO.output(room.door_pin, locked)
+			set_pin(room.door_pin, locked)
 
 		action = (locked and 'Opening' or 'Closing')
 		print("%s door on PIN %d" % (action, room.door_pin))
@@ -115,39 +85,8 @@ def door_control(action, room):
 		return 1, 'Error: %s' % err
 
 #
-# Challenge controls
-#   - challenge_control
-#
-#
-
-def challenge_control(action, challenge):
-
-	try:
-		if action not in [ 'validate', 'reset' ]:
-			raise Exception('Invalid action `%s` in method challenge_control()' % action)
-
-		solved = (action == 'validate')
-
-		controller = challenge.get_controller()
-
-		if not controller:
-
-			host, port = get_master()
-
-			url = 'http://%s%s/web/%s/%s/%s/' % (host, port, challenge.room.escapegame.slug, challenge.room.slug, challenge.slug)
-
-			# TODO
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-#
 # Cube controls
-#   - cube_control
 #
-
 def cube_control(action, pin):
 
 	try:
@@ -159,18 +98,10 @@ def cube_control(action, pin):
 
 		print('Sending signal %s to pin number %d' % (signal, pin))
 
-		return set_pin_state(pin, state)
+		return set_pin(pin, state)
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
-
-#
-# PINs and LEDs controls
-#   - is_valid_pin
-#   - set_led_status
-#   - get_pin_state
-#   - wait_for_pin_state_change
-#
 
 invalid_pins = [
 	1,
@@ -195,37 +126,47 @@ invalid_pins = [
 def is_valid_pin(pin):
 	return pin not in invalid_pins
 
-def set_pin_state(pin, state):
+#
+# Send signal to the supplied PIN number
+#
+def set_pin(pin, signal):
 
 	try:
-		#signal = (state and 'HIGH' or 'LOW')
-		#print("Sending signal %s to pin %d" % (signal, pin))
+		state = (signal and 'HIGH' or 'LOW')
+		print("Sending signal %s to pin %d" % (state, pin))
 
 		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
-			GPIO.output(pin, state)
+			GPIO.output(pin, signal)
 
 		return 0, 'Success'
 
 	except Exception as err:
 		return 1, 'Error: %s' % err
 
-def get_pin_state(pin):
+#
+# Get the state of the supplied PIN number
+#
+def get_pin(pin):
 
 	try:
-		state = 0
+		signal = 0
 		if RUNNING_ON_PI:
 			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
-			state = GPIO.input(pin)
+			signal = GPIO.input(pin)
 
-		print("Getting pin state on PIN %d = %s" % (pin, state))
-		return state, 'Success'
+		state = (signal and 'HIGH' or 'LOW')
+		print("Getting signal from PIN %d = %s" % (pin, state))
+		return signal, 'Success'
 
 	except Exception as err:
 		return -1, 'Error: %s' % err
 
+#
+# Wait for state change on supplied PIN number until timeout expires (forever if timeout=-1)
+#
 def wait_for_pin_state_change(pin, timeout=-1):
 
 	try:

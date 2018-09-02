@@ -37,7 +37,7 @@ def escapegame_index(request, game_slug):
 
 	for room in rooms:
 
-		host, port = libraspi.get_net_info(room.get_controller(), 80)
+		host, port, protocol = libraspi.get_net_info(request, room.get_controller())
 
 		base_url = 'http://%s%s/api/door/%s/%s/' % (host, port, game.slug, room.slug)
 
@@ -65,7 +65,7 @@ def escapegame_pause(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = game.video.control('pause')
+		status, message = game.video.control(request, 'pause')
 		return JsonResponse({
 			'status': status,
 			'method': method,
@@ -88,7 +88,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = game.video.control('play')
+		status, message = game.video.control(request, 'play')
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -130,9 +130,6 @@ def escapegame_reset(request, game_slug):
 		game.finish_time = None
 		game.save()
 
-		libraspi.notify_frontend(game)
-		libraspi.notify_frontend(game, '0:00:00')
-
 		# Lower the cube (no need for delay)
 		cube_control('lower', game.cube_pin, schedule=0)
 
@@ -170,7 +167,7 @@ def escapegame_reset(request, game_slug):
 					})
 
 		# Stop video player
-		status, message = game.video.control('stop')
+		status, message = game.video.control(request, 'stop')
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
 		# call should fail and we still want to continue.

@@ -32,8 +32,8 @@ class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255)
 	escapegame_name = models.CharField(max_length=255, unique=True)
-	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
-	video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='escapegame_video')
+	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
+	video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_video')
 
 	cube_pin = models.IntegerField(default=7)
 	cube_delay = models.IntegerField(default=50)
@@ -74,7 +74,11 @@ class EscapeGame(models.Model):
 		for room in rooms:
 			room.reset()
 
-	def get_challenges(self, controller=self.raspberrypi):
+	def get_challenges(self, controller=None):
+
+		if not controller:
+			controller = self.raspberrypi
+
 		challenges = []
 		rooms = EscapeGameRoom.objects.filter(escapegame=self)
 		for room in rooms:
@@ -90,7 +94,7 @@ class EscapeGameRoom(models.Model):
 	slug = models.SlugField(max_length=255, unique=True)
 	room_name = models.CharField(max_length=255, unique=True)
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	raspberrypi = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
 	has_cube = models.BooleanField(default=False)
 
 	door_pin = models.IntegerField(default=11)

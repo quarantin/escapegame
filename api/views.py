@@ -85,7 +85,7 @@ def rest_video_control(request, video_slug, action):
 
 		video = Video.objects.get(slug=video_slug)
 
-		status, message = video.control(action)
+		status, message = video.control(request, action)
 
 		return JsonResponse({
 			'status': status,

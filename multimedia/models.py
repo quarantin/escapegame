@@ -92,7 +92,7 @@ class Video(models.Model):
 
 		return status, message
 
-	def control(action):
+	def control(self, request, action):
 
 		try:
 			if action not in [ 'pause', 'play', 'stop' ]:
@@ -100,7 +100,7 @@ class Video(models.Model):
 
 			fifo = '/tmp/%s.fifo' % self.slug
 
-			host, port = libraspi.get_master()
+			host, port = libraspi.get_net_info(request, RaspberryPi.get_myself())
 
 			video_url = 'http://%s%s/media%s' % (host, port, self.video_path.url)
 
