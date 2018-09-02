@@ -90,6 +90,10 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `RaspberryPi`', ending='')
 
+		# Raspberry Pi: Master game controller
+		raspi_master = RaspberryPi(name='Raspi Master', hostname='escapegame.local')
+		raspi_master.save()
+
 		# Raspberry Pi: Les 1001 nuits
 		raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local')
 		raspi_1001_nuits.save()
