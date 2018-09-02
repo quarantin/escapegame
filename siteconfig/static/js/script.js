@@ -17,7 +17,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/web/' + this.value + '/start/',
+			url: '/' + this.value + '/start/',
 			crossDomain: true,
 			success: function() {
 				$('button#video-play').addClass('d-none');
@@ -49,7 +49,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/web/' + this.value + '/reset/',
+			url: '/' + this.value + '/reset/',
 			crossDomain: true,
 			success: function() {
 				$('button#video-play').removeClass('d-none');
@@ -197,7 +197,7 @@ $(document).ready(function() {
 		var game_slug = $('button#start-escapegame').val();
 
 		$.ajax({
-			url: '/web/' + game_slug + '/status/',
+			url: '/' + game_slug + '/status/',
 			crossDomain: true,
 			success: function(game) {
 

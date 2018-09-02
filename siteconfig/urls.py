@@ -27,9 +27,6 @@ from escapegame import admin as myadmin
 
 urlpatterns = [
 
-	# Landing page
-	path('', RedirectView.as_view(url='/web/', permanent=False)),
-
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
 
@@ -46,7 +43,7 @@ urlpatterns = [
 	path('api/', include('api.urls')),
 
 	# Web interface
-	path('web/', include('web.urls')),
+	path('', include('web.urls')),
 
 ]
 
