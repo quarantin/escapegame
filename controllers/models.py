@@ -22,6 +22,14 @@ class ArduinoSketch(models.Model):
 		return self.sketch_path.url
 
 	def clean(self):
+		if not self.sketch_name:
+			raise ValidationError({
+				'sketch_name': 'Sketch name cannot be empty',
+			})
+		if not self.sketch_path:
+			raise ValidationError({
+				'sketch_path': 'Sketch path cannot be empty',
+			})
 		if not self.sketch_path.path.lower().endswith('.ino'):
 			raise ValidationError({
 				'sketch_path': 'An Arduino sketch must have a .ino file extension',
@@ -63,7 +71,7 @@ class RaspberryPi(models.Model):
 	port = models.IntegerField(default=80)
 
 	def __str__(self):
-		return self.name
+		return 'Raspberry Pi - %s' % self.name
 
 	def get_by_name(hostname):
 		try:

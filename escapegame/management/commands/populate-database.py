@@ -6,6 +6,8 @@ from escapegame.models import *
 from multimedia.models import *
 from controllers.models import *
 
+from datetime import timedelta
+
 
 class Command(BaseCommand):
 
@@ -46,9 +48,33 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `Video`', ending='')
 
-		# Demo video
-		video = Video(video_name='Video demo', video_path='uploads/videos/test.h264')
-		video.save()
+		# Les 1001 nuits - Briefing Video
+		briefing_video_1001_nuits = Video(video_name='Les 100 nuits - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_1001_nuits.save()
+
+		# Les 1001 nuits - Winners Video
+		winners_video_1001_nuits = Video(video_name='Les 100 nuits - Good End', video_path='uploads/videos/test.h264')
+		winners_video_1001_nuits.save()
+
+		# Les 1001 nuits - Losers Video
+		losers_video_1001_nuits = Video(video_name='Les 100 nuits - Bad End', video_path='uploads/videos/test.h264')
+		losers_video_1001_nuits.save()
+
+		# Stranger Things - Briefing Video
+		briefing_video_stranger_things = Video(video_name='Stranger Things - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_stranger_things.save()
+
+		# Stranger Things - Winners Video
+		winners_video_stranger_things = Video(video_name='Stranger Things - Good End', video_path='uploads/videos/test.h264')
+		winners_video_stranger_things.save()
+
+		# Stranger Things - Losers Video
+		losers_video_stranger_things = Video(video_name='Stranger Things - Bad End', video_path='uploads/videos/test.h264')
+		losers_video_stranger_things.save()
+
+		# Stranger Things - Challenge Video - La Forêt
+		video_la_foret = Video(video_name='Stranger Things - Challenge - La Forêt', video_path='uploads/videos/test.h264')
+		video_la_foret.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
@@ -58,31 +84,31 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `Image`', ending='')
 
 		# Full map image
-		map_image = Image(image_name='Full Map', image_path='uploads/images/map-base.png')
+		map_image = Image(image_name='Escape Game Map - Full Map', image_path='uploads/images/map-base.png')
 		map_image.save()
 
 		# SAS 1 door image
-		door_sas1_image = Image(image_name='SAS 1 Door', image_path='uploads/images/map-sas1-door.png')
+		door_sas1_image = Image(image_name='Les 1001 nuits - SAS Door', image_path='uploads/images/map-sas1-door.png')
 		door_sas1_image.save()
 
 		# SAS 2 door image
-		door_sas2_image = Image(image_name='SAS 2 Door', image_path='uploads/images/map-sas2-door.png')
+		door_sas2_image = Image(image_name='Stranger Things - SAS Door - Salle Claire', image_path='uploads/images/map-sas2-door.png')
 		door_sas2_image.save()
 
 		# SAS 3 door image
-		door_sas3_image = Image(image_name='SAS 3 Door', image_path='uploads/images/map-sas3-door.png')
+		door_sas3_image = Image(image_name='Stranger Things - SAS Door - Salle Obscure', image_path='uploads/images/map-sas3-door.png')
 		door_sas3_image.save()
 
-		# Room "La fontaine" door image
-		door_room_fontain_image = Image(image_name='Door Room Fontain', image_path='uploads/images/map-door-room-fontain.png')
+		# Room "La Fontaine" door image
+		door_room_fontain_image = Image(image_name='Les 1001 nuits - La Fontaine Door', image_path='uploads/images/map-door-room-fontain.png')
 		door_room_fontain_image.save()
 
 		# Room "Salle claire" door image
-		door_room_claire_image = Image(image_name='Door Room Salle Claire', image_path='uploads/images/map-door-room-salle-claire.png')
+		door_room_claire_image = Image(image_name='Stranger Things - Salle Claire Door', image_path='uploads/images/map-door-room-salle-claire.png')
 		door_room_claire_image.save()
 
 		# Room "Salle obscure" door image
-		door_room_obscure_image = Image(image_name='Door Room Salle Obscure', image_path='uploads/images/map-door-room-salle-obscure.png')
+		door_room_obscure_image = Image(image_name='Stranger Things - Salle Obscure Door', image_path='uploads/images/map-door-room-salle-obscure.png')
 		door_room_obscure_image.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -93,15 +119,15 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `RaspberryPi`', ending='')
 
 		# Raspberry Pi: Master game controller
-		raspi_master = RaspberryPi(name='Raspi Master', hostname='escapegame.local')
+		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local')
 		raspi_master.save()
 
 		# Raspberry Pi: Les 1001 nuits
-		raspi_1001_nuits = RaspberryPi(name='Raspi 1001-nuits', hostname='1001-nuits.local')
+		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits', hostname='les-1001-nuits.local')
 		raspi_1001_nuits.save()
 
 		# Raspberry Pi: Stranger Things
-		raspi_stranger_things = RaspberryPi(name='Raspi Stranger Things', hostname='stranger-things.local')
+		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
 		raspi_stranger_things.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -111,12 +137,31 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
 
+
 		# Escape game: Les 1001 nuits
-		game_1001_nuits = EscapeGame(escapegame_name='Les 1001 nuits', video=video, raspberrypi=raspi_1001_nuits, map_image=map_image)
+		time_limit_1001_nuits = timedelta(minutes=30)
+		game_1001_nuits = EscapeGame(
+			escapegame_name='Les 1001 nuits',
+			time_limit=time_limit_1001_nuits,
+			briefing_video=briefing_video_1001_nuits,
+			winners_video=winners_video_1001_nuits,
+			losers_video=losers_video_1001_nuits,
+			raspberrypi=raspi_1001_nuits,
+			map_image=map_image)
+
 		game_1001_nuits.save()
 
 		# Escape game: Stranger Things
-		game_stranger_things = EscapeGame(escapegame_name='Stranger Things', video=video, raspberrypi=raspi_stranger_things, map_image=map_image)
+		time_limit_stranger_things = timedelta(hours=1)
+		game_stranger_things = EscapeGame(
+			escapegame_name='Stranger Things',
+			time_limit=time_limit_stranger_things,
+			briefing_video=briefing_video_stranger_things,
+			winners_video=winners_video_stranger_things,
+			losers_video=losers_video_stranger_things,
+			raspberrypi=raspi_stranger_things,
+			map_image=map_image)
+
 		game_stranger_things.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -144,12 +189,12 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: SAS 2 - Stranger Things - Salle Claire
-		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=7, door_image=door_sas2_image, room_name='SAS 2 - Stranger Things - Salle Claire ')
+		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=7, door_image=door_sas2_image, room_name='SAS 2 - Salle Claire ')
 		room_sas_2.has_cube = True
 		room_sas_2.save()
 
 		# Room: SAS 3 - Stranger Things - Salle Obscure
-		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=11, door_image=door_sas3_image, room_name='SAS 3 - Stranger Things - Salle Obscure')
+		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=11, door_image=door_sas3_image, room_name='SAS 3 - Salle Obscure')
 		room_sas_3.has_cube = True
 		room_sas_3.save()
 
@@ -236,7 +281,7 @@ class Command(BaseCommand):
 		chall.save()
 
 		# Challenge: 1 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1 (la forêt)')
+		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1 (la forêt)', solved_video=video_la_foret)
 		chall.save()
 
 		# Challenge: 2 (Stranger Things / La forêt)

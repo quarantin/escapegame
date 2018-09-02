@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
+from django.forms.widgets import TimeInput, DateTimeInput
+from django.db import models
 from django.apps import apps
 from django.contrib import admin
 from django.template.response import TemplateResponse
@@ -14,29 +16,44 @@ from datetime import datetime
 
 import json
 
+
 # Escape game admin classes
 
 class EscapeGameAdmin(admin.ModelAdmin):
-	prepoluated_fields = { 'slug': ( 'escapegame_name', )}
+	formfield_overrides = {
+		models.DurationField: { 'widget': DateTimeInput },
+	}
 	list_display = [
 		'escapegame_name',
 		'slug',
+		'time_limit',
 		'raspberrypi',
-		'video',
 		'cube_delay',
 		'cube_pin',
+		'start_time',
+		'finish_time',
+		'briefing_video',
+		'winners_video',
+		'losers_video',
 		'map_image',
 	]
 	fieldsets = (
-		('General', { 'fields': (
+		('Escape Game', { 'fields': (
 			'escapegame_name',
 			'slug',
+			'time_limit',
 			'raspberrypi',
-			'video',
 			)}),
-		('Cube controls', { 'fields': (
+		('Cube Controls', { 'fields': (
 			'cube_delay',
 			'cube_pin',
+			'start_time',
+			'finish_time',
+			)}),
+		('Videos', { 'fields': (
+			'briefing_video',
+			'winners_video',
+			'losers_video',
 			)}),
 		('Maps', { 'fields': (
 			'map_image',
@@ -44,10 +61,9 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
+		return self.readonly_fields + ( 'slug', 'start_time', 'finish_time' )
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
-	prepoluated_fields = { 'slug': ( 'room_name', )}
 	list_display = [
 		'room_name',
 		'slug',
@@ -55,11 +71,12 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'raspberrypi',
 		'door_pin',
 		'door_locked',
+		'unlock_time',
 		'room_image',
 		'door_image',
 	]
 	fieldsets = (
-		('General', { 'fields': (
+		('Escape Game Room', { 'fields': (
 			'room_name',
 			'slug',
 			'escapegame',
@@ -68,6 +85,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		('Door controls', { 'fields': (
 			'door_pin',
 			'door_locked',
+			'unlock_time',
 			)}),
 		('Maps', { 'fields': (
 			'room_image',
@@ -76,30 +94,33 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
+		return self.readonly_fields + ( 'slug', 'unlock_time' )
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
-	prepoluated_fields = { 'slug': ( 'challenge_name', )}
 	list_display = [
 		'challenge_name',
 		'slug',
 		'room',
-		'video',
 		'challenge_pin',
 		'solved',
+		'solved_time',
+		'solved_video',
 		'challenge_image',
 		'challenge_solved_image',
 	]
-	fieldset = (
-		('General', { 'fields': (
+	fieldsets = (
+		('Escape Game Challenge', { 'fields': (
 			'challenge_name',
 			'slug',
 			'room',
-			'video',
 			)}),
 		('Challenge Controls', { 'fields': (
 			'challenge_pin',
 			'solved',
+			'solved_time',
+			)}),
+		('Videos', { 'fields': (
+			'solved_video',
 			)}),
 		('Maps', { 'fields': (
 			'challenge_image',
@@ -108,10 +129,10 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
+		return self.readonly_fields + ( 'slug', 'solved_time' )
 
 
-# Register admin site
+# Our custom admin site
 
 class EscapeGameAdminSite(admin.sites.AdminSite):
 
@@ -230,8 +251,7 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		], context)
 
 
-
-# Create our custom admin site
+# Instanciate our custom admin site
 site = EscapeGameAdminSite(name='escapegame')
 
 # Register our models to our custom admin site

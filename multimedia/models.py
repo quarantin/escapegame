@@ -26,7 +26,7 @@ class Image(models.Model):
 	height = models.IntegerField()
 
 	def __str__(self):
-		return self.image_path.url
+		return 'Image - %s' % self.image_name
 
 	def save(self, *args, **kwargs):
 		self.width = self.image_path.width
@@ -36,18 +36,23 @@ class Image(models.Model):
 	def natural_key(self):
 		return ( self.image_name, self.image_path.url, self.width, self.height )
 
+	class Meta:
+		ordering = [ 'image_name' ]
+
 class Video(models.Model):
 
-	slug = models.SlugField(max_length=255, unique=True)
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	video_name = models.CharField(max_length=255, unique=True)
 	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
 
 	def __str__(self):
-		return self.video_path.url
+		return 'Video - %s' % self.video_name
 
 	def save(self, *args, **kwargs):
-		if not self.slug:
-			self.slug = slugify(self.video_name)
+		new_slug = slugify(self.video_name)
+		if not self.slug or self.slug != new_slug:
+			self.slug = new_slug
+
 		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
@@ -58,3 +63,6 @@ class Video(models.Model):
 	def control(self, request, action):
 		video_url = self.get_url(request)
 		return VideoPlayer(video_url).control(request, action)
+
+	class Meta:
+		ordering = [ 'video_name' ]

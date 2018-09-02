@@ -32,22 +32,26 @@ class EscapeGame(models.Model):
 
 	from_shell = False
 
-	slug = models.SlugField(max_length=255)
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	escapegame_name = models.CharField(max_length=255, unique=True)
+	time_limit = models.DurationField()
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
-	video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_video')
 
 	cube_pin = models.IntegerField(default=7)
 	cube_delay = models.IntegerField(default=50)
 	cube_raised = models.BooleanField(default=False)
 
-	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
+	briefing_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_briefing_video')
+	winners_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_winners_video')
+	losers_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_losers_video')
 
 	start_time = models.DateTimeField(blank=True, null=True)
 	finish_time = models.DateTimeField(blank=True, null=True)
 
+	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
+
 	def __str__(self):
-		return self.escapegame_name
+		return 'Escape Game - %s' % self.escapegame_name
 
 	def clean(self):
 		if not libraspi.is_valid_pin(self.cube_pin):
@@ -56,16 +60,25 @@ class EscapeGame(models.Model):
 			})
 
 	def save(self, **kwargs):
-		if not self.slug:
-			self.slug = slugify(self.escapegame_name)
+		new_slug = slugify(self.escapegame_name)
+		if not self.slug or self.slug != new_slug:
+			self.slug = new_slug
+
 		self.clean()
 		super(EscapeGame, self).save(**kwargs)
 		libraspi.notify_frontend(self)
 
-	def finish(self):
+	def finish(self, request):
 		if not self.finish_time:
 			self.finish_time = timezone.localtime()
 			self.save()
+
+			time_diff = self.finish_time - self.start_time
+			if self.losers_video and time_diff > self.time_limit:
+				self.losers_video.control(request, 'play')
+
+			if self.winners_video and time_diff <= self.time_limit:
+				self.winners_video.control(request, 'play')
 
 	def reset(self):
 		self.start_time = None
@@ -91,9 +104,12 @@ class EscapeGame(models.Model):
 
 		return challenges
 
+	class Meta:
+		ordering = [ 'escapegame_name' ]
+
 class EscapeGameRoom(models.Model):
 
-	slug = models.SlugField(max_length=255, unique=True)
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	room_name = models.CharField(max_length=255, unique=True)
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
@@ -101,14 +117,13 @@ class EscapeGameRoom(models.Model):
 
 	door_pin = models.IntegerField(default=11)
 	door_locked = models.BooleanField(default=True)
+	unlock_time = models.DateTimeField(blank=True, null=True)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
 	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
 
-	unlock_time = models.DateTimeField(blank=True, null=True)
-
 	def __str__(self):
-		return '%s / %s' % (self.escapegame, self.room_name)
+		return 'Room - %s - %s' % (self.escapegame.escapegame_name, self.room_name)
 
 	def clean(self):
 		if not libraspi.is_valid_pin(self.door_pin):
@@ -117,8 +132,10 @@ class EscapeGameRoom(models.Model):
 			})
 
 	def save(self, **kwargs):
-		if not self.slug:
-			self.slug = slugify(self.room_name)
+		new_slug = slugify(self.room_name)
+		if not self.slug or self.slug != new_slug:
+			self.slug = new_slug
+
 		self.clean()
 		super(EscapeGameRoom, self).save(**kwargs)
 		libraspi.notify_frontend(self.escapegame)
@@ -175,23 +192,25 @@ class EscapeGameRoom(models.Model):
 		except Exception as err:
 			return 1, 'Error: %s' % err
 
+	class Meta:
+		ordering = [ 'room_name' ]
+
 class EscapeGameChallenge(models.Model):
 
-	slug = models.SlugField(max_length=255, unique=True)
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	challenge_name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
-	video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_video')
 
 	challenge_pin = models.IntegerField(default=31)
 	solved = models.BooleanField(default=False)
+	solved_time = models.DateTimeField(blank=True, null=True)
+	solved_video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_video')
 
 	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
 	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
-	solved_time = models.DateTimeField(blank=True, null=True)
-
 	def __str__(self):
-		return '%s / %s' % (self.room, self.challenge_name)
+		return 'Challenge - %s / %s / %s' % (self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name)
 
 	def clean(self):
 		if not libraspi.is_valid_pin(self.challenge_pin):
@@ -200,8 +219,10 @@ class EscapeGameChallenge(models.Model):
 			})
 
 	def save(self, **kwargs):
-		if not self.slug:
-			self.slug = slugify(self.challenge_name)
+		new_slug = slugify(self.challenge_name)
+		if not self.slug or self.slug != new_slug:
+			self.slug = new_slug
+
 		self.clean()
 		super(EscapeGameChallenge, self).save(**kwargs)
 		libraspi.notify_frontend(self.room.escapegame)
@@ -214,7 +235,7 @@ class EscapeGameChallenge(models.Model):
 		self.solved_time = None
 		self.save()
 
-	def set_solved(self, solved):
+	def set_solved(self, request, solved):
 		try:
 			action = (solved and 'Solving' or 'Reseting')
 			print('%s challenge %s / %s / %s' % (action, self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name))
@@ -226,8 +247,8 @@ class EscapeGameChallenge(models.Model):
 
 			self.save()
 
-			if self.solved and self.video:
-				libraspi.video_control('play', video)
+			if self.solved and self.solved_video:
+				self.solved_video.control(request, 'play')
 
 			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
@@ -239,7 +260,7 @@ class EscapeGameChallenge(models.Model):
 				if self.room.is_last_room():
 
 					print('This was the last room, stopping escape game counter')
-					self.room.escapegame.finish()
+					self.room.escapegame.finish(request)
 
 				else:
 					print('Still some rooms to explore')
@@ -250,3 +271,6 @@ class EscapeGameChallenge(models.Model):
 
 		except Exception as err:
 			return 1, 'Error: %s' % err
+
+	class Meta:
+		ordering = [ 'challenge_name' ]

@@ -22,5 +22,7 @@ class ArduinoSketchAdmin(admin.ModelAdmin):
 class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = ( 'name', 'hostname', 'port' )
 
+
+# Register our models to our custom admin site
 site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)

@@ -50,21 +50,6 @@ def get_net_info(request, controller):
 	return (controller.hostname, get_port_string(request, controller.port), request.scheme)
 
 #
-# Perform HTTP GET request to URL
-#
-def do_get(url):
-	try:
-		print('libraspi.do_get(url=%s)' % url)
-		response = requests.get(url)
-		if not response:
-			raise Exception("requests.get(url=%s) failed!" % url)
-
-		return 0, 'Success'
-
-	except Exception as err:
-		return 1, 'Error: %s' % err
-
-#
 # Notify the game websocket frontend with supplied message
 #
 def notify_frontend(game, message='notify'):

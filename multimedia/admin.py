@@ -22,10 +22,22 @@ class ImageAdmin(admin.ModelAdmin):
 
 class VideoAdmin(admin.ModelAdmin):
 	list_display = [
-		'slug',
 		'video_name',
+		'slug',
 		'video_path',
 	]
+	fieldsets = (
+		('Video', { 'fields': (
+			'video_name',
+			'slug',
+			'video_path',
+		)}),
+	)
 
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', )
+
+
+# Register our models to our custom admin site
 site.register(Image, ImageAdmin)
 site.register(Video, VideoAdmin)

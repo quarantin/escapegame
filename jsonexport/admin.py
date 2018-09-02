@@ -40,11 +40,6 @@ class JsonImportAdmin(admin.ModelAdmin):
 	def has_change_permission(self, request, obj=None):
 		return request.user.is_superuser
 
-	#def get_urls(self):
-	#	return [
-	#		path('import/', views.json_import, name='json_import'),
-	#	]
-
 class JsonExportAdmin(admin.ModelAdmin):
 	change_list_form = JsonExportForm
 
@@ -60,10 +55,7 @@ class JsonExportAdmin(admin.ModelAdmin):
 	def has_change_permission(self, request, obj=None):
 		return request.user.is_superuser
 
-	#def get_urls(self):
-	#	return [
-	#		path('export/', views.json_export, name='json_export'),
-	#	]
 
+# Register our models to our custom admin site
 site.register([ JsonImport ], JsonImportAdmin)
 site.register([ JsonExport ], JsonExportAdmin)

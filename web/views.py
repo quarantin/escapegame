@@ -65,7 +65,7 @@ def escapegame_pause(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = game.video.control(request, 'pause')
+		status, message = game.briefing_video.control(request, 'pause')
 		return JsonResponse({
 			'status': status,
 			'method': method,
@@ -88,7 +88,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = game.video.control(request, 'play')
+		status, message = game.briefing_video.control(request, 'play')
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -167,7 +167,7 @@ def escapegame_reset(request, game_slug):
 					})
 
 		# Stop video player
-		status, message = game.video.control(request, 'stop')
+		status, message = game.briefing_video.control(request, 'stop')
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
 		# call should fail and we still want to continue.
