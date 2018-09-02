@@ -30,6 +30,8 @@ def paste_image(to_image, from_image_field):
 
 class EscapeGame(models.Model):
 
+	from_shell = False
+
 	slug = models.SlugField(max_length=255)
 	escapegame_name = models.CharField(max_length=255, unique=True)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')

@@ -72,6 +72,9 @@ def notify_frontend(game, message='notify'):
 	from ws4redis.publisher import RedisPublisher
 	from ws4redis.redis_store import RedisMessage
 
+	if game.from_shell:
+		return
+
 	facility = 'notify-%s' % game.slug
 
 	redis_publisher = RedisPublisher(facility=facility, broadcast=True)

@@ -34,6 +34,8 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
+		EscapeGame.from_shell = True
+
 		# We want to clear the database before populating it to avoid duplicate entries.
 		self.flush_database()
 
