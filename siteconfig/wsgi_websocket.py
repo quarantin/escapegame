@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import os
 import gevent.socket
 import redis.connection
-
 redis.connection.socket = gevent.socket
 os.environ.update(DJANGO_SETTINGS_MODULE='siteconfig.settings')
 

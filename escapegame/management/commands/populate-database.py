@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from django.core.management.base import BaseCommand
 
 from escapegame.models import *
 from multimedia.models import *
 from controllers.models import *
+
 
 class Command(BaseCommand):
 

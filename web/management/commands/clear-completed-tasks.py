@@ -1,11 +1,6 @@
+# -*- coding: utf-8 -*-
+
 from django.core.management.base import BaseCommand
-
-
-import traceback
-
-import time
-
-import os
 
 
 class Command(BaseCommand):

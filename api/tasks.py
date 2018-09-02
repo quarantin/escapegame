@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from background_task import background
 
 from constance import config

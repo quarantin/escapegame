@@ -1,7 +1,9 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import sys
 import RPi.GPIO as GPIO
+
 
 # See:
 # https://sourceforge.net/p/raspberry-gpio-python/wiki/Checking%20function%20of%20GPIO%20channels/

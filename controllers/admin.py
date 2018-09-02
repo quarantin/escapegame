@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 
 from escapegame.admin import site
 
 from .models import *
+
 
 # Controllers admin classes
 
