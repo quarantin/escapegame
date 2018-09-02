@@ -141,7 +141,6 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
 
-
 		# Escape game: Les 1001 nuits
 		time_limit_1001_nuits = timedelta(minutes=30)
 		game_1001_nuits = EscapeGame(
