@@ -9,6 +9,7 @@ import requests
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
+	GPIO.setmode(GPIO.BOARD)
 
 
 def git_version():
@@ -136,7 +137,6 @@ def set_pin(pin, signal):
 		print("Sending signal %s to pin %d" % (state, pin))
 
 		if RUNNING_ON_PI:
-			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.OUT)
 			GPIO.output(pin, signal)
 
@@ -153,7 +153,6 @@ def get_pin(pin):
 	try:
 		signal = 0
 		if RUNNING_ON_PI:
-			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
 			signal = GPIO.input(pin)
 
@@ -172,7 +171,6 @@ def wait_for_pin_state_change(pin, timeout=-1):
 	try:
 		ret = pin
 		if RUNNING_ON_PI:
-			GPIO.setmode(GPIO.BOARD)
 			GPIO.setup(pin, GPIO.IN)
 			ret = GPIO.wait_for_edge(pin, GPIO.BOTH, timeout=timeout)
 			if ret is None:
