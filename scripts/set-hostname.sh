@@ -9,6 +9,9 @@ if [ -z "${HOSTNAME}" ]; then
 	exit
 fi
 
+# Ask sudo password before anything else to avoid polluting script output.
+sudo echo -n > /dev/null
+
 # Modify /etc/hostname to reflect the new hostname
 echo -n "[ * ] Updating ${HOSTNAME_FILE} with new hostname \`${HOSTNAME}\`... "
 sudo sh -c "echo ${HOSTNAME} > ${HOSTNAME_FILE}"
