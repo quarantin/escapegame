@@ -73,6 +73,7 @@ GOLANG_URL="https://storage.googleapis.com/golang/${GOLANG_PKG}"
 wget -q -O "/tmp/${GOLANG_PKG}" "${GOLANG_URL}"
 sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xf "/tmp/${GOLANG_PKG}"
+export GOROOT=/usr/local/go
 rm -f "/tmp/${GOLANG_PKG}"
 
 # Install arduino-cli
