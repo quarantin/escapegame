@@ -86,7 +86,3 @@ def setup_background_tasks():
 
 	except Exception as err:
 		print("Adding background tasks failed! (Error: %s)" % traceback.format_exc())
-
-db_tables = connection.introspection.table_names()
-if 'escapegame_escapegame' in db_tables:
-	setup_background_tasks()
