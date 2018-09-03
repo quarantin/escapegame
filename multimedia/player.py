@@ -2,17 +2,12 @@
 
 from constance import config
 
-from controllers.models import RaspberryPi
-
-from escapegame import libraspi
-
 import os
 import dbus
 import getpass
 import traceback
 import subprocess
 
-DEVNULL = None
 
 #
 # Generic video player
@@ -109,6 +104,9 @@ class PlayerMPV(BaseVideoPlayer):
 	def stop(self):
 
 		try:
+			#os.system('killall mpv; rm -f %s' % fifo)
+			#return 0, 'Success'
+
 			status, message = 1, 'Fifo %s could not be found' % self.socket
 			if os.path.exists(self.socket):
 				fout = open(self.socket, 'w')
