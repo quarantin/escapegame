@@ -26,6 +26,9 @@ DEBUG = True
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Import loggers configuration (need BASE_DIR)
+from . import logging
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 
@@ -258,62 +261,3 @@ CORS_ALLOW_CREDENTIALS = False
 #CORS_ORIGIN_WHITELIST = [
 #	'.local',
 #]
-
-"""
-LOGGING = {
-	'version': 1,
-	'disable_existing_loggers': False,
-	'formatters': {
-		'default': {
-			'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
-		},
-	},
-	'handlers': {
-		'console':{
-			'level':'DEBUG',
-			'class':'logging.StreamHandler',
-			'formatter': 'default',
-		},
-		'logfile': {
-			'level':'DEBUG',
-			'class':'logging.FileHandler',
-			'formatter': 'default',
-			'filename': BASE_DIR + "/django-service.log",
-		},
-		'logfile_tasks': {
-			'level':'DEBUG',
-			'class':'logging.FileHandler',
-			'formatter': 'default',
-			'filename': BASE_DIR + "/django-background-tasks.log",
-		},
-		'logfile_db': {
-			'level':'DEBUG',
-			'class':'logging.FileHandler',
-			'formatter': 'default',
-			'filename': BASE_DIR + "/django-debug-database.log",
-		},
-	},
-	'loggers': {
-		'django.db.backends': {
-			'handlers': [ 'logfile_db' ],
-			'level': 'WARN',
-			'propagate': True,
-		},
-		'django': {
-			'handlers':[ 'logfile', 'console' ],
-			'level':'INFO',
-			'propagate': True,
-		},
-		'escapegame': {
-			'handlers': [ 'logfile', 'console' ],
-			'level': 'DEBUG',
-			'propagate': True,
-		},
-		'escapegame.tasks': {
-			'handlers': [ 'logfile_tasks', 'console' ],
-			'level': 'DEBUG',
-			'propagate': True,
-		},
-	}
-}
-"""
