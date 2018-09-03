@@ -210,6 +210,10 @@ def escapegame_status(request, game_slug):
 			__populate_images(room, 'door_image')
 			game['rooms'].append(room)
 
+		game['status'] = 0
+		game['method'] = method
+		game['message'] = 'Success'
+
 		return JsonResponse(game)
 
 	except Exception as err:
