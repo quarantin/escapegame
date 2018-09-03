@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from django.db import connection
 from django.core.management import call_command
 
 from background_task import background
+from background_task.models import Task
+
+from controllers.models import RaspberryPi
 
 from .models import EscapeGame, EscapeGameChallenge
 
@@ -53,6 +57,8 @@ def poll_gpio(challenge_id):
 
 def setup_background_tasks():
 
+	print('Setting up background tasks!')
+
 	try:
 		controller = RaspberryPi.get_myself()
 
@@ -61,18 +67,19 @@ def setup_background_tasks():
 			challs = game.get_challenges(controller=controller)
 			for chall in challs:
 
-				task_name = 'api.tasks.poll_gpio.%s.%s.%s' % (game.slug, chall.room.slug, chall.slug)
-				verbose_name = '%s.%d' % (task_name, chall.id)
+				task_name = 'escapegame.tasks.poll_gpio'
+				verbose_name = '%s.%s.%s.%s' % (task_name, game.slug, chall.room.slug, chall.slug)
 
 				try:
+					# If the task does not exist, this block will raise an exception.
+					# Otherwise the background task is already installed, and we're good.
 					task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
-					if task:
-						print("Not adding background task %s, already present in db" % task.verbose_name)
-						continue
+					continue
 
-				except task.DoesNotExist:
+				except Task.DoesNotExist:
 
-					tasks.poll_gpio(challenge.id, verbose_name=verbose_name)
+					# Instanciate the background task because we could not find it in database.
+					poll_gpio(chall.id, task_name=task_name, verbose_name=verbose_name)
 
 				except Exception as err:
 					print('Error: %s' % traceback.format_exc())
@@ -80,4 +87,6 @@ def setup_background_tasks():
 	except Exception as err:
 		print("Adding background tasks failed! (Error: %s)" % traceback.format_exc())
 
-setup_background_tasks()
+db_tables = connection.introspection.table_names()
+if 'escapegame_escapegame' in db_tables:
+	setup_background_tasks()
