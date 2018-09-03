@@ -23,7 +23,7 @@ def escapegame_index(request):
 		'games': EscapeGame.objects.all(),
 	}
 
-	template = loader.get_template('web/index.html')
+	template = loader.get_template('escapegame/index.html')
 
 	return HttpResponse(template.render(context, request))
 
@@ -44,7 +44,7 @@ def escapegame_detail(request, game_slug):
 		'rooms': rooms,
 	}
 
-	template = loader.get_template('web/escapegame.html')
+	template = loader.get_template('escapegame/escapegame.html')
 
 	return HttpResponse(template.render(context, request))
 
@@ -52,7 +52,7 @@ def escapegame_detail(request, game_slug):
 @login_required
 def escapegame_pause(request, game_slug):
 
-	method = 'web.views.escapegame_pause'
+	method = 'escapegame.views.escapegame_pause'
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -75,7 +75,7 @@ def escapegame_pause(request, game_slug):
 @login_required
 def escapegame_start(request, game_slug):
 
-	method = 'web.views.escapegame_start'
+	method = 'escapegame.views.escapegame_start'
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -110,7 +110,7 @@ def escapegame_start(request, game_slug):
 @login_required
 def escapegame_reset(request, game_slug):
 
-	method = 'web.views.escapegame_reset'
+	method = 'escapegame.views.escapegame_reset'
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
@@ -190,7 +190,7 @@ def __populate_images(obj, key):
 @login_required
 def escapegame_status(request, game_slug):
 
-	method = 'web.views.escapegame_status'
+	method = 'escapegame.views.escapegame_status'
 
 	try:
 		game = EscapeGame.objects.values().get(slug=game_slug)
@@ -225,7 +225,7 @@ def escapegame_status(request, game_slug):
 """
 def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action):
 
-	method = 'api.views.rest_challenge_control'
+	method = 'escapegame.views.rest_challenge_control'
 	validated = (action == 'validate')
 
 	try:
@@ -257,7 +257,7 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 """
 def rest_door_control(request, game_slug, room_slug, action):
 
-	method = 'api.views.rest_door_control'
+	method = 'escapegame.views.rest_door_control'
 	locked = (action == 'lock')
 
 	try:
@@ -288,7 +288,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 """
 def rest_video_control(request, video_slug, action):
 
-	method = 'api.views.rest_video_control'
+	method = 'escapegame.views.rest_video_control'
 
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:

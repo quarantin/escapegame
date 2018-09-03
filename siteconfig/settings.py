@@ -102,7 +102,7 @@ TEMPLATES = [
 		'DIRS': [
 			os.path.join(BASE_DIR, 'jsonexport', 'templates'),
 			os.path.join(BASE_DIR, 'siteconfig', 'templates'),
-			os.path.join(BASE_DIR, 'web', 'templates'),
+			os.path.join(BASE_DIR, 'escapegame', 'templates'),
 		],
 		'APP_DIRS': True,
 		'OPTIONS': {
