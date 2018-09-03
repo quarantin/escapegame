@@ -9,6 +9,8 @@ DBUSER=escapegame
 DBPASS=escapegame
 DBPORT=3306
 
+sudo echo > /dev/null
+
 CREATE_MYSQL_CLIENT_CONFIG(){
 
 	DBHOST=$1
