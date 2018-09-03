@@ -6,9 +6,11 @@ TIMEZONE='Europe/Paris'
 
 ARCH=amd64
 NGINX_PKG=nginx-full
+MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
 if [ "$RUNNING_ON_PI" = true ]; then
 	ARCH=armv6l
 	NGINX_PKG=nginx-light
+	MYSQL_CONFIG='/etc/mysql/mariadb.conf.d/50-server.cnf'
 fi
 
 DEBIAN_PACKAGES=(
@@ -151,8 +153,7 @@ done
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 
 	# Configure mysql to listen on the network
-	MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
-	sudo sed -i 's/^bind-address        = 127.0.0.1$/bind = 0.0.0.0/' "${MYSQL_CONFIG}" || true
+	sudo sed -i 's/^bind-address[^a-z]*= 127.0.0.1$/bind-address = 0.0.0.0/' "${MYSQL_CONFIG}" || true
 
 	# Configure redis to listen on the network
 	REDIS_CONFIG='/etc/redis/redis.conf'
