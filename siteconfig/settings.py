@@ -12,6 +12,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+from escapegame import forms
+
+from collections import OrderedDict
+
 import os
 import imp
 import socket
@@ -34,6 +38,7 @@ SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 
 # Whether we are running on a Raspberry Pi or not
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+VIDEO_PLAYER = (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv')
 
 # Load python code from file without .py extension
 MASTER_FILE = 'master-hostname.txt'
@@ -58,9 +63,7 @@ ALLOWED_HOSTS = [
 	HOSTNAME,
 ]
 
-
 # Application definition
-
 INSTALLED_APPS = [
 	'escapegame',
 	'controllers',
@@ -233,25 +236,67 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 			'widget': 'django.forms.TextInput',
 		}
 	],
+	'hostname': [
+		'django.forms.CharField',
+		{
+			'widget': 'django.forms.TextInput',
+			'validators': [ forms.validate_hostname ],
+		}
+	],
+	'master_hostname': [
+		'django.forms.CharField',
+		{
+			'widget': 'django.forms.TextInput',
+			'validators': [ forms.validate_master_hostname ],
+		}
+	],
+
 }
 
 CONSTANCE_CONFIG = {
-	'IS_MASTER': (IS_MASTER, 'Whether this is the master host.'),
-	'IS_SLAVE': (not IS_MASTER, 'Whether this is a slave host.'),
-	'TLD': (MASTER.TLD, 'The TLD (Top-Level-Domain) of this host.', 'text_field'),
-	'HOSTNAME': (HOSTNAME, 'The full domain name of this host.', 'test_field'),
-	'MASTER_TLD': (MASTER.TLD, 'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field'),
-	'MASTER_HOSTNAME_SHORT': (MASTER.HOSTNAME, 'The hostname name of the Raspberry Pi acting as master.', 'text_field'),
-	'MASTER_HOSTNAME': (MASTER_HOSTNAME, 'The full domain name of the host acting as master.', 'text_field'),
-	'MASTER_PORT': (80, 'The TCP port of the Raspberry Pi acting as master.'),
-	'REQUEST_TIMEOUT': (3, 'The default network timeout for requests, in seconds.'),
-	'RUNNING_ON_PI': (RUNNING_ON_PI, 'True if this application is running on a Raspberry PI, false otherwise.'),
-	'UPLOAD_IMAGE_PATH': ('uploads/images', 'The directory to upload images.', 'text_field'),
-	'UPLOAD_VIDEO_PATH': ('uploads/videos', 'The directory to upload videos.', 'text_field'),
-	'UPLOAD_SKETCH_PATH': ('uploads/sketches', 'The directory to upload Arduino sketches.', 'text_field'),
-	'VIDEO_PLAYER': (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv', 'The path of the executable to display videos.', 'text_field'),
+
+	# System Settings
+	'IS_MASTER':             ( IS_MASTER,          'Whether this is the master host.'                                               ),
+	'IS_SLAVE':              ( not IS_MASTER,      'Whether this is a slave host.'                                                  ),
+	'RUNNING_ON_PI':         ( RUNNING_ON_PI,      'True if this application is running on a Raspberry PI, false otherwise.'        ),
+
+	# Network Settings
+	'HOSTNAME':              ( HOSTNAME,           'The full domain name of this host.',                               'hostname'   ),
+	'MASTER_HOSTNAME':       ( MASTER_HOSTNAME,    'The full domain name of the host acting as master.',          'master_hostname' ),
+	'MASTER_TLD':            ( MASTER.TLD,         'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field' ),
+	'MASTER_PORT':           ( 80,                 'The TCP port of the Raspberry Pi acting as master.'                             ),
+
+	# Upload Settings
+	'UPLOAD_IMAGE_PATH':     ( 'uploads/images',   'The directory to upload images.',                                  'text_field' ),
+	'UPLOAD_VIDEO_PATH':     ( 'uploads/videos',   'The directory to upload videos.',                                  'text_field' ),
+	'UPLOAD_SKETCH_PATH':    ( 'uploads/sketches', 'The directory to upload Arduino sketches.',                        'text_field' ),
+
+	# Video Settings
+	'VIDEO_PLAYER':          ( VIDEO_PLAYER,       'The path of the executable to display videos.',                    'text_field' ),
 }
 
+CONSTANCE_CONFIG_FIELDSETS = OrderedDict([
+
+	( 'System Settings', [
+		'IS_MASTER',
+		'IS_SLAVE',
+		'RUNNING_ON_PI',
+	]),
+	( 'Network Settings', [
+		'HOSTNAME',
+		'MASTER_HOSTNAME',
+		'MASTER_TLD',
+		'MASTER_PORT',
+	]),
+	( 'Upload Settings', [
+		'UPLOAD_IMAGE_PATH',
+		'UPLOAD_VIDEO_PATH',
+		'UPLOAD_SKETCH_PATH',
+	]),
+	( 'Video Settings',   [
+		'VIDEO_PLAYER',
+	]),
+])
 
 # CORS settings
 

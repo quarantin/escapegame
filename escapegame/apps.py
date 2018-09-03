@@ -12,6 +12,7 @@ class EscapegameConfig(AppConfig):
 
 	def ready(self):
 		from . import tasks
+		from .signals import constance
 
 		db_tables = connection.introspection.table_names()
 		if 'escapegame_escapegame' in db_tables:
