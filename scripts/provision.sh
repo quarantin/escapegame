@@ -74,6 +74,7 @@ wget -q -O "/tmp/${GOLANG_PKG}" "${GOLANG_URL}"
 sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xf "/tmp/${GOLANG_PKG}"
 export GOROOT=/usr/local/go
+export PATH=$PATH:$GOROOT/bin
 rm -f "/tmp/${GOLANG_PKG}"
 
 # Install arduino-cli
@@ -81,6 +82,7 @@ GO_DIR=~/golang
 rm -rf ${GO_DIR}
 mkdir -p ${GO_DIR}
 export GOPATH=${GO_DIR}
+export PATH=$PATH:$GOPATH
 go get -u github.com/arduino/arduino-cli
 mkdir -p ~/.arduino15
 ${GO_DIR}/bin/arduino-cli core update-index
