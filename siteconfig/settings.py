@@ -133,7 +133,7 @@ DATABASE_MYSQL = {
 	'NAME': 'escapegame',
 	'USER': 'escapegame',
 	'PASSWORD': 'escapegame',
-	'HOST': IS_MASTER and 'localhost' or MASTER_HOSTNAME,
+	'HOST': MASTER_HOSTNAME,
 	'OPTIONS': {
 		'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 	},
@@ -218,7 +218,7 @@ CHANNEL_LAYER = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [("127.0.0.1", 6379)],
+			"hosts": [(MASTER_HOSTNAME, 6379)],
 		},
 		"ROUTING": "siteconfig.routing.channel_routing",
 	},
