@@ -208,8 +208,11 @@ WEBSOCKET_URL = '/ws/'
 # Use Redis as the session engine
 # https://django-websocket-redis.readthedocs.io/en/latest/installation.html#replace-memcached-with-redis
 
-SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_PREFIX = 'session'
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+	'host': MASTER_HOSTNAME,
+}
 
 
 # Channels
@@ -220,7 +223,7 @@ CHANNEL_LAYER = {
 		"CONFIG": {
 			"hosts": [(MASTER_HOSTNAME, 6379)],
 		},
-		"ROUTING": "siteconfig.routing.channel_routing",
+		#"ROUTING": "siteconfig.routing.channel_routing",
 	},
 }
 
