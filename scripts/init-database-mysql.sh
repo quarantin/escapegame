@@ -9,6 +9,7 @@ DBUSER=escapegame
 DBPASS=escapegame
 DBPORT=3306
 
+# Ask sudo password before anything else to avoid polluting script output.
 sudo echo > /dev/null
 
 CREATE_MYSQL_CLIENT_CONFIG(){
@@ -64,11 +65,12 @@ CREATE_MYSQL_USER(){
 		IF_EXISTS='IF EXISTS '
 	fi
 
-	echo -n "[ * ] Creating MySQL user for \`${DB_HOST}\`... "
+	echo -n "[ * ] Creating MySQL user for \`${DBUSER}\`@\`${DB_HOST}\` on database \`${DBNAME}\`... "
 
-	sudo mysql -u root -e "DROP USER $IF_EXISTS '${DBUSER}'@'${DB_HOST}'"
+	sudo mysql -u root -e "DROP USER ${IF_EXISTS} '${DBUSER}'@'${DB_HOST}'"
 	sudo mysql -u root -e "CREATE USER '${DBUSER}'@'${DB_HOST}' IDENTIFIED BY '${DBPASS}'"
 	sudo mysql -u root -e "GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${DBUSER}'@'${DB_HOST}'"
+	sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test_${DBNAME}.* TO '${DBUSER}'@'${DB_HOST}'"
 
 	echo OK
 }
@@ -94,7 +96,8 @@ MASTER(){
 
 	CREATE_MYSQL_DATABASE
 
-	CREATE_MYSQL_USER localhost
+	# Disable this line when reverse dns is enabled
+	CREATE_MYSQL_USER %
 
 	# Make migrations
 	echo "[ * ] Running ${PYTHON} manage.py makemigrations..."
@@ -110,23 +113,15 @@ MASTER(){
 
 	CREATE_DJANGO_USER
 
-	RASPIS=$(${PYTHON} manage.py shell < "${ROOTDIR}/scripts/show-remote-controllers.py")
-	for RASPI in $RASPIS; do
-		CREATE_MYSQL_USER $RASPI
-	done
-
-	MYSQL_SERVER=localhost
-}
-
-SLAVE(){
-
-	MYSQL_SERVER="${MASTER_HOSTNAME}"
+	# Enable this loop to create a MySQL user for each Raspberry Pi
+	#RASPIS=$(${PYTHON} manage.py shell < "${ROOTDIR}/scripts/show-remote-controllers.py")
+	#for RASPI in $RASPIS; do
+	#	CREATE_MYSQL_USER $RASPI
+	#done
 }
 
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 	MASTER
-else
-	SLAVE
 fi
 
-CREATE_MYSQL_CLIENT_CONFIG "${MYSQL_SERVER}"
+CREATE_MYSQL_CLIENT_CONFIG "${MASTER_HOSTNAME}"
