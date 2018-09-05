@@ -16,10 +16,14 @@ class Command(BaseCommand):
 		all_models = [
 			Image,
 			Video,
+			RaspberryPi,
+			GPIO,
+			Challenge,
+			Cube,
+			Door,
 			EscapeGame,
 			EscapeGameRoom,
 			EscapeGameChallenge,
-			RaspberryPi,
 		]
 
 		self.stdout.write(self.style.MIGRATE_HEADING('Flushing database:'))
@@ -137,6 +141,27 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 #
+# Cubes
+#
+		self.stdout.write('  Populating model `Cube`', ending='')
+
+		# Cube: Les 1001 nuits
+		tag_id = '00000001'
+		cube_1001_nuits = Cube(name='Les 1001 nuits', tag_id=tag_id, raspberrypi=raspi_master, pin=7, )
+		cube_1001_nuits.save()
+
+		# Cube: Stranger Things - Salle Claire
+		tag_id = '00000002'
+		cube_stranger_things_salle_claire = Cube(name='Stranger Things - Salle Claire', tag_id=tag_id, raspberrypi=raspi_master, pin=11)
+		cube_stranger_things_salle_claire.save()
+
+		# Cube: Stranger Things - Salle Obscure
+		tag_id = '00000003'
+		cube_stranger_things_salle_obscure = Cube(name='Stranger Things - Salle Obscure', tag_id=tag_id, raspberrypi=raspi_master, pin=12)
+		cube_stranger_things_salle_obscure.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+#
 # Escape games
 #
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
@@ -150,6 +175,7 @@ class Command(BaseCommand):
 			winners_video=winners_video_1001_nuits,
 			losers_video=losers_video_1001_nuits,
 			raspberrypi=raspi_1001_nuits,
+			cube=cube_1001_nuits,
 			map_image=map_image)
 
 		game_1001_nuits.save()
@@ -163,6 +189,8 @@ class Command(BaseCommand):
 			winners_video=winners_video_stranger_things,
 			losers_video=losers_video_stranger_things,
 			raspberrypi=raspi_stranger_things,
+			cube=cube_stranger_things_salle_claire,
+			cube_2=cube_stranger_things_salle_obscure,
 			map_image=map_image)
 
 		game_stranger_things.save()
@@ -175,8 +203,7 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
 
 		# Room: SAS 1 - Les 1001 nuits
-		room_sas_1 = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=7, door_image=door_sas1_image, room_name='SAS 1 - Les 1001 nuits')
-		room_sas_1.has_cube = True
+		room_sas_1 = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=10, door_image=door_sas1_image, room_name='SAS 1 - Les 1001 nuits', cube=cube_1001_nuits)
 		room_sas_1.save()
 
 		# Room: La fontaine
@@ -192,13 +219,11 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: SAS 2 - Stranger Things - Salle Claire
-		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=7, door_image=door_sas2_image, room_name='SAS 2 - Salle Claire ')
-		room_sas_2.has_cube = True
+		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas2_image, room_name='SAS 2 - Salle Claire ', cube=cube_stranger_things_salle_claire)
 		room_sas_2.save()
 
 		# Room: SAS 3 - Stranger Things - Salle Obscure
-		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=11, door_image=door_sas3_image, room_name='SAS 3 - Salle Obscure')
-		room_sas_3.has_cube = True
+		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas3_image, room_name='SAS 3 - Salle Obscure', cube=cube_stranger_things_salle_obscure)
 		room_sas_3.save()
 
 		# Room: La salle claire

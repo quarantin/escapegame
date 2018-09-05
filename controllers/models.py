@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from constance import config
@@ -91,3 +92,167 @@ class RaspberryPi(models.Model):
 	class Meta:
 		verbose_name = 'Raspberry Pi'
 		verbose_name_plural = 'Raspberry Pis'
+
+class GPIO(models.Model):
+
+	name = models.CharField(max_length=255, unique=True)
+	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
+	pin = models.IntegerField(default=7)
+
+	def __str__(self):
+		return 'GPIO - %s' % self.name
+
+	def clean(self):
+		if not libraspi.is_valid_pin(self.pin):
+			raise ValidationError({
+				'pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.pin,
+			})
+
+	def save(self, *args, **kwargs):
+		self.clean()
+		super(GPIO, self).save(*args, **kwargs)
+
+	""" Read value from this GPIO
+	"""
+	def read(self):
+		return libraspi.get_pin(self.pin)
+
+	""" Write value to this GPIO
+	"""
+	def write(self, signal):
+		return libraspi.set_pin(self.pin, signal)
+
+	class Meta:
+		verbose_name = 'GPIO'
+		verbose_name_plural = 'GPIOs'
+
+class Challenge(GPIO):
+
+	solved = models.BooleanField(default=False)
+	solved_at = models.DateTimeField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Challenge GPIO - %s' % self.name
+
+	def save(self, *args, **kwargs):
+		self.clean()
+		super(Challenge, self).save(*args, **kwargs)
+
+	""" Reset this challenge state
+	"""
+	def reset(self):
+		self.solved = False
+		self.solved_at = None
+		self.save()
+		return 0, 'Success'
+
+	""" Callback method to call when this challenge has just been solved
+	"""
+	def solve(self):
+		self.solved = True
+		if self.solved_at is None:
+			self.solved_at = timezone.localtime()
+
+		self.save()
+		return 0, 'Success'
+
+class Cube(GPIO):
+
+	tag_id = models.CharField(max_length=32)
+	taken_at = models.DateTimeField(blank=True, null=True)
+	placed_at = models.DateTimeField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Cube - %s' % self.name
+
+	def save(self, *args, **kwargs):
+		self.clean()
+		super(Cube, self).save(*args, **kwargs)
+
+	""" Reset this cube state
+	"""
+	def reset(self):
+		self.taken_at = None
+		self.placed_at = None
+		self.save()
+		return self.lowerStand()
+
+	""" Callback method to call when the cube has just been taken from the NFC reader
+	"""
+	def taken(self):
+		if self.taken_time is None:
+			self.taken_time = timezone.localtime()
+			self.save()
+		return 0, 'Success'
+
+	""" Callback method to call when the cube has just been placed on the NFC reader
+	"""
+	def placed(self):
+		if self.placed_time is None:
+			self.placed_time = timezone.localtime()
+			self.save()
+
+	""" Raise the cube stand
+	"""
+	def raiseStand(self):
+		# TODO: Implement me
+		return 0, 'Success'
+
+	""" Lower the cube stand
+	"""
+	def lowerStand(self):
+		# TODO: Implement me
+		return 0, 'Success'
+
+class Door(GPIO):
+
+	locked = models.BooleanField(default=True)
+	unlock_time = models.DateTimeField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Door - %s' % self.name
+
+	def save(self, *args, **kwargs):
+		self.clean()
+		super(Door, self).save(*args, **kwargs)
+
+	""" Reset this door state
+	"""
+	def reset(self):
+		self.unlock_time = None
+
+		return self.lock()
+
+	""" Lock this door
+	"""
+	def lock(self):
+		self.locked = True
+
+		print("Locking door `%s`" % self.name)
+		status, message = libraspi.door_control('lock', self)
+		if status != 0:
+			raise Exception('Failed locking door `%s`' % self.name)
+
+		self.save()
+		return status, message
+
+	""" Unlock this door
+	"""
+	def unlock(self):
+		self.locked = False
+
+		if self.unlock_time is None:
+			self.unlock_time = timezone.localtime()
+
+		print("Unlocking door `%s`" % self.name)
+		status, message = libraspi.door_control('unlock', self)
+		if status != 0:
+			raise Exception('Failed unlocking door `%s`' % self.name)
+
+		self.save()
+		return status, message
+
+	""" Set the state of this door lock
+	"""
+	def set_locked(self, locked):
+		return (locked and self.lock() or self.unlock())

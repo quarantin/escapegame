@@ -28,8 +28,8 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'slug',
 		'time_limit',
 		'raspberrypi',
+		'cube',
 		'cube_delay',
-		'cube_pin',
 		'start_time',
 		'finish_time',
 		'briefing_video',
@@ -45,8 +45,8 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'raspberrypi',
 			)}),
 		('Cube Controls', { 'fields': (
+			'cube',
 			'cube_delay',
-			'cube_pin',
 			'start_time',
 			'finish_time',
 			)}),
@@ -69,9 +69,8 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'slug',
 		'escapegame',
 		'raspberrypi',
-		'door_pin',
-		'door_locked',
-		'unlock_time',
+		'cube',
+		'door',
 		'room_image',
 		'door_image',
 	]
@@ -82,10 +81,11 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'escapegame',
 			'raspberrypi',
 			)}),
+		('Cube controls', { 'fields': (
+			'cube',
+			)}),
 		('Door controls', { 'fields': (
-			'door_pin',
-			'door_locked',
-			'unlock_time',
+			'door',
 			)}),
 		('Maps', { 'fields': (
 			'room_image',
@@ -101,9 +101,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'challenge_name',
 		'slug',
 		'room',
-		'challenge_pin',
-		'solved',
-		'solved_time',
+		'gpio',
 		'solved_video',
 		'challenge_image',
 		'challenge_solved_image',
@@ -115,9 +113,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			'room',
 			)}),
 		('Challenge Controls', { 'fields': (
-			'challenge_pin',
-			'solved',
-			'solved_time',
+			'gpio',
 			)}),
 		('Videos', { 'fields': (
 			'solved_video',

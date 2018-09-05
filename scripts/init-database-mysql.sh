@@ -107,11 +107,11 @@ MASTER(){
 	echo "[ * ] Running ${PYTHON} manage.py migrate..."
 	${PYTHON} manage.py migrate
 
+	CREATE_DJANGO_USER
+
 	# Populate database
 	echo "[ * ] Running ${PYTHON} manage.py populate-database..."
 	${PYTHON} manage.py populate-database
-
-	CREATE_DJANGO_USER
 
 	# Enable this loop to create a MySQL user for each Raspberry Pi
 	#RASPIS=$(${PYTHON} manage.py shell < "${ROOTDIR}/scripts/show-remote-controllers.py")

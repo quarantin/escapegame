@@ -28,16 +28,16 @@ def poll_gpio(challenge_id):
 
 	chall = EscapeGameChallenge.objects.get(pk=challenge_id)
 
-	print('[%s] Polling for GPIO pin %d' % (method, chall.challenge_pin))
+	print('[%s] Polling for GPIO pin %d' % (method, chall.gpio.pin))
 
 	while True:
 
 		try:
-			status, message = libraspi.wait_for_pin_state_change(chall.challenge_pin)
+			status, message = libraspi.wait_for_pin_state_change(chall.gpio.pin)
 			if message != 'Success':
 				raise Exception('libraspi.wait_for_pin_state_change() failed')
 
-			status, message = libraspi.get_pin_state(chall.challenge_pin)
+			status, message = libraspi.get_pin_state(chall.gpio.pin)
 			if message != 'Success':
 				raise Exception('libraspi.get_pin_state() failed')
 

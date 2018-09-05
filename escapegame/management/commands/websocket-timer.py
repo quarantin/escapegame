@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -60,7 +61,7 @@ class Command(BaseCommand):
 
 				for game in games:
 
-					rooms_with_cubes = EscapeGameRoom.objects.filter(escapegame=game, has_cube=True)
+					rooms_with_cubes = EscapeGameRoom.objects.filter(escapegame=game, ~Q(cube = None))
 
 					start_time = self.get_start_time(rooms_with_cubes)
 

@@ -62,7 +62,17 @@ class Video(models.Model):
 
 	def control(self, request, action):
 		video_url = self.get_url(request)
-		return VideoPlayer(video_url).control(request, action)
+		#return VideoPlayer(video_url).control(action)
+		return 0, 'Success'
+
+	def pause(self, request):
+		return self.control(request, 'pause')
+
+	def play(self, request):
+		return self.control(request, 'play')
+
+	def stop(self, request):
+		return self.control(request, 'stop')
 
 	class Meta:
 		ordering = [ 'video_name' ]

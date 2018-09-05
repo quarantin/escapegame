@@ -70,6 +70,9 @@ def notify_frontend(game, message='notify'):
 def is_valid_pin(pin):
 	return pin not in invalid_pins
 
+def is_valid_gpio(gpio):
+	return gpio.pin not in invalid_pins
+
 #
 # Send signal to the supplied PIN number
 #
@@ -149,7 +152,7 @@ def cube_control(action, pin):
 #
 # Door controls
 #
-def door_control(action, room):
+def door_control(action, door):
 
 	try:
 		if action not in [ 'lock', 'unlock' ]:
@@ -157,15 +160,12 @@ def door_control(action, room):
 
 		locked = (action == 'lock')
 
-		# Get the controller of the room
-		controller = room.get_controller()
+		# Get the controller of the door
+		controller = door.raspberrypi
 
 		# Only perform physical door opening if we are the room controller.
 		if controller.is_myself():
-			set_pin(room.door_pin, locked)
-
-		action = (locked and 'Opening' or 'Closing')
-		print("%s door on PIN %d" % (action, room.door_pin))
+			set_pin(door.pin, locked)
 
 		return 0, 'Success'
 

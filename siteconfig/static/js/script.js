@@ -168,7 +168,7 @@ $(document).ready(function() {
 
 			for (var index in game.rooms) {
 				var room = game.rooms[index];
-				if (room.door_image && room.door_locked == false) {
+				if (room.door_image && room.door.locked == false) {
 					drawImage(ctx, room.door_image);
 				}
 			}
@@ -181,7 +181,7 @@ $(document).ready(function() {
 		for (index in game.rooms) {
 
 			var room = game.rooms[index];
-			if (room.door_locked) {
+			if (room.door.locked) {
 				$('button#lock-'   + room.slug).removeClass('d-none');
 				$('button#unlock-' + room.slug).addClass('d-none');
 			}

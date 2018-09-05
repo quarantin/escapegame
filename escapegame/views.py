@@ -80,7 +80,7 @@ def escapegame_start(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 
-		status, message = game.briefing_video.control(request, 'play')
+		status, message = game.briefing_video.play(request)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -91,7 +91,7 @@ def escapegame_start(request, game_slug):
 
 		# Raise the cube: Create a background task to delay call to:
 		# libraspi.cube_control('raise', game.cube.pin)
-		cube_control('raise', game.cube_pin, schedule=game.cube_delay)
+		cube_control('raise', game.cube.pin, schedule=game.cube_delay)
 
 		return JsonResponse({
 			'status': 0,
@@ -127,7 +127,7 @@ def escapegame_reset(request, game_slug):
 			# Close the door
 			print('Closing door for room %s' % room.room_name)
 			room.start_time = None
-			status, message = room.set_door_locked(True)
+			status, message = room.door.lock()
 			if status != 0:
 				return JsonResponse({
 					'status': status,
@@ -153,7 +153,8 @@ def escapegame_reset(request, game_slug):
 					})
 
 		# Stop video player
-		status, message = game.briefing_video.control(request, 'stop')
+		status, message = game.briefing_video.stop(request)
+
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
 		# call should fail and we still want to continue.
@@ -271,7 +272,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 
-		status, message = room.set_door_locked(locked)
+		status, message = room.door.set_locked(locked)
 
 		return JsonResponse({
 			'status': status,

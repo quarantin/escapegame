@@ -198,6 +198,6 @@ class JsonExportForm(forms.ModelForm):
 
 		for jsonkey, model in model_mapping:
 			if post.get(jsonkey):
-				config[jsonkey] = get_sorted_query_set(model.objects.all().order_by('id').values(), [ 'door_locked', 'solved' ])
+				config[jsonkey] = get_sorted_query_set(model.objects.all().order_by('id').values(), [ 'locked', 'solved' ])
 
 		return config
