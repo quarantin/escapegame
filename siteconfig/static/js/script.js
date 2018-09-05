@@ -146,7 +146,6 @@ $(document).ready(function() {
 	});
 
 	function drawImage(ctx, imageObj) {
-		console.log(imageObj);
 		image = new Image();
 		image.src = '/media/' + imageObj.image_path;
 		ctx.drawImage(image, 0, 0, imageObj.width, imageObj.height);
