@@ -161,6 +161,7 @@ class Command(BaseCommand):
 		cube_stranger_things_salle_obscure.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
+
 #
 # Escape games
 #
@@ -203,7 +204,7 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
 
 		# Room: SAS 1 - Les 1001 nuits
-		room_sas_1 = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=10, door_image=door_sas1_image, room_name='SAS 1 - Les 1001 nuits', cube=cube_1001_nuits, is_sas=True)
+		room_sas_1 = EscapeGameRoom(escapegame=game_1001_nuits, door_pin=10, door_image=door_sas1_image, room_name='SAS - Les 1001 nuits', cube=cube_1001_nuits, is_sas=True)
 		room_sas_1.save()
 
 		# Room: La fontaine
@@ -219,11 +220,11 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: SAS 2 - Stranger Things - Salle Claire
-		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas2_image, room_name='SAS 2 - Salle Claire ', cube=cube_stranger_things_salle_claire, is_sas=True)
+		room_sas_2 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas2_image, room_name='SAS - Salle Claire ', cube=cube_stranger_things_salle_claire, is_sas=True)
 		room_sas_2.save()
 
 		# Room: SAS 3 - Stranger Things - Salle Obscure
-		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas3_image, room_name='SAS 3 - Salle Obscure', cube=cube_stranger_things_salle_obscure, is_sas=True)
+		room_sas_3 = EscapeGameRoom(escapegame=game_stranger_things, door_pin=10, door_image=door_sas3_image, room_name='SAS - Salle Obscure', cube=cube_stranger_things_salle_obscure, is_sas=True)
 		room_sas_3.save()
 
 		# Room: La salle claire
@@ -315,5 +316,30 @@ class Command(BaseCommand):
 		# Challenge: 2 (Stranger Things / La forêt)
 		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall2 (la forêt)')
 		chall.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+#
+# Extra doors
+#
+		self.stdout.write('  Populating model `Door` (extra)', ending='')
+
+		door_briefing_room = Door(name='Briefing Room - Les 1001 nuits', game=game_1001_nuits)
+		door_briefing_room.save()
+
+		door_briefing_room = Door(name='Briefing Room - Stranger Things', game=game_stranger_things)
+		door_briefing_room.save()
+
+		# SAS 1 is for Les 1001 nuits
+		door_corridor_sas_1 = Door(name='Couloir - SAS - Les 1001 Nuits', game=game_1001_nuits)
+		door_corridor_sas_1.save()
+
+		# SAS 2 is for Stranger Things - Salle Claire
+		door_corridor_sas_2 = Door(name='Couloir - SAS - Salle Claire', game=game_stranger_things)
+		door_corridor_sas_2.save()
+
+		# SAS 3 is for Stranger Things - Salle Obscure
+		door_corridor_sas_3 = Door(name='Couloir - SAS - Salle Obscure', game=game_stranger_things)
+		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

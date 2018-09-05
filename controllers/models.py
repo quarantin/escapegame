@@ -209,6 +209,7 @@ class Door(GPIO):
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
+	game = models.ForeignKey('escapegame.EscapeGame', null=True, on_delete=models.CASCADE, blank=True)
 
 	def __str__(self):
 		return 'Door - %s' % self.name

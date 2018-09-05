@@ -33,6 +33,7 @@ def escapegame_detail(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
+	game.doors = Door.objects.filter(game=game)
 
 	for room in rooms:
 
@@ -195,8 +196,9 @@ def escapegame_status(request, game_slug):
 	method = 'escapegame.views.escapegame_status'
 
 	try:
-		game = EscapeGame.objects.values().get(slug=game_slug)
+		game = EscapeGame.objects.filter(slug=game_slug).values().get()
 		game['rooms'] = []
+		game['doors'] = [ door for door in Door.objects.filter(game=game['id']).values() ]
 
 		__populate_images(game, 'map_image')
 

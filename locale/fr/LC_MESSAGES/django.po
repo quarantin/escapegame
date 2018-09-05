@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-09-05 23:26+0200\n"
+"PO-Revision-Date: 2018-09-05 23:26+0200\n"
+"Last-Translator: me <mail@mail.com>\n"
+"Language-Team: me <mail@mail.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: escapegame/templates/admin/base_site.html:4
+msgid "Django site admin"
+msgstr "Administration du site Django"
+
+#: escapegame/templates/admin/base_site.html:13
+#: escapegame/templates/admin/base_site.html:19
+msgid "Django administration"
+msgstr "Administration Django"
+
+#: escapegame/templates/admin/escapegame/index.html:23
+#: escapegame/templates/admin/escapegame/index.html:26
+#: escapegame/templates/admin/escapegame/index.html:29
+#: escapegame/templates/admin/escapegame/index.html:32
+#, python-format
+msgid "Models in the %(name)s application"
+msgstr ""
+
+# #, python-format
+# msgid "Models in the %(name)s application"
+# msgstr "Modèles de l'application %(name)s"
+#: escapegame/templates/admin/escapegame/index.html:46
+msgid "Add"
+msgstr "Ajouter"
+
+#: escapegame/templates/admin/escapegame/index.html:52
+msgid "Change"
+msgstr "Modifier"
+
+#: escapegame/templates/admin/escapegame/index.html:63
+msgid "You don't have permission to edit anything."
+msgstr "Vous n'avez pas les permissions pour éditer quoi que ce soit."
+
+#: escapegame/templates/admin/escapegame/index.html:71
+msgid "Recent actions"
+msgstr "Actions récentes"
+
+#: escapegame/templates/admin/escapegame/index.html:72
+msgid "My actions"
+msgstr "Mes actions"
+
+#: escapegame/templates/admin/escapegame/index.html:76
+msgid "None available"
+msgstr "Aucun disponible"
+
+#: escapegame/templates/admin/escapegame/index.html:90
+msgid "Unknown content"
+msgstr "Contenu inconnu"
+
+#: escapegame/templates/escapegame/escapegame.html:17 escapegame/views.py:43
+msgid "Area"
+msgstr "Espace"
+
+#: escapegame/templates/escapegame/escapegame.html:24
+#: escapegame/templates/escapegame/escapegame.html:25
+msgid "Start escape game"
+msgstr "Commencer le jeu d'évasion"
+
+#: escapegame/templates/escapegame/escapegame.html:32
+#: escapegame/templates/escapegame/escapegame.html:33
+msgid "Pause video"
+msgstr "Pause vidéo"
+
+#: escapegame/templates/escapegame/escapegame.html:40
+#: escapegame/templates/escapegame/escapegame.html:41
+msgid "Reset escape game"
+msgstr "Réinitialiser le jeu d'évasion"
+
+#: escapegame/templates/escapegame/escapegame.html:52
+#: escapegame/templates/escapegame/escapegame.html:53
+#: escapegame/templates/escapegame/escapegame.html:99
+#: escapegame/templates/escapegame/escapegame.html:100
+msgid "Unlock"
+msgstr "Déverouiller"
+
+#: escapegame/templates/escapegame/escapegame.html:58
+#: escapegame/templates/escapegame/escapegame.html:59
+#: escapegame/templates/escapegame/escapegame.html:105
+#: escapegame/templates/escapegame/escapegame.html:106
+msgid "Lock"
+msgstr "Vérouiller"
+
+#: escapegame/templates/escapegame/escapegame.html:68
+msgid "Time Elapsed"
+msgstr "Temps Écoulé"
+
+#: escapegame/templates/escapegame/escapegame.html:83
+msgid "No room configured yet for this escape game."
+msgstr "Aucune salle configurée pour ce jeu d'évasion"
+
+#: escapegame/templates/escapegame/escapegame.html:84
+msgid "You can visit"
+msgstr "Vous pouvez visiter"
+
+#: escapegame/templates/escapegame/escapegame.html:84
+msgid "this"
+msgstr "cette"
+
+#: escapegame/templates/escapegame/escapegame.html:84
+msgid "page to create new rooms."
+msgstr "page pour créer de nouvelle salles."
+
+#: escapegame/templates/escapegame/escapegame.html:94
+msgid "Data will be refreshed soon!"
+msgstr "Les données seront bientôt rafraichies !"
+
+#: escapegame/templates/escapegame/escapegame.html:115
+msgid "Map"
+msgstr "Plan"
+
+#: escapegame/templates/escapegame/escapegame.html:117
+msgid "No map data available."
+msgstr "Pas de carte disponible."
+
+#: jsonexport/apps.py:8 jsonexport/templates/jsonexport/index.html:24
+msgid "JSON Import / Export"
+msgstr "Import / Export JSON"
+
+#: jsonexport/templates/jsonexport/export.html:8
+#: jsonexport/templates/jsonexport/import.html:8
+#: jsonexport/templates/jsonexport/index.html:8
+msgid "Home"
+msgstr "Accueil"
+
+#: jsonexport/templates/jsonexport/export.html:10
+#: jsonexport/templates/jsonexport/import.html:10
+#: jsonexport/templates/jsonexport/index.html:10
+msgid "JSON"
+msgstr "JSON"
+
+#: jsonexport/templates/jsonexport/index.html:24
+msgid "Import or export escape game configuration as JSON"
+msgstr "Importer ou exporter les paramètres du jeu d'évasion au format JSON"
+
+#: jsonexport/templates/jsonexport/index.html:28
+msgid "Import escape game settings"
+msgstr "Importer les paramètres du jeu d'évasion"
+
+#: jsonexport/templates/jsonexport/index.html:28
+msgid "JSON Import"
+msgstr "Import JSON"
+
+#: jsonexport/templates/jsonexport/index.html:34
+msgid "Export escape game settings"
+msgstr "Expoter les paramètres du jeu d'évasion"
+
+#: jsonexport/templates/jsonexport/index.html:34
+msgid "JSON Export"
+msgstr "Export JSON"
+
+#: siteconfig/settings.py:198
+msgid "English"
+msgstr "Anglais"
+
+#: siteconfig/settings.py:199
+msgid "French"
+msgstr "Français"
