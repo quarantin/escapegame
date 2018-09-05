@@ -191,6 +191,7 @@ class Cube(GPIO):
 		if self.placed_time is None:
 			self.placed_time = timezone.localtime()
 			self.save()
+		return 0, 'Success'
 
 	""" Raise the cube stand
 	"""
