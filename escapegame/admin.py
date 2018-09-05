@@ -29,6 +29,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'time_limit',
 		'raspberrypi',
 		'cube',
+		'cube_2',
 		'cube_delay',
 		'start_time',
 		'finish_time',
@@ -46,6 +47,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			)}),
 		('Cube Controls', { 'fields': (
 			'cube',
+			'cube_2',
 			'cube_delay',
 			'start_time',
 			'finish_time',

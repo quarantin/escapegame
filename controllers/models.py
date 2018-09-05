@@ -207,7 +207,7 @@ class Cube(GPIO):
 class Door(GPIO):
 
 	locked = models.BooleanField(default=True)
-	unlock_time = models.DateTimeField(blank=True, null=True)
+	unlocked_at = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
 		return 'Door - %s' % self.name
@@ -219,7 +219,7 @@ class Door(GPIO):
 	""" Reset this door state
 	"""
 	def reset(self):
-		self.unlock_time = None
+		self.unlocked_at = None
 
 		return self.lock()
 
@@ -241,8 +241,8 @@ class Door(GPIO):
 	def unlock(self):
 		self.locked = False
 
-		if self.unlock_time is None:
-			self.unlock_time = timezone.localtime()
+		if self.unlocked_at is None:
+			self.unlocked_at = timezone.localtime()
 
 		print("Unlocking door `%s`" % self.name)
 		status, message = libraspi.door_control('unlock', self)

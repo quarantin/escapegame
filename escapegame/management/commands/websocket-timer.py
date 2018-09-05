@@ -41,10 +41,10 @@ class Command(BaseCommand):
 	def get_start_time(self, rooms_with_cubes):
 
 		for room in rooms_with_cubes:
-			if not room.unlock_time:
+			if not room.door.unlocked_at:
 				return None
 
-		return max(rooms_with_cubes, key=lambda x: x.unlock_time)
+		return max(rooms_with_cubes, key=lambda x: x.door.unlocked_at)
 
 	def handle(self, *args, **options):
 
