@@ -11,6 +11,4 @@ fi
 
 ${ROOTDIR}/scripts/restart-nginx.sh
 
-${ROOTDIR}/scripts/restart-uwsgi.sh
-
-${ROOTDIR}/scripts/restart-django-services.sh
+${ROOTDIR}/scripts/restart-django.sh
