@@ -4,6 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
+from controllers.models import Door
 from multimedia.models import Image, Video
 
 from . import libraspi
@@ -203,6 +204,7 @@ def escapegame_status(request, game_slug):
 		for room in rooms:
 
 			room['challenges'] = []
+			room['door'] = Door.objects.filter(pk=room['door_id']).values().get()
 			challs = EscapeGameChallenge.objects.filter(room=room['id']).values()
 			for chall in challs:
 				__populate_images(chall, 'challenge_solved_image')
