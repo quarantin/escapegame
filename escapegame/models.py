@@ -242,7 +242,7 @@ class EscapeGameChallenge(models.Model):
 
 			self.solved = solved
 
-			if self.solved and self.solved_time:
+			if self.solved and not self.solved_time:
 				self.solved_time = timezone.localtime()
 
 			self.save()
