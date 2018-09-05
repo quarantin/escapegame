@@ -171,6 +171,16 @@ class EscapeGameRoom(models.Model):
 		for chall in challs:
 			chall.reset()
 
+	def lock(self):
+		status, message = self.door.lock()
+		libraspi.notify_frontend(self.escapegame)
+		return status, message
+
+	def unlock(self):
+		status, message = self.door.unlock()
+		libraspi.notify_frontend(self.escapegame)
+		return status, message
+
 	class Meta:
 		ordering = [ 'id', 'escapegame', 'room_name' ]
 

@@ -128,7 +128,7 @@ def escapegame_reset(request, game_slug):
 			# Close the door
 			print('Closing door for room %s' % room.room_name)
 			room.start_time = None
-			status, message = room.door.lock()
+			status, message = room.lock()
 			if status != 0:
 				return JsonResponse({
 					'status': status,
@@ -274,7 +274,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 		game = EscapeGame.objects.get(slug=game_slug)
 		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
 
-		status, message = room.door.set_locked(locked)
+		status, message = (locked and room.lock() or room.unlock())
 
 		return JsonResponse({
 			'status': status,
