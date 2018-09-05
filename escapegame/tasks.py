@@ -57,8 +57,6 @@ def poll_gpio(challenge_id):
 
 def setup_background_tasks():
 
-	print('Setting up background tasks!')
-
 	try:
 		controller = RaspberryPi.get_myself()
 
