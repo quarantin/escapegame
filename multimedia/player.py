@@ -35,7 +35,7 @@ class BaseVideoPlayer():
 	def stop(self):
 		pass
 
-	def control(self, request, action):
+	def control(self, action):
 
 		try:
 			actions = self.get_available_actions()
@@ -134,6 +134,9 @@ class PlayerOMX(BaseVideoPlayer):
 	def __init__(self, video_url, socket='org.mpris.MediaPlayer2.omxplayer'):
 		super(PlayerOMX, self).__init__(socket, video_url)
 
+		# Starts the video
+		self.play(video_url)
+
 		# Initialize DBUS controls and properties
 		self.__init_controls()
 
@@ -199,7 +202,7 @@ class PlayerOMX(BaseVideoPlayer):
 
 	def play(self, video_url=None):
 
-		if video_url is None or video_url == self.video_url:
+		if video_url is None:
 			return self.pause()
 
 		self.video_url = video_url
