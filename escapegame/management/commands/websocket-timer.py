@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.db.models import Q
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -38,13 +37,13 @@ class Command(BaseCommand):
 
 		self.send_message(game, message)
 
-	def get_start_time(self, rooms_with_cubes):
+	def get_start_time(self, sas_rooms):
 
-		for room in rooms_with_cubes:
+		for room in sas_rooms:
 			if not room.door.unlocked_at:
 				return None
 
-		return max(rooms_with_cubes, key=lambda x: x.door.unlocked_at)
+		return max(sas_rooms, key=lambda x: x.door.unlocked_at)
 
 	def handle(self, *args, **options):
 
@@ -61,9 +60,9 @@ class Command(BaseCommand):
 
 				for game in games:
 
-					rooms_with_cubes = EscapeGameRoom.objects.filter(escapegame=game, ~Q(cube = None))
+					sas_rooms = EscapeGameRoom.objects.filter(escapegame=game, is_sas=True)
 
-					start_time = self.get_start_time(rooms_with_cubes)
+					start_time = self.get_start_time(sas_rooms)
 
 					if game not in game_started:
 						game_started[game] = True

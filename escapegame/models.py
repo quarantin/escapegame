@@ -113,6 +113,8 @@ class EscapeGameRoom(models.Model):
 	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
 
+	is_sas = models.BooleanField(default=False)
+
 	cube = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
 
 	door = models.ForeignKey(Door, null=True, on_delete=models.CASCADE, related_name='room_door')
@@ -144,7 +146,7 @@ class EscapeGameRoom(models.Model):
 			valid = True
 			challs = EscapeGameChallenge.objects.filter(room=self)
 			for chall in challs:
-				if not chall.gpio.solved:
+				if chall.gpio.solved_at is None:
 					valid = False
 
 			return valid

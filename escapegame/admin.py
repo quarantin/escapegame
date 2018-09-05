@@ -71,6 +71,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'slug',
 		'escapegame',
 		'raspberrypi',
+		'is_sas',
 		'cube',
 		'door',
 		'room_image',
@@ -82,6 +83,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'slug',
 			'escapegame',
 			'raspberrypi',
+			'is_sas',
 			)}),
 		('Cube controls', { 'fields': (
 			'cube',
