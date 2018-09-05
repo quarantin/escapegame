@@ -54,8 +54,10 @@ $(document).ready(function() {
 			success: function() {
 				$('button#video-play').removeClass('d-none');
 				$('button#video-pause').addClass('d-none');
+				$('#selected_video').val(start_video);
 			},
 		});
+
 	});
 
 	/*
@@ -65,9 +67,17 @@ $(document).ready(function() {
 	 *   - stop
 	 */
 
+	var start_video = $('#selected_video').val();
 	// Handler for the button to start the video
-	$('button#video-play').click(function() {
+	$('#selected_video').on('change', function(){
 
+		$('#selected_video').val(this.value);
+
+	});
+
+
+
+	$('button#video-play').click(function() {
 		$('button#video-play').toggleClass('d-none');
 		$('button#video-pause').toggleClass('d-none');
 
@@ -75,7 +85,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + this.value + '/pause/',
+			url: '/api/video/' + $('#selected_video').val() + '/pause/',
 			crossDomain: true,
 		});
 	});
@@ -90,7 +100,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + this.value + '/pause/',
+			url: '/api/video/' + $('#selected_video').val() + '/pause/',
 			crossDomain: true,
 		});
 	});
@@ -102,7 +112,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + this.value + '/stop/',
+			url: '/api/video/' + $('#selected_video').val() + '/stop/',
 			crossDomain: true,
 		});
 	});

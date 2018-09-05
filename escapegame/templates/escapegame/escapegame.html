@@ -61,6 +61,38 @@
 			</div>
 		</div>
 
+		<!-- Video controls -->
+		<div class="col head_block">
+			<label class="head_block head_border">Video Controls &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
+			<div class="col head_block">
+				<button id="video-play" type="submit">
+					<div class="image-with-caption">
+						<img src="{% static 'img/icons8-play-100.png' %}" title="Play video">
+						<p>Start video</p>
+					</div>
+				</button>
+				<button id="video-pause" type="submit" class="d-none">
+					<div class="image-with-caption">
+						<img src="{% static 'img/icons8-pause-100.png' %}" title="Pause video">
+						<p>Pause video</p>
+					</div>
+				</button>
+				<button id="video-stop" type="submit">
+					<div class="image-with-caption">
+						<img src="{% static 'img/icons8-stop-100.png' %}" title="Stop video">
+						<p>Stop video</p>
+					</div>
+				</button>
+
+				<!-- Video lists-->
+				<select id="selected_video">
+					{% for video in videos %}
+						<option name="video.video_name" id="default" value="{{video.slug}}" {% if video.slug == game.briefing_video.slug %} selected="selected"{%endif%}>{{video.video_name}}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
 		<!-- Escape game counter -->
 		<div class="col head_block">
 			<label class="head_block head_border">{% trans "Time Elapsed" %}</label>

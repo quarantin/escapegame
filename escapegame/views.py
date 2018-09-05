@@ -34,6 +34,7 @@ def escapegame_detail(request, game_slug):
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
 	game.doors = Door.objects.filter(game=game)
+	videos = Video.objects.all()
 
 	for room in rooms:
 
@@ -44,6 +45,7 @@ def escapegame_detail(request, game_slug):
 	context = {
 		'game': game,
 		'rooms': rooms,
+		'videos': videos,
 	}
 
 	template = loader.get_template('escapegame/escapegame.html')
