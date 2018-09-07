@@ -1,9 +1,15 @@
 $(document).ready(function() {
 
+	/*
+	 * Retrieve language country code from URL.
+	 */
 	function get_language() {
 		return location.pathname.split('/')[1];
 	}
 
+	/*
+	 * Return the video URL for the video selected in select field.
+	 */
 	function get_video_url(action) {
 
 		selected_video = $('#selected-video').val();
@@ -11,47 +17,10 @@ $(document).ready(function() {
 		return '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
 
+
 	/*
-	 * Escape game controls:
-	 *   - start
-	 *   - reset
+	 * Escape game reset button
 	 */
-
-	// Handler for the button to start the escape game
-	$('button#start-escapegame').click(function() {
-
-		ok = confirm('Are you really sure you want to start a new escape game?\n\nThis will reset all challenge state and current score.');
-		if (ok !== true)
-			return;
-
-		lang = get_language();
-
-		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
-			url: '/' + lang + '/' + this.value + '/start/',
-			crossDomain: true,
-			success: function() {
-				$('button#video-play').addClass('d-none');
-				$('button#video-pause').removeClass('d-none');
-			},
-		});
-	});
-
-	// Handler for the button to pause the video
-	$('button#pause-escapegame').click(function() {
-
-		lang = get_language();
-
-		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
-			url: '/' + lang  + '/api/video/' + this.value + '/pause/',
-			crossDomain: true,
-		});
-	});
 
 	// Handler for the button to reset the escape game
 	$('button#reset-escapegame').click(function() {
@@ -60,22 +29,17 @@ $(document).ready(function() {
 		if (ok !== true)
 			return;
 
-		lang = get_language();
-
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
-			url: '/' + lang + '/' + this.value + '/reset/',
-			crossDomain: true,
+			url: '/' + get_language() + '/' + this.value + '/reset/',
 			success: function() {
 				location.reload();
 			},
 		});
 	});
 
+
 	/*
-	 * Video controls:
+	 * Video control buttons:
 	 *   - play
 	 *   - pause
 	 *   - stop
@@ -91,11 +55,7 @@ $(document).ready(function() {
 		$('button#video-pause').toggleClass('d-none');
 
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
 			url: get_video_url('pause'),
-			crossDomain: true,
 		});
 	});
 
@@ -106,11 +66,7 @@ $(document).ready(function() {
 		$('button#video-pause').toggleClass('d-none');
 
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
 			url: get_video_url('pause'),
-			crossDomain: true,
 		});
 	});
 
@@ -118,11 +74,7 @@ $(document).ready(function() {
 	$('button#video-stop').click(function() {
 
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
 			url: get_video_url('stop'),
-			crossDomain: true,
 		});
 	});
 
@@ -133,15 +85,11 @@ $(document).ready(function() {
 		if (ok !== true)
 			return;
 
-		$('button#'   + this.id).toggleClass('d-none');
-		$('button#un' + this.id).toggleClass('d-none');
-
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
-			},
 			url: this.value,
-			crossDomain: true,
+			success: function() {
+				location.reload();
+			},
 		});
 	});
 
@@ -152,15 +100,47 @@ $(document).ready(function() {
 		if (ok !== true)
 			return;
 
-		$('button#' + this.id             ).toggleClass('d-none');
-		$('button#' + this.id.substring(2)).toggleClass('d-none');
+		$.ajax({
+			url: this.value,
+			success: function() {
+				location.reload();
+			},
+		});
+	});
+
+	// Handler for challenge reset buttons
+	$('a.challenge-reset').click(function (e) {
+
+		ok = confirm('Are you really sure you want to reset this challenge?');
+		if (ok !== true)
+			return;
+
+		// Don't follow href
+		e.preventDefault();
 
 		$.ajax({
-			xhrFields: {
-				withCredentials: false
+			url: this.href,
+			success: function() {
+				location.reload();
 			},
-			url: this.value,
-			crossDomain: true,
+		});
+	});
+
+	// Handler for challenge validate buttons
+	$('a.challenge-validate').click(function (e) {
+
+		ok = confirm('Are you really sure you want to validate this challenge?');
+		if (ok !== true)
+			return;
+
+		// Don't follow href
+		e.preventDefault();
+
+		$.ajax({
+			url: this.href,
+			success: function() {
+				location.reload();
+			},
 		});
 	});
 
@@ -193,63 +173,17 @@ $(document).ready(function() {
 		};
 	};
 
-	function toggle_locks(game) {
-
-		// Toggle room door lock buttons
-		for (index in game.rooms) {
-
-			var room = game.rooms[index];
-			if (room.door.locked) {
-				$('button#lock-'   + room.slug).removeClass('d-none');
-				$('button#unlock-' + room.slug).addClass('d-none');
-			}
-			else {
-				$('button#lock-'   + room.slug).addClass('d-none');
-				$('button#unlock-' + room.slug).removeClass('d-none');
-			}
-		}
-	}
-
 	function refresh_page() {
 
 		var game_slug = $('button#reset-escapegame').val();
 
-		lang = get_language();
-
 		$.ajax({
-			url: '/' + lang + '/' + game_slug + '/status/',
+			url: '/' + get_language() + '/' + game_slug + '/status/',
 			crossDomain: true,
 			success: function(game) {
 
 				if (typeof game === 'undefined')
 					return;
-
-				// For each room...
-				for (var index in game.rooms) {
-
-					var room = game.rooms[index];
-
-					var html = '\t<tr>\n\t\t<th>Enigmes</th>\n\t\t<th>Statut</th></tr>\n';
-					var statusdiv = $('div#' + room.slug + '-data');
-
-					if (room.challenges.length == 0) {
-						html = '<div class="col"><span><p>No challenge configured for this room.<br>You can visit <a href="/admin/escapegame/escapegamechallenge">this</a> page to create new challenges.</p></span></div>';
-					}
-					else {
-						// For each challenge...
-						for (var subindex in room.challenges) {
-							var chall = room.challenges[subindex];
-							var solved = '<img src="/static/admin/img/' + (chall.solved ? 'icon-yes.svg' : 'icon-no.svg') + '"/>';
-							html += '\t<tr>\n\t\t<td width="80%">' + chall.challenge_name + '</td>\n\t\t<td width="20%">' + solved + '</td>\n\t</tr>\n';
-						}
-
-						html = '<table class="challenge-status">\n' + html + '</table>\n';
-					}
-
-					statusdiv.html(html);
-				}
-
-				toggle_locks(game);
 
 				draw_map(game);
 			},
