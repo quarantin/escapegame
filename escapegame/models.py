@@ -103,6 +103,26 @@ class EscapeGame(models.Model):
 
 		return challenges
 
+	def get_videos(self, controller=None):
+
+		videos = []
+
+		if self.briefing_video is not None:
+			videos.append(self.briefing_video)
+
+		if self.winners_video is not None:
+			videos.append(self.winners_video)
+
+		if self.losers_video is not None:
+			videos.append(self.losers_video)
+
+		challs = self.get_challenges(controller)
+		for chall in challs:
+			if chall.solved_video is not None:
+				videos.append(chall.solved_video)
+
+		return videos
+
 	class Meta:
 		ordering = [ 'escapegame_name' ]
 

@@ -33,8 +33,9 @@ def escapegame_detail(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
+	videos = game.get_videos()
+
 	game.doors = Door.objects.filter(game=game)
-	videos = Video.objects.all()
 
 	for room in rooms:
 
