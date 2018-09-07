@@ -163,6 +163,9 @@ def door_control(action, door):
 		# Get the controller of the door
 		controller = door.raspberrypi
 
+		if controller is None:
+			controller = door.game.raspberrypi
+
 		# Only perform physical door opening if we are the room controller.
 		if controller.is_myself():
 			set_pin(door.pin, locked)
