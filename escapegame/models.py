@@ -84,6 +84,10 @@ class EscapeGame(models.Model):
 
 		self.cube.reset()
 
+		doors = Door.objects.filter(game=self)
+		for door in doors:
+			door.reset()
+
 		rooms = EscapeGameRoom.objects.filter(escapegame=self)
 		for room in rooms:
 			room.reset()
