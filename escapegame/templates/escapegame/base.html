@@ -1,10 +1,12 @@
+{% load i18n %}
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>{% block header %}{% endblock %}</head>
 <body>
 	<nav class="navbar navbar-light bg-light">
-		<span class="navbar-brand mb-0 h1">Escape &amp; Cie Interface Gamemaster</span>
-		<a href="/" class="btn btn-primary">Accueil</a>
+		<span class="navbar-brand mb-0 h1">{% trans "Escape Game" %} - {% trans "Game Master Management Interface" %}</span>
+		<a href="/" class="btn btn-primary">{% trans "Home" %}</a>
 	</nav>
 	<div class="container">{% block content %}{% endblock %}	</div>
 </body>

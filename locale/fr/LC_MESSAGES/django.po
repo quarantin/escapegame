@@ -6,12 +6,12 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-07 08:53+0200\n"
-"PO-Revision-Date: 2018-09-05 23:26+0200\n"
-"Last-Translator: me <mail@mail.com>\n"
-"Language-Team: me <mail@mail.com>\n"
+"POT-Creation-Date: 2018-09-07 09:10+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -35,9 +35,6 @@ msgstr "Administration Django"
 msgid "Models in the %(name)s application"
 msgstr "Modèles de l'application %(name)s"
 
-# #, python-format
-# msgid "Models in the %(name)s application"
-# msgstr "Modèles de l'application %(name)s"
 #: escapegame/templates/admin/escapegame/index.html:46
 msgid "Add"
 msgstr "Ajouter"
@@ -65,6 +62,21 @@ msgstr "Aucun disponible"
 #: escapegame/templates/admin/escapegame/index.html:90
 msgid "Unknown content"
 msgstr "Contenu inconnu"
+
+#: escapegame/templates/escapegame/base.html:8
+msgid "Escape Game"
+msgstr "Commencer le jeu d'évasion"
+
+#: escapegame/templates/escapegame/base.html:8
+msgid "Game Master Management Interface"
+msgstr "Interface de gestion du maître du jeu"
+
+#: escapegame/templates/escapegame/base.html:9
+#: jsonexport/templates/jsonexport/export.html:8
+#: jsonexport/templates/jsonexport/import.html:8
+#: jsonexport/templates/jsonexport/index.html:8
+msgid "Home"
+msgstr "Accueil"
 
 #: escapegame/templates/escapegame/escapegame.html:15
 msgid "Area"
@@ -138,8 +150,6 @@ msgid "No escape game configured yet."
 msgstr "Aucun jeu d'évasion configuré."
 
 #: escapegame/templates/escapegame/index.html:11
-#, fuzzy
-#| msgid "page to create new rooms."
 msgid "page to create a new escape game."
 msgstr "page pour créer un nouveau jeu d'évasion."
 
@@ -154,12 +164,6 @@ msgstr "Interface de gestion"
 #: jsonexport/apps.py:8 jsonexport/templates/jsonexport/index.html:24
 msgid "JSON Import / Export"
 msgstr "Import / Export JSON"
-
-#: jsonexport/templates/jsonexport/export.html:8
-#: jsonexport/templates/jsonexport/import.html:8
-#: jsonexport/templates/jsonexport/index.html:8
-msgid "Home"
-msgstr "Accueil"
 
 #: jsonexport/templates/jsonexport/export.html:10
 #: jsonexport/templates/jsonexport/import.html:10

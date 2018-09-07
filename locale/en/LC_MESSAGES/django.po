@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-07 08:53+0200\n"
+"POT-Creation-Date: 2018-09-07 09:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,6 +61,21 @@ msgstr ""
 
 #: escapegame/templates/admin/escapegame/index.html:90
 msgid "Unknown content"
+msgstr ""
+
+#: escapegame/templates/escapegame/base.html:8
+msgid "Escape Game"
+msgstr ""
+
+#: escapegame/templates/escapegame/base.html:8
+msgid "Game Master Management Interface"
+msgstr ""
+
+#: escapegame/templates/escapegame/base.html:9
+#: jsonexport/templates/jsonexport/export.html:8
+#: jsonexport/templates/jsonexport/import.html:8
+#: jsonexport/templates/jsonexport/index.html:8
+msgid "Home"
 msgstr ""
 
 #: escapegame/templates/escapegame/escapegame.html:15
@@ -148,12 +163,6 @@ msgstr ""
 
 #: jsonexport/apps.py:8 jsonexport/templates/jsonexport/index.html:24
 msgid "JSON Import / Export"
-msgstr ""
-
-#: jsonexport/templates/jsonexport/export.html:8
-#: jsonexport/templates/jsonexport/import.html:8
-#: jsonexport/templates/jsonexport/index.html:8
-msgid "Home"
 msgstr ""
 
 #: jsonexport/templates/jsonexport/export.html:10
