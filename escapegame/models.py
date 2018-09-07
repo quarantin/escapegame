@@ -35,7 +35,7 @@ class EscapeGame(models.Model):
 	from_shell = False
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
-	escapegame_name = models.CharField(max_length=255, unique=True)
+	name = models.CharField(max_length=255, unique=True)
 	time_limit = models.DurationField()
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
 
@@ -54,10 +54,10 @@ class EscapeGame(models.Model):
 	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 
 	def __str__(self):
-		return 'Escape Game - %s' % self.escapegame_name
+		return 'Escape Game - %s' % self.name
 
 	def save(self, *args, **kwargs):
-		new_slug = slugify(self.escapegame_name)
+		new_slug = slugify(self.name)
 		if self.slug is None or self.slug != new_slug:
 			self.slug = new_slug
 
@@ -88,7 +88,7 @@ class EscapeGame(models.Model):
 		for door in doors:
 			door.reset()
 
-		rooms = EscapeGameRoom.objects.filter(escapegame=self)
+		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
 			room.reset()
 
@@ -98,7 +98,7 @@ class EscapeGame(models.Model):
 			controller = self.raspberrypi
 
 		challenges = []
-		rooms = EscapeGameRoom.objects.filter(escapegame=self)
+		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
 			challs = EscapeGameChallenge.objects.filter(room=room)
 			for chall in challs:
@@ -128,13 +128,13 @@ class EscapeGame(models.Model):
 		return videos
 
 	class Meta:
-		ordering = [ 'escapegame_name' ]
+		ordering = [ 'name' ]
 
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
-	room_name = models.CharField(max_length=255, unique=True)
-	escapegame = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
+	name = models.CharField(max_length=255, unique=True)
+	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
 
 	is_sas = models.BooleanField(default=False)
@@ -148,22 +148,22 @@ class EscapeGameRoom(models.Model):
 	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
 
 	def __str__(self):
-		return 'Room - %s - %s' % (self.escapegame.escapegame_name, self.room_name)
+		return 'Room - %s - %s' % (self.game.name, self.name)
 
 	def save(self, *args, **kwargs):
-		new_slug = slugify(self.room_name)
+		new_slug = slugify(self.name)
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
 		if self.door is None:
-			name = 'Exit Door - %s' % self.room_name
+			name = 'Exit Door - %s' % self.name
 			door = Door(name=name, raspberrypi=self.get_controller(), pin=self.door_pin)
 			door.save()
 			self.door = door
 
 		self.clean()
 		super(EscapeGameRoom, self).save(*args, **kwargs)
-		libraspi.notify_frontend(self.escapegame)
+		libraspi.notify_frontend(self.game)
 
 	def all_challenge_validated(self):
 		try:
@@ -180,11 +180,11 @@ class EscapeGameRoom(models.Model):
 			return False
 
 	def is_last_room(self):
-		last_room = EscapeGameRoom.objects.filter(escapegame=self.escapegame).order_by('id').last()
+		last_room = EscapeGameRoom.objects.filter(game=self.game).order_by('id').last()
 		return last_room == self
 
 	def get_controller(self):
-		return self.raspberrypi or self.escapegame.raspberrypi
+		return self.raspberrypi or self.game.raspberrypi
 
 	def reset(self):
 
@@ -199,21 +199,21 @@ class EscapeGameRoom(models.Model):
 
 	def lock(self):
 		status, message = self.door.lock()
-		libraspi.notify_frontend(self.escapegame)
+		libraspi.notify_frontend(self.game)
 		return status, message
 
 	def unlock(self):
 		status, message = self.door.unlock()
-		libraspi.notify_frontend(self.escapegame)
+		libraspi.notify_frontend(self.game)
 		return status, message
 
 	class Meta:
-		ordering = [ 'id', 'escapegame', 'room_name' ]
+		ordering = [ 'id', 'game', 'name' ]
 
 class EscapeGameChallenge(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
-	challenge_name = models.CharField(max_length=255, unique=True)
+	name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
 	gpio = models.ForeignKey(Challenge, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
@@ -225,22 +225,22 @@ class EscapeGameChallenge(models.Model):
 	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
 	def __str__(self):
-		return 'Challenge - %s / %s / %s' % (self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name)
+		return 'Challenge - %s / %s / %s' % (self.room.game.name, self.room.name, self.name)
 
 	def save(self, *args, **kwargs):
-		new_slug = slugify(self.challenge_name)
+		new_slug = slugify(self.name)
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
 		if self.gpio is None:
-			name = 'Challenge - %s' % self.challenge_name
+			name = 'Challenge - %s' % self.name
 			gpio = Challenge(name=name, raspberrypi=self.get_controller(), pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
 
 		self.clean()
 		super(EscapeGameChallenge, self).save(*args, **kwargs)
-		libraspi.notify_frontend(self.room.escapegame)
+		libraspi.notify_frontend(self.room.game)
 
 	def get_controller(self):
 		return self.room.get_controller()
@@ -252,7 +252,7 @@ class EscapeGameChallenge(models.Model):
 	def set_solved(self, request, solved):
 		try:
 			action = (solved and 'Solving' or 'Reseting')
-			print('%s challenge %s / %s / %s' % (action, self.room.escapegame.escapegame_name, self.room.room_name, self.challenge_name))
+			print('%s challenge %s / %s / %s' % (action, self.room.game.name, self.room.name, self.name))
 
 			status, message = (solved and self.gpio.solve() or self.gpio.reset())
 			if status != 0:
@@ -264,19 +264,19 @@ class EscapeGameChallenge(models.Model):
 			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
 
-				print('This was the last remaining challenge to solve, opening door for %s' % self.room.room_name)
+				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
 				self.room.door.unlock()
 
 				# Was this the last room of this game?
 				if self.room.is_last_room():
 
 					print('This was the last room, stopping escape game counter')
-					self.room.escapegame.finish(request)
+					self.room.game.finish(request)
 
 				else:
 					print('Still some rooms to explore')
 			else:
-				print('Still unsolved challenge in room %s' % self.room.room_name)
+				print('Still unsolved challenge in room %s' % self.room.name)
 
 			return 0, 'Success'
 
@@ -284,4 +284,4 @@ class EscapeGameChallenge(models.Model):
 			return 1, 'Error: %s' % err
 
 	class Meta:
-		ordering = [ 'id', 'room', 'challenge_name' ]
+		ordering = [ 'id', 'room', 'name' ]

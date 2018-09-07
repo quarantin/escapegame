@@ -32,7 +32,7 @@ def escapegame_index(request):
 def escapegame_detail(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
-	rooms = EscapeGameRoom.objects.filter(escapegame=game)
+	rooms = EscapeGameRoom.objects.filter(game=game)
 	videos = game.get_videos()
 
 	for room in rooms:
@@ -62,8 +62,8 @@ def escapegame_reset(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
-		rooms = EscapeGameRoom.objects.filter(escapegame=game)
-		print('Reseting escape game %s' % game.escapegame_name)
+		rooms = EscapeGameRoom.objects.filter(game=game)
+		print('Reseting escape game %s' % game.name)
 
 		game.reset()
 
@@ -86,7 +86,7 @@ def escapegame_reset(request, game_slug):
 		})
 
 	except Exception as err:
-		print('Failed reseting escapegame %s' % game.escapegame_name)
+		print('Failed reseting escapegame %s' % game.name)
 		return JsonResponse({
 			'status': 1,
 			'method': method,
@@ -113,7 +113,7 @@ def escapegame_status(request, game_slug):
 
 		__populate_images(game, 'map_image')
 
-		rooms = EscapeGameRoom.objects.filter(escapegame=game['id']).values()
+		rooms = EscapeGameRoom.objects.filter(game=game['id']).values()
 		for room in rooms:
 
 			room['challenges'] = []
@@ -153,7 +153,7 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 			raise Exception('Invalid action: `%s` for method: `%s`' % (action, method))
 
 		game = EscapeGame.objects.get(slug=game_slug)
-		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
+		room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
 		status, message = chall.set_solved(request, validated)
@@ -187,7 +187,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 		game = EscapeGame.objects.get(slug=game_slug)
 
 		try:
-			room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
+			room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
 		except EscapeGameRoom.DoesNotExist:
 			room = Door.objects.get(slug=room_slug)
 

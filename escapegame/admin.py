@@ -24,7 +24,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		models.DurationField: { 'widget': DateTimeInput },
 	}
 	list_display = [
-		'escapegame_name',
+		'name',
 		'slug',
 		'time_limit',
 		'raspberrypi',
@@ -40,7 +40,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	]
 	fieldsets = (
 		('Escape Game', { 'fields': (
-			'escapegame_name',
+			'name',
 			'slug',
 			'time_limit',
 			'raspberrypi',
@@ -67,9 +67,9 @@ class EscapeGameAdmin(admin.ModelAdmin):
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = [
-		'room_name',
+		'name',
 		'slug',
-		'escapegame',
+		'game',
 		'raspberrypi',
 		'is_sas',
 		'cube',
@@ -79,9 +79,9 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 	]
 	fieldsets = (
 		('Escape Game Room', { 'fields': (
-			'room_name',
+			'name',
 			'slug',
-			'escapegame',
+			'game',
 			'raspberrypi',
 			'is_sas',
 			)}),
@@ -102,7 +102,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	list_display = [
-		'challenge_name',
+		'name',
 		'slug',
 		'room',
 		'gpio',
@@ -112,7 +112,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 	]
 	fieldsets = (
 		('Escape Game Challenge', { 'fields': (
-			'challenge_name',
+			'name',
 			'slug',
 			'room',
 			)}),

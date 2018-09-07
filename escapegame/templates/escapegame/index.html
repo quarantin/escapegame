@@ -12,13 +12,13 @@
 				</span>
 			</div>
 {% else %}{% for game in games %}
-			<!-- Escape Game - {{ game.escapegame_name }} -->
+			<!-- Escape Game - {{ game.name }} -->
 			<div class="col-sm-6">
 				<div class="card">
 					<img class="card-img-top" src="" alt="">
 					<div class="card-body">
-						<h5 class="card-title">{{ game.escapegame_name }}</h5>
-						<p class="card-text">{% trans "Management Interface for" %} {{ game.escapegame_name }}</p>
+						<h5 class="card-title">{{ game.name }}</h5>
+						<p class="card-text">{% trans "Management Interface for" %} {{ game.name }}</p>
 						<a href="/{{ request.LANGUAGE_CODE }}/{{ game.slug }}/" class="btn btn-primary">{% trans "Management Interface" %}</a>
 					</div>
 				</div>

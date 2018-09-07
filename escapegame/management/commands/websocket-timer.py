@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
 				for game in games:
 
-					sas_rooms = EscapeGameRoom.objects.filter(escapegame=game, is_sas=True)
+					sas_rooms = EscapeGameRoom.objects.filter(game=game, is_sas=True)
 
 					start_time = self.get_start_time(sas_rooms)
 
