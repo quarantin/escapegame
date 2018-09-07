@@ -2,6 +2,7 @@
 
 from django.template import loader
 from django.contrib import messages
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseServerError
 
@@ -63,7 +64,7 @@ def json_export(request):
 				if indent:
 					indent = 4
 
-				jsonstring = json.dumps(jsonconfig, indent=indent)
+				jsonstring = json.dumps(jsonconfig, indent=indent, cls=DjangoJSONEncoder)
 				response = HttpResponse(jsonstring, content_type='application/json')
 				response['Content-Disposition'] = 'attachment; filename=%s' % jsonfile
 				response['Content-Length'] = len(jsonstring)
