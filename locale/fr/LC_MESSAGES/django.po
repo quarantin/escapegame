@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-07 11:53+0200\n"
+"POT-Creation-Date: 2018-09-07 15:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgstr "Contenu inconnu"
 
 #: escapegame/templates/escapegame/base.html:8
 msgid "Escape Game"
-msgstr "Jeu d'Évasion"
+msgstr "Jeu d'évasion"
 
 #: escapegame/templates/escapegame/base.html:8
 msgid "Game Master Management Interface"
@@ -86,70 +86,90 @@ msgstr "Visiter la page d'accueil"
 msgid "Home"
 msgstr "Accueil"
 
-#: escapegame/templates/escapegame/escapegame.html:15
-msgid "Area"
-msgstr "Espace"
+#: escapegame/templates/escapegame/escapegame.html:17
+msgid "Escape game controls"
+msgstr "Contrôles du jeu d'évasion"
 
-#: escapegame/templates/escapegame/escapegame.html:22
-#: escapegame/templates/escapegame/escapegame.html:23
-msgid "Start escape game"
-msgstr "Commencer le jeu d'évasion"
-
-#: escapegame/templates/escapegame/escapegame.html:30
-#: escapegame/templates/escapegame/escapegame.html:31
-msgid "Pause video"
-msgstr "Pause vidéo"
-
-#: escapegame/templates/escapegame/escapegame.html:38
-#: escapegame/templates/escapegame/escapegame.html:39
+#: escapegame/templates/escapegame/escapegame.html:24
+#: escapegame/templates/escapegame/escapegame.html:25
 msgid "Reset escape game"
 msgstr "Réinitialiser le jeu d'évasion"
 
-#: escapegame/templates/escapegame/escapegame.html:50
-#: escapegame/templates/escapegame/escapegame.html:51
-#: escapegame/templates/escapegame/escapegame.html:97
-#: escapegame/templates/escapegame/escapegame.html:98
+#: escapegame/templates/escapegame/escapegame.html:32
+msgid "Video controls"
+msgstr "Contrôles vidéo"
+
+#: escapegame/templates/escapegame/escapegame.html:41
+msgid "Video"
+msgstr "Vidéo"
+
+#: escapegame/templates/escapegame/escapegame.html:52
+msgid "Play video"
+msgstr "Lecture"
+
+#: escapegame/templates/escapegame/escapegame.html:53
+msgid "Start video"
+msgstr "Lecture"
+
+#: escapegame/templates/escapegame/escapegame.html:60
+#: escapegame/templates/escapegame/escapegame.html:61
+msgid "Pause video"
+msgstr "Pause"
+
+#: escapegame/templates/escapegame/escapegame.html:68
+#: escapegame/templates/escapegame/escapegame.html:69
+msgid "Stop video"
+msgstr "Arrêt"
+
+#: escapegame/templates/escapegame/escapegame.html:81
+msgid "Door controls"
+msgstr "Contrôles des portes"
+
+#: escapegame/templates/escapegame/escapegame.html:86
+#: escapegame/templates/escapegame/escapegame.html:87
+#: escapegame/templates/escapegame/escapegame.html:131
+#: escapegame/templates/escapegame/escapegame.html:132
 msgid "Unlock"
 msgstr "Déverrouiller"
 
-#: escapegame/templates/escapegame/escapegame.html:56
-#: escapegame/templates/escapegame/escapegame.html:57
-#: escapegame/templates/escapegame/escapegame.html:103
-#: escapegame/templates/escapegame/escapegame.html:104
+#: escapegame/templates/escapegame/escapegame.html:92
+#: escapegame/templates/escapegame/escapegame.html:93
+#: escapegame/templates/escapegame/escapegame.html:137
+#: escapegame/templates/escapegame/escapegame.html:138
 msgid "Lock"
 msgstr "Vérrouiller"
 
-#: escapegame/templates/escapegame/escapegame.html:66
+#: escapegame/templates/escapegame/escapegame.html:100
 msgid "Time Elapsed"
-msgstr "Temps Écoulé"
+msgstr "Temps écoulé"
 
-#: escapegame/templates/escapegame/escapegame.html:81
+#: escapegame/templates/escapegame/escapegame.html:115
 msgid "No room configured yet for this escape game."
 msgstr "Aucune salle configurée pour ce jeu d'évasion."
 
-#: escapegame/templates/escapegame/escapegame.html:82
+#: escapegame/templates/escapegame/escapegame.html:116
 #: escapegame/templates/escapegame/index.html:11
 msgid "You can visit"
 msgstr "Vous pouvez visiter"
 
-#: escapegame/templates/escapegame/escapegame.html:82
+#: escapegame/templates/escapegame/escapegame.html:116
 #: escapegame/templates/escapegame/index.html:11
 msgid "this"
 msgstr "cette"
 
-#: escapegame/templates/escapegame/escapegame.html:82
+#: escapegame/templates/escapegame/escapegame.html:116
 msgid "page to create new rooms."
 msgstr "page pour créer de nouvelle salles."
 
-#: escapegame/templates/escapegame/escapegame.html:92
+#: escapegame/templates/escapegame/escapegame.html:126
 msgid "Data will be refreshed soon!"
-msgstr "Les données seront bientôt rafraichies !"
+msgstr "Les données seront bientôt rafraîchies !"
 
-#: escapegame/templates/escapegame/escapegame.html:113
+#: escapegame/templates/escapegame/escapegame.html:147
 msgid "Map"
 msgstr "Plan"
 
-#: escapegame/templates/escapegame/escapegame.html:115
+#: escapegame/templates/escapegame/escapegame.html:149
 msgid "No map data available."
 msgstr "Pas de carte disponible."
 
