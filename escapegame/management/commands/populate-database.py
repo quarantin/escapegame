@@ -309,6 +309,10 @@ class Command(BaseCommand):
 		chall = EscapeGameChallenge(room=room_obscure, challenge_name='chall2 (salle obscure)')
 		chall.save()
 
+		# Challenge: La radio (Stranger Things / La salle obscure)
+		chall_radio = EscapeGameChallenge(room=room_obscure, challenge_name='La radio')
+		chall_radio.save()
+
 		# Challenge: 1 (Stranger Things / La forêt)
 		chall = EscapeGameChallenge(room=room_foret, challenge_name='chall1 (la forêt)', solved_video=video_la_foret)
 		chall.save()
