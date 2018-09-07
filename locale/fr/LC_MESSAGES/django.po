@@ -65,7 +65,7 @@ msgstr "Contenu inconnu"
 
 #: escapegame/templates/escapegame/base.html:8
 msgid "Escape Game"
-msgstr "Commencer le jeu d'évasion"
+msgstr "Jeu d'Évasion"
 
 #: escapegame/templates/escapegame/base.html:8
 msgid "Game Master Management Interface"
