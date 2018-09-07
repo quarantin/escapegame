@@ -1,4 +1,5 @@
 {% extends "escapegame/base.html" %}
+{% load i18n %}
 {% block header %}{% include "escapegame/head.html" %}
 {% endblock %}
 {% block content %}
@@ -6,8 +7,8 @@
 {% if games|length < 1 %}
 			<div class="col-sm-6">
 				<span>
-					<p>No escape game configured yet.<br>
-					You can visit <a href="/admin/escapegame/escapegame/">this</a> page to create a new escape game.</p>
+					<p>{% trans "No escape game configured yet." %}<br>
+					{% trans "You can visit" %} <a href="/admin/escapegame/escapegame/">{% trans "this" %}</a> {% trans "page to create a new escape game." %}</p>
 				</span>
 			</div>
 {% else %}{% for game in games %}
@@ -17,8 +18,8 @@
 					<img class="card-img-top" src="" alt="">
 					<div class="card-body">
 						<h5 class="card-title">{{ game.escapegame_name }}</h5>
-						<p class="card-text">Page de gestion de l'espace {{ game.escapegame_name }}</p>
-						<a href="/{{ game.slug }}/" class="btn btn-primary">Interface de gestion</a>
+						<p class="card-text">{% trans "Management Interface for" %} {{ game.escapegame_name }}</p>
+						<a href="/{{ game.slug }}/" class="btn btn-primary">{% trans "Management Interface" %}</a>
 					</div>
 				</div>
 			</div>
