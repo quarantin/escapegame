@@ -35,7 +35,7 @@ def git_version():
 
 	try:
 		import subprocess
-		import siteconfig.settings
+		from siteconfig import settings
 		output = subprocess.check_output([ 'git', 'rev-parse', 'HEAD' ], cwd=settings.BASE_DIR)
 		return output.decode('utf-8').strip()
 
