@@ -10,7 +10,7 @@
 			{% get_available_languages as languages %}
 			{% for lang_code, lang_name in languages %}
 				{% with 'img/flag/'|add:lang_code|add:'.png' as image_flag %}
-				<a href="/{{ lang_code }}/" class="btn" data-toggle="tooltip" title="{% trans "Website in" %} {{ lang_name|lower }}">
+				<a href="/{{ lang_code }}{{ request.path|slice:"3:"}}" class="btn" data-toggle="tooltip" title="{% trans "Website in" %} {{ lang_name|lower }}">
 					<img src="{% static image_flag %}" width="25" height="15">
 				</a>
 				{% endwith %}
