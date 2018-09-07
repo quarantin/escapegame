@@ -67,52 +67,17 @@ def escapegame_reset(request, game_slug):
 
 		game.reset()
 
-		print('Closing room doors')
-
-		# For each room
-		for room in rooms:
-
-			# Close the door
-			print('Closing door for room %s' % room.room_name)
-			room.start_time = None
-			status, message = room.lock()
-			if status != 0:
-				return JsonResponse({
-					'status': status,
-					'method': method,
-					'message': message,
-					'traceback': traceback.format_exc(),
-				})
-
-			print('Reseting challenges')
-
-			# Reset all challenges
-			challenges = EscapeGameChallenge.objects.filter(room=room)
-			for chall in challenges:
-
-				print('Reseting challenge %s' % chall.challenge_name)
-				status, message = chall.set_solved(request, False)
-				if status != 0:
-					return JsonResponse({
-						'status': status,
-						'method': method,
-						'message': message,
-						'traceback': traceback.format_exc(),
-					})
-
 		# Stop video player
 		status, message = game.briefing_video.stop(request)
 
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
-		# call should fail and we still want to continue.
+		# call will fail but we're still good to go.
 		#if message != 'Success':
 		#	return JsonResponse({
 		#		'status': status,
 		#		'message': message,
 		#	})
-
-		print('Done reseting escapegame %s' % game.escapegame_name)
 
 		return JsonResponse({
 			'status': 0,
