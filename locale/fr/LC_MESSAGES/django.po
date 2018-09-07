@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-07 09:10+0200\n"
+"POT-Creation-Date: 2018-09-07 11:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,15 @@ msgstr "Jeu d'Évasion"
 msgid "Game Master Management Interface"
 msgstr "Interface de gestion du maître du jeu"
 
-#: escapegame/templates/escapegame/base.html:9
+#: escapegame/templates/escapegame/base.html:13
+msgid "Website in"
+msgstr "Site web en"
+
+#: escapegame/templates/escapegame/base.html:18
+msgid "Visit home page"
+msgstr "Visiter la page d'accueil"
+
+#: escapegame/templates/escapegame/base.html:18
 #: jsonexport/templates/jsonexport/export.html:8
 #: jsonexport/templates/jsonexport/import.html:8
 #: jsonexport/templates/jsonexport/index.html:8
@@ -191,10 +199,10 @@ msgstr "Expoter les paramètres du jeu d'évasion"
 msgid "JSON Export"
 msgstr "Export JSON"
 
-#: siteconfig/settings.py:182
+#: siteconfig/settings.py:186
 msgid "English"
 msgstr "Anglais"
 
-#: siteconfig/settings.py:183
+#: siteconfig/settings.py:187
 msgid "French"
 msgstr "Français"
