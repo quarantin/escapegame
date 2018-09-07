@@ -112,8 +112,15 @@
 		<!-- Room controls -->
 		<div class="col head_block">
 			<span>
-				<p>{% trans "No room configured yet for this escape game." %}<br>
-				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">{% trans "this" %}</a> {% trans "page to create new rooms." %}</p>
+				<p>
+					{% trans "No room configured yet for this escape game." %}
+					<br>
+					{% trans "You can visit" %}
+					<a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">
+						{% trans "this" %}
+					</a>
+					{% trans "page to create new rooms." %}
+				</p>
 			</span>
 		</div>
 {% else %}{% for room in rooms %}
@@ -121,11 +128,47 @@
 		<div class="col head_block" id="{{ room.slug }}">
 			<label class="head_block head_border">&laquo;&nbsp;{{ room.room_name }}&nbsp;&raquo;</label>
 			<div class="row head_block">
-				<div class="col-8 challenge-status" id="{{ room.slug }}-data">
-					<!-- Placeholder for room status -->
-					{% trans "Data will be refreshed soon!" %}
+
+			{% if room.challs|length < 1 %}
+				<!-- Challenge controls -->
+				<div class="col">
+					<span>
+						<p>
+							{% trans "No challenge configured yet for this room." %}
+							<br>
+							{% trans "You can visit" %}
+							<a href="/admin/escapegame/escapegamechallenge">
+								{% trans "this" %}
+							</a>
+							{% trans "page to create new challenges." %}
+						</p>
+					</span>
 				</div>
-				<div class="col-4">
+			{% else %}
+				<!-- Challenge controls -->
+				<div class="col">
+					<table class="challenge-status">
+						<tr>
+							<th>{% trans "Enigmes" %}</th>
+							<th>{% trans "Statut" %}</th>
+						</tr>
+					{% for chall in room.challs %}
+						<tr>
+							<td width="80%">{{ chall.challenge_name }}</td>
+							<td width="20%">
+							<a class="challenge-reset{% if not chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/reset/">
+								<img src="/static/admin/img/icon-yes.svg"/>
+							</a>
+							<a class="challenge-validate{%if chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/validate/">
+								<img src="/static/admin/img/icon-no.svg"/>
+							</a>
+							</td>
+						</tr>
+					{% endfor %}
+					</table>
+				</div>
+			{% endif %}
+				<div class="col col-lg-4">
 					<button class="lock-button{% if not room.door.locked %} d-none{% endif %}" id="lock-{{ room.slug }}" value="{{ room.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ room.room_name }}">
