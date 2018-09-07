@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
 	function get_language() {
-		return location.pathname.split('/')[3];
+		return location.pathname.split('/')[1];
 	}
 
 	function get_video_url(action) {
@@ -24,11 +24,13 @@ $(document).ready(function() {
 		if (ok !== true)
 			return;
 
+		lang = get_language();
+
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/' + get_language() + '/' + this.value + '/start/',
+			url: '/' + lang + '/' + this.value + '/start/',
 			crossDomain: true,
 			success: function() {
 				$('button#video-play').addClass('d-none');
@@ -40,11 +42,13 @@ $(document).ready(function() {
 	// Handler for the button to pause the video
 	$('button#pause-escapegame').click(function() {
 
+		lang = get_language();
+
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/' + get_language() + '/api/video/' + this.value + '/pause/',
+			url: '/' + lang  + '/api/video/' + this.value + '/pause/',
 			crossDomain: true,
 		});
 	});
@@ -56,11 +60,13 @@ $(document).ready(function() {
 		if (ok !== true)
 			return;
 
+		lang = get_language();
+
 		$.ajax({
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/' + get_language() + '/' + this.value + '/reset/',
+			url: '/' + lang + '/' + this.value + '/reset/',
 			crossDomain: true,
 			success: function() {
 				location.reload();
@@ -206,10 +212,12 @@ $(document).ready(function() {
 
 	function refresh_page() {
 
-		var game_slug = $('button#start-escapegame').val();
+		var game_slug = $('button#reset-escapegame').val();
+
+		lang = get_language();
 
 		$.ajax({
-			url: '/' + game_slug + '/status/',
+			url: '/' + lang + '/' + game_slug + '/status/',
 			crossDomain: true,
 			success: function(game) {
 
