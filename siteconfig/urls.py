@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.urls import include, path
 from django.contrib.auth.views import LoginView
@@ -25,7 +26,13 @@ from django.views.generic.base import RedirectView
 
 from escapegame import admin as myadmin
 
+
 urlpatterns = [
+
+	path('i18n/', include('django.conf.urls.i18n')),
+]
+
+urlpatterns += i18n_patterns(
 
 	# Authentication pages
 	path('accounts/', include('django.contrib.auth.urls')),
@@ -41,7 +48,7 @@ urlpatterns = [
 
 	# Escape game interface
 	path('', include('escapegame.urls')),
-]
+)
 
 if settings.DEBUG:
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

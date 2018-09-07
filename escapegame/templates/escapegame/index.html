@@ -8,7 +8,7 @@
 			<div class="col-sm-6">
 				<span>
 					<p>{% trans "No escape game configured yet." %}<br>
-					{% trans "You can visit" %} <a href="/admin/escapegame/escapegame/">{% trans "this" %}</a> {% trans "page to create a new escape game." %}</p>
+					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegame/">{% trans "this" %}</a> {% trans "page to create a new escape game." %}</p>
 				</span>
 			</div>
 {% else %}{% for game in games %}
@@ -19,7 +19,7 @@
 					<div class="card-body">
 						<h5 class="card-title">{{ game.escapegame_name }}</h5>
 						<p class="card-text">{% trans "Management Interface for" %} {{ game.escapegame_name }}</p>
-						<a href="/{{ game.slug }}/" class="btn btn-primary">{% trans "Management Interface" %}</a>
+						<a href="/{{ request.LANGUAGE_CODE }}/{{ game.slug }}/" class="btn btn-primary">{% trans "Management Interface" %}</a>
 					</div>
 				</div>
 			</div>

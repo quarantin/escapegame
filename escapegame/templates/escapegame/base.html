@@ -6,7 +6,17 @@
 <body>
 	<nav class="navbar navbar-light bg-light">
 		<span class="navbar-brand mb-0 h1">{% trans "Escape Game" %} - {% trans "Game Master Management Interface" %}</span>
-		<a href="/" class="btn btn-primary">{% trans "Home" %}</a>
+		<span class="navbar-brand mb-0 h1">
+			{% get_available_languages as languages %}
+			{% for lang_code, lang_name in languages %}
+				{% with 'img/flag/'|add:lang_code|add:'.png' as image_flag %}
+				<a href="/{{ lang_code }}/" class="btn" data-toggle="tooltip" title="{% trans "Website in" %} {{ lang_name|lower }}">
+					<img src="{% static image_flag %}" width="25" height="15">
+				</a>
+				{% endwith %}
+			{% endfor %}
+			<a href="/{{ request.LANGUAGE_CODE }}/" class="btn btn-primary" data-toggle="tooltip" title="{% trans "Visit home page" %}">{% trans "Home" %}</a>
+		</span>
 	</nav>
 	<div class="container">{% block content %}{% endblock %}	</div>
 </body>

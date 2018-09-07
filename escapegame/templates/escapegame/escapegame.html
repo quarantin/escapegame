@@ -79,7 +79,7 @@
 		<div class="col head_block">
 			<span>
 				<p>{% trans "No room configured yet for this escape game." %}<br>
-				{% trans "You can visit" %} <a href="/admin/escapegame/escapegameroom">{% trans "this" %}</a> {% trans "page to create new rooms." %}</p>
+				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">{% trans "this" %}</a> {% trans "page to create new rooms." %}</p>
 			</span>
 		</div>
 {% else %}{% for room in rooms %}

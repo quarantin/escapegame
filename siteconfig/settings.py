@@ -88,6 +88,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+	'django.middleware.locale.LocaleMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
@@ -168,8 +169,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'fr'
-
 TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
@@ -178,10 +177,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+LANG_EN = 'en'
+LANG_FR = 'fr'
+
+LANGUAGE_CODE = LANG_FR
+
 LANGUAGES = [
-	('en', _('English')),
-	('fr', _('French')),
+	(LANG_EN, _('English')),
+	(LANG_FR, _('French')),
 ]
+
+prefix_default_language=True
+
 
 # Path to store locales for internationalization
 LOCALE_PATHS = [
