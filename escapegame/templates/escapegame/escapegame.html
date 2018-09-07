@@ -81,13 +81,13 @@
 			<label class="head_block head_border">{% trans "Door controls" %} &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
 			<div class="row head_block">
 				<div class="col">{% for door in game.doors %}
-					<button class="lock-button{% if not door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}" value="{{ game.url_callback }}/unlock/" type="submit">
+					<button class="lock-button{% if not door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}" value="{{ door.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ door.name }}">
 							<p>{% trans "Unlock" %} {{ door.name }}</p>
 						</div>
 					</button>
-					<button class="unlock-button{% if door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}" value="{{ game.url_callback }}/lock/" type="submit">
+					<button class="unlock-button{% if door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}" value="{{ door.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ door.name }}">
 							<p>{% trans "Lock" %} {{ door.name }}</p>
