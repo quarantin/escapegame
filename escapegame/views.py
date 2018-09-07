@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from controllers.models import Door
+from controllers.models import Door, RaspberryPi
 from multimedia.models import Image, Video
 
 from . import libraspi
@@ -39,9 +39,7 @@ def escapegame_detail(request, game_slug):
 
 	for room in rooms:
 
-		host, port, protocol = libraspi.get_net_info(request, room.get_controller())
-
-		room.url_callback = '%s://%s%s/api/door/%s/%s' % (protocol, host, port, game.slug, room.slug)
+		room.url_callback = '/api/door/%s/%s' % (game.slug, room.slug)
 
 	context = {
 		'game': game,
