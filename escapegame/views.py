@@ -37,6 +37,9 @@ def escapegame_detail(request, game_slug):
 
 	for room in rooms:
 		room.url_callback = '/api/door/%s/%s' % (game.slug, room.slug)
+		room.challs = EscapeGameChallenge.objects.filter(room=room)
+		for chall in room.challs:
+			chall.url_callback = '/api/challenge/%s/%s/%s' % (game.slug, room.slug, chall.slug)
 
 	game.doors = Door.objects.filter(game=game)
 	for door in game.doors:
@@ -217,7 +220,11 @@ def rest_door_control(request, game_slug, room_slug, action):
 			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
 		game = EscapeGame.objects.get(slug=game_slug)
-		room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
+
+		try:
+			room = EscapeGameRoom.objects.get(slug=room_slug, escapegame=game)
+		except EscapeGameRoom.DoesNotExist:
+			room = Door.objects.get(slug=room_slug)
 
 		status, message = (locked and room.lock() or room.unlock())
 
