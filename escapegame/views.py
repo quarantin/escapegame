@@ -35,11 +35,12 @@ def escapegame_detail(request, game_slug):
 	rooms = EscapeGameRoom.objects.filter(escapegame=game)
 	videos = game.get_videos()
 
-	game.doors = Door.objects.filter(game=game)
-
 	for room in rooms:
-
 		room.url_callback = '/api/door/%s/%s' % (game.slug, room.slug)
+
+	game.doors = Door.objects.filter(game=game)
+	for door in game.doors:
+		door.url_callback = '/api/door/%s/%s' % (game.slug, door.slug)
 
 	context = {
 		'game': game,
