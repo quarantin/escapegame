@@ -80,19 +80,30 @@
 			<!-- Doors controls -->
 			<label class="head_block head_border">{% trans "Door controls" %} &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
 			<div class="row head_block">
-				<div class="col">{% for door in game.doors %}
+				<div class="col">
+
+				{% for door in game.doors %}
+					{% with door_prefix=door.name|slice:"0:1"|lower door_suffix=door.name|slice:"1:" %}
+					{% with door_name=door_prefix|add:door_suffix %}
+
+
 					<button class="lock-button{% if not door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}" value="{{ door.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ door.name }}">
-							<p>{% trans "Unlock" %} {{ door.name }}</p>
+							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ door_name }}">
+							<p>{% trans "Unlock" %} {{ door_name }}</p>
 						</div>
 					</button>
 					<button class="unlock-button{% if door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}" value="{{ door.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ door.name }}">
-							<p>{% trans "Lock" %} {{ door.name }}</p>
+							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ door_name }}">
+							<p>{% trans "Lock" %} {{ door_name }}</p>
 						</div>
-					</button>{% endfor %}
+					</button>
+
+					{% endwith %}
+					{% endwith %}
+				{% endfor %}
+
 				</div>
 			</div>
 
@@ -169,18 +180,22 @@
 				</div>
 			{% endif %}
 				<div class="col col-lg-4">
+					{% with room_prefix=room.room_name|slice:"0:1"|lower room_suffix=room.room_name|slice:"1:" %}
+					{% with room_name=room_prefix|add:room_suffix %}
 					<button class="lock-button{% if not room.door.locked %} d-none{% endif %}" id="lock-{{ room.slug }}" value="{{ room.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ room.room_name }}">
-							<p>{% trans "Unlock" %} {{ room.room_name }}</p>
+							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ room_name }}">
+							<p>{% trans "Unlock" %} {{ room_name }}</p>
 						</div>
 					</button>
 					<button class="unlock-button{% if room.door.locked %} d-none{% endif %}" id="unlock-{{ room.slug }}" value="{{ room.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ room.room_name }}">
-							<p>{% trans "Lock" %} {{ room.room_name }}</p>
+							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ room_name }}">
+							<p>{% trans "Lock" %} {{ room_name }}</p>
 						</div>
 					</button>
+					{% endwith %}
+					{% endwith %}
 				</div>
 			</div>
 		</div>
