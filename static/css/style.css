@@ -32,6 +32,10 @@ button {
 	border:0;
 }
 
+label#selected-video-label {
+	margin-bottom: 0px;
+}
+
 select#selected-video {
 	width: 70%;
 }

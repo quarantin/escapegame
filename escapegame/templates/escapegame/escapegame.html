@@ -62,44 +62,45 @@
 		</div>
 
 		<!-- Video controls -->
-		<div class="col head_block">
-			<label class="head_block head_border">Video Controls &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
+		<div class="col head_block form-group">
+			<label class="head_block head_border">{% trans "Video Controls" %} &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
 			<div class="row head_block">
 
 				<!-- Video lists-->
-				<!-- <div class="col-sm-10"> -->
-					<select id="selected-video" class="form-control mx-auto">{% for video in videos %}
+				<div class="col">
+					<label for="selected-video" id="selected-video-label">{% trans "Selected video" %}{% if request.LANGUAGE_CODE == "fr" %}&nbsp;{% endif %}:</label>
+					<select id="selected-video" class="head_block form-control mx-auto">{% for video in videos %}
 						<option name="{{ video.video_name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
-{{ video.video_name }}
+							{% trans "Video" %} - {{ video.video_name }}
 						</option>{% endfor %}
 					</select>
-				<!-- </div> -->
+				</div>
 			</div>
 
 			<div class="row head_block">
 
-				<!-- Play/Pause buttons -->
-				<div class="col-sm-6">
+				<!-- Play / Pause buttons -->
+				<div class="col">
 					<button id="video-play" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-play-100.png' %}" title="Play video">
-							<p>Start video</p>
+							<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}">
+							<p>{% trans "Start video" %}</p>
 						</div>
 					</button>
 					<button id="video-pause" type="submit" class="d-none">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-pause-100.png' %}" title="Pause video">
-							<p>Pause video</p>
+							<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}">
+							<p>{% trans "Pause video" %}</p>
 						</div>
 					</button>
 				</div>
 
 				<!-- Stop button -->
-				<div class="col-sm-6">
+				<div class="col">
 					<button id="video-stop" type="submit">
 						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-stop-100.png' %}" title="Stop video">
-							<p>Stop video</p>
+							<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}">
+							<p>{% trans "Stop video" %}</p>
 						</div>
 					</button>
 				</div>
