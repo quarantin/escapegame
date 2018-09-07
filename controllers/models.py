@@ -95,6 +95,7 @@ class RaspberryPi(models.Model):
 
 class GPIO(models.Model):
 
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
 	pin = models.IntegerField(default=7)
@@ -109,6 +110,10 @@ class GPIO(models.Model):
 			})
 
 	def save(self, *args, **kwargs):
+		new_slug = slugify(self.name)
+		if self.slug is None or self.slug != new_slug:
+			self.slug = new_slug
+
 		self.clean()
 		super(GPIO, self).save(*args, **kwargs)
 
