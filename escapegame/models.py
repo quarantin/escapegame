@@ -36,7 +36,7 @@ class EscapeGame(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
-	time_limit = models.DurationField()
+	time_limit = models.DurationField(default=timedelta(hours=1))
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
 
 	cube   = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='escapegame_cube')
