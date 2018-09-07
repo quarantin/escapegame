@@ -32,6 +32,10 @@ button {
 	border:0;
 }
 
+select#selected-video {
+	width: 70%;
+}
+
 .time {
 	margin-top: 30px;
 	font-size: 20px;

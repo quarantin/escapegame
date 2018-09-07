@@ -64,34 +64,46 @@
 		<!-- Video controls -->
 		<div class="col head_block">
 			<label class="head_block head_border">Video Controls &laquo;&nbsp;{{ game.escapegame_name }}&nbsp;&raquo;</label>
-			<div class="col head_block">
-				<button id="video-play" type="submit">
-					<div class="image-with-caption">
-						<img src="{% static 'img/icons8-play-100.png' %}" title="Play video">
-						<p>Start video</p>
-					</div>
-				</button>
-				<button id="video-pause" type="submit" class="d-none">
-					<div class="image-with-caption">
-						<img src="{% static 'img/icons8-pause-100.png' %}" title="Pause video">
-						<p>Pause video</p>
-					</div>
-				</button>
-				<button id="video-stop" type="submit">
-					<div class="image-with-caption">
-						<img src="{% static 'img/icons8-stop-100.png' %}" title="Stop video">
-						<p>Stop video</p>
-					</div>
-				</button>
+			<div class="row head_block">
 
 				<!-- Video lists-->
-				<select id="selected_video">
-					{% for video in videos %}
+				<!-- <div class="col-sm-10"> -->
+					<select id="selected-video" class="form-control mx-auto">{% for video in videos %}
 						<option name="{{ video.video_name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
-							{{ video.video_name }}
-						</option>
-					{% endfor %}
-				</select>
+{{ video.video_name }}
+						</option>{% endfor %}
+					</select>
+				<!-- </div> -->
+			</div>
+
+			<div class="row head_block">
+
+				<!-- Play/Pause buttons -->
+				<div class="col-sm-6">
+					<button id="video-play" type="submit">
+						<div class="image-with-caption">
+							<img src="{% static 'img/icons8-play-100.png' %}" title="Play video">
+							<p>Start video</p>
+						</div>
+					</button>
+					<button id="video-pause" type="submit" class="d-none">
+						<div class="image-with-caption">
+							<img src="{% static 'img/icons8-pause-100.png' %}" title="Pause video">
+							<p>Pause video</p>
+						</div>
+					</button>
+				</div>
+
+				<!-- Stop button -->
+				<div class="col-sm-6">
+					<button id="video-stop" type="submit">
+						<div class="image-with-caption">
+							<img src="{% static 'img/icons8-stop-100.png' %}" title="Stop video">
+							<p>Stop video</p>
+						</div>
+					</button>
+				</div>
+
 			</div>
 		</div>
 

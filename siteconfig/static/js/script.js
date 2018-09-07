@@ -1,10 +1,14 @@
 $(document).ready(function() {
 
+	function get_language() {
+		return location.pathname.split('/')[3];
+	}
+
 	function get_video_url(action) {
 
 		selected_video = $('#selected-video').val();
 
-		return '/api/video/' + selected_video + '/' + action + '/';
+		return '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
 
 	/*
@@ -24,7 +28,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/' + this.value + '/start/',
+			url: '/' + get_language() + '/' + this.value + '/start/',
 			crossDomain: true,
 			success: function() {
 				$('button#video-play').addClass('d-none');
@@ -40,7 +44,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + this.value + '/pause/',
+			url: '/' + get_language() + '/api/video/' + this.value + '/pause/',
 			crossDomain: true,
 		});
 	});
@@ -56,7 +60,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/' + this.value + '/reset/',
+			url: '/' + get_language() + '/' + this.value + '/reset/',
 			crossDomain: true,
 			success: function() {
 				location.reload();
