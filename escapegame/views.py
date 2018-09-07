@@ -53,65 +53,6 @@ def escapegame_detail(request, game_slug):
 
 	return HttpResponse(template.render(context, request))
 
-
-@login_required
-def escapegame_pause(request, game_slug):
-
-	method = 'escapegame.views.escapegame_pause'
-
-	try:
-		game = EscapeGame.objects.get(slug=game_slug)
-
-		status, message = game.briefing_video.control(request, 'pause')
-		return JsonResponse({
-			'status': status,
-			'method': method,
-			'message': message,
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'method': method,
-			'message': 'Error: %s' % err,
-			'traceback': traceback.format_exc(),
-		})
-
-@login_required
-def escapegame_start(request, game_slug):
-
-	method = 'escapegame.views.escapegame_start'
-
-	try:
-		game = EscapeGame.objects.get(slug=game_slug)
-
-		status, message = game.briefing_video.play(request)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'method': method,
-				'message': message,
-				'traceback': traceback.format_exc(),
-			})
-
-		# Raise the cube: Create a background task to delay call to:
-		# libraspi.cube_control('raise', game.cube.pin)
-		cube_control('raise', game.cube.pin, schedule=game.cube_delay)
-
-		return JsonResponse({
-			'status': 0,
-			'method': method,
-			'message': 'Success',
-		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'method': method,
-			'message': 'Error: %s' % err,
-			'traceback': traceback.format_exc(),
-		})
-
 @login_required
 def escapegame_reset(request, game_slug):
 
