@@ -1,5 +1,12 @@
 $(document).ready(function() {
 
+	function get_video_url(action) {
+
+		selected_video = $('#selected-video').val();
+
+		return '/api/video/' + selected_video + '/' + action + '/';
+	}
+
 	/*
 	 * Escape game controls:
 	 *   - start
@@ -52,12 +59,9 @@ $(document).ready(function() {
 			url: '/' + this.value + '/reset/',
 			crossDomain: true,
 			success: function() {
-				$('button#video-play').removeClass('d-none');
-				$('button#video-pause').addClass('d-none');
-				$('#selected_video').val(start_video);
+				location.reload();
 			},
 		});
-
 	});
 
 	/*
@@ -67,15 +71,10 @@ $(document).ready(function() {
 	 *   - stop
 	 */
 
-	var start_video = $('#selected_video').val();
 	// Handler for the button to start the video
-	$('#selected_video').on('change', function(){
-
-		$('#selected_video').val(this.value);
-
+	$('#selected-video').on('change', function(){
+		$('#selected-video').val(this.value);
 	});
-
-
 
 	$('button#video-play').click(function() {
 		$('button#video-play').toggleClass('d-none');
@@ -85,7 +84,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + $('#selected_video').val() + '/pause/',
+			url: get_video_url('pause'),
 			crossDomain: true,
 		});
 	});
@@ -100,7 +99,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + $('#selected_video').val() + '/pause/',
+			url: get_video_url('pause'),
 			crossDomain: true,
 		});
 	});
@@ -112,7 +111,7 @@ $(document).ready(function() {
 			xhrFields: {
 				withCredentials: false
 			},
-			url: '/api/video/' + $('#selected_video').val() + '/stop/',
+			url: get_video_url('stop'),
 			crossDomain: true,
 		});
 	});

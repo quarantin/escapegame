@@ -87,7 +87,9 @@
 				<!-- Video lists-->
 				<select id="selected_video">
 					{% for video in videos %}
-						<option name="video.video_name" id="default" value="{{video.slug}}" {% if video.slug == game.briefing_video.slug %} selected="selected"{%endif%}>{{video.video_name}}</option>
+						<option name="{{ video.video_name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
+							{{ video.video_name }}
+						</option>
 					{% endfor %}
 				</select>
 			</div>
