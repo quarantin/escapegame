@@ -57,15 +57,15 @@ class Command(BaseCommand):
 		demo_video.save()
 
 		# Les 1001 nuits - Briefing Video
-		briefing_video_1001_nuits = Video(video_name='Les 100 nuits - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_1001_nuits = Video(video_name='Les 1001 nuits - Briefing', video_path='uploads/videos/test.h264')
 		briefing_video_1001_nuits.save()
 
 		# Les 1001 nuits - Winners Video
-		winners_video_1001_nuits = Video(video_name='Les 100 nuits - Good End', video_path='uploads/videos/test.h264')
+		winners_video_1001_nuits = Video(video_name='Les 1001 nuits - Good End', video_path='uploads/videos/test.h264')
 		winners_video_1001_nuits.save()
 
 		# Les 1001 nuits - Losers Video
-		losers_video_1001_nuits = Video(video_name='Les 100 nuits - Bad End', video_path='uploads/videos/test.h264')
+		losers_video_1001_nuits = Video(video_name='Les 1001 nuits - Bad End', video_path='uploads/videos/test.h264')
 		losers_video_1001_nuits.save()
 
 		# Stranger Things - Briefing Video
