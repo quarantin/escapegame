@@ -76,6 +76,7 @@ def escapegame_reset(request, game_slug):
 		#if message != 'Success':
 		#	return JsonResponse({
 		#		'status': status,
+		#		'method': method,
 		#		'message': message,
 		#	})
 
