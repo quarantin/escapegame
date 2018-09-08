@@ -33,6 +33,7 @@ def escapegame_detail(request, game_slug):
 
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(game=game)
+	raspberry_pis = RaspberryPi.objects.all()
 	videos = game.get_videos()
 
 	for room in rooms:
@@ -49,6 +50,7 @@ def escapegame_detail(request, game_slug):
 		'game': game,
 		'rooms': rooms,
 		'videos': videos,
+		'raspberry_pis': raspberry_pis,
 	}
 
 	template = loader.get_template('escapegame/escapegame.html')
