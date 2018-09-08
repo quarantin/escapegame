@@ -13,6 +13,7 @@ $(document).ready(function() {
 	function get_video_url(action) {
 
 		selected_video = $('#selected-video').val();
+		selected_raspi = $('#selected-raspberry-pi').val();
 
 		return '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
@@ -207,7 +208,7 @@ $(document).ready(function() {
 			return;
 		}
 
-		var game_slug = $('button#start-escapegame').val();
+		var game_slug = $('button#reset-escapegame').val();
 
 		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify-' + game_slug + '?subscribe-broadcast');
 
@@ -217,8 +218,9 @@ $(document).ready(function() {
 
 		ws.onmessage = function(e) {
 			console.log('websocket received data: ' + e.data);
-			if (e.data.startsWith('notify'))
+			if (e.data.startsWith('notify')) {
 				refresh_page();
+			}
 			else
 				$('div#counter').text(e.data);
 		};
