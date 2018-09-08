@@ -12,6 +12,7 @@ class EscapegameConfig(AppConfig):
 
 	def ready(self):
 		from . import tasks
+		from .signals import save
 		from .signals import constance
 
 		db_tables = connection.introspection.table_names()
