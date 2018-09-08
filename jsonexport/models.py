@@ -20,13 +20,13 @@ model_mapping = [
 	('images', Image),
 	('videos', Video),
 	('raspberry_pis', RaspberryPi),
-	('escapegames', EscapeGame),
-	('rooms', EscapeGameRoom),
-	('challenges', EscapeGameChallenge),
 	('GPIOs', GPIO),
 	('cubeGPIOs', Cube),
+	('escapegames', EscapeGame),
 	('doorGPIOs', Door),
+	('rooms', EscapeGameRoom),
 	('challengeGPIOs', Challenge),
+	('challenges', EscapeGameChallenge),
 ]
 
 # JSON Import/Export models and forms
