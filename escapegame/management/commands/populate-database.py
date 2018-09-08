@@ -20,7 +20,7 @@ class Command(BaseCommand):
 			GPIO,
 			Challenge,
 			Cube,
-			Door,
+			DoorGPIO,
 			EscapeGame,
 			EscapeGameRoom,
 			EscapeGameChallenge,
@@ -326,24 +326,24 @@ class Command(BaseCommand):
 #
 # Extra doors
 #
-		self.stdout.write('  Populating model `Door` (extra)', ending='')
+		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
 
-		door_briefing_room = Door(name='La salle de briefing - Les 1001 nuits', game=game_1001_nuits)
+		door_briefing_room = DoorGPIO(name='La salle de briefing - Les 1001 nuits', game=game_1001_nuits)
 		door_briefing_room.save()
 
-		door_briefing_room = Door(name='La salle de briefing - Stranger Things', game=game_stranger_things)
+		door_briefing_room = DoorGPIO(name='La salle de briefing - Stranger Things', game=game_stranger_things)
 		door_briefing_room.save()
 
 		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = Door(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, image=door_sas1_image)
+		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, image=door_sas1_image)
 		door_corridor_sas_1.save()
 
 		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = Door(name='La porte couloir du SAS clair', game=game_stranger_things, image=door_sas2_image)
+		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS clair', game=game_stranger_things, image=door_sas2_image)
 		door_corridor_sas_2.save()
 
 		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = Door(name='La porte couloir du SAS obscur', game=game_stranger_things, image=door_sas3_image)
+		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS obscur', game=game_stranger_things, image=door_sas3_image)
 		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

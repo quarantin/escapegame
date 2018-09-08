@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from controllers.models import Door, RaspberryPi
+from controllers.models import DoorGPIO, RaspberryPi
 from multimedia.models import Image, Video
 
 from . import libraspi
@@ -42,7 +42,7 @@ def escapegame_detail(request, game_slug):
 		for chall in room.challs:
 			chall.url_callback = '/api/challenge/%s/%s/%s' % (game.slug, room.slug, chall.slug)
 
-	game.doors = Door.objects.filter(game=game)
+	game.doors = DoorGPIO.objects.filter(game=game)
 	for door in game.doors:
 		door.url_callback = '/api/door/%s/%s' % (game.slug, door.slug)
 
@@ -112,7 +112,7 @@ def escapegame_status(request, game_slug):
 	try:
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
 		game['rooms'] = []
-		game['doors'] = [ door for door in Door.objects.filter(game=game['id']).values() ]
+		game['doors'] = [ door for door in DoorGPIO.objects.filter(game=game['id']).values() ]
 
 		__populate_images(game, 'map_image')
 
@@ -120,7 +120,7 @@ def escapegame_status(request, game_slug):
 		for room in rooms:
 
 			room['challenges'] = []
-			room['door'] = Door.objects.filter(pk=room['door_id']).values().get()
+			room['door'] = DoorGPIO.objects.filter(pk=room['door_id']).values().get()
 			challs = EscapeGameChallenge.objects.filter(room=room['id']).values()
 			for chall in challs:
 				__populate_images(chall, 'challenge_solved_image')
@@ -192,7 +192,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 		try:
 			room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
 		except EscapeGameRoom.DoesNotExist:
-			room = Door.objects.get(slug=room_slug)
+			room = DoorGPIO.objects.get(slug=room_slug)
 
 		status, message = (locked and room.lock() or room.unlock())
 

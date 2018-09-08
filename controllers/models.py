@@ -214,7 +214,7 @@ class Cube(GPIO):
 		# TODO: Implement me
 		return 0, 'Success'
 
-class Door(GPIO):
+class DoorGPIO(GPIO):
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
@@ -225,7 +225,7 @@ class Door(GPIO):
 
 	def save(self, *args, **kwargs):
 		self.clean()
-		super(Door, self).save(*args, **kwargs)
+		super(DoorGPIO, self).save(*args, **kwargs)
 
 	""" Reset this door state
 	"""

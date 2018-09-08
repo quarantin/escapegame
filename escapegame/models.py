@@ -84,7 +84,7 @@ class EscapeGame(models.Model):
 
 		self.cube.reset()
 
-		doors = Door.objects.filter(game=self)
+		doors = DoorGPIO.objects.filter(game=self)
 		for door in doors:
 			door.reset()
 
@@ -141,7 +141,7 @@ class EscapeGameRoom(models.Model):
 
 	cube = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
 
-	door = models.ForeignKey(Door, null=True, on_delete=models.CASCADE, related_name='room_door')
+	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
 	door_pin = models.IntegerField(default=10)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
@@ -157,7 +157,7 @@ class EscapeGameRoom(models.Model):
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
-			door = Door(name=name, raspberrypi=self.get_controller(), pin=self.door_pin)
+			door = DoorGPIO(name=name, raspberrypi=self.get_controller(), pin=self.door_pin)
 			door.save()
 			self.door = door
 

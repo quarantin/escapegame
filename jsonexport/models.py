@@ -23,7 +23,7 @@ model_mapping = [
 	('GPIOs', GPIO),
 	('cubeGPIOs', Cube),
 	('escapegames', EscapeGame),
-	('doorGPIOs', Door),
+	('doorGPIOs', DoorGPIO),
 	('rooms', EscapeGameRoom),
 	('challengeGPIOs', Challenge),
 	('challenges', EscapeGameChallenge),
