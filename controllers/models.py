@@ -70,12 +70,21 @@ class ArduinoSketch(models.Model):
 
 class RaspberryPi(models.Model):
 
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
 
 	def __str__(self):
 		return 'Raspberry Pi - %s' % self.name
+
+	def save(self, *args, **kwargs):
+		new_slug = slugify(self.name)
+		if not self.slug or self.slug != new_slug:
+			self.slug = new_slug
+
+		self.clean()
+		super(RaspberryPi, self).save(*args, **kwargs)
 
 	def get_by_name(hostname):
 		try:

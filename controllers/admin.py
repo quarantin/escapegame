@@ -25,9 +25,13 @@ class ArduinoSketchAdmin(admin.ModelAdmin):
 class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
+		'slug',
 		'hostname',
 		'port',
 	]
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', )
 
 class ChallengeGPIOAdmin(admin.ModelAdmin):
 	list_display = [
