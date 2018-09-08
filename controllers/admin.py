@@ -36,6 +36,7 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 class ChallengeGPIOAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
+		'slug',
 		'raspberrypi',
 		'pin',
 		'solved',
@@ -43,11 +44,12 @@ class ChallengeGPIOAdmin(admin.ModelAdmin):
 	]
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'solved_at', )
+		return self.readonly_fields + ( 'slug', 'solved_at' )
 
 class CubeGPIOAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
+		'slug',
 		'raspberrypi',
 		'pin',
 		'tag_id',
@@ -56,7 +58,7 @@ class CubeGPIOAdmin(admin.ModelAdmin):
 	]
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'taken_at', 'placed_at' )
+		return self.readonly_fields + ( 'slug', 'taken_at', 'placed_at' )
 
 class DoorGPIOAdmin(admin.ModelAdmin):
 	list_display = [
@@ -68,7 +70,7 @@ class DoorGPIOAdmin(admin.ModelAdmin):
 	]
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'unlocked_at', )
+		return self.readonly_fields + ( 'slug', 'unlocked_at' )
 
 # Register our models to our custom admin site
 site.register(ArduinoSketch, ArduinoSketchAdmin)
