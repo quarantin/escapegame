@@ -179,7 +179,6 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: '/' + get_language() + '/' + game_slug + '/status/',
-			crossDomain: true,
 			success: function(game) {
 
 				if (typeof game === 'undefined')
