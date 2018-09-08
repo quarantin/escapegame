@@ -15,7 +15,7 @@ $(document).ready(function() {
 		selected_video = $('#selected-video').val();
 		selected_raspi = $('#selected-raspberry-pi').val();
 
-		return '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
+		return selected_raspi + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
 
 

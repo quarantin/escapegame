@@ -45,7 +45,7 @@
 
 					<div class="row">
 						<select id="selected-raspberry-pi" class="head_block form-control mx-auto">{% for raspi in raspberry_pis %}
-							<option name="{{ raspi.name }}" value="{{ raspi.id }}" {% if raspi == game.controller %} selected{% endif %}>
+							<option name="{{ raspi.name }}" value="http{% if request.is_secure %}s{% endif %}://{{ raspi.hostname }}:{{ raspi.port }}" {% if raspi == game.controller %} selected{% endif %}>
 								{% trans "Raspberry Pi" %} - {{ raspi.name }}
 							</option>{% endfor %}
 						</select>
