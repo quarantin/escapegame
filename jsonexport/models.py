@@ -21,7 +21,7 @@ model_mapping = [
 	('videos', Video),
 	('raspberry_pis', RaspberryPi),
 	('GPIOs', GPIO),
-	('cubeGPIOs', Cube),
+	('cubeGPIOs', CubeGPIO),
 	('escapegames', EscapeGame),
 	('doorGPIOs', DoorGPIO),
 	('rooms', EscapeGameRoom),

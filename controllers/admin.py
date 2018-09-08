@@ -41,7 +41,7 @@ class ChallengeAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'solved_at', )
 
-class CubeAdmin(admin.ModelAdmin):
+class CubeGPIOAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
 		'raspberrypi',
@@ -70,5 +70,5 @@ class DoorGPIOAdmin(admin.ModelAdmin):
 site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)
 site.register(Challenge, ChallengeAdmin)
-site.register(Cube, CubeAdmin)
+site.register(CubeGPIO, CubeGPIOAdmin)
 site.register(DoorGPIO, DoorGPIOAdmin)

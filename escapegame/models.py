@@ -39,8 +39,8 @@ class EscapeGame(models.Model):
 	time_limit = models.DurationField(default=timedelta(hours=1))
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
 
-	cube   = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='escapegame_cube')
-	cube_2 = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='escapegame_cube_2', blank=True)
+	cube   = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube')
+	cube_2 = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube_2', blank=True)
 
 	cube_delay = models.DurationField(default=timedelta(seconds=30))
 
@@ -139,7 +139,7 @@ class EscapeGameRoom(models.Model):
 
 	is_sas = models.BooleanField(default=False)
 
-	cube = models.ForeignKey(Cube, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
+	cube = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
 
 	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
 	door_pin = models.IntegerField(default=10)

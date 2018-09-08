@@ -165,7 +165,7 @@ class Challenge(GPIO):
 		self.save()
 		return 0, 'Success'
 
-class Cube(GPIO):
+class CubeGPIO(GPIO):
 
 	tag_id = models.CharField(max_length=32)
 	taken_at = models.DateTimeField(blank=True, null=True)
@@ -176,7 +176,7 @@ class Cube(GPIO):
 
 	def save(self, *args, **kwargs):
 		self.clean()
-		super(Cube, self).save(*args, **kwargs)
+		super(CubeGPIO, self).save(*args, **kwargs)
 
 	""" Reset this cube state
 	"""
