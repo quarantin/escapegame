@@ -2,6 +2,7 @@
 
 from django import forms
 from django.db import models
+from django.core import serializers
 
 from escapegame import libraspi
 
@@ -12,6 +13,7 @@ from collections import OrderedDict
 from escapegame.models import *
 
 import json
+import traceback
 
 
 model_mapping = [
@@ -21,50 +23,11 @@ model_mapping = [
 	('escapegames', EscapeGame),
 	('rooms', EscapeGameRoom),
 	('challenges', EscapeGameChallenge),
+	('GPIOs', GPIO),
+	('cubeGPIOs', Cube),
+	('doorGPIOs', Door),
+	('challengeGPIOs', Challenge),
 ]
-
-top_fields = [
-	'id',
-	'slug',
-	'name',
-	'escapegame_id',
-	'room_id',
-	'challenge_id',
-	'raspberrypi_id',
-]
-
-def get_sorted_query_set(queryset, excluded_fields):
-
-	result = []
-
-	for obj in queryset:
-		objdict = OrderedDict()
-
-		# Add top fields first
-		for top_field in top_fields:
-			if top_field in obj:
-				val = obj.pop(top_field)
-				if val != None:
-					objdict[top_field] = val
-
-		# Then add remaining fields in alphabetical order, except the excluded ones.
-		for key in sorted(obj.keys()):
-
-			excluded = False
-			for excluded_field in excluded_fields:
-				if key.endswith(excluded_field):
-					excluded = True
-					break
-
-			if not excluded:
-				val = obj[key]
-				if val != None:
-					objdict[key] = obj[key]
-
-		result.append(objdict)
-
-	return result
-
 
 # JSON Import/Export models and forms
 
@@ -86,35 +49,18 @@ class JsonImportForm(forms.ModelForm):
 			'json_configuration',
 		]
 
-	def json_import (self, model, dic):
+	def json_import(self, model, listdic):
 
 		try:
-			try:
-				obj = model.objects.get(id=dic['id'])
-				for key, val in dic.items():
-					setattr(obj, key, val)
-			except:
-				obj = model(**dic)
-
-			obj.save()
+			dics = json.dumps(listdic)
+			objects = serializers.deserialize('json', dics)
+			for obj in objects:
+				obj.save()
 
 			return 0, 'Success'
 
 		except Exception as err:
-			return 1, 'Error: %s<br>\n%s' % err
-
-	def json_import_list(self, model, listdic):
-
-		try:
-			for dic in listdic:
-				status, message = self.json_import(model, dic)
-				if status != 0:
-					return status, message
-
-			return 0, 'Success'
-
-		except Exception as err:
-			return 1, 'Error: %s' % err
+			return 1, 'Error: %s' % traceback.format_exc()
 
 	def load(self, json_configuration):
 
@@ -128,25 +74,19 @@ class JsonImportForm(forms.ModelForm):
 
 			for jsonkey, model in model_mapping:
 				if jsonkey in config:
-					status, message = self.json_import_list(model, config[jsonkey])
+					status, message = self.json_import(model, config[jsonkey])
 					if status != 0:
 						return status, message
 
 			return status, message
 
 		except Exception as err:
-			return 1, 'Error: %s' % err
+			return 1, 'Error: %s' % traceback.format_exc()
 
 class JsonExport(models.Model):
 	indent = models.BooleanField(default=True)
 	export_date = models.BooleanField(default=True)
 	software_version = models.BooleanField(default=True)
-	images = models.BooleanField(default=True)
-	videos = models.BooleanField(default=True)
-	escapegames = models.BooleanField(default=True)
-	rooms = models.BooleanField(default=True)
-	challenges = models.BooleanField(default=True)
-	raspberry_pis = models.BooleanField(default=True)
 
 	def save(self, *args, **kwargs):
 		pass
@@ -163,12 +103,6 @@ class JsonExportForm(forms.ModelForm):
 			'indent',
 			'export_date',
 			'software_version',
-			'images',
-			'videos',
-			'escapegames',
-			'rooms',
-			'challenges',
-			'raspberry_pis',
 		]
 
 	def dump(self, post):
@@ -194,7 +128,6 @@ class JsonExportForm(forms.ModelForm):
 		config['filename'] = 'escapegame-config-%s.json' % now.strftime('%Y-%m-%d_%H-%M-%S')
 
 		for jsonkey, model in model_mapping:
-			if post.get(jsonkey):
-				config[jsonkey] = get_sorted_query_set(model.objects.all().order_by('id').values(), [ 'locked', 'solved' ])
+			config[jsonkey] = json.loads(serializers.serialize('json', model.objects.all(), ensure_ascii=False))
 
 		return config

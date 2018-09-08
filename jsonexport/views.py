@@ -2,9 +2,9 @@
 
 from django.template import loader
 from django.contrib import messages
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 
 from .models import JsonImportForm, JsonExportForm
 
@@ -57,17 +57,21 @@ def json_export(request):
 			form = JsonExportForm(request.POST)
 			if form.is_valid():
 
-				jsonconfig = form.dump(request.POST)
+				jsondata = form.dump(request.POST)
 
-				jsonfile = jsonconfig.pop('filename', 'escapegame-config.json')
-				indent = jsonconfig.pop('indent', None) or None
+				jsonfile = jsondata.pop('filename', 'escapegame-config.json')
+
+				indent = jsondata.pop('indent', None) or None
 				if indent:
 					indent = 4
 
-				jsonstring = json.dumps(jsonconfig, indent=indent, cls=DjangoJSONEncoder)
-				response = HttpResponse(jsonstring, content_type='application/json')
+				json_dumps_params = dict(
+					ensure_ascii=False,
+					indent=indent,
+				)
+
+				response = JsonResponse(jsondata, json_dumps_params=json_dumps_params)
 				response['Content-Disposition'] = 'attachment; filename=%s' % jsonfile
-				response['Content-Length'] = len(jsonstring)
 				return response
 
 		else:
