@@ -18,7 +18,7 @@ class Command(BaseCommand):
 			Video,
 			RaspberryPi,
 			GPIO,
-			Challenge,
+			ChallengeGPIO,
 			CubeGPIO,
 			DoorGPIO,
 			EscapeGame,

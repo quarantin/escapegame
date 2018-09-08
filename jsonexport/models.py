@@ -25,7 +25,7 @@ model_mapping = [
 	('escapegames', EscapeGame),
 	('doorGPIOs', DoorGPIO),
 	('rooms', EscapeGameRoom),
-	('challengeGPIOs', Challenge),
+	('challengeGPIOs', ChallengeGPIO),
 	('challenges', EscapeGameChallenge),
 ]
 

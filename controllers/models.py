@@ -135,7 +135,7 @@ class GPIO(models.Model):
 		verbose_name = 'GPIO'
 		verbose_name_plural = 'GPIOs'
 
-class Challenge(GPIO):
+class ChallengeGPIO(GPIO):
 
 	solved = models.BooleanField(default=False)
 	solved_at = models.DateTimeField(blank=True, null=True)
@@ -145,7 +145,7 @@ class Challenge(GPIO):
 
 	def save(self, *args, **kwargs):
 		self.clean()
-		super(Challenge, self).save(*args, **kwargs)
+		super(ChallengeGPIO, self).save(*args, **kwargs)
 
 	""" Reset this challenge state
 	"""

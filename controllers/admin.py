@@ -29,7 +29,7 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 		'port',
 	]
 
-class ChallengeAdmin(admin.ModelAdmin):
+class ChallengeGPIOAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
 		'raspberrypi',
@@ -69,6 +69,6 @@ class DoorGPIOAdmin(admin.ModelAdmin):
 # Register our models to our custom admin site
 site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)
-site.register(Challenge, ChallengeAdmin)
+site.register(ChallengeGPIO, ChallengeGPIOAdmin)
 site.register(CubeGPIO, CubeGPIOAdmin)
 site.register(DoorGPIO, DoorGPIOAdmin)

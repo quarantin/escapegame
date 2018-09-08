@@ -216,7 +216,7 @@ class EscapeGameChallenge(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
-	gpio = models.ForeignKey(Challenge, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
+	gpio = models.ForeignKey(ChallengeGPIO, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
 	gpio_pin = models.IntegerField(default=31)
 
 	solved_video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_video')
@@ -234,7 +234,7 @@ class EscapeGameChallenge(models.Model):
 
 		if self.gpio is None:
 			name = 'Challenge - %s' % self.name
-			gpio = Challenge(name=name, raspberrypi=self.get_controller(), pin=self.gpio_pin)
+			gpio = ChallengeGPIO(name=name, raspberrypi=self.get_controller(), pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
 
