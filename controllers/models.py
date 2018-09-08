@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 
 from constance import config
 
+from multimedia.models import Image
+
 from escapegame import libraspi
 
 import os
@@ -100,6 +102,7 @@ class GPIO(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
 	pin = models.IntegerField(default=7)
+	image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
 		return 'GPIO - %s' % self.name

@@ -335,15 +335,15 @@ class Command(BaseCommand):
 		door_briefing_room.save()
 
 		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = Door(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits)
+		door_corridor_sas_1 = Door(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, image=door_sas1_image)
 		door_corridor_sas_1.save()
 
 		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = Door(name='La porte couloir du SAS clair', game=game_stranger_things)
+		door_corridor_sas_2 = Door(name='La porte couloir du SAS clair', game=game_stranger_things, image=door_sas2_image)
 		door_corridor_sas_2.save()
 
 		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = Door(name='La porte couloir du SAS obscur', game=game_stranger_things)
+		door_corridor_sas_3 = Door(name='La porte couloir du SAS obscur', game=game_stranger_things, image=door_sas3_image)
 		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
