@@ -5,10 +5,6 @@ from django.template.defaultfilters import slugify
 
 from constance import config
 
-from controllers.models import RaspberryPi
-
-from escapegame import libraspi
-
 from .player import VideoPlayer
 
 import os
@@ -57,6 +53,8 @@ class Video(models.Model):
 		super(Video, self).save(*args, **kwargs)
 
 	def get_url(self, request):
+		from controllers.models import RaspberryPi
+		from escapegame import libraspi
 		host, port, protocol = libraspi.get_net_info(request, RaspberryPi.get_master())
 		return '%s://%s%s%s' % (protocol, host, port, self.video_path.url)
 
