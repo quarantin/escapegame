@@ -181,7 +181,7 @@ class CubeGPIO(GPIO):
 	placed_at = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
-		return 'Cube - %s' % self.name
+		return 'Cube GPIO - %s' % self.name
 
 	def save(self, *args, **kwargs):
 		self.clean()
@@ -230,7 +230,7 @@ class DoorGPIO(GPIO):
 	game = models.ForeignKey('escapegame.EscapeGame', null=True, on_delete=models.CASCADE, blank=True)
 
 	def __str__(self):
-		return 'Door - %s' % self.name
+		return 'Door GPIO - %s' % self.name
 
 	def save(self, *args, **kwargs):
 		self.clean()
