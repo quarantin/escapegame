@@ -79,6 +79,10 @@ $(document).ready(function() {
 		});
 	});
 
+	/*
+	 * Door control buttons
+	 */
+
 	// Handler for lock buttons
 	$('button.lock-button').click(function() {
 
@@ -108,6 +112,10 @@ $(document).ready(function() {
 			},
 		});
 	});
+
+	/*
+	 * Challenge control buttons
+	 */
 
 	// Handler for challenge reset buttons
 	$('a.challenge-reset').click(function (e) {
