@@ -29,6 +29,14 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 		'hostname',
 		'port',
 	]
+	fieldsets = (
+		('Raspberry Pi', { 'fields': (
+			'name',
+			'slug',
+			'hostname',
+			'port',
+			)}),
+	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', )
@@ -42,6 +50,16 @@ class ChallengeGPIOAdmin(admin.ModelAdmin):
 		'solved',
 		'solved_at',
 	]
+	fieldsets = (
+		('Challenge GPIO', { 'fields': (
+			'name',
+			'slug',
+			'raspberrypi',
+			'pin',
+			'solved',
+			'solved_at',
+			)}),
+	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'solved_at' )
@@ -56,6 +74,17 @@ class CubeGPIOAdmin(admin.ModelAdmin):
 		'taken_at',
 		'placed_at',
 	]
+	fieldsets = (
+		('Cube GPIO', { 'fields': (
+			'name',
+			'slug',
+			'raspberrypi',
+			'pin',
+			'tag_id',
+			'taken_at',
+			'placed_at',
+			)}),
+	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'taken_at', 'placed_at' )
@@ -63,11 +92,22 @@ class CubeGPIOAdmin(admin.ModelAdmin):
 class DoorGPIOAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
+		'slug',
 		'raspberrypi',
 		'pin',
 		'locked',
 		'unlocked_at',
 	]
+	fieldsets = (
+		('Door GPIO', { 'fields': (
+			'name',
+			'slug',
+			'raspberrypi',
+			'pin',
+			'locked',
+			'unlocked_at',
+			)}),
+	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'unlocked_at' )
