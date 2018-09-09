@@ -233,6 +233,9 @@ class DoorGPIO(GPIO):
 		return 'Door GPIO - %s' % self.name
 
 	def save(self, *args, **kwargs):
+		if self.raspberrypi is None and self.game is not None:
+			self.raspberrypi = self.game.raspberrypi
+
 		self.clean()
 		super(DoorGPIO, self).save(*args, **kwargs)
 
