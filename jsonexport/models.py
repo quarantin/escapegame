@@ -91,13 +91,11 @@ class JsonExport(models.Model):
 		pass
 
 	@staticmethod
-	def dump(request):
+	def dump(post):
 
 		now = datetime.now()
 
 		config = OrderedDict()
-
-		post = request.POST
 
 		# Check if we should beautify JSON
 		config['indent'] = False
