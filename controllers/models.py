@@ -20,6 +20,10 @@ import os
 
 class ArduinoSketch(models.Model):
 
+	class Meta:
+		verbose_name = 'Arduino Sketch'
+		verbose_name_plural = 'Arduino Sketches'
+
 	sketch_name = models.CharField(max_length=255, unique=True)
 	sketch_code = models.TextField(max_length=10000)
 	sketch_path = models.FileField(upload_to=config.UPLOAD_SKETCH_PATH)
@@ -66,10 +70,6 @@ class ArduinoSketch(models.Model):
 		self.save_code()
 		super(ArduinoSketch, self).save(*args, **kwargs)
 
-	class Meta:
-		verbose_name = 'Arduino Sketch'
-		verbose_name_plural = 'Arduino Sketches'
-
 class Controller(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
@@ -93,6 +93,10 @@ class Controller(models.Model):
 
 class RaspberryPi(Controller):
 
+	class Meta:
+		verbose_name = 'Raspberry Pi'
+		verbose_name_plural = 'Raspberry Pis'
+
 	def __str__(self):
 		return 'Raspberry Pi - %s' % self.name
 
@@ -108,11 +112,11 @@ class RaspberryPi(Controller):
 	def get_myself():
 		return RaspberryPi.get_by_name(config.HOSTNAME)
 
-	class Meta:
-		verbose_name = 'Raspberry Pi'
-		verbose_name_plural = 'Raspberry Pis'
-
 class GPIO(models.Model):
+
+	class Meta:
+		verbose_name = 'GPIO'
+		verbose_name_plural = 'GPIOs'
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
@@ -224,11 +228,11 @@ class GPIO(models.Model):
 
 		return status, message
 
-	class Meta:
-		verbose_name = 'GPIO'
-		verbose_name_plural = 'GPIOs'
-
 class ChallengeGPIO(GPIO):
+
+	class Meta:
+		verbose_name = 'Challenge GPIO'
+		verbose_name_plural = 'Challenge GPIOs'
 
 	solved = models.BooleanField(default=False)
 	solved_at = models.DateTimeField(blank=True, null=True)
@@ -261,6 +265,10 @@ class ChallengeGPIO(GPIO):
 		return super(ChallengeGPIO, self).write(True)
 
 class CubeGPIO(GPIO):
+
+	class Meta:
+		verbose_name = 'Cube GPIO'
+		verbose_name_plural = 'Cube GPIOs'
 
 	tag_id = models.CharField(max_length=32)
 	taken_at = models.DateTimeField(blank=True, null=True)
@@ -312,6 +320,10 @@ class CubeGPIO(GPIO):
 		return 0, 'Success'
 
 class DoorGPIO(GPIO):
+
+	class Meta:
+		verbose_name = 'Door GPIO'
+		verbose_name_plural = 'Door GPIOs'
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
