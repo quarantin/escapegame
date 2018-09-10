@@ -135,7 +135,7 @@ class EscapeGameRoom(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, blank=True, null=True)
 
 	is_sas = models.BooleanField(default=False)
 
@@ -154,6 +154,9 @@ class EscapeGameRoom(models.Model):
 		new_slug = slugify(self.name)
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
+
+		if self.controller is None:
+			self.controller = self.game.controller
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
@@ -234,9 +237,13 @@ class EscapeGameChallenge(models.Model):
 
 		if self.gpio is None:
 			name = 'Challenge - %s' % self.name
-			gpio = ChallengeGPIO(name=name, controller=self.get_controller(), pin=self.gpio_pin)
+			gpio = ChallengeGPIO(name=name, controller=self.get_controller(), action_pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
+
+		if self.gpio_pin != self.gpio.action_pin:
+			self.gpio.action_pin = self.gpio_pin
+			self.gpio.save()
 
 		self.clean()
 		super(EscapeGameChallenge, self).save(*args, **kwargs)

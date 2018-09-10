@@ -11,5 +11,5 @@ from escapegame.libraspi import notify_frontend
 @receiver(post_save, sender=DoorGPIO)
 def save_door(sender, instance, created, **kwargs):
 	print('w00tw00tw00t')
-	if instance.game is not None:
-		notify_frontend(instance.game)
+	if instance.parent is not None:
+		notify_frontend(instance.parent)
