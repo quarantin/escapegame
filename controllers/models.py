@@ -147,6 +147,18 @@ class GPIO(models.Model):
 				'action_url': 'This field is mandatory unless you set an action PIN',
 			})
 
+		if self.reset_pin is not None and self.reset_url is not None:
+			raise ValidationError({
+				'reset_pin': 'This field is forbidden if you already set a reset URL',
+				'reset_url': 'This field is forbidden if you already set a reset PIN',
+			})
+
+		if self.action_pin is not None and self.action_url is not None:
+			raise ValidationError({
+				'action_pin': 'This field is forbidden if you already set an action URL',
+				'action_url': 'This field is forbidden if you already set an action PIN',
+			})
+
 		if self.reset_pin is not None and not libraspi.is_valid_pin(self.reset_pin):
 			raise ValidationError({
 				'reset_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.reset_pin,
