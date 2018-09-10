@@ -164,17 +164,17 @@ class Command(BaseCommand):
 
 		# Cube: Les 1001 nuits
 		tag_id = '00000001'
-		cube_1001_nuits = CubeGPIO(name='Les 1001 nuits', tag_id=tag_id, controller=raspi_master, pin=7, )
+		cube_1001_nuits = CubeGPIO(name='Les 1001 nuits', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
 		cube_1001_nuits.save()
 
 		# Cube: Stranger Things - Salle Claire
 		tag_id = '00000002'
-		cube_stranger_things_salle_claire = CubeGPIO(name='Stranger Things - Salle Claire', tag_id=tag_id, controller=raspi_master, pin=11)
+		cube_stranger_things_salle_claire = CubeGPIO(name='Stranger Things - Salle Claire', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
 		cube_stranger_things_salle_claire.save()
 
 		# Cube: Stranger Things - Salle Obscure
 		tag_id = '00000003'
-		cube_stranger_things_salle_obscure = CubeGPIO(name='Stranger Things - Salle Obscure', tag_id=tag_id, controller=raspi_master, pin=12)
+		cube_stranger_things_salle_obscure = CubeGPIO(name='Stranger Things - Salle Obscure', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
 		cube_stranger_things_salle_obscure.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
