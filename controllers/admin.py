@@ -121,7 +121,9 @@ class GPIOAdmin(admin.ModelAdmin):
 		'name',
 		'slug',
 		'controller',
-		#'parent',
+		'parent_id',
+		'parent_type',
+		'parent',
 		'action_pin',
 		'reset_pin',
 		'action_url',
@@ -133,7 +135,9 @@ class GPIOAdmin(admin.ModelAdmin):
 			'name',
 			'slug',
 			'controller',
-			#'parent',
+			'parent_id',
+			'parent_type',
+			'parent',
 		)}),
 
 		('Action configuration', { 'fields': (
@@ -211,7 +215,7 @@ class DoorGPIOAdmin(GPIOAdmin):
 		('Door GPIO', { 'fields': (
 			'locked',
 			'unlocked_at',
-			)}),
+		)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):

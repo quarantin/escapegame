@@ -122,9 +122,9 @@ class GPIO(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
 
-	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
-	object_id = models.PositiveIntegerField(blank=True, null=True)
-	parent = GenericForeignKey()
+	parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	parent_id = models.PositiveIntegerField()
+	parent = GenericForeignKey('parent_type', 'parent_id')
 
 	reset_pin = models.IntegerField(blank=True, null=True, default=7)
 	action_pin = models.IntegerField(blank=True, null=True)
