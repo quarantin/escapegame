@@ -160,7 +160,7 @@ class EscapeGameRoom(models.Model):
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
+			door = DoorGPIO(name=name, parent=self, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
 			door.save()
 			self.door = door
 
@@ -237,7 +237,7 @@ class EscapeGameChallenge(models.Model):
 
 		if self.gpio is None:
 			name = 'Challenge - %s' % self.name
-			gpio = ChallengeGPIO(name=name, controller=self.get_controller(), action_pin=self.gpio_pin)
+			gpio = ChallengeGPIO(name=name, parent=self, controller=self.get_controller(), action_pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
 

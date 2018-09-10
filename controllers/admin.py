@@ -121,16 +121,19 @@ class GPIOAdmin(admin.ModelAdmin):
 		'name',
 		'slug',
 		'controller',
+		#'parent',
 		'action_pin',
 		'reset_pin',
 		'action_url',
 		'reset_url',
+		'image',
 	]
 	fieldsets = (
 		('GPIO', { 'fields': (
 			'name',
 			'slug',
 			'controller',
+			#'parent',
 		)}),
 
 		('Action configuration', { 'fields': (
@@ -142,6 +145,10 @@ class GPIOAdmin(admin.ModelAdmin):
 			'reset_pin',
 			'reset_url',
 		)}),
+
+		('Multimedia', { 'fields': (
+			'image',
+		)})
 	)
 
 	def get_readonly_fields(self, request, obj=None):
