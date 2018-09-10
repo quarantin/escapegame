@@ -4,29 +4,24 @@ from django import forms
 from django.urls import path
 from django.apps import apps
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
 from siteconfig import settings
-
 from escapegame.admin import site
-
 from escapegame.models import *
-
 from .models import *
-
 from . import views
 
 from collections import OrderedDict
-
 from datetime import datetime
-
 import json
 
 
-# Admin classes
+#
+# Admin models
+#
 
 class JsonImportAdmin(admin.ModelAdmin):
-	change_list_form = JsonImportForm
+	form = JsonImportForm
 
 	def get_changelist_form(self, request):
 		return self.change_list_form
@@ -41,7 +36,7 @@ class JsonImportAdmin(admin.ModelAdmin):
 		return request.user.is_superuser
 
 class JsonExportAdmin(admin.ModelAdmin):
-	change_list_form = JsonExportForm
+	form = JsonExportForm
 
 	def get_changelist_form(self, request):
 		return self.change_list_form
@@ -55,7 +50,9 @@ class JsonExportAdmin(admin.ModelAdmin):
 	def has_change_permission(self, request, obj=None):
 		return request.user.is_superuser
 
-
+#
 # Register our models to our custom admin site
+#
+
 site.register([ JsonImport ], JsonImportAdmin)
 site.register([ JsonExport ], JsonExportAdmin)

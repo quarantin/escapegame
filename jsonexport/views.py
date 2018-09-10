@@ -30,8 +30,10 @@ def json_import(request):
 		if request.method == 'POST':
 			form = JsonImportForm(request.POST, request.FILES)
 			if form.is_valid():
+
 				jsonfile = request.FILES['json_configuration']
-				status, message = form.load(jsonfile)
+
+				status, message = JsonImport.load(jsonfile)
 				if status != 0:
 					messages.error(request, "Failed to upload JSON file '%s' (%s)" % (jsonfile, message))
 				else:
@@ -57,11 +59,9 @@ def json_export(request):
 			form = JsonExportForm(request.POST)
 			if form.is_valid():
 
-				jsondata = form.dump(request.POST)
+				jsondata = JsonExport.dump(request.POST)
 
-				jsonfile = jsondata.pop('filename', 'escapegame-config.json')
-
-				indent = jsondata.pop('indent', None) or None
+				indent = jsondata.pop('indent', False)
 				if indent:
 					indent = 4
 
@@ -71,7 +71,10 @@ def json_export(request):
 				)
 
 				response = JsonResponse(jsondata, json_dumps_params=json_dumps_params)
+
+				jsonfile = jsondata.pop('filename', 'escapegame-config.json')
 				response['Content-Disposition'] = 'attachment; filename=%s' % jsonfile
+
 				return response
 
 		else:

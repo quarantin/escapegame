@@ -5,15 +5,12 @@ from django.db import models
 from django.core import serializers
 
 from escapegame import libraspi
-
-from datetime import datetime
-
-from collections import OrderedDict
-
 from escapegame.models import *
 
-import json
+from collections import OrderedDict
+from datetime import datetime
 import traceback
+import json
 
 
 model_mapping = [
@@ -29,27 +26,23 @@ model_mapping = [
 	('challenges', EscapeGameChallenge),
 ]
 
-# JSON Import/Export models and forms
+#
+# Models
+#
 
 class JsonImport(models.Model):
-	json_configuration = models.FileField()
-
-	def save(self, *args, **kwargs):
-		pass
 
 	class Meta:
 		verbose_name = 'JSON Import'
 		verbose_name_plural = 'JSON Import'
 
-class JsonImportForm(forms.ModelForm):
+	json_configuration = models.FileField()
 
-	class Meta:
-		model = JsonImport
-		fields = [
-			'json_configuration',
-		]
+	def save(self, *args, **kwargs):
+		pass
 
-	def json_import(self, model, listdic):
+	@staticmethod
+	def load_list(model, listdic):
 
 		try:
 			dics = json.dumps(listdic)
@@ -62,7 +55,8 @@ class JsonImportForm(forms.ModelForm):
 		except Exception as err:
 			return 1, 'Error: %s' % traceback.format_exc()
 
-	def load(self, json_configuration):
+	@staticmethod
+	def load(json_configuration):
 
 		try:
 			databytes = bytearray()
@@ -74,7 +68,7 @@ class JsonImportForm(forms.ModelForm):
 
 			for jsonkey, model in model_mapping:
 				if jsonkey in config:
-					status, message = self.json_import(model, config[jsonkey])
+					status, message = JsonImport.load_list(model, config[jsonkey])
 					if status != 0:
 						return status, message
 
@@ -84,6 +78,11 @@ class JsonImportForm(forms.ModelForm):
 			return 1, 'Error: %s' % traceback.format_exc()
 
 class JsonExport(models.Model):
+
+	class Meta:
+		verbose_name = 'JSON Export'
+		verbose_name_plural = 'JSON Export'
+
 	indent = models.BooleanField(default=True)
 	export_date = models.BooleanField(default=True)
 	software_version = models.BooleanField(default=True)
@@ -91,25 +90,14 @@ class JsonExport(models.Model):
 	def save(self, *args, **kwargs):
 		pass
 
-	class Meta:
-		verbose_name = 'JSON Export'
-		verbose_name_plural = 'JSON Export'
-
-class JsonExportForm(forms.ModelForm):
-
-	class Meta:
-		model = JsonExport
-		fields = [
-			'indent',
-			'export_date',
-			'software_version',
-		]
-
-	def dump(self, post):
+	@staticmethod
+	def dump(request):
 
 		now = datetime.now()
 
 		config = OrderedDict()
+
+		post = request.POST
 
 		# Check if we should beautify JSON
 		config['indent'] = False
@@ -131,3 +119,20 @@ class JsonExportForm(forms.ModelForm):
 			config[jsonkey] = json.loads(serializers.serialize('json', model.objects.all(), ensure_ascii=False))
 
 		return config
+
+#
+# Forms
+#
+
+class JsonImportForm(forms.ModelForm):
+
+	class Meta:
+		model = JsonImport
+		exclude = []
+
+class JsonExportForm(forms.ModelForm):
+
+	class Meta:
+		model = JsonExport
+		exclude = []
+
