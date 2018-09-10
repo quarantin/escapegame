@@ -37,7 +37,7 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	time_limit = models.DurationField(default=timedelta(hours=1))
-	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE, related_name='escapegame_raspberrypi')
+	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, related_name='escapegame_controller')
 
 	cube   = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube')
 	cube_2 = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube_2', blank=True)
@@ -95,7 +95,7 @@ class EscapeGame(models.Model):
 	def get_challenges(self, controller=None):
 
 		if not controller:
-			controller = self.raspberrypi
+			controller = self.controller
 
 		challenges = []
 		rooms = EscapeGameRoom.objects.filter(game=self)
@@ -135,14 +135,14 @@ class EscapeGameRoom(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
+	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
 
 	is_sas = models.BooleanField(default=False)
 
 	cube = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
 
 	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
-	door_pin = models.IntegerField(default=10)
+	door_pin = models.IntegerField(default=11)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
 	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
@@ -157,7 +157,7 @@ class EscapeGameRoom(models.Model):
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, raspberrypi=self.get_controller(), pin=self.door_pin)
+			door = DoorGPIO(name=name, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
 			door.save()
 			self.door = door
 
@@ -184,7 +184,7 @@ class EscapeGameRoom(models.Model):
 		return last_room == self
 
 	def get_controller(self):
-		return self.raspberrypi or self.game.raspberrypi
+		return self.controller or self.game.controller
 
 	def reset(self):
 
@@ -234,7 +234,7 @@ class EscapeGameChallenge(models.Model):
 
 		if self.gpio is None:
 			name = 'Challenge - %s' % self.name
-			gpio = ChallengeGPIO(name=name, raspberrypi=self.get_controller(), pin=self.gpio_pin)
+			gpio = ChallengeGPIO(name=name, controller=self.get_controller(), pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
 

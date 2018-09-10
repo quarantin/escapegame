@@ -37,11 +37,11 @@ def poll_gpio(challenge_id):
 			if message != 'Success':
 				raise Exception('libraspi.wait_for_pin_state_change() failed')
 
-			status, message = libraspi.get_pin_state(chall.gpio.pin)
-			if message != 'Success':
-				raise Exception('libraspi.get_pin_state() failed')
+			status, message, signal = libraspi.get_pin(chall.gpio.pin)
+			if status != 0:
+				raise Exception('libraspi.get_pin() failed')
 
-			chall.solved = status
+			chall.solved = signal
 			chall.save()
 
 		except Exception as err:

@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from constance import config
 
@@ -68,7 +70,7 @@ class ArduinoSketch(models.Model):
 		verbose_name = 'Arduino Sketch'
 		verbose_name_plural = 'Arduino Sketches'
 
-class RaspberryPi(models.Model):
+class Controller(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
@@ -76,7 +78,7 @@ class RaspberryPi(models.Model):
 	port = models.IntegerField(default=80)
 
 	def __str__(self):
-		return 'Raspberry Pi - %s' % self.name
+		return 'Controller - %s' % self.name
 
 	def save(self, *args, **kwargs):
 		new_slug = slugify(self.name)
@@ -84,7 +86,15 @@ class RaspberryPi(models.Model):
 			self.slug = new_slug
 
 		self.clean()
-		super(RaspberryPi, self).save(*args, **kwargs)
+		super(Controller, self).save(*args, **kwargs)
+
+	def is_myself(self, hostname=config.HOSTNAME):
+		return hostname == self.hostname
+
+class RaspberryPi(Controller):
+
+	def __str__(self):
+		return 'Raspberry Pi - %s' % self.name
 
 	def get_by_name(hostname):
 		try:
@@ -98,9 +108,6 @@ class RaspberryPi(models.Model):
 	def get_myself():
 		return RaspberryPi.get_by_name(config.HOSTNAME)
 
-	def is_myself(self, hostname=config.HOSTNAME):
-		return hostname == self.hostname
-
 	class Meta:
 		verbose_name = 'Raspberry Pi'
 		verbose_name_plural = 'Raspberry Pis'
@@ -109,20 +116,52 @@ class GPIO(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
-	raspberrypi = models.ForeignKey(RaspberryPi, null=True, on_delete=models.CASCADE)
-	pin = models.IntegerField(default=7)
+	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
+
+	reset_pin = models.IntegerField(blank=True, null=True)
+	action_pin = models.IntegerField(blank=True, null=True)
+
+	reset_url = models.URLField(max_length=255, blank=True, null=True)
+	action_url = models.URLField(max_length=255, blank=True, null=True)
+
 	image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL)
+
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	object_id = models.PositiveIntegerField()
+	parent = GenericForeignKey()
 
 	def __str__(self):
 		return 'GPIO - %s' % self.name
 
 	def clean(self):
-		if not libraspi.is_valid_pin(self.pin):
+
+		if self.reset_pin is None and self.reset_url is None:
 			raise ValidationError({
-				'pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.pin,
+				'reset_pin': 'This field is mandatory unless you set a reset URL',
+				'reset_url': 'This field is mandatory unless you set a reset PIN',
+			})
+
+		if self.action_pin is None and self.action_url is None:
+			raise ValidationError({
+				'action_pin': 'This field is mandatory unless you set an action URL',
+				'action_url': 'This field is mandatory unless you set an action PIN',
+			})
+
+		if self.reset_pin is not None and not libraspi.is_valid_pin(self.reset_pin):
+			raise ValidationError({
+				'reset_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.reset_pin,
+			})
+
+		if self.action_pin is not None and not libraspi.is_valid_pin(self.action_pin):
+			raise ValidationError({
+				'action_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % self.action_pin,
 			})
 
 	def save(self, *args, **kwargs):
+
+		if self.controller is None:
+			self.controller = self.parent.controller
+
 		new_slug = slugify(self.name)
 		if self.slug is None or self.slug != new_slug:
 			self.slug = new_slug
@@ -133,12 +172,81 @@ class GPIO(models.Model):
 	""" Read value from this GPIO
 	"""
 	def read(self):
-		return libraspi.get_pin(self.pin)
+
+		status = 1
+		message = 'No action URL or action PIN defined for this GPIO!'
+		signal = None
+
+		try:
+			if self.action_url is not None:
+
+				status, message, signal = libraspi.do_get(self.action_url)
+				if status != 0:
+					return -1, mesage, None
+
+			elif self.action_pin is not None:
+
+				status, message, signal = libraspi.get_pin(self.action_pin)
+				if status != 0:
+					return -1, message, None
+
+			return status, message, signal
+
+		except Exception as err:
+			return 1, 'Error: %s' % err, None
 
 	""" Write value to this GPIO
 	"""
 	def write(self, signal):
-		return libraspi.set_pin(self.pin, signal)
+
+		status = 1
+		message = 'No action URL or action PIN defined for this GPIO!'
+
+		if self.action_url is not None:
+
+			status, message, html = libraspi.do_get('%s/%d' % (self.action_url, signal and 1 or 0))
+			if status != 0:
+				return status, message
+
+		elif self.action_pin is not None:
+
+			status, message = libraspi.set_pin(self.action_pin, signal)
+			if status != 0:
+				return status, message
+
+		return status, message
+
+	""" Reset the state of this GPIO
+	"""
+	def reset(self):
+
+		status = 1
+		message = 'No action URL or action PIN defined for this GPIO!'
+
+		# Call reset URL if one is defined
+		if self.reset_url is not None:
+
+			status, message, html = libraspi.do_get(self.reset_url)
+			if status != 0:
+				return status, message
+
+		# Send reset sequence to reset pin if one is defined
+		elif self.reset_pin is not None:
+
+			# Set reset pin to HIGH to trigger controller reset
+			status, message = libraspi.set_pin(self.reset_pin, True)
+			if status != 0:
+				return status, message
+
+			# Wait for the controller to have time to read the value
+			time.sleep(1)
+
+			# Set reset pin to LOW to stop triggering controller reset
+			status, message = libraspi.set_pin(self.reset_pin, False)
+			if status != 0:
+				return status, message
+
+		return status, message
 
 	class Meta:
 		verbose_name = 'GPIO'
@@ -159,10 +267,12 @@ class ChallengeGPIO(GPIO):
 	""" Reset this challenge state
 	"""
 	def reset(self):
+
 		self.solved = False
 		self.solved_at = None
 		self.save()
-		return 0, 'Success'
+
+		return super(ChallengeGPIO, self).reset()
 
 	""" Callback method to call when this challenge has just been solved
 	"""
@@ -172,7 +282,7 @@ class ChallengeGPIO(GPIO):
 			self.solved_at = timezone.localtime()
 
 		self.save()
-		return 0, 'Success'
+		return super(ChallengeGPIO, self).write(True)
 
 class CubeGPIO(GPIO):
 
@@ -183,17 +293,19 @@ class CubeGPIO(GPIO):
 	def __str__(self):
 		return 'Cube GPIO - %s' % self.name
 
-	def save(self, *args, **kwargs):
-		self.clean()
-		super(CubeGPIO, self).save(*args, **kwargs)
-
 	""" Reset this cube state
 	"""
 	def reset(self):
+
 		self.taken_at = None
 		self.placed_at = None
 		self.save()
-		return self.lowerStand()
+
+		status, message = self.lowerStand()
+		if status != 0:
+			return status, message
+
+		return super(CubeGPIO, self).reset()
 
 	""" Callback method to call when the cube has just been taken from the NFC reader
 	"""
@@ -227,14 +339,14 @@ class DoorGPIO(GPIO):
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
-	game = models.ForeignKey('escapegame.EscapeGame', null=True, on_delete=models.CASCADE, blank=True)
 
 	def __str__(self):
 		return 'Door GPIO - %s' % self.name
 
 	def save(self, *args, **kwargs):
-		if self.raspberrypi is None and self.game is not None:
-			self.raspberrypi = self.game.raspberrypi
+	
+		if self.reset_pin is None:
+			self.reset_pin = self.action_pin
 
 		self.clean()
 		super(DoorGPIO, self).save(*args, **kwargs)
@@ -242,38 +354,35 @@ class DoorGPIO(GPIO):
 	""" Reset this door state
 	"""
 	def reset(self):
-		self.unlocked_at = None
 
-		return self.lock()
+		self.locked = True
+		self.unlocked_at = None
+		self.save()
+
+		return super(DoorGPIO, self).reset()
 
 	""" Lock this door
 	"""
 	def lock(self):
-		self.locked = True
-
 		print("Locking door `%s`" % self.name)
-		status, message = libraspi.door_control('lock', self)
-		if status != 0:
-			raise Exception('Failed locking door `%s`' % self.name)
 
+		self.locked = True
 		self.save()
-		return status, message
+
+		return super(DoorGPIO, self).write(True)
 
 	""" Unlock this door
 	"""
 	def unlock(self):
-		self.locked = False
+		print("Unlocking door `%s`" % self.name)
 
+		self.locked = False
 		if self.unlocked_at is None:
 			self.unlocked_at = timezone.localtime()
 
-		print("Unlocking door `%s`" % self.name)
-		status, message = libraspi.door_control('unlock', self)
-		if status != 0:
-			raise Exception('Failed unlocking door `%s`' % self.name)
-
 		self.save()
-		return status, message
+
+		return super(DoorGPIO, self).write(False)
 
 	""" Set the state of this door lock
 	"""

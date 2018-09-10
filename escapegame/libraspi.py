@@ -49,6 +49,15 @@ def get_port_string(request, port):
 def get_net_info(request, controller):
 	return (controller.hostname, get_port_string(request, controller.port), request.scheme)
 
+def do_get(url):
+
+	try:
+		import requests
+		response = requests.get(url)
+		return 0, 'Success', response.content
+
+	except Exception as err:
+		return 1, 'Error: %s' % err, None
 #
 # Notify the game websocket frontend with supplied message
 #
@@ -104,10 +113,10 @@ def get_pin(pin):
 
 		state = (signal and 'HIGH' or 'LOW')
 		print("Getting signal from PIN %d = %s" % (pin, state))
-		return signal, 'Success'
+		return 0, 'Success', signal
 
 	except Exception as err:
-		return -1, 'Error: %s' % err
+		return -1, 'Error: %s' % err, None
 
 #
 # Wait for state change on supplied PIN number until timeout expires (forever if timeout=-1)
@@ -161,10 +170,10 @@ def door_control(action, door):
 		locked = (action == 'lock')
 
 		# Get the controller of the door
-		controller = door.raspberrypi
+		controller = door.controller
 
 		if controller is None:
-			controller = door.game.raspberrypi
+			controller = door.game.controller
 
 		# Only perform physical door opening if we are the room controller.
 		if controller.is_myself():
