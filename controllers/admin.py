@@ -208,7 +208,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return super().get_readonly_fields() + ( 'unlocked_at', )
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'unlocked_at', )
 
 # Register our models to our custom admin site
