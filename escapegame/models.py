@@ -265,7 +265,7 @@ class EscapeGameChallenge(models.Model):
 
 			status, message = (solved and self.gpio.solve() or self.gpio.reset())
 			if status != 0:
-				return status, 'Error: %s' % message
+				return status, message
 
 			if self.gpio.solved and self.solved_video:
 				self.solved_video.play()
@@ -274,14 +274,14 @@ class EscapeGameChallenge(models.Model):
 			if self.room.all_challenge_validated():
 
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
-				self.room.door.forward_lock_request(request, game_slug, room_slug, action)
+				status, message = self.room.door.forward_lock_request(request, game_slug, room_slug, action)
+				if status != 0:
+					return status, message
 
 				# Was this the last room of this game?
 				if self.room.is_last_room():
-
 					print('This was the last room, stopping escape game counter')
 					self.room.game.finish(request)
-
 				else:
 					print('Still some rooms to explore')
 			else:
