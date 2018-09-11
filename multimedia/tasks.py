@@ -35,6 +35,8 @@ def video_player_task(vid):
 	if os.path.exists(FIFO_PATH):
 		os.remove(FIFO_PATH)
 
+	old_url = None
+
 	while True:
 
 		try:
@@ -74,8 +76,12 @@ def video_player_task(vid):
 			elif command.startswith('http'):
 				logger.write('Running load URL command: %s\n' % command)
 				logger.flush()
-				player.load(command)
-				#player.play_pause()
+				if old_url is not None and old_url == command and player.playback_status() == 'Paused':
+					player.play_pause()
+				else:
+					player.load(command)
+
+				old_url = command
 
 			else:
 				logger.write('Ignoring unknown command: `%s`\n' % command)
