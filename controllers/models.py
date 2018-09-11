@@ -379,3 +379,42 @@ class DoorGPIO(GPIO):
 	"""
 	def set_locked(self, locked):
 		return (locked and self.lock() or self.unlock())
+
+	""" Forward a lock request to the appropriate controller
+	"""
+	def forward_lock_request(self, request, game_slug, room_slug, action):
+
+		# Logic is inverted in the controller so we perform inverse logic here
+		# - LOW: lock the door
+		# - HIGH: unlock the door
+		locked = (action != 'lock')
+
+		# Try to use our own controller
+		controller = self.controller
+
+		# Fallback to self.room controller
+		if controller is None and self.room is not None:
+			controller = self.room.controller
+
+		# Fallback to self.game controller
+		if controller is None and self.game is not None:
+			controller = self.game.controller
+
+		# Fallback to self.room.game controller
+		if controller is None and self.room is not None:
+			controller = self.room.game.controller
+
+		# If we're the controller, proceed to lock/unlock sequence
+		if controller is not None and controller.is_myself():
+
+			status, message = (locked and self.lock() or self.unlock())
+
+		# Otherwise forward the request to the controller
+		else:
+			host, port, protocol = libraspi.get_net_info(request, controller)
+
+			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
+
+			status, message = libraspi.do_get(url)
+
+		return status, message

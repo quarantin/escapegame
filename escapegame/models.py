@@ -257,10 +257,11 @@ class EscapeGameChallenge(models.Model):
 		self.gpio.reset()
 		self.save()
 
-	def set_solved(self, request, solved):
+	def set_solved(self, request, game_slug, room_slug, action):
 		try:
-			action = (solved and 'Solving' or 'Reseting')
-			print('%s challenge %s / %s / %s' % (action, self.room.game.name, self.room.name, self.name))
+			solved = (action == 'validate')
+			actionstr = (solved and 'Solving' or 'Reseting')
+			print('%s challenge %s / %s / %s' % (actionstr, self.room.game.name, self.room.name, self.name))
 
 			status, message = (solved and self.gpio.solve() or self.gpio.reset())
 			if status != 0:
@@ -273,7 +274,7 @@ class EscapeGameChallenge(models.Model):
 			if self.room.all_challenge_validated():
 
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
-				self.room.door.unlock()
+				self.room.door.forward_lock_request(request, game_slug, room_slug, action)
 
 				# Was this the last room of this game?
 				if self.room.is_last_room():
