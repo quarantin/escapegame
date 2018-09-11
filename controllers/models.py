@@ -12,6 +12,8 @@ from escapegame import libraspi
 
 import os
 import time
+import socket
+
 
 # Controllers classes
 
