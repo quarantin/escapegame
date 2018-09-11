@@ -250,6 +250,14 @@ CHANNEL_LAYER = {
 }
 
 
+# WS4Redis
+
+WS4REDIS_CONNECTION = {
+	'host': REDIS_HOST,
+	'port': REDIS_PORT,
+}
+
+
 # Constance settings
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
