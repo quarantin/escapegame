@@ -71,7 +71,7 @@ def escapegame_reset(request, game_slug):
 		game.reset()
 
 		# Stop video player
-		status, message = game.briefing_video.stop(request)
+		status, message = game.briefing_video.stop()
 
 		# We don't want to return an error if the stop action failed,
 		# because maybe there was no video running, in which case this
