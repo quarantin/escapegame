@@ -205,7 +205,7 @@ def rest_door_control(request, game_slug, room_slug, action):
 
 		else:
 			host, port, protocol = libraspi.get_net_info(request, room.controller)
-			url = '%s://%s%s/%s/api/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
+			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
 
 			print('Forwarding door control request to %s' % url)
 			status, message = libraspi.do_get(url)
