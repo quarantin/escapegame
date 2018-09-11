@@ -416,6 +416,6 @@ class DoorGPIO(GPIO):
 			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
 
 			print("\n#\nI am *NOT* the controller, lets forward to %s" % url)
-			status, message = libraspi.do_get(url)
+			status, message, html = libraspi.do_get(url)
 
 		return status, message
