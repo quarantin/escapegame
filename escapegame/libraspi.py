@@ -43,11 +43,11 @@ def git_version():
 		return 1, 'Error: %s' % err
 
 def get_port_string(request, port):
-	bind_port = request.is_secure() and 443 or 80
+	bind_port = request is not None and (request.is_secure() and 443 or 80) or 80
 	return port != bind_port and ':%d' % port or ''
 
 def get_net_info(request, controller):
-	return (controller.hostname, get_port_string(request, controller.port), request.scheme)
+	return (controller.hostname, get_port_string(request, controller.port), request is not None and request.scheme or 'http')
 
 def do_get(url):
 
