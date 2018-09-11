@@ -35,6 +35,7 @@ def escapegame_detail(request, game_slug):
 	rooms = EscapeGameRoom.objects.filter(game=game)
 	raspberry_pis = RaspberryPi.objects.all()
 	videos = game.get_videos()
+	#videos = Video.objects.all()
 
 	for room in rooms:
 		room.url_callback = '/api/door/%s/%s' % (game.slug, room.slug)
