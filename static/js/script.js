@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	var timeout = 3000;
+	var timeout = 5000;
 
 	/*
 	 * Retrieve language country code from URL.
@@ -170,7 +170,7 @@ $(document).ready(function() {
 		});
 	});
 
-	function toggle_lock(lock_button, unlock_button, locked)
+	function toggle_elements(lock_button, unlock_button, locked)
 	{
 		if (locked) {
 			$(lock_button).addClass('d-none');
@@ -181,28 +181,35 @@ $(document).ready(function() {
 			$(unlock_button).addClass('d-none');
 		}
 	}
-	function toggle_elements(game) {
+	function toggle_all_elements(game) {
+
+		output = 'WTF\n';
 
 		for (var door_index in game.doors) {
 
 			var door = game.doors[door_index];
 			var door_name = game.slug + '-' + door.slug;
-			toggle_lock('button#lock-' + door_name, 'button#unlock_' + door_name, door.locked);
+			output += 'EXTRA DOOR ' + door.slug + ' locked=' + door.locked + '\n';
+			toggle_elements('button#lock-' + door_name, 'button#unlock_' + door_name, door.locked);
 		}
 
 		for (var room_index in game.rooms) {
 
 			var room = game.rooms[room_index];
 			var door = room.door;
-			toggle_lock('button#lock-' + door.slug , 'button#unlock_' + door.slug, door.locked);
+			output += 'ROOM DOOR ' + door.slug + ' locked=' + door.locked + '\n';
+			toggle_elements('button#lock-' + door.slug , 'button#unlock_' + door.slug, door.locked);
 
-			for (var chall_index in room.challs) {
+			for (var chall_index in room.challenges) {
 
-				var chall = room.challs[chall_index];
+				var chall = room.challenges[chall_index];
 				var chall_name = game.slug + '-' + chall.slug;
-				toggle_chall('a#validate-' + chall_name, 'a#reset-' + chall_name, chall.gpio.solved);
+				output += 'CHALL ' + chall.slug + ' solved=' + chall.solved+ '\n';
+				toggle_elements('a#validate-' + chall_name, 'a#reset-' + chall_name, chall.solved);
 			}
 		}
+
+		alert(output);
 	}
 
 	function drawImage(ctx, imageObj) {
@@ -250,13 +257,19 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: '/' + get_language() + '/' + game_slug + '/status/',
+			timeout: timeout,
 			success: function(game) {
 
-				if (typeof game === 'undefined')
+				if (typeof game === 'undefined') {
+					alert('Invalid escape game status!');
 					return;
+				}
 
-				toggle_elements(game);
+				toggle_all_elements(game);
 				draw_map(game);
+			},
+			error: function() {
+				alert('Could not retrieve escape game status!');
 			},
 		});
 	}
