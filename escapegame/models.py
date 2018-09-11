@@ -39,9 +39,6 @@ class EscapeGame(models.Model):
 	time_limit = models.DurationField(default=timedelta(hours=1))
 	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, related_name='escapegame_controller')
 
-	cube   = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube')
-	cube_2 = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='escapegame_cube_2', blank=True)
-
 	cube_delay = models.DurationField(default=timedelta(seconds=30))
 
 	briefing_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_briefing_video')
@@ -82,7 +79,8 @@ class EscapeGame(models.Model):
 		self.finish_time = None
 		self.save()
 
-		self.cube.reset()
+		# TODO fetch cubes and reset them
+		#self.cube.reset()
 
 		doors = DoorGPIO.objects.filter(game=self)
 		for door in doors:
@@ -139,8 +137,6 @@ class EscapeGameRoom(models.Model):
 
 	is_sas = models.BooleanField(default=False)
 
-	cube = models.ForeignKey(CubeGPIO, null=True, on_delete=models.CASCADE, related_name='room_cube', blank=True)
-
 	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
 	door_pin = models.IntegerField(default=11)
 
@@ -158,14 +154,16 @@ class EscapeGameRoom(models.Model):
 		if self.controller is None:
 			self.controller = self.game.controller
 
-		if self.door is None:
-			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, parent=self, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
-			door.save()
-			self.door = door
-
 		self.clean()
 		super(EscapeGameRoom, self).save(*args, **kwargs)
+
+		if self.door is None:
+			name = 'Exit Door - %s' % self.name
+			door = DoorGPIO(name=name, room=self, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
+			door.save()
+			self.door = door
+			super(EscapeGameRoom, self).save(*args, **kwargs)
+
 		libraspi.notify_frontend(self.game)
 
 	def all_challenge_validated(self):
@@ -191,8 +189,9 @@ class EscapeGameRoom(models.Model):
 
 	def reset(self):
 
-		if self.cube is not None:
-			self.cube.reset()
+		# TODO reset cubes
+		#if self.cube is not None:
+		#	self.cube.reset()
 
 		self.door.reset()
 
@@ -235,18 +234,20 @@ class EscapeGameChallenge(models.Model):
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
+		self.clean()
+		super(EscapeGameChallenge, self).save(*args, **kwargs)
+
 		if self.gpio is None:
 			name = 'Challenge - %s' % self.name
-			gpio = ChallengeGPIO(name=name, parent=self, controller=self.get_controller(), action_pin=self.gpio_pin)
+			gpio = ChallengeGPIO(name=name, challenge=self, controller=self.get_controller(), action_pin=self.gpio_pin)
 			gpio.save()
 			self.gpio = gpio
+			super(EscapeGameChallenge, self).save(*args, **kwargs)
 
 		if self.gpio_pin != self.gpio.action_pin:
 			self.gpio.action_pin = self.gpio_pin
 			self.gpio.save()
 
-		self.clean()
-		super(EscapeGameChallenge, self).save(*args, **kwargs)
 		libraspi.notify_frontend(self.room.game)
 
 	def get_controller(self):

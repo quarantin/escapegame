@@ -56,6 +56,10 @@ class Command(BaseCommand):
 		demo_video = Video(video_name='Video Demo', video_path='uploads/videos/test.h264')
 		demo_video.save()
 
+		# Demo Video 2
+		demo_video_2 = Video(video_name='Video Demo 2', video_path='uploads/videos/small.mp4')
+		demo_video_2.save()
+
 		# Les 1001 nuits - Briefing Video
 		briefing_video_1001_nuits = Video(video_name='Les 1001 nuits - Briefing', video_path='uploads/videos/test.h264')
 		briefing_video_1001_nuits.save()
@@ -158,28 +162,6 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 #
-# Cubes
-#
-		self.stdout.write('  Populating model `CubeGPIO`', ending='')
-
-		# Cube: Les 1001 nuits
-		tag_id = '00000001'
-		cube_1001_nuits = CubeGPIO(name='Les 1001 nuits', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
-		cube_1001_nuits.save()
-
-		# Cube: Stranger Things - Salle Claire
-		tag_id = '00000002'
-		cube_stranger_things_salle_claire = CubeGPIO(name='Stranger Things - Salle Claire', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
-		cube_stranger_things_salle_claire.save()
-
-		# Cube: Stranger Things - Salle Obscure
-		tag_id = '00000003'
-		cube_stranger_things_salle_obscure = CubeGPIO(name='Stranger Things - Salle Obscure', tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
-		cube_stranger_things_salle_obscure.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-#
 # Escape games
 #
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
@@ -193,7 +175,6 @@ class Command(BaseCommand):
 			winners_video=winners_video_1001_nuits,
 			losers_video=losers_video_1001_nuits,
 			controller=raspi_1001_nuits,
-			cube=cube_1001_nuits,
 			map_image=map_image)
 
 		game_1001_nuits.save()
@@ -207,8 +188,6 @@ class Command(BaseCommand):
 			winners_video=winners_video_stranger_things,
 			losers_video=losers_video_stranger_things,
 			controller=raspi_stranger_things,
-			cube=cube_stranger_things_salle_claire,
-			cube_2=cube_stranger_things_salle_obscure,
 			map_image=map_image)
 
 		game_stranger_things.save()
@@ -221,7 +200,7 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `EscapeGameRoom`', ending='')
 
 		# Room: SAS 1 - Les 1001 nuits
-		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_pin=10, door_image=door_sas_1_image, name='Le SAS 1001 nuits', cube=cube_1001_nuits, is_sas=True)
+		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_pin=10, door_image=door_sas_1_image, name='Le SAS 1001 nuits', is_sas=True)
 		room_sas_1.save()
 
 		# Room: La fontaine
@@ -236,12 +215,12 @@ class Command(BaseCommand):
 		room_lampe = EscapeGameRoom(game=game_1001_nuits, door_pin=13, door_image=None, name='La lampe')
 		room_lampe.save()
 
-		# Room: SAS 2 - Stranger Things - Salle Claire
-		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_pin=10, door_image=door_sas_2_image, name='Le SAS clair ', cube=cube_stranger_things_salle_claire, is_sas=True)
+		# Room: SAS 2 - Stranger Things - Salle obscure
+		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_pin=10, door_image=door_sas_2_image, name='Le SAS obscur', is_sas=True)
 		room_sas_2.save()
 
-		# Room: SAS 3 - Stranger Things - Salle Obscure
-		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_pin=10, door_image=door_sas_3_image, name='Le SAS obscur', cube=cube_stranger_things_salle_obscure, is_sas=True)
+		# Room: SAS 3 - Stranger Things - Salle claire
+		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_pin=10, door_image=door_sas_3_image, name='Le SAS clair', is_sas=True)
 		room_sas_3.save()
 
 		# Room: La salle claire
@@ -267,12 +246,12 @@ class Command(BaseCommand):
 		chall_sas_1_timer = EscapeGameChallenge(room=room_sas_1, name='Début du jeu \'Les 1001 nuits\'')
 		chall_sas_1_timer.save()
 
-		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle claire
-		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, name='Début du jeu \'Salle claire\'')
+		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle obscure
+		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, name='Début du jeu \'Salle obscure\'')
 		chall_sas_2_timer.save()
 
-		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle obscure
-		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, name='Début du jeu \'Salle obscure\'')
+		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle claire
+		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, name='Début du jeu \'Salle claire\'')
 		chall_sas_3_timer.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -345,22 +324,45 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
 
-		door_briefing_room = DoorGPIO(name='La salle de briefing pour les 1001 nuits', parent=game_1001_nuits, image=door_briefing_room_image, action_pin=11)
+		door_briefing_room = DoorGPIO(name='La salle de briefing pour les 1001 nuits', game=game_1001_nuits, image=door_briefing_room_image, action_pin=11)
 		door_briefing_room.save()
 
-		door_briefing_room = DoorGPIO(name='La salle de briefing pour Stranger Things', parent=game_stranger_things, image=door_briefing_room_image, action_pin=11)
+		door_briefing_room = DoorGPIO(name='La salle de briefing pour Stranger Things', game=game_stranger_things, image=door_briefing_room_image, action_pin=11)
 		door_briefing_room.save()
 
 		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', parent=game_1001_nuits, image=door_corridor_sas_1_image, action_pin=11)
+		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, image=door_corridor_sas_1_image, action_pin=11)
 		door_corridor_sas_1.save()
 
 		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS clair', parent=game_stranger_things, image=door_corridor_sas_2_image, action_pin=11)
+		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', game=game_stranger_things, image=door_corridor_sas_2_image, action_pin=11)
 		door_corridor_sas_2.save()
 
 		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS obscur', parent=game_stranger_things, image=door_corridor_sas_3_image, action_pin=11)
+		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', game=game_stranger_things, image=door_corridor_sas_3_image, action_pin=11)
 		door_corridor_sas_3.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+
+#
+# Cubes
+#
+		self.stdout.write('  Populating model `CubeGPIO`', ending='')
+
+		# Cube: Les 1001 nuits
+		tag_id = '00000001'
+		cube_1001_nuits = CubeGPIO(name='Les 1001 nuits', game=game_1001_nuits, tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
+		cube_1001_nuits.save()
+
+		# Cube: Stranger Things - Salle Claire
+		tag_id = '00000002'
+		cube_stranger_things_salle_claire = CubeGPIO(name='Stranger Things - Salle Claire', game=game_stranger_things, tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
+		cube_stranger_things_salle_claire.save()
+
+		# Cube: Stranger Things - Salle Obscure
+		tag_id = '00000003'
+		cube_stranger_things_salle_obscure = CubeGPIO(name='Stranger Things - Salle Obscure', game=game_stranger_things, tag_id=tag_id, controller=raspi_master, action_pin=11, reset_pin=12)
+		cube_stranger_things_salle_obscure.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

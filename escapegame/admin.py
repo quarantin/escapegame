@@ -28,8 +28,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'slug',
 		'time_limit',
 		'controller',
-		'cube',
-		'cube_2',
 		'cube_delay',
 		'start_time',
 		'finish_time',
@@ -46,8 +44,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'controller',
 			)}),
 		('Cube Controls', { 'fields': (
-			'cube',
-			'cube_2',
 			'cube_delay',
 			'start_time',
 			'finish_time',
@@ -72,7 +68,6 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'game',
 		'controller',
 		'is_sas',
-		'cube',
 		'door',
 		'room_image',
 		'door_image',
@@ -84,9 +79,6 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'game',
 			'controller',
 			'is_sas',
-			)}),
-		('Cube controls', { 'fields': (
-			'cube',
 			)}),
 		('Door controls', { 'fields': (
 			'door',
