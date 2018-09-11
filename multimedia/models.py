@@ -5,11 +5,8 @@ from django.template.defaultfilters import slugify
 
 from constance import config
 
-from .player import VideoPlayer
-
 import os
 import traceback
-import subprocess
 
 
 # Multimedia classes
@@ -52,25 +49,48 @@ class Video(models.Model):
 		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
-	def get_url(self, request):
+	def send_command(self, command):
+		try:
+			from .tasks import FIFO_PATH
+			if not os.path.exists(FIFO_PATH):
+				raise Exception('Player fifo does not exist!')
+
+			fifo = open(FIFO_PATH, 'w')
+			fifo.write(command)
+			fifo.close()
+			return 0, 'Success'
+
+		except:
+			return 1, 'Error: %s' % traceback.format_exc(),
+
+	def get_url(self, request=None, controller=None):
 		from controllers.models import RaspberryPi
 		from escapegame import libraspi
-		host, port, protocol = libraspi.get_net_info(request, RaspberryPi.get_master())
+		controller = controller or RaspberryPi.get_myself()
+		host, port, protocol = libraspi.get_net_info(request, controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.video_path.url)
 
-	def control(self, request, action):
-		video_url = self.get_url(request)
-		#return VideoPlayer(video_url).control(action)
-		return 0, 'Success'
+	def control(self, action):
 
-	def pause(self, request):
-		return self.control(request, 'pause')
+		if action == 'pause':
+			return self.pause()
 
-	def play(self, request):
-		return self.control(request, 'play')
+		elif action == 'stop':
+			return self.stop()
 
-	def stop(self, request):
-		return self.control(request, 'stop')
+		elif action == 'play':
+			return self.play()
+
+		return 1, 'Invalid action `%s`' % action
+
+	def pause(self):
+		return self.send_command('pause')
+
+	def play(self):
+		return self.send_command(self.get_url())
+
+	def stop(self):
+		return self.send_command('stop')
 
 	class Meta:
 		ordering = [ 'video_name' ]
