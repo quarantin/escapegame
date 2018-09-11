@@ -170,6 +170,41 @@ $(document).ready(function() {
 		});
 	});
 
+	function toggle_lock(lock_button, unlock_button, locked)
+	{
+		if (locked) {
+			$(lock_button).addClass('d-none');
+			$(unlock_button).removeClass('d-none');
+		}
+		else {
+			$(lock_button).removeClass('d-none');
+			$(unlock_button).addClass('d-none');
+		}
+	}
+	function toggle_elements(game) {
+
+		for (var door_index in game.doors) {
+
+			var door = game.doors[door_index];
+			var door_name = game.slug + '-' + door.slug;
+			toggle_lock('button#lock-' + door_name, 'button#unlock_' + door_name, door.locked);
+		}
+
+		for (var room_index in game.rooms) {
+
+			var room = game.rooms[room_index];
+			var door = room.door;
+			toggle_lock('button#lock-' + door.slug , 'button#unlock_' + door.slug, door.locked);
+
+			for (var chall_index in room.challs) {
+
+				var chall = room.challs[chall_index];
+				var chall_name = game.slug + '-' + chall.slug;
+				toggle_chall('a#validate-' + chall_name, 'a#reset-' + chall_name, chall.gpio.solved);
+			}
+		}
+	}
+
 	function drawImage(ctx, imageObj) {
 		image = new Image();
 		image.src = '/media/' + imageObj.image_path;
@@ -220,6 +255,7 @@ $(document).ready(function() {
 				if (typeof game === 'undefined')
 					return;
 
+				toggle_elements(game);
 				draw_map(game);
 			},
 		});
@@ -269,7 +305,7 @@ $(document).ready(function() {
 		};
 	}
 
-	refresh_page();
+	//refresh_page();
 
 	create_websocket();
 });
