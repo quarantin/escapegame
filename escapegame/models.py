@@ -274,7 +274,7 @@ class EscapeGameChallenge(models.Model):
 			if self.room.all_challenge_validated():
 
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
-				status, message = self.room.door.forward_lock_request(request, game_slug, room_slug, action)
+				status, message = self.room.door.forward_lock_request(request, game_slug, room_slug, 'unlock')
 				if status != 0:
 					return status, message
 
