@@ -85,7 +85,10 @@ class Controller(models.Model):
 		self.clean()
 		super(Controller, self).save(*args, **kwargs)
 
-	def is_myself(self, hostname=config.HOSTNAME):
+	def is_myself(self, hostname=None):
+		if hostname is None:
+			hostname = '%s%s' % (socket.gethostname(), config.MASTER_TLD)
+
 		return hostname == self.hostname
 
 class RaspberryPi(Controller):
@@ -107,7 +110,8 @@ class RaspberryPi(Controller):
 		return RaspberryPi.get_by_name(config.MASTER_HOSTNAME)
 
 	def get_myself():
-		return RaspberryPi.get_by_name(config.HOSTNAME)
+		hostname = '%s%s' % (socket.gethostname(), config.MASTER_TLD)
+		return RaspberryPi.get_by_name(hostname)
 
 class GPIO(models.Model):
 
