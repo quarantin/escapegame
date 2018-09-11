@@ -9,6 +9,7 @@ import requests
 RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
 if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
+	GPIO.setwarnings(False)
 	GPIO.setmode(GPIO.BOARD)
 
 invalid_pins = [
