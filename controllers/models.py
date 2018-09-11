@@ -350,7 +350,9 @@ class DoorGPIO(GPIO):
 		self.unlocked_at = None
 		self.save()
 
-		return super(DoorGPIO, self).reset()
+		# Don't call reset from parent because logic is different for doors
+		#return super(DoorGPIO, self).reset()
+		return super(DoorGPIO, self).write(False)
 
 	""" Lock this door
 	"""
@@ -360,7 +362,7 @@ class DoorGPIO(GPIO):
 		self.locked = True
 		self.save()
 
-		return super(DoorGPIO, self).write(True)
+		return super(DoorGPIO, self).write(False)
 
 	""" Unlock this door
 	"""
@@ -373,7 +375,7 @@ class DoorGPIO(GPIO):
 
 		self.save()
 
-		return super(DoorGPIO, self).write(False)
+		return super(DoorGPIO, self).write(True)
 
 	""" Set the state of this door lock
 	"""
@@ -384,10 +386,7 @@ class DoorGPIO(GPIO):
 	"""
 	def forward_lock_request(self, request, game_slug, room_slug, action):
 
-		# Logic is inverted in the controller so we perform inverse logic here
-		# - LOW: lock the door
-		# - HIGH: unlock the door
-		locked = (action != 'lock')
+		locked = (action == 'lock')
 
 		# Try to use our own controller
 		controller = self.controller
