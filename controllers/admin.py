@@ -21,34 +21,7 @@ class GPIOForm(forms.ModelForm):
 	def clean(self):
 
 		reset_pin = self.cleaned_data['reset_pin']
-		reset_url = self.cleaned_data['reset_url']
-
 		action_pin = self.cleaned_data['action_pin']
-		action_url = self.cleaned_data['action_url']
-
-		if reset_pin is None and reset_url is None:
-			raise ValidationError({
-				'reset_pin': 'You have to supply at least one of \'Reset PIN\' or \'Reset URL\'',
-				'reset_url': '',
-			})
-
-		if action_pin is None and action_url is None:
-			raise ValidationError({
-				'action_pin': 'You have to supply at least one of \'Action PIN\' or \'Action URL\'',
-				'action_url': '',
-			})
-
-		if reset_pin is not None and reset_url is not None:
-			raise ValidationError({
-				'reset_pin': 'Only one of \'Reset PIN\' or \'Reset URL\' can be supplied',
-				'reset_url': '',
-			})
-
-		if action_pin is not None and action_url is not None:
-			raise ValidationError({
-				'action_pin': 'Only one of \'Reset PIN\' or \'Reset URL\' can be supplied',
-				'action_url': '',
-			})
 
 		if reset_pin is not None and not libraspi.is_valid_pin(reset_pin):
 			raise ValidationError({

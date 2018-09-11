@@ -119,8 +119,8 @@ class GPIO(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
 
-	reset_pin = models.IntegerField(blank=True, null=True, default=7)
-	action_pin = models.IntegerField(blank=True, null=True)
+	reset_pin = models.IntegerField(default=7)
+	action_pin = models.IntegerField(default=11)
 
 	reset_url = models.URLField(max_length=255, blank=True, null=True)
 	action_url = models.URLField(max_length=255, blank=True, null=True)
