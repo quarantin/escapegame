@@ -121,9 +121,6 @@ class GPIOAdmin(admin.ModelAdmin):
 		'name',
 		'slug',
 		'controller',
-		'parent_id',
-		'parent_type',
-		'parent',
 		'action_pin',
 		'reset_pin',
 		'action_url',
@@ -135,9 +132,6 @@ class GPIOAdmin(admin.ModelAdmin):
 			'name',
 			'slug',
 			'controller',
-			'parent_id',
-			'parent_type',
-			'parent',
 		)}),
 
 		('Action configuration', { 'fields': (
@@ -163,6 +157,7 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 	form = ChallengeGPIOForm
 
 	list_display = GPIOAdmin.list_display + [
+		'challenge',
 		'solved',
 		'solved_at',
 	]
@@ -170,6 +165,7 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 	fieldsets = GPIOAdmin.fieldsets + (
 
 		('Challenge GPIO', { 'fields': (
+			'challenge'
 			'solved',
 			'solved_at',
 		)}),
@@ -178,19 +174,21 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return super(ChallengeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'solved_at', )
 
-class CubeGPIOAdmin(GPIOAdmin):
+class CubeGPIOAdmin(ChallengeGPIOAdmin):
 
 	form = CubeGPIOForm
 
-	list_display = GPIOAdmin.list_display + [
+	list_display = ChallengeGPIOAdmin.list_display + [
+		'game',
 		'tag_id',
 		'taken_at',
 		'placed_at',
 	]
 
-	fieldsets = GPIOAdmin.fieldsets + (
+	fieldsets = ChallengeGPIOAdmin.fieldsets + (
 
 		('Cube GPIO', { 'fields': (
+			'game',
 			'tag_id',
 			'taken_at',
 			'placed_at',
@@ -206,6 +204,8 @@ class DoorGPIOAdmin(GPIOAdmin):
 	form = DoorGPIOForm
 
 	list_display = GPIOAdmin.list_display + [
+		'game',
+		'room',
 		'locked',
 		'unlocked_at',
 	]
@@ -213,10 +213,29 @@ class DoorGPIOAdmin(GPIOAdmin):
 	fieldsets = GPIOAdmin.fieldsets + (
 
 		('Door GPIO', { 'fields': (
+			'game',
+			'room',
 			'locked',
 			'unlocked_at',
 		)}),
 	)
+
+	def clean(self):
+
+		game = self.cleaned_data['reset_pin']
+		room = self.cleaned_data['reset_url']
+
+		if game is None and room is None:
+			raise ValidationError({
+				'game': 'You have to supply at least one of \'Game\' or \'Room\'',
+				'room': '',
+			})
+
+		if game is not None and room is not None:
+			raise ValidationError({
+				'game': 'Only one of \'Game\' or \'Room\' can be supplied',
+				'room': '',
+			})
 
 	def get_readonly_fields(self, request, obj=None):
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'unlocked_at', )

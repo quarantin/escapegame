@@ -4,17 +4,14 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 from constance import config
 
 from multimedia.models import Image
-
 from escapegame import libraspi
 
 import os
-
+import time
 
 # Controllers classes
 
@@ -122,10 +119,6 @@ class GPIO(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
 
-	parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-	parent_id = models.PositiveIntegerField()
-	parent = GenericForeignKey('parent_type', 'parent_id')
-
 	reset_pin = models.IntegerField(blank=True, null=True, default=7)
 	action_pin = models.IntegerField(blank=True, null=True)
 
@@ -138,9 +131,6 @@ class GPIO(models.Model):
 		return 'GPIO - %s' % self.name
 
 	def save(self, *args, **kwargs):
-
-		if self.controller is None:
-			self.controller = self.parent.controller
 
 		new_slug = slugify(self.name)
 		if self.slug is None or self.slug != new_slug:
@@ -219,7 +209,7 @@ class GPIO(models.Model):
 				return status, message
 
 			# Wait for the controller to have time to read the value
-			time.sleep(1)
+			time.sleep(0.1)
 
 			# Set reset pin to LOW to stop triggering controller reset
 			status, message = libraspi.set_pin(self.reset_pin, False)
@@ -233,6 +223,8 @@ class ChallengeGPIO(GPIO):
 	class Meta:
 		verbose_name = 'Challenge GPIO'
 		verbose_name_plural = 'Challenge GPIOs'
+
+	challenge = models.ForeignKey('escapegame.EscapeGameChallenge', on_delete=models.CASCADE, blank=True, null=True)
 
 	solved = models.BooleanField(default=False)
 	solved_at = models.DateTimeField(blank=True, null=True)
@@ -264,11 +256,13 @@ class ChallengeGPIO(GPIO):
 		self.save()
 		return super(ChallengeGPIO, self).write(True)
 
-class CubeGPIO(GPIO):
+class CubeGPIO(ChallengeGPIO):
 
 	class Meta:
 		verbose_name = 'Cube GPIO'
 		verbose_name_plural = 'Cube GPIOs'
+
+	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE)
 
 	tag_id = models.CharField(max_length=32)
 	taken_at = models.DateTimeField(blank=True, null=True)
@@ -324,6 +318,9 @@ class DoorGPIO(GPIO):
 	class Meta:
 		verbose_name = 'Door GPIO'
 		verbose_name_plural = 'Door GPIOs'
+
+	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE, blank=True, null=True)
+	room = models.ForeignKey('escapegame.EscapeGameRoom', on_delete=models.CASCADE, blank=True, null=True)
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
