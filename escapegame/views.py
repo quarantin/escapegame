@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from controllers.models import DoorGPIO, RaspberryPi
+from controllers.models import ChallengeGPIO, DoorGPIO, RaspberryPi
 from multimedia.models import Image, Video
 
 from . import libraspi
@@ -127,9 +127,15 @@ def escapegame_status(request, game_slug):
 
 			room['challenges'] = []
 			room['door'] = DoorGPIO.objects.filter(pk=room['door_id']).values().get()
+
 			challs = EscapeGameChallenge.objects.filter(room=room['id']).values()
 			for chall in challs:
+
+				gpio = ChallengeGPIO.objects.filter(pk=chall['gpio_id']).values().get()
+				chall['solved'] = gpio['solved']
+
 				__populate_images(chall, 'challenge_solved_image')
+
 				room['challenges'].append(chall)
 
 			__populate_images(room, 'door_image')
@@ -166,6 +172,8 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
 		status, message = chall.set_solved(request, game_slug, room_slug, action)
+		if status != 0:
+			raise Exception('call to chall.set_solved() failed with error `%s`' % message)
 
 		return JsonResponse({
 			'status': status,
