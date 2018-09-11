@@ -33,18 +33,27 @@ if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 fi
 
 PIP_PACKAGES=(
-	channels
-	django
-	django-background-tasks
-	django-constance[database]
-	django-cors-headers
-	django-extensions
-	django-redis-sessions
-	django-rest-framework
+	asn1crypto==0.24.0
+	cffi==1.11.5
+	channels==2.1.3
+	cryptography==2.3.1
+	django==2.0.7
+	django-background-tasks==1.1.13
+	django-constance[database]==2.2.0
+	django-cors-headers==2.4.0
+	django-extensions==2.1.0
+	django-redis-sessions==0.6.1
+	django-rest-framework==0.1.0
 	django-websocket-redis==0.5.2
-	mysqlclient
-	omxplayer-wrapper
-	service_identity
+	gevent==1.3.6
+	greenlet==0.4.14
+	mysqlclient==1.3.13
+	omxplayer-wrapper==0.2.5
+	pyasn1==0.4.4
+	pyOpenSSL==18.0.0
+	redis==2.10.6
+	service_identity==17.0.0
+	six==1.10.0
 )
 
 DJANGO='django'
