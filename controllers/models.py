@@ -407,6 +407,7 @@ class DoorGPIO(GPIO):
 		# If we're the controller, proceed to lock/unlock sequence
 		if controller is not None and controller.is_myself():
 
+			print("\n#\nI am the controller, lets proceed")
 			status, message = (locked and self.lock() or self.unlock())
 
 		# Otherwise forward the request to the controller
@@ -415,6 +416,7 @@ class DoorGPIO(GPIO):
 
 			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
 
+			print("\n#\nI am *NOT* the controller, lets forward to %s" % url)
 			status, message = libraspi.do_get(url)
 
 		return status, message
