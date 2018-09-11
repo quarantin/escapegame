@@ -8,7 +8,7 @@ from background_task.models import Task
 from multimedia.models import Video
 
 from omxplayer import keys
-from omxplayer.player import OMXPlayer
+from omxplayer.player import OMXPlayer, OMXPlayerDeadError
 from omxplayer.bus_finder import BusFinder
 
 import os
@@ -35,6 +35,8 @@ def video_player_task(vid):
 	if os.path.exists(FIFO_PATH):
 		os.remove(FIFO_PATH)
 
+	player = None
+
 	old_url = None
 
 	while True:
@@ -46,46 +48,67 @@ def video_player_task(vid):
 				logger.flush()
 				os.mkfifo(FIFO_PATH)
 
-				print('[ %s ] Starting video player task: %s' % (method, video_url))
-				logger.write('Starting video player task: %s\n' % video_url)
-				logger.flush()
-				player = OMXPlayer(video_url, pause=True, dbus_name=dbus_name, args=[ '--no-osd', '--no-keys' ])
-
 			fifo = open(FIFO_PATH, 'r')
 
 			command = fifo.read().strip()
 
 			fifo.close()
 
+			if player is None:
+				print('[ %s ] Starting video player task: %s' % (method, video_url))
+				logger.write('Starting video player task: %s\n' % video_url)
+				logger.flush()
+				player = OMXPlayer(video_url, pause=False, dbus_name=dbus_name, args=[ '--no-osd', '--no-keys' ])
+
 			if command == 'pause':
 				logger.write('Running pause command\n')
 				logger.flush()
-				player.play_pause()
+				try:
+					player.play_pause()
+				except:
+					player = None
+					continue
 
 			elif command == 'stop':
 				logger.write('Running stop command\n')
 				logger.flush()
-				player.stop()
+				try:
+					if player.playback_status() != 'Stopped':
+						player.stop()
+				except:
+					player = None
+					continue
 
 			elif command in [ 'exit', 'quit', ]:
 				logger.write('Running exit command\n')
 				logger.flush()
-				player.stop()
-				break
+				try:
+					if player.playback_status() != 'Stopped':
+						player.stop()
+				finally:
+					player = None
+					break
 
 			elif command.startswith('http'):
 				logger.write('Running load URL command: %s\n' % command)
 				logger.flush()
-				if old_url is not None and old_url == command and player.playback_status() == 'Paused':
-					player.play_pause()
-				else:
-					player.load(command)
-
-				old_url = command
-
+				try:
+					if old_url is not None and old_url == command and player.playback_status() == 'Paused':
+						player.play_pause()
+					else:
+						player.load(command)
+				except:
+					player = None
+					old_url = command
 			else:
 				logger.write('Ignoring unknown command: `%s`\n' % command)
 
+			continue
+
+		except OMXPlayerDeadError as err:
+			print('[%s] OMXPlayer is dead, restarting new instance' % method)
+			print('Stack Trace:\n%s\n%s\n' % (err, traceback.format_exc()))
+			#player = OMXPlayer(video_url, pause=False, dbus_name=dbus_name, args=[ '--no-osd', '--no-keys' ])
 			continue
 
 		except Exception as err:
@@ -100,7 +123,10 @@ def video_player_task(vid):
 			print('[%s] Error: %s' % (method, traceback.format_exc()))
 
 		try:
+			print("Cleaning FIFO after unexpected event...")
+
 			# If we arrive here, something went wrong, so let's try to cleanup the fifo
+			player = None
 			if os.path.exists(FIFO_PATH):
 				os.remove(FIFO_PATH)
 
