@@ -41,7 +41,7 @@ class Command(BaseCommand):
 	def get_start_time(self, sas_rooms):
 
 		for room in sas_rooms:
-			if not room.door.unlocked_at:
+			if room.door.unlocked_at is None:
 				return None
 
 		return max(sas_rooms, key=lambda x: x.door.unlocked_at)
