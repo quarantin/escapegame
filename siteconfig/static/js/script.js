@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+	var timeout = 3000;
+
 	/*
 	 * Retrieve language country code from URL.
 	 */
@@ -47,16 +49,17 @@ $(document).ready(function() {
 	 */
 
 	// Handler for the button to start the video
-	$('#selected-video').on('change', function(){
-		$('#selected-video').val(this.value);
-	});
-
 	$('button#video-play').click(function() {
 		$('button#video-play').toggleClass('d-none');
 		$('button#video-pause').toggleClass('d-none');
 
 		$.ajax({
-			url: get_video_url('pause'),
+			url: get_video_url('play'),
+			timeout: timeout,
+			error: function() {
+				selected_raspi = $('#selected-raspberry-pi').val();
+				alert('Could not connect to host: ' + selected_raspi);
+			}
 		});
 	});
 
@@ -68,14 +71,28 @@ $(document).ready(function() {
 
 		$.ajax({
 			url: get_video_url('pause'),
+			timeout: timeout,
+			error: function() {
+				selected_raspi = $('#selected-raspberry-pi').val();
+				alert('Could not connect to host: ' + selected_raspi);
+			}
+
 		});
 	});
 
 	// Handler for the button to stop the video
 	$('button#video-stop').click(function() {
 
+		$('button#video-play').removeClass('d-none');
+		$('button#video-pause').addClass('d-none');
+
 		$.ajax({
 			url: get_video_url('stop'),
+			timeout: timeout,
+			error: function() {
+				selected_raspi = $('#selected-raspberry-pi').val();
+				alert('Could not connect to host: ' + selected_raspi);
+			}
 		});
 	});
 
@@ -173,12 +190,22 @@ $(document).ready(function() {
 				ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
 			}
 
-			for (var index in game.rooms) {
+			var index;
+
+			for (index in game.rooms) {
 				var room = game.rooms[index];
-				if (room.door_image && room.door.locked == false) {
+				if (room.door_image && !room.door.locked) {
 					drawImage(ctx, room.door_image);
 				}
 			}
+
+			for (index in game.doors) {
+				var door = game.doors[index];
+				if (door.image && !door.locked) {
+					drawImage(ctx, door.image);
+				}
+			}
+
 		};
 	};
 
