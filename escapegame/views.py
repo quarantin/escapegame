@@ -112,7 +112,12 @@ def escapegame_status(request, game_slug):
 	try:
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
 		game['rooms'] = []
-		game['doors'] = [ door for door in DoorGPIO.objects.filter(game=game['id']).values() ]
+		game['doors'] = []
+
+		doors = DoorGPIO.objects.filter(game=game['id']).values()
+		for door in doors:
+			__populate_images(door, 'image')
+			game['doors'].append(door)
 
 		__populate_images(game, 'map_image')
 
