@@ -16,7 +16,7 @@ def basename(value):
 @stringfilter
 def path(path, n):
 	tokens = path.strip('/').split('/')
-	if len(tokens) < n:
+	if len(tokens) < n + 1:
 		return path
 
-	return '/'.join(tokens[:n])
+	return '/'.join(tokens[1:n + 1])
