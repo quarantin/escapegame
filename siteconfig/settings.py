@@ -52,6 +52,9 @@ IS_MASTER = (socket.gethostname() == MASTER.HOSTNAME)
 # Build full hostname by appending master hostname with master TLD
 MASTER_HOSTNAME = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
 
+# The TLD of the master
+MASTER_TLD = MASTER.TLD
+
 # My hostname
 HOSTNAME = '%s%s' % (socket.gethostname(), MASTER.TLD)
 
@@ -304,7 +307,7 @@ CONSTANCE_CONFIG = {
 	# Network Settings
 	'HOSTNAME':              ( HOSTNAME,           'The full domain name of this host.',                               'hostname'   ),
 	'MASTER_HOSTNAME':       ( MASTER_HOSTNAME,    'The full domain name of the host acting as master.',          'master_hostname' ),
-	'MASTER_TLD':            ( MASTER.TLD,         'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field' ),
+	'MASTER_TLD':            ( MASTER_TLD,         'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field' ),
 	'MASTER_PORT':           ( 80,                 'The TCP port of the Raspberry Pi acting as master.'                             ),
 
 	# Upload Settings
