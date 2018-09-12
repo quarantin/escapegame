@@ -9,7 +9,7 @@ import json
 class EscapegameConfig(AppConfig):
 	name = 'escapegame'
 	logger = logging.getLogger(name)
-	client = None
+	tasks = {}
 
 	def ready(self):
 
@@ -50,10 +50,9 @@ class EscapegameConfig(AppConfig):
 			host = gpio.controller.hostname
 			if host not in tasks:
 				tasks[host] = {}
-				tasks[host]['challenges'] = {}
+				tasks[host]['challenges'] = []
 
-			tasks[host]['challenges']['reset_pin'] = gpio.reset_pin
-			tasks[host]['challenges']['action_pin'] = gpio.action_pin
+			tasks[host]['challenges'].append(gpio.id)
 
 		for host in tasks:
 
@@ -64,7 +63,8 @@ class EscapegameConfig(AppConfig):
 
 			self.client.set(key, val)
 
-	def run_tasks(self):
+	def run_redis_tasks(self):
+		from .tasks import poll_challenge_gpio
 		from controllers.models import RaspberryPi
 
 		myself = RaspberryPi.get_myself()
@@ -72,10 +72,20 @@ class EscapegameConfig(AppConfig):
 		key = 'tasks:%s' % myself.hostname
 
 		jsonstring = self.client.get(key)
-		jsondata = json.loads(jsonstring)
 
-		print("I am %s and I will run the following tasks:")
-		print(json.dump(jsondata, indent=4))
+		jsondata = json.loads(jsonstring.decode('utf-8'))
+		gpios = jsondata['challenges']
+
+		for gpio_id in list(self.tasks):
+			if gpio_id not in gpios:
+				task = self.tasks[gpio_id]
+				task.revoke(terminate=True)
+				del self.tasks[gpio_id]
+
+		for gpio_id in gpios:
+			if gpio_id not in self.tasks:
+				self.tasks[gpio_id] = poll_challenge_gpio.delay(gpio_id)
+			print('I am %s and I\'m running the following task: poll_challenge_gpio(%d) [%s]' % (myself.hostname, gpio_id, self.tasks[gpio_id]))
 
 	def taskLogger(pin):
 		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapegameConfig.name, pin))

@@ -69,19 +69,22 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
 	'escapegame',
 	'controllers',
-	'multimedia',
 	'jsonexport',
-	'corsheaders',
-	'background_task',
+	'multimedia',
+
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.messages',
 	'django.contrib.sessions',
 	'django.contrib.staticfiles',
+
+	'background_task',
+	'celery',
 	'channels',
 	'constance',
 	'constance.backends.database',
+	'corsheaders',
 	'django_extensions',
 	'rest_framework.authtoken',
 	'ws4redis',
@@ -256,6 +259,11 @@ WS4REDIS_CONNECTION = {
 	'host': REDIS_HOST,
 	'port': REDIS_PORT,
 }
+
+
+# Celery broker URL
+
+CELERY_BROKER_URL = 'redis://%s:%s/' % (REDIS_HOST, REDIS_PORT)
 
 
 # Constance settings

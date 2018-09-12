@@ -1,86 +1,85 @@
 # -*- coding: utf-8 -*-
 
-from django.db import connection
-from django.core.management import call_command
+from siteconfig.celery import app
 
-from background_task import background
-from background_task.models import Task
+from controllers.models import ChallengeGPIO, CubeGPIO
 
-from controllers.models import RaspberryPi
-
-from .models import EscapeGame, EscapeGameChallenge
-
-from . import libraspi
+from escapegame import libraspi
 
 import time
 import traceback
 
 
-@background(schedule=0)
-def cube_control(action, pin):
-	call_command('clear-completed-tasks')
-	return libraspi.cube_control(action, pin)
+@app.task
+def cube_control(cube_id, action, delay=0):
 
-@background(schedule=0)
-def poll_gpio(challenge_id):
+	cube = CubeGPIO.objects.get(pk=cube_id)
 
-	method = 'api.tasks.poll_gpio'
+	try:
+		signal = (action == 'raise')
+		action = (signal and 'Raising' or 'Lowering')
 
-	chall = EscapeGameChallenge.objects.get(pk=challenge_id)
+		print('%s cube %s in %s seconds...' % (action, cube.slug))
 
-	print('[%s] Polling for GPIO pin %d' % (method, chall.gpio.pin))
+		time.sleep(delay)
+
+		print('%s cube %s now.' % (action, cube.slug))
+
+		status, message = libraspi.set_pin(cube.lower_pin, signal)
+		if status != 0:
+			raise Exception('libraspi.set_pin(%d, %s) failed' % cube.raise_pin, signal)
+
+	except:
+		print('Error: %s' % traceback.format_exc())
+
+@app.task
+def poll_challenge_gpio(gpio_id):
+
+	gpio = ChallengeGPIO.objects.get(pk=gpio_id)
+
+	method = 'task.poll.gpio.%d.%s' % (gpio.action_pin, gpio.slug)
+
+	print('[%s] Polling for GPIO %d' % (method, gpio.action_pin))
 
 	while True:
 
 		try:
-			status, message = libraspi.wait_for_pin_state_change(chall.gpio.pin)
-			if message != 'Success':
-				raise Exception('libraspi.wait_for_pin_state_change() failed')
-
-			status, message, signal = libraspi.get_pin(chall.gpio.pin)
+			# First check current status of the GPIO so our database is consistant
+			status, message, signal = libraspi.get_pin(gpio.action_pin)
 			if status != 0:
 				raise Exception('libraspi.get_pin() failed')
 
-			chall.solved = signal
-			chall.save()
+			# If this is not the state of the GPIO in database, then update it
+			if signal != gpio.solved:
+				gpio.solved = signal
+				gpio.save()
 
-		except Exception as err:
+			# Wait for a change on the GPIO
+			status, message = libraspi.wait_for_pin_state_change(gpio.action_pin)
+			if message != 'Success':
+				raise Exception('libraspi.wait_for_pin_state_change() failed')
+
+			# We just got a change on the GPIO, retrieve the value and update database
+			status, message, signal = libraspi.get_pin(gpio.action_pin)
+			if status != 0:
+				raise Exception('libraspi.get_pin() failed')
+
+			# If this is not the state of the GPIO in database, then update it
+			if signal != gpio.solved:
+				gpio.solved = signal
+				gpio.save()
+
+			continue
+
+		except:
 			print('[%s] Error: %s' % traceback.format_exc())
 
+		# If we arrive here something went wrong, so let's just sleep a bit
+		# before next iteration to avoid CPU overhead.
 		try:
 			# time.sleep() can raise some exceptions on some architectures,
 			# so we call it from inside a try/except block just in case.
 			time.sleep(1)
 
-		except Exception as err:
+		except:
 			print('[%s] Error: %s' % traceback.format_exc())
-
-def setup_background_tasks():
-
-	try:
-		controller = RaspberryPi.get_myself()
-
-		games = EscapeGame.objects.all()
-		for game in games:
-			challs = game.get_challenges(controller=controller)
-			for chall in challs:
-
-				task_name = 'escapegame.tasks.poll_gpio'
-				verbose_name = '%s.%s.%s.%s' % (task_name, game.slug, chall.room.slug, chall.slug)
-
-				try:
-					# If the task does not exist, this block will raise an exception.
-					# Otherwise the background task is already installed, and we're good.
-					task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
-					continue
-
-				except Task.DoesNotExist:
-
-					# Instanciate the background task because we could not find it in database.
-					poll_gpio(chall.id, task_name=task_name, verbose_name=verbose_name)
-
-				except Exception as err:
-					print('Error: %s' % traceback.format_exc())
-
-	except Exception as err:
-		print("Adding background tasks failed! (Error: %s)" % traceback.format_exc())
