@@ -39,8 +39,6 @@ def poll_challenge_gpio(gpio_id):
 
 	method = 'task.poll.gpio.%d.%s' % (gpio.action_pin, gpio.slug)
 
-	print('[%s] Polling for GPIO %d' % (method, gpio.action_pin))
-
 	while True:
 
 		try:
@@ -54,20 +52,12 @@ def poll_challenge_gpio(gpio_id):
 				gpio.solved = signal
 				gpio.save()
 
+			print('[%s] Polling for GPIO %d (current state: %s)' % (method, gpio.action_pin, (signal and 'HIGH' or 'LOW')))
+
 			# Wait for a change on the GPIO
 			status, message = libraspi.wait_for_pin_state_change(gpio.action_pin)
 			if message != 'Success':
 				raise Exception('libraspi.wait_for_pin_state_change() failed')
-
-			# We just got a change on the GPIO, retrieve the value and update database
-			status, message, signal = libraspi.get_pin(gpio.action_pin)
-			if status != 0:
-				raise Exception('libraspi.get_pin() failed')
-
-			# If this is not the state of the GPIO in database, then update it
-			if signal != gpio.solved:
-				gpio.solved = signal
-				gpio.save()
 
 			continue
 
