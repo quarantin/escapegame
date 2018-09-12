@@ -14,7 +14,7 @@
 		<div class="col head_block">
 
 			<!-- Escape game controls -->
-			<label class="head_block head_border">{% trans "Escape game controls" %} &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+			<label class="head_block head_border">{% trans "Escape game controls" %}</label>
 			<div class="row head_block">
 				<div class="col">
 
@@ -29,7 +29,7 @@
 			</div>
 
 			<!-- Video controls -->
-			<label class="head_block head_border">{% trans "Video controls" %} &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+			<label class="head_block head_border">{% trans "Video controls" %}</label>
 			<div class="row head_block">
 
 				<!-- Video lists-->
@@ -86,7 +86,7 @@
 			</div>
 
 			<!-- Doors controls -->
-			<label class="head_block head_border">{% trans "Door controls" %} &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+			<label class="head_block head_border">{% trans "Door controls" %}</label>
 			<div class="row head_block">
 				<div class="col">
 
@@ -210,7 +210,7 @@
 {% endfor %}{% endif %}
 		<!-- Map -->
 		<div class="col head_block">
-			<label class="head_block head_border">{% trans "Map" %} &laquo;&nbsp;{{ game.name }}&nbsp;&raquo;</label>
+			<label class="head_block head_border">{% trans "Map" %}</label>
 			<div class="col head_block">
 				{% if not game.map_image %}<span>{% trans "No map data available." %}</span>{% else %}<canvas id="map" class="col head_block" width="1648" height="904"></canvas>{% endif %}
 			</div>
