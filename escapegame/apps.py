@@ -7,6 +7,7 @@ from celery.task.control import inspect, revoke
 from ast import literal_eval
 
 import logging
+import socket
 import redis
 import json
 
@@ -68,16 +69,15 @@ class EscapegameConfig(AppConfig):
 			client.set(key, val)
 
 	def get_running_tasks(self):
-		from siteconfig.settings import MASTER_HOSTNAME, MASTER_TLD
 
 		running_tasks = {}
 
-		my_celery_id = 'celery@%s' % MASTER_HOSTNAME.replace(MASTER_TLD, '')
 		celery_tasks = inspect().active()
 		if not celery_tasks:
-			print('\n###\nNo task already running!')
+			print('\n###\nNo task already running on any host!')
 			return running_tasks
 
+		my_celery_id = 'celery@%s' % socket.gethostname()
 		if my_celery_id in celery_tasks:
 
 			my_tasks = celery_tasks[my_celery_id]
@@ -88,6 +88,9 @@ class EscapegameConfig(AppConfig):
 
 				print('\n###\nFound already running task for GPIO ID %d: %s' % (gpio_id, task_id))
 				running_tasks[gpio_id] = task_id
+
+			if not my_tasks:
+				print('\n###\nNo running tasks found for me!')
 
 		return running_tasks
 
