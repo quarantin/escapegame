@@ -91,20 +91,22 @@ class EscapegameConfig(AppConfig):
 
 	def terminate_obsolete_tasks(self, running_tasks, published_tasks):
 
-		real_running_tasks = running_tasks
-		running_tasks = list(running_tasks)
-		for gpio_id in running_tasks:
+		tasks_to_kill = []
 
+		if not running_tasks:
+			print('\n###\nNo obsolete task to terminate!')
+
+		for gpio_id in running_tasks:
 			if gpio_id not in published_tasks['challenges']:
+				tasks_to_kill.append(gpio_id)
+
+		for gpio_id in tasks_to_kill:
 
 				task_id = running_tasks[gpio_id]
 				revoke(task_id, terminate=True)
 
 				print('\n###\nFound obsolete running task for GPIO ID %d: %s, killing it' % (gpio_id, task_id))
-				del real_running_tasks[gpio_id]
-
-		if not running_tasks:
-			print('\n###\nNo obsolete task to terminate!')
+				del running_tasks[gpio_id]
 
 	def start_non_running_tasks(self, running_tasks, published_tasks):
 		from .tasks import poll_challenge_gpio
