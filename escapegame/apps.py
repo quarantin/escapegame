@@ -56,7 +56,7 @@ class EscapegameConfig(AppConfig):
 
 			print("Updating redis tasks (%s, %s)..." % (key, val))
 
-			client.set(key, val))
+			client.set(key, val)
 
 	def taskLogger(pin):
 		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapegameConfig.name, pin))
