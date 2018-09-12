@@ -2,24 +2,32 @@
 
 from django.apps import AppConfig
 
+from celery.task.control import inspect, revoke
+
+from ast import literal_eval
+
 import logging
 import redis
 import json
+
 
 class EscapegameConfig(AppConfig):
 	name = 'escapegame'
 	logger = logging.getLogger(name)
 	tasks = {}
 
+	def redis_client(self):
+
+		# Redis is using a connection pool, so no
+		# need to worry about closing connections.
+		from siteconfig.settings import REDIS_HOST, REDIS_PORT
+		return redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+
 	def ready(self):
 
 		# Register signals
 		from .signals import save
 		from .signals import constance
-
-		# Connect to Redis server
-		from siteconfig.settings import REDIS_HOST, REDIS_PORT
-		self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
 		# Register video player task
 		# (Only if the table exists to avoid errors when populating database)
@@ -29,17 +37,11 @@ class EscapegameConfig(AppConfig):
 		if 'multimedia_video' in db_tables:
 			tasks.setup_background_tasks()
 
-		# Update Redis tasks
-		# (only the master should do it)
-		from siteconfig.settings import IS_MASTER
-		if IS_MASTER:
-			self.update_redis_tasks()
-
 		# Run Redis tasks
 		# (all hosts should do it including the master)
 		self.run_redis_tasks()
 
-	def update_redis_tasks(self):
+	def publish_redis_tasks(self):
 		from controllers.models import ChallengeGPIO
 
 		tasks = {}
@@ -54,38 +56,103 @@ class EscapegameConfig(AppConfig):
 
 			tasks[host]['challenges'].append(gpio.id)
 
+		client = self.redis_client()
+
 		for host in tasks:
 
 			key = 'tasks:%s' % host
 			val = json.dumps(tasks[host])
 
-			print("Updating redis tasks (%s, %s)..." % (key, val))
+			print("\n###\nPublising redis tasks (%s, %s)..." % (key, val))
 
-			self.client.set(key, val)
+			client.set(key, val)
 
-	def run_redis_tasks(self):
+	def get_running_tasks(self):
+		from siteconfig.settings import MASTER_HOSTNAME, MASTER_TLD
+
+		running_tasks = {}
+
+		my_celery_id = 'celery@%s' % MASTER_HOSTNAME.replace(MASTER_TLD, '')
+		celery_tasks = inspect().active()
+		if not celery_tasks:
+			print('\n###\nNo task already running!')
+			return running_tasks
+
+		my_tasks = celery_tasks[my_celery_id]
+		for task in my_tasks:
+
+			gpio_id = literal_eval(task['args'])[0]
+			task_id = task['id']
+
+			print('\n###\nFound already running task for GPIO ID %d: %s' % (gpio_id, task_id))
+			running_tasks[gpio_id] = task_id
+
+		return running_tasks
+
+	def terminate_obsolete_tasks(self, running_tasks, published_tasks):
+
+		real_running_tasks = running_tasks
+		running_tasks = list(running_tasks)
+		for gpio_id in running_tasks:
+
+			if gpio_id not in published_tasks['challenges']:
+
+				task_id = running_tasks[gpio_id]
+				revoke(task_id, terminate=True)
+
+				print('\n###\nFound obsolete running task for GPIO ID %d: %s, killing it' % (gpio_id, task_id))
+				del real_running_tasks[gpio_id]
+
+		if not running_tasks:
+			print('\n###\nNo obsolete task to terminate!')
+
+	def start_non_running_tasks(self, running_tasks, published_tasks):
 		from .tasks import poll_challenge_gpio
+
+		for gpio_id in published_tasks['challenges']:
+
+			if gpio_id not in running_tasks:
+				task = poll_challenge_gpio.delay(gpio_id)
+				running_tasks[gpio_id] = task.id
+
+			print('\n###\nI\'m running the following task: poll_challenge_gpio(%d) [%s]' % (gpio_id, running_tasks[gpio_id]))
+
+		if not published_tasks['challenges']:
+			print('\n###\nNo non-running tasks found!')
+
+	def get_published_tasks(self):
 		from controllers.models import RaspberryPi
 
 		myself = RaspberryPi.get_myself()
 
 		key = 'tasks:%s' % myself.hostname
+		empty_task_list = b'{ "challenges": [] }'
 
-		jsonstring = self.client.get(key)
+		client = self.redis_client()
 
-		jsondata = json.loads(jsonstring.decode('utf-8'))
-		gpios = jsondata['challenges']
+		jsonstring = client.get(key)
+		if not jsonstring:
+			jsonstring = empty_task_list
 
-		for gpio_id in list(self.tasks):
-			if gpio_id not in gpios:
-				task = self.tasks[gpio_id]
-				task.revoke(terminate=True)
-				del self.tasks[gpio_id]
+		return json.loads(jsonstring.decode('utf-8'))
 
-		for gpio_id in gpios:
-			if gpio_id not in self.tasks:
-				self.tasks[gpio_id] = poll_challenge_gpio.delay(gpio_id)
-			print('I am %s and I\'m running the following task: poll_challenge_gpio(%d) [%s]' % (myself.hostname, gpio_id, self.tasks[gpio_id]))
+	def run_redis_tasks(self):
 
-	def taskLogger(pin):
-		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapegameConfig.name, pin))
+		# Publish all Redis tasks
+		# (only the master should do it)
+		from siteconfig.settings import IS_MASTER
+		if IS_MASTER:
+			self.publish_redis_tasks()
+
+		# Get the list of already running tasks from celery
+		running_tasks = self.get_running_tasks()
+
+		# Retrive the list of tasks published in Redis
+		published_tasks = self.get_published_tasks()
+
+		# Terminate the tasks that are now obsolete. A task could become obsolete for example
+		# if a change in the configuration of the GPIO occurs (let's say the PIN number).
+		self.terminate_obsolete_tasks(running_tasks, published_tasks)
+
+		# Start the tasks that are not already running
+		self.start_non_running_tasks(running_tasks, published_tasks)
