@@ -72,7 +72,7 @@ def poll_challenge_gpio(gpio_id):
 			continue
 
 		except:
-			print('[%s] Error: %s' % traceback.format_exc())
+			print('[%s] Error: %s' % (method, traceback.format_exc()))
 
 		# If we arrive here something went wrong, so let's just sleep a bit
 		# before next iteration to avoid CPU overhead.
@@ -82,4 +82,4 @@ def poll_challenge_gpio(gpio_id):
 			time.sleep(1)
 
 		except:
-			print('[%s] Error: %s' % traceback.format_exc())
+			print('[%s] Error: %s' % (method, traceback.format_exc()))
