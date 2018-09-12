@@ -4,37 +4,38 @@ from django.db import connection
 from django.apps import AppConfig
 
 import logging
-
+import redis
+import json
 
 class EscapegameConfig(AppConfig):
 	name = 'escapegame'
 	logger = logging.getLogger(name)
+	client = None
 
 	def ready(self):
-		from siteconfig.settings import IS_MASTER
-		from multimedia import tasks as ext_tasks
-		from . import tasks as int_tasks
+
+		# Register signals
 		from .signals import save
 		from .signals import constance
 
+		# Connect to Redis server
+		from siteconfig.settings import REDIS_HOST, REDIS_PORT
+		self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+
+		# Update Redis tasks
+		# (only the master should do it)
+		from siteconfig.settings import IS_MASTER
 		if IS_MASTER:
-			self.updateRedisTasks()
+			self.update_redis_tasks()
 
-		db_tables = connection.introspection.table_names()
+		# Run Redis tasks
+		# (all hosts should do it including the master)
+		self.run_redis_tasks()
 
-		if 'escapegame_escapegame' in db_tables:
-		   int_tasks.setup_background_tasks()
+	def redis_connection(self):
 
-		if 'multimedia_video' in db_tables:
-			ext_tasks.setup_background_tasks()
-
-	def updateRedisTasks(self):
-		from siteconfig.settings import REDIS_HOST
+	def update_redis_tasks(self):
 		from controllers.models import ChallengeGPIO
-		import redis
-		import json
-
-		client = redis.Redis(host=REDIS_HOST)
 
 		tasks = {}
 
@@ -56,7 +57,20 @@ class EscapegameConfig(AppConfig):
 
 			print("Updating redis tasks (%s, %s)..." % (key, val))
 
-			client.set(key, val)
+			self.client.set(key, val)
+
+	def run_tasks(self):
+		from controllers.models import RaspberryPi
+
+		myself = RaspberryPi.get_myself()
+
+		key = 'tasks:%s' % myself.hostname
+
+		jsonstring = self.client.get(key)
+		jsondata = json.loads(jsonstring)
+
+		print("I am %s and I will run the following tasks:")
+		print(json.dump(jsondata, indent=4))
 
 	def taskLogger(pin):
 		return logging.getLogger('%s.tasks.poll.gpio.%d' % (EscapegameConfig.name, pin))
