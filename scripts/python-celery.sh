@@ -11,7 +11,7 @@ STATE_FILE=/var/run/celery/worker.state
 cd ${ROOTDIR}
 
 while true; do
-	sudo celery worker -A siteconfig --uid ${UID} --gid ${GID} --logfile ${LOG_FILE} --statedb ${STATE_FILE}
+	sudo celery -A siteconfig --uid ${UID} --gid ${GID} --logfile ${LOG_FILE} --statedb ${STATE_FILE} worker
 	echo "celery died! Restarting celery in ${SLEEP} second(s)"
 	sleep ${SLEEP}
 done
