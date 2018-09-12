@@ -318,7 +318,7 @@ $(document).ready(function() {
 		};
 	}
 
-	//refresh_page();
+	refresh_page();
 
 	create_websocket();
 });
