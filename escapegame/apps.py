@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.db import connection
 from django.apps import AppConfig
 
 import logging
@@ -22,6 +21,14 @@ class EscapegameConfig(AppConfig):
 		from siteconfig.settings import REDIS_HOST, REDIS_PORT
 		self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
+		# Register video player task
+		# (Only if the table exists to avoid errors when populating database)
+		from multimedia import tasks
+		from django.db import connection
+		db_tables = connection.introspection.table_names()
+		if 'multimedia_video' in db_tables:
+			tasks.setup_background_tasks()
+
 		# Update Redis tasks
 		# (only the master should do it)
 		from siteconfig.settings import IS_MASTER
@@ -31,8 +38,6 @@ class EscapegameConfig(AppConfig):
 		# Run Redis tasks
 		# (all hosts should do it including the master)
 		self.run_redis_tasks()
-
-	def redis_connection(self):
 
 	def update_redis_tasks(self):
 		from controllers.models import ChallengeGPIO
