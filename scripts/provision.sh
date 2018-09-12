@@ -134,6 +134,7 @@ sudo chown ${USER}:${USER} ${CELERY_LOG}
 # Prepare /var/run folder for celery
 CELERY_RUN=/var/run/celery
 sudo mkdir -p -m 755 ${CELERY_RUN}
+sudo chown ${USER}:${USER} ${CELERY_RUN}
 
 # Hide GNU screen startup message
 sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
