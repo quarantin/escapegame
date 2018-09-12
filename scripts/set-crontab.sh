@@ -12,7 +12,7 @@ CRONTAB=$(mktemp)
 
 # Celery
 
-echo "@reboot sudo celery worker -A siteconfig --logfile /var/log/celery.log --statedb /var/run/celery/worker.state --uid 1000 --gid 1000 --workdir ${ROOTDIR}" >> ${CRONTAB}
+echo "@reboot ${ROOTDIR}/scripts/python-celery.sh" >> ${CRONTAB}
 
 
 # Django background tasks
