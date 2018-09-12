@@ -78,14 +78,16 @@ class EscapegameConfig(AppConfig):
 			print('\n###\nNo task already running!')
 			return running_tasks
 
-		my_tasks = celery_tasks[my_celery_id]
-		for task in my_tasks:
+		if my_celery_id in celery_tasks:
 
-			gpio_id = literal_eval(task['args'])[0]
-			task_id = task['id']
+			my_tasks = celery_tasks[my_celery_id]
+			for task in my_tasks:
 
-			print('\n###\nFound already running task for GPIO ID %d: %s' % (gpio_id, task_id))
-			running_tasks[gpio_id] = task_id
+				gpio_id = literal_eval(task['args'])[0]
+				task_id = task['id']
+
+				print('\n###\nFound already running task for GPIO ID %d: %s' % (gpio_id, task_id))
+				running_tasks[gpio_id] = task_id
 
 		return running_tasks
 
