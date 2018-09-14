@@ -3,5 +3,5 @@
 . $(dirname $0)/env.sh
 
 echo -n '[ * ] Restarting django services...'
-sudo killall -9 ${PYTHON}
+sudo kill -9 $(pidof ${PYTHON})
 echo ' OK'
