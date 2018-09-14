@@ -209,7 +209,7 @@ $(document).ready(function() {
 			}
 		}
 
-		alert(output);
+		console.log(output);
 	}
 
 	function drawImage(ctx, imageObj) {
@@ -253,6 +253,8 @@ $(document).ready(function() {
 
 	function refresh_page() {
 
+		console.log('refreshing page');
+
 		var game_slug = $('button#reset-escapegame').val();
 
 		$.ajax({
@@ -279,6 +281,8 @@ $(document).ready(function() {
 		var port;
 		var protocol;
 
+		console.log('creating websocket');
+
 		if (location.protocol == 'http:') {
 			port = (location.port == 80 ? '' : ':' + location.port);
 			protocol = 'ws:';
@@ -296,12 +300,37 @@ $(document).ready(function() {
 
 		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify-' + game_slug + '?subscribe-broadcast');
 
+		var heartbeat_msg = '--heartbeat--', heartbeat_interval = null, missed_heartbeats = 0;
+
 		ws.onopen = function() {
 			console.log('websocket connected');
+
+			if (heartbeat_interval === null) {
+				missed_heartbeats = 0;
+				heartbeat_interval = setInterval(function() {
+					try {
+						missed_heartbeats++;
+						if (missed_heartbeats >= 3)
+							throw new Error("Too many missed heartbeats.");
+						ws.send(heartbeat_msg);
+					}
+					catch(e) {
+						clearInterval(heartbeat_interval);
+						heartbeat_interval = null;
+						console.warn("Closing connection. Reason: " + e.message);
+						ws.close();
+					}
+				}, 5000);
+			}
 		};
 
 		ws.onmessage = function(e) {
 			console.log('websocket received data: ' + e.data);
+			if (e.data === heartbeat_msg) {
+				// reset the counter for missed heartbeats
+				missed_heartbeats = 0;
+				return;
+			}
 			if (e.data.startsWith('notify')) {
 				refresh_page();
 			}
@@ -318,7 +347,7 @@ $(document).ready(function() {
 		};
 	}
 
-	refresh_page();
-
 	create_websocket();
+
+	refresh_page();
 });
