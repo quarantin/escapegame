@@ -59,23 +59,34 @@ def do_get(url):
 
 	except Exception as err:
 		return 1, 'Error: %s' % err, None
-#
-# Notify the game websocket frontend with supplied message
-#
-def notify_frontend(game, message='notify'):
 
+#
+# Send a message to the frontend on the supplied channel
+#
+def send_message(channel, message):
 	from ws4redis.publisher import RedisPublisher
 	from ws4redis.redis_store import RedisMessage
 
-	if game.from_shell:
-		return
-
-	facility = 'notify-%s' % game.slug
-
+	facility = 'notify-%s' % channel
 	redis_publisher = RedisPublisher(facility=facility, broadcast=True)
 	redis_publisher.publish_message(RedisMessage(message))
 	print('notify_frontend("%s")' % message)
 
+#
+# Notify the game websocket frontend with supplied message.
+# Notify all game frontends if game is None
+#
+def notify_frontend(game=None, message='notify'):
+	from escapegame.models import EscapeGame
+
+	games = EscapeGame.objects.all()
+	for some_game in games:
+
+		if some_game.from_shell:
+			continue
+
+		if game is None or game == some_game:
+			send_message(some_game, message)
 
 def is_valid_pin(pin):
 	return pin not in invalid_pins
