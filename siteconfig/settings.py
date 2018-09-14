@@ -217,13 +217,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'siteconfig', 'static'),)
 
 
-# The following directive is required during development and ignored in production environments.
-# It overrides Django’s internal main loop and adds a URL dispatcher in front of the request handler.
-# https://django-websocket-redis.readthedocs.io/en/latest/installation.html#configuration
-
-WSGI_APPLICATION = 'ws4redis.django_runserver.application'
-
-
 # Websocket URLs
 # https://django-websocket-redis.readthedocs.io/en/latest/installation.html#configuration
 
@@ -256,12 +249,22 @@ CHANNEL_LAYER = {
 }
 
 
+# The following directive is required during development and ignored in production environments.
+# It overrides Django’s internal main loop and adds a URL dispatcher in front of the request handler.
+# https://django-websocket-redis.readthedocs.io/en/latest/installation.html#configuration
+
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+
+
 # WS4Redis
 
 WS4REDIS_CONNECTION = {
 	'host': REDIS_HOST,
 	'port': REDIS_PORT,
 }
+
+# Heart beat for websocket
+WS4REDIS_HEARTBEAT = '--heartbeat--'
 
 
 # Celery broker URL
