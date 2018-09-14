@@ -13,6 +13,7 @@ from escapegame import libraspi
 import os
 import time
 import socket
+import requests
 
 
 # Controllers classes
@@ -75,6 +76,7 @@ class Controller(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
+	online = models.BooleanField(default=False)
 
 	def __str__(self):
 		return 'Controller - %s' % self.name
@@ -92,6 +94,24 @@ class Controller(models.Model):
 			hostname = '%s%s' % (socket.gethostname(), config.MASTER_TLD)
 
 		return hostname == self.hostname
+
+	def is_online(self):
+
+		self.online = False
+
+		url = 'http://%s:%s/en/ping/' % (self.hostname, self.port)
+
+		try:
+			response = requests.get(url)
+			if response and response.content.decode('utf-8') == 'OK':
+				self.online = True
+
+		except:
+			pass
+
+		self.save()
+
+		return self.online
 
 class RaspberryPi(Controller):
 

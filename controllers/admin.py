@@ -76,6 +76,7 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 		'slug',
 		'hostname',
 		'port',
+		'online',
 	]
 	fieldsets = (
 		('Raspberry Pi', { 'fields': (
@@ -83,11 +84,12 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 			'slug',
 			'hostname',
 			'port',
+			'online',
 			)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
+		return self.readonly_fields + ( 'slug', 'online' )
 
 class GPIOAdmin(admin.ModelAdmin):
 	list_display = [
