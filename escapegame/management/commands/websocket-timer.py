@@ -5,7 +5,6 @@ from django.utils import timezone
 
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
-from ws4redis.exceptions import WebSocketError
 
 from escapegame.models import EscapeGame, EscapeGameRoom
 
@@ -44,7 +43,9 @@ class Command(BaseCommand):
 			if room.door.unlocked_at is None:
 				return None
 
-		return max(sas_rooms, key=lambda x: x.door.unlocked_at)
+		max_room = max(sas_rooms, key=lambda x: x.door.unlocked_at)
+
+		return max_room.door.unlocked_at
 
 	def handle(self, *args, **options):
 
@@ -82,8 +83,6 @@ class Command(BaseCommand):
 
 					else:
 						self.stdout.write('  No message to send [facility=notify-%s]' % game.slug)
-			except WebSocketError:
-				pass
 			except:
 				self.stdout.write(traceback.format_exc())
 
