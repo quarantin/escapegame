@@ -43,6 +43,19 @@ CREATE_MYSQL_ROOT_CONFIG(){
 	echo OK
 }
 
+KILL_MYSQL_TASKS(){
+
+	echo -n '[ * ] Killing MySQL tasks... '
+
+	KILL_COMMAND=$(sudo mysql -u root -e "show processlist" | tail -n +2 | grep -v 'show processlist'  | awk -F"\t" '{ print $1}' | sed -e 's/^/KILL /' -e 's/$/;/' | tr '\n' ' ')
+	if [ -z "${KILL_COMMAND}" ]; then
+		echo 'OK (No task found)'
+	else
+		sudo mysql -u root -e "${KILL_COMMAND}"
+		echo OK
+	fi
+}
+
 CREATE_MYSQL_DATABASE(){
 
 	echo -n "[ * ] Creating MySQL database \`${DBNAME}\`... "
@@ -94,6 +107,8 @@ MASTER(){
 
 	CREATE_MYSQL_ROOT_CONFIG
 
+	KILL_MYSQL_TASKS
+
 	CREATE_MYSQL_DATABASE
 
 	# Disable this line when reverse dns is enabled
@@ -109,6 +124,8 @@ MASTER(){
 
 	CREATE_DJANGO_USER
 
+	CREATE_MYSQL_CLIENT_CONFIG "${MASTER_HOSTNAME}"
+
 	# Populate database
 	echo "[ * ] Running ${PYTHON} manage.py populate-database..."
 	${PYTHON} manage.py populate-database
@@ -119,6 +136,7 @@ MASTER(){
 	#	CREATE_MYSQL_USER $RASPI
 	#done
 }
+
 
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 	MASTER
