@@ -17,6 +17,9 @@ import os, subprocess, traceback
 	Escape Game Operator Pages
 """
 
+def escapegame_ping(request):
+	return HttpResponse('OK')
+
 @login_required
 def escapegame_index(request):
 

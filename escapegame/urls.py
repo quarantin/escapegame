@@ -14,6 +14,9 @@ urlpatterns = [
 	# Escape game index view
 	path('', views.escapegame_index),
 
+	# Used to check host connectivity
+	path('ping/', views.escapegame_ping),
+
 	# Escape game detail view
 	path('<slug:game_slug>/', views.escapegame_detail),
 
