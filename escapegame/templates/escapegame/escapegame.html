@@ -44,11 +44,27 @@
 					</div>
 
 					<div class="row">
-						<select id="selected-raspberry-pi" class="head_block form-control mx-auto">{% for raspi in raspberry_pis %}
-							<option name="{{ raspi.name }}" value="http{% if request.is_secure %}s{% endif %}://{{ raspi.hostname }}:{{ raspi.port }}" {% if raspi == game.controller %} selected{% endif %}>
-								{% trans "Raspberry Pi" %} - {{ raspi.name }}
-							</option>{% endfor %}
-						</select>
+						<div id="selected-raspberry-pi" class="head_block dropdown mx-auto">
+
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								{% with raspi=raspberry_pis.0 %}
+								<span class="">
+									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
+									&nbsp;
+									<span class="col-3 float-right badge badge-{{ raspi.badge }}">{{ raspi.status }}</span>
+								</span>
+								{% endwith %}
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+{% for raspi in raspberry_pis %}
+								<a class="dropdown-item" href="">
+									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
+									&nbsp;
+									<span class="col-3 float-right badge badge-{{ raspi.badge }}">{{ raspi.status }}</span>
+								</a>
+{% endfor %}
+							</div>
+						</div>
 					</div>
 
 					<div class="row">
@@ -95,13 +111,13 @@
 					{% with door_name=door_prefix|add:door_suffix %}
 
 
-					<button class="lock-button{% if not door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}-{{ door.slug }}" value="{{ door.url_callback }}/unlock/" type="submit">
+					<button class="unlock-button{% if not door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}-{{ door.slug }}" value="{{ door.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ door_name }}">
 							<p>{% trans "Unlock" %} {{ door_name }}</p>
 						</div>
 					</button>
-					<button class="unlock-button{% if door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}-{{ door.slug }}" value="{{ door.url_callback }}/lock/" type="submit">
+					<button class="lock-button{% if door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}-{{ door.slug }}" value="{{ door.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ door_name }}">
 							<p>{% trans "Lock" %} {{ door_name }}</p>
@@ -176,10 +192,10 @@
 							<td width="80%">{{ chall.name }}</td>
 							<td width="20%">
 							<a class="challenge-reset{% if not chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/reset/" id="reset-{{ game.slug }}-{{ chall.slug }}">
-								<img src="/static/admin/img/icon-yes.svg"/>
+								<img src="{% static 'admin/img/icon-yes.svg' %}" />
 							</a>
 							<a class="challenge-validate{%if chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/validate/" id="validate-{{ game.slug}}-{{ chall.slug }}">
-								<img src="/static/admin/img/icon-no.svg"/>
+								<img src="{% static 'admin/img/icon-no.svg' %}"/>
 							</a>
 							</td>
 						</tr>
@@ -190,13 +206,13 @@
 				<div class="col col-lg-4">
 					{% with door_prefix=room.name|slice:"0:1"|lower door_suffix=room.name|slice:"1:" %}
 					{% with door_name=door_prefix|add:door_suffix %}
-					<button class="lock-button{% if not room.door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}-{{ room.slug }}" value="{{ room.url_callback }}/unlock/" type="submit">
+					<button class="unlock-button{% if not room.door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}-{{ room.slug }}" value="{{ room.url_callback }}/unlock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-cadenas-100.png' %}" title="{% trans "Unlock" %} {{ door_name }}">
 							<p>{% trans "Unlock" %} {{ door_name }}</p>
 						</div>
 					</button>
-					<button class="unlock-button{% if room.door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}-{{ room.slug }}" value="{{ room.url_callback }}/lock/" type="submit">
+					<button class="lock-button{% if room.door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}-{{ room.slug }}" value="{{ room.url_callback }}/lock/" type="submit">
 						<div class="image-with-caption">
 							<img src="{% static 'img/icons8-ouvrir-100.png' %}" title="{% trans "Lock" %} {{ door_name }}">
 							<p>{% trans "Lock" %} {{ door_name }}</p>
