@@ -37,18 +37,16 @@ for APP in "${APPS[@]}"; do
 done
 
 
+# Configure the crontab
 crontab ${CRONTAB}
-STATUS=$?
-rm -f "${CRONTAB}"
-if [ "${STATUS}" = "0" ]; then
-	crontab -l
-	echo "[ + ] Installed successfully celery"
-	echo "[ + ] Installed successfully process_tasks"
-	echo "[ + ] Installed successfully monitor-network"
-	echo "[ + ] Installed successfully websocket-timer"
-	for APP in "${APPS[@]}"; do
-		echo "[ + ] Installed successfully uwsgi for ${APP}"
-	done
+
+if [ "${?}"= "0" ]; then
+	echo '[ + ] Crontab installed successfully'
 else
-	echo "ERROR: failed to install crontab!"
+	echo 'ERROR: failed to install crontab!'
 fi
+
+
+# Delete temporary file
+
+rm -f "${CRONTAB}"
