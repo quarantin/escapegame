@@ -5,8 +5,6 @@ from django.db import connection
 from background_task import background
 from background_task.models import Task
 
-from multimedia.models import Video
-
 from omxplayer import keys
 from omxplayer.player import OMXPlayer, OMXPlayerDeadError
 from omxplayer.bus_finder import BusFinder
@@ -26,11 +24,9 @@ def video_player_task(vid):
 
 	dbus_name = 'org.mpris.MediaPlayer2.omxplayer'
 
-	video = Video.objects.all().first()
+	video_url = 'http://escapegame.local/media/uploads/videos/test.h264'
 
 	logger = open(LOG_PATH, 'w')
-
-	video_url = video.get_url()
 
 	if os.path.exists(FIFO_PATH):
 		os.remove(FIFO_PATH)
@@ -55,8 +51,8 @@ def video_player_task(vid):
 			fifo.close()
 
 			if player is None:
-				print('[ %s ] Starting video player task: %s' % (method, video_url))
-				logger.write('Starting video player task: %s\n' % video_url)
+				print('[ %s ] Starting video player task: %s' % (method, command))
+				logger.write('Starting video player task: %s\n' % command)
 				logger.flush()
 				player = OMXPlayer(video_url, pause=False, dbus_name=dbus_name, args=[ '--no-osd', '--no-keys' ])
 
@@ -90,16 +86,17 @@ def video_player_task(vid):
 					break
 
 			elif command.startswith('http'):
-				logger.write('Running load URL command: %s\n' % command)
+				video_url = command
+				logger.write('Running load URL: %s\n' % video_url)
 				logger.flush()
 				try:
-					if old_url is not None and old_url == command and player.playback_status() == 'Paused':
+					if old_url is not None and old_url == video_url and player.playback_status() == 'Paused':
 						player.play_pause()
 					else:
-						player.load(command)
+						player.load(video_url)
+						old_url = video_url
 				except:
 					player = None
-					old_url = command
 			else:
 				logger.write('Ignoring unknown command: `%s`\n' % command)
 
@@ -108,7 +105,6 @@ def video_player_task(vid):
 		except OMXPlayerDeadError as err:
 			print('[%s] OMXPlayer is dead, restarting new instance' % method)
 			print('Stack Trace:\n%s\n%s\n' % (err, traceback.format_exc()))
-			#player = OMXPlayer(video_url, pause=False, dbus_name=dbus_name, args=[ '--no-osd', '--no-keys' ])
 			continue
 
 		except Exception as err:
