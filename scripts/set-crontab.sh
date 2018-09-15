@@ -41,7 +41,8 @@ done
 crontab ${CRONTAB}
 
 if [ "${?}" = "0" ]; then
-	echo '[ + ] Crontab installed successfully'
+	echo '[ + ] Crontab installed successfully:'
+	crontab -l
 else
 	echo 'ERROR: failed to install crontab!'
 fi
