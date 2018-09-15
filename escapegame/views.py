@@ -53,10 +53,10 @@ def escapegame_detail(request, game_slug):
 
 	for raspi in raspberry_pis:
 
-		success = ('[ ONLINE ]', 'success')
-		failure = ('[ OFFLINE ]', 'danger')
+		success = ('[ ONLINE ]', 'success', 'danger')
+		failure = ('[ OFFLINE ]', 'danger', 'success')
 
-		raspi.status, raspi.badge = raspi.online and success or failure
+		raspi.status, raspi.badge, raspi.not_badge = raspi.online and success or failure
 
 	context = {
 		'game': game,
@@ -126,6 +126,13 @@ def escapegame_status(request, game_slug):
 		game['raspberrypis'] = [ x for x in RaspberryPi.objects.values() ]
 		game['rooms'] = []
 		game['doors'] = []
+
+		for raspi in game['raspberrypis']:
+
+			success = ('[ ONLINE ]', 'success', 'danger')
+			failure = ('[ OFFLINE ]', 'danger', 'success')
+
+			raspi['status'], raspi['badge'], raspi['not_badge'] = raspi['online'] and success or failure
 
 		doors = DoorGPIO.objects.filter(game=game['id']).values()
 		for door in doors:
