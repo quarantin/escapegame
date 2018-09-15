@@ -25,6 +25,11 @@ echo "@reboot ${ROOTDIR}/scripts/python-manage.sh process_tasks" >> ${CRONTAB}
 echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
 
 
+# Monitor the network to see which Raspberry Pis are alive
+
+echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network.py" >> ${CRONTAB}
+
+
 # UWSGI instances for django and websockets
 
 for APP in "${APPS[@]}"; do
@@ -39,6 +44,7 @@ if [ "${STATUS}" = "0" ]; then
 	crontab -l
 	echo "[ + ] Installed successfully celery"
 	echo "[ + ] Installed successfully process_tasks"
+	echo "[ + ] Installed successfully monitor-network"
 	echo "[ + ] Installed successfully websocket-timer"
 	for APP in "${APPS[@]}"; do
 		echo "[ + ] Installed successfully uwsgi for ${APP}"
