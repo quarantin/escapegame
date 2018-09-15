@@ -10,6 +10,13 @@ APPS=(
 CRONTAB=$(mktemp)
 
 
+# UWSGI instances for django and websockets
+
+for APP in "${APPS[@]}"; do
+	echo "@reboot sudo /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/uwsgi.ini:${APP}" >> ${CRONTAB}
+done
+
+
 # Celery
 
 echo "@reboot ${ROOTDIR}/scripts/python-celery.sh" >> ${CRONTAB}
@@ -20,27 +27,23 @@ echo "@reboot ${ROOTDIR}/scripts/python-celery.sh" >> ${CRONTAB}
 echo "@reboot ${ROOTDIR}/scripts/python-manage.sh process_tasks" >> ${CRONTAB}
 
 
-# Django websocket timer process
+if [ ${HOSTNAME} = ${MASTER_HOSTNAME} ]; then
 
-echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
+	# Django websocket timer process
 
-
-# Monitor the network to see which Raspberry Pis are alive
-
-echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network" >> ${CRONTAB}
+	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
 
 
-# UWSGI instances for django and websockets
+	# Monitor the network to see which Raspberry Pis are alive
 
-for APP in "${APPS[@]}"; do
-	echo "@reboot sudo /usr/bin/uwsgi --ini /etc/uwsgi/apps-enabled/uwsgi.ini:${APP}" >> ${CRONTAB}
-done
+	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network" >> ${CRONTAB}
+fi
 
 
 # Configure the crontab
 crontab ${CRONTAB}
 
-if [ "${?}" = "0" ]; then
+if [ "${?}" = '0' ]; then
 	echo '[ + ] Crontab installed successfully:'
 	crontab -l
 else
@@ -50,4 +53,4 @@ fi
 
 # Delete temporary file
 
-rm -f "${CRONTAB}"
+rm -f ${CRONTAB}
