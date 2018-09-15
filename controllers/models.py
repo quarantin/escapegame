@@ -423,11 +423,15 @@ class DoorGPIO(GPIO):
 		if controller is None and self.room is not None:
 			controller = self.room.game.controller
 
-		# If we're the controller, proceed to lock/unlock sequence
+		# If we're the controller, proceed to lock/unlock sequence and notify frontend
 		if controller is not None and controller.is_myself():
 
 			print("\n#\nI am the controller, lets proceed")
 			status, message = (locked and self.lock() or self.unlock())
+			if status != 0:
+				return status, message
+
+			status, message = libraspi.notify_frontend()
 
 		# Otherwise forward the request to the controller
 		else:
