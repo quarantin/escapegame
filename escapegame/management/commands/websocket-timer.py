@@ -3,10 +3,8 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
-
 from escapegame.models import EscapeGame, EscapeGameRoom
+from escapegame import libraspi
 
 import os
 import time
@@ -16,17 +14,9 @@ import traceback
 class Command(BaseCommand):
 	help = 'Websocket timer process to notify web frontend for all escape games'
 
-	def send_message(self, game, message):
-
-		facility = 'notify-%s' % game.slug
-		self.stdout.write('  Sending %s [facility=%s]' % (message, facility))
-
-		redis_publisher = RedisPublisher(facility=facility, broadcast=True)
-		redis_publisher.publish_message(RedisMessage(message))
-
 	def publish_reset(self, game):
 
-		self.send_message(game, '0:00:00')
+		libraspi.notify_frontend(game, '0:00:00')
 
 	def publish_counter(self, game, start_time, finish_time=None):
 
@@ -35,7 +25,7 @@ class Command(BaseCommand):
 
 		message = ('%s' % (finish_time - start_time)).split('.')[0]
 
-		self.send_message(game, message)
+		libraspi.notify_frontend(game, message)
 
 	def get_start_time(self, sas_rooms):
 
