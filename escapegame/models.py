@@ -60,7 +60,6 @@ class EscapeGame(models.Model):
 
 		self.clean()
 		super(EscapeGame, self).save(*args, **kwargs)
-		libraspi.notify_frontend(self)
 
 	def finish(self, request):
 		if not self.finish_time:
@@ -89,6 +88,12 @@ class EscapeGame(models.Model):
 		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
 			room.reset()
+
+		# Some rooms or challenges might eventually be shared between escape games, so instead
+		# of just notifying this game frontend, notify all game frontends just in case.
+
+		#libraspi.notify_frontend(self)
+		libraspi.notify_frontend()
 
 	def get_challenges(self, controller=None):
 
@@ -164,8 +169,6 @@ class EscapeGameRoom(models.Model):
 			self.door = door
 			super(EscapeGameRoom, self).save(*args, **kwargs)
 
-		libraspi.notify_frontend(self.game)
-
 	def all_challenge_validated(self):
 		try:
 			valid = True
@@ -198,16 +201,6 @@ class EscapeGameRoom(models.Model):
 		challs = EscapeGameChallenge.objects.filter(room=self)
 		for chall in challs:
 			chall.reset()
-
-	def lock(self):
-		status, message = self.door.lock()
-		libraspi.notify_frontend(self.game)
-		return status, message
-
-	def unlock(self):
-		status, message = self.door.unlock()
-		libraspi.notify_frontend(self.game)
-		return status, message
 
 	class Meta:
 		ordering = [ 'id', 'game', 'name' ]
@@ -247,8 +240,6 @@ class EscapeGameChallenge(models.Model):
 		if self.gpio_pin != self.gpio.action_pin:
 			self.gpio.action_pin = self.gpio_pin
 			self.gpio.save()
-
-		libraspi.notify_frontend(self.room.game)
 
 	def get_controller(self):
 		return self.room.get_controller()
