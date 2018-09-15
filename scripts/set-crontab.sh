@@ -40,7 +40,7 @@ done
 # Configure the crontab
 crontab ${CRONTAB}
 
-if [ "${?}"= "0" ]; then
+if [ "${?}" = "0" ]; then
 	echo '[ + ] Crontab installed successfully'
 else
 	echo 'ERROR: failed to install crontab!'
