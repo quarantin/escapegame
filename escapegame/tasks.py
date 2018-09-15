@@ -51,6 +51,7 @@ def poll_challenge_gpio(gpio_id):
 			if signal != gpio.solved:
 				gpio.solved = signal
 				gpio.save()
+				libraspi.notify_frontend()
 
 			print('[%s] Polling for GPIO %d (current state: %s)' % (method, gpio.action_pin, (signal and 'HIGH' or 'LOW')))
 
