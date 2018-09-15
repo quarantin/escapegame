@@ -7,17 +7,25 @@ from escapegame import libraspi
 
 import os
 import time
-#import signal
 import traceback
+
 
 class Command(BaseCommand):
 	help = 'Monitor which Raspberry Pis are online'
 
+	def reset_online_status(self):
+		raspis = RaspberryPi.objects.all()
+		for raspi in raspis:
+			raspi.online = False
+			raspi.save()
+
+		libraspi.notify_frontend()
+
 	def handle(self, *args, **options):
 
-		#signal.signal(signal.SIGINT, signal_handler)
-
 		self.stdout.write(self.style.MIGRATE_HEADING('Starting process to monitor Raspberry Pis'))
+
+		self.reset_online_status()
 
 		delay = os.getenv('WEBSOCKET_DELAY') or 10
 
