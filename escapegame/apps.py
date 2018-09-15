@@ -34,13 +34,14 @@ class EscapegameConfig(AppConfig):
 		# (Only if the table exists to avoid errors when populating database)
 		from multimedia import tasks
 		from django.db import connection
-		db_tables = connection.introspection.table_names()
-		if 'multimedia_video' in db_tables:
-			tasks.setup_background_tasks()
+		#db_tables = connection.introspection.table_names()
+		#if 'multimedia_video' in db_tables:
+		#	tasks.setup_background_tasks()
 
 		# Run Redis tasks
-		# (all hosts should do it including the master)
-		self.run_redis_tasks()
+		# (Only if the table exists to avoid errors when populating database)
+		#if 'controllers_challengegpio' in db_tables:
+		#	self.run_redis_tasks()
 
 	def publish_redis_tasks(self):
 		from controllers.models import ChallengeGPIO
@@ -121,8 +122,11 @@ class EscapegameConfig(AppConfig):
 			if gpio_id not in running_tasks:
 				task = poll_challenge_gpio.delay(gpio_id)
 				running_tasks[gpio_id] = task.id
+				print('\n###\nI just created the task for GPIO ID %d: %s' % (gpio_id, task.id))
+			else:
+				print('\n###\nI won\'t create  the task for GPIO ID %d because it already exists: %s' % (gpio_id, running_tasks[gpio_id]))
 
-			print('\n###\nI\'m running the following task: poll_challenge_gpio(%d) [%s]' % (gpio_id, running_tasks[gpio_id]))
+			print('I\'m running the following task: poll_challenge_gpio(%d) [%s]' % (gpio_id, running_tasks[gpio_id]))
 
 		if not published_tasks['challenges']:
 			print('\n###\nNo non-running tasks found!')
@@ -130,16 +134,18 @@ class EscapegameConfig(AppConfig):
 	def get_published_tasks(self):
 		from controllers.models import RaspberryPi
 
-		myself = RaspberryPi.get_myself()
-
-		key = 'tasks:%s' % myself.hostname
 		empty_task_list = b'{ "challenges": [] }'
 
-		client = self.redis_client()
+		jsonstring = empty_task_list
+		myself = RaspberryPi.get_myself()
+		if myself is not None:
 
-		jsonstring = client.get(key)
-		if not jsonstring:
-			jsonstring = empty_task_list
+			key = 'tasks:%s' % myself.hostname
+			client = self.redis_client()
+
+			jsonstring = client.get(key)
+			if not jsonstring:
+				jsonstring = empty_task_list
 
 		return json.loads(jsonstring.decode('utf-8'))
 
