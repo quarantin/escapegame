@@ -6,12 +6,12 @@ from django.contrib.auth.decorators import login_required
 
 from controllers.models import ChallengeGPIO, DoorGPIO, RaspberryPi
 from multimedia.models import Image, Video
-
-from . import libraspi
-from .tasks import cube_control
 from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 
-import os, subprocess, traceback
+import os
+import traceback
+import subprocess
+
 
 """
 	Escape Game Operator Pages
@@ -34,6 +34,7 @@ def escapegame_index(request):
 @login_required
 def escapegame_detail(request, game_slug):
 
+	lang = request.LANGUAGE_CODE
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(game=game)
 	raspberry_pis = RaspberryPi.objects.all()
@@ -41,14 +42,21 @@ def escapegame_detail(request, game_slug):
 	#videos = Video.objects.all()
 
 	for room in rooms:
-		room.url_callback = '/api/door/%s/%s' % (game.slug, room.slug)
+		room.url_callback = '/%s/api/door/%s/%s' % (lang, game.slug, room.slug)
 		room.challs = EscapeGameChallenge.objects.filter(room=room)
 		for chall in room.challs:
-			chall.url_callback = '/api/challenge/%s/%s/%s' % (game.slug, room.slug, chall.slug)
+			chall.url_callback = '/%s/api/challenge/%s/%s/%s' % (lang, game.slug, room.slug, chall.slug)
 
 	game.doors = DoorGPIO.objects.filter(game=game)
 	for door in game.doors:
-		door.url_callback = '/api/door/%s/%s' % (game.slug, door.slug)
+		door.url_callback = '/%s/api/door/%s/%s' % (lang, game.slug, door.slug)
+
+	for raspi in raspberry_pis:
+
+		success = ('[ ONLINE ]', 'success')
+		failure = ('[ OFFLINE ]', 'danger')
+
+		raspi.status, raspi.badge = raspi.online and success or failure
 
 	context = {
 		'game': game,
