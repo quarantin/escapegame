@@ -123,6 +123,7 @@ def escapegame_status(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
+		game['raspberrypis'] = [ x for x in RaspberryPi.objects.values() ]
 		game['rooms'] = []
 		game['doors'] = []
 
