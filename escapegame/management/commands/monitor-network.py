@@ -33,7 +33,7 @@ class Command(BaseCommand):
 					if raspi.hostname not in status:
 						status[raspi.hostname] = False
 
-					online = raspi.is_online(force=True)
+					online = raspi.is_online()
 					if online != status[raspi.hostname]:
 						status[raspi.hostname] = online
 						libraspi.notify_frontend()
