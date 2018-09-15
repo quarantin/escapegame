@@ -86,7 +86,7 @@ def notify_frontend(game=None, message='notify'):
 			continue
 
 		if game is None or game == some_game:
-			send_message(some_game, message)
+			send_message(some_game.slug, message)
 
 def is_valid_pin(pin):
 	return pin not in invalid_pins
