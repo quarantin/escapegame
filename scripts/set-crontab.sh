@@ -27,7 +27,7 @@ echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
 
 # Monitor the network to see which Raspberry Pis are alive
 
-echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network.py" >> ${CRONTAB}
+echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network" >> ${CRONTAB}
 
 
 # UWSGI instances for django and websockets
