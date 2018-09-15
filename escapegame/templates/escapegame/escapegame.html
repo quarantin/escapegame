@@ -51,7 +51,7 @@
 								<span class="">
 									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
 									&nbsp;
-									<span class="col-3 float-right badge badge-{{ raspi.badge }}">{{ raspi.status }}</span>
+									<span id="raspberry-pi-selected" class="col-3 float-right badge badge-{{ raspi.badge }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
 								</span>
 								{% endwith %}
 							</button>
@@ -60,7 +60,7 @@
 								<a class="dropdown-item" href="">
 									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
 									&nbsp;
-									<span class="col-3 float-right badge badge-{{ raspi.badge }}">{{ raspi.status }}</span>
+									<span id="raspberry-pi-{{ raspi.slug }}" class="col-3 float-right badge badge-{{ raspi.badge }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
 								</a>
 {% endfor %}
 							</div>

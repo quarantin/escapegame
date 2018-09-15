@@ -45,13 +45,43 @@ $(document).ready(function() {
 	}
 
 	/*
+	 * Toggle online status for the supplied Raspberry Pi
+	 */
+	function toggle_online_status(raspi, selected_raspi)
+	{
+		var raspi_id = 'raspberry-pi-' + raspi.slug;
+
+		var online_elem = $(raspi_id);
+
+		online_elem.removeClass('badge-' + raspi.not_badge);
+		online_elem.addClass('badge-' + raspi.badge);
+		online_elem.text(raspi.status);
+
+		if (raspi.slug == selected_raspi.data('slug')) {
+			selected_raspi.removeClass('badge-' + raspi.not_badge);
+			selected_raspi.addClass('badge-' + raspi.badge);
+			selected_raspi.text(raspi.status);
+		}
+	}
+
+	/*
 	 * Toggle all elements in the page:
+	 *   - raspberry pis online status
 	 *   - door lock/unlock buttons
 	 *   - challenge validate/reset buttons
 	 */
 	function toggle_all_elements(game) {
 
 		output = '';
+		// TODO: selected element from fake <select>: raspberry-pi-selected
+		var selected_raspi = $('#raspberry-pi-selected')
+
+		for (var raspi_index in game.raspberrypis) {
+
+			var raspi = game.raspberrypis[raspi_index];
+
+			toggle_online_status(raspi, selected_raspi);
+		}
 
 		for (var door_index in game.doors) {
 
@@ -237,6 +267,19 @@ $(document).ready(function() {
 		};
 	}
 
+	function test()
+	{
+		$('div.dropdown-menu a.dropdown-item').click(function(e) {
+
+			// Don't follow href
+			e.preventDefault();
+
+			html = '<span>' + $(this).html() + '</span>';
+
+			$('div#selected-raspberry-pi button.btn').html(html).addClass('d-non').removeClass('d-none');
+		});
+	}
+
 	/*
 	 * Assign click event handler for the escape game reset button.
 	 */
@@ -340,6 +383,8 @@ $(document).ready(function() {
 			});
 		});
 	}
+
+	test();
 
 	// Handler for the button to reset the escape game
 	game_control_handler('reset');

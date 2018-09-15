@@ -45,13 +45,46 @@ $(document).ready(function() {
 	}
 
 	/*
+	 * Toggle online status for the supplied Raspberry Pi
+	 */
+	function toggle_online_status(raspi, selected_raspi)
+	{
+		var raspi_id = 'raspberry-pi-' + raspi.slug;
+
+		var online_elem = $(raspi_id);
+		console.log("WTF");
+		console.log(raspi);
+
+		online_elem.removeClass('badge-' + raspi.not_badge);
+		online_elem.addClass('badge-' + raspi.badge);
+		online_elem.text(raspi.status);
+
+		if (raspi.slug == selected_raspi.data('slug')) {
+			selected_raspi.removeClass('badge-' + raspi.not_badge);
+			selected_raspi.addClass('badge-' + raspi.badge);
+			selected_raspi.text(raspi.status);
+		}
+	}
+
+	/*
 	 * Toggle all elements in the page:
+	 *   - raspberry pis online status
 	 *   - door lock/unlock buttons
 	 *   - challenge validate/reset buttons
 	 */
 	function toggle_all_elements(game) {
 
 		output = '';
+		// TODO: selected element from fake <select>: raspberry-pi-selected
+		var selected_raspi = $('#raspberry-pi-selected')
+
+		for (var raspi_index in game.raspberrypis) {
+
+			var raspi = game.raspberrypis[raspi_index];
+
+			toggle_online_status(raspi, selected_raspi);
+			output += 'Raspberry Pi: ' + raspi.hostname + ' ' + raspi.status;
+		}
 
 		for (var door_index in game.doors) {
 
@@ -209,13 +242,14 @@ $(document).ready(function() {
 		};
 
 		ws.onmessage = function(e) {
-			console.log('websocket received data: ' + e.data);
 
 			// Heartbeat messages
 			if (e.data === heartbeat_msg) {
 				missed_heartbeats = 0;
 				return;
 			}
+
+			console.log('websocket received data: ' + e.data);
 
 			// Notify messages, meaning we have to refresh the page
 			if (e.data.startsWith('notify')) {
