@@ -1,175 +1,37 @@
 $(document).ready(function() {
 
-	var timeout = 5000;
+	/*
+	 * One second is 1000 miliseconds.
+	 */
+	var second = 1000;
+
+	/*
+	 * Timeout for AJAX requests (3 seconds).
+	 */
+	var timeout = 3 * second;
 
 	/*
 	 * Retrieve language country code from URL.
 	 */
-	function get_language() {
+	function get_language()
+	{
 		return location.pathname.split('/')[1];
 	}
 
 	/*
 	 * Return the video URL for the video selected in select field.
 	 */
-	function get_video_url(action) {
-
+	function get_video_url(action)
+	{
 		selected_video = $('#selected-video').val();
 		selected_raspi = $('#selected-raspberry-pi').val();
 
 		return selected_raspi + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
 
-
 	/*
-	 * Escape game reset button
+	 * Switch visibility of buttons according to state.
 	 */
-
-	// Handler for the button to reset the escape game
-	$('button#reset-escapegame').click(function() {
-
-		ok = confirm('Are you really sure you want to reset the current escape game?\n\nThis will reset all challenge state and current score.');
-		if (ok !== true)
-			return;
-
-		$.ajax({
-			url: '/' + get_language() + '/' + this.value + '/reset/',
-			success: function() {
-				location.reload();
-			},
-		});
-	});
-
-
-	/*
-	 * Video control buttons:
-	 *   - play
-	 *   - pause
-	 *   - stop
-	 */
-
-	// Handler for the button to start the video
-	$('button#video-play').click(function() {
-		$('button#video-play').toggleClass('d-none');
-		$('button#video-pause').toggleClass('d-none');
-
-		$.ajax({
-			url: get_video_url('play'),
-			timeout: timeout,
-			error: function() {
-				selected_raspi = $('#selected-raspberry-pi').val();
-				alert('Could not connect to host: ' + selected_raspi);
-			}
-		});
-	});
-
-	// Handler for the button to pause the video
-	$('button#video-pause').click(function() {
-
-		$('button#video-play').toggleClass('d-none');
-		$('button#video-pause').toggleClass('d-none');
-
-		$.ajax({
-			url: get_video_url('pause'),
-			timeout: timeout,
-			error: function() {
-				selected_raspi = $('#selected-raspberry-pi').val();
-				alert('Could not connect to host: ' + selected_raspi);
-			}
-
-		});
-	});
-
-	// Handler for the button to stop the video
-	$('button#video-stop').click(function() {
-
-		$('button#video-play').removeClass('d-none');
-		$('button#video-pause').addClass('d-none');
-
-		$.ajax({
-			url: get_video_url('stop'),
-			timeout: timeout,
-			error: function() {
-				selected_raspi = $('#selected-raspberry-pi').val();
-				alert('Could not connect to host: ' + selected_raspi);
-			}
-		});
-	});
-
-	/*
-	 * Door control buttons
-	 */
-
-	// Handler for lock buttons
-	$('button.lock-button').click(function() {
-
-		ok = confirm('Are you really sure you want to unlock the door?');
-		if (ok !== true)
-			return;
-
-		$.ajax({
-			url: this.value,
-			success: function() {
-				location.reload();
-			},
-		});
-	});
-
-	// Handler for unlock buttons
-	$('button.unlock-button').click(function() {
-
-		ok = confirm('Are you really sure you want to lock the door?');
-		if (ok !== true)
-			return;
-
-		$.ajax({
-			url: this.value,
-			success: function() {
-				location.reload();
-			},
-		});
-	});
-
-	/*
-	 * Challenge control buttons
-	 */
-
-	// Handler for challenge reset buttons
-	$('a.challenge-reset').click(function (e) {
-
-		ok = confirm('Are you really sure you want to reset this challenge?');
-		if (ok !== true)
-			return;
-
-		// Don't follow href
-		e.preventDefault();
-
-		$.ajax({
-			url: this.href,
-			success: function() {
-				location.reload();
-			},
-		});
-	});
-
-	// Handler for challenge validate buttons
-	$('a.challenge-validate').click(function (e) {
-
-		ok = confirm('Are you really sure you want to validate this challenge?');
-		if (ok !== true)
-			return;
-
-		// Don't follow href
-		e.preventDefault();
-
-		$.ajax({
-			url: this.href,
-			success: function() {
-				location.reload();
-			},
-		});
-	});
-
 	function toggle_elements(lock_button, unlock_button, locked)
 	{
 		if (locked) {
@@ -181,15 +43,21 @@ $(document).ready(function() {
 			$(unlock_button).addClass('d-none');
 		}
 	}
+
+	/*
+	 * Toggle all elements in the page:
+	 *   - door lock/unlock buttons
+	 *   - challenge validate/reset buttons
+	 */
 	function toggle_all_elements(game) {
 
-		output = 'WTF\n';
+		output = '';
 
 		for (var door_index in game.doors) {
 
 			var door = game.doors[door_index];
 			var door_name = game.slug + '-' + door.slug;
-			output += 'EXTRA DOOR ' + door.slug + ' locked=' + door.locked + '\n';
+			output += 'EXTRA DOOR ' + door_name + ' locked=' + door.locked + '\n';
 			toggle_elements('button#lock-' + door_name, 'button#unlock_' + door_name, door.locked);
 		}
 
@@ -197,8 +65,9 @@ $(document).ready(function() {
 
 			var room = game.rooms[room_index];
 			var door = room.door;
-			output += 'ROOM DOOR ' + door.slug + ' locked=' + door.locked + '\n';
-			toggle_elements('button#lock-' + door.slug , 'button#unlock_' + door.slug, door.locked);
+			var door_name = game.slug + '-' + door.slug;
+			output += 'ROOM DOOR ' + door_name + ' locked=' + door.locked + '\n';
+			toggle_elements('button#lock-' + door_name , 'button#unlock_' + door_name, door.locked);
 
 			for (var chall_index in room.challenges) {
 
@@ -212,12 +81,18 @@ $(document).ready(function() {
 		console.log(output);
 	}
 
-	function drawImage(ctx, imageObj) {
+	/*
+	 * Draw the given image onto the supplied context.
+	 */
+	function draw_image(ctx, imageObj) {
 		image = new Image();
 		image.src = '/media/' + imageObj.image_path;
 		ctx.drawImage(image, 0, 0, imageObj.width, imageObj.height);
 	}
 
+	/*
+	 * Draw the map of the game and its elements (doors, challenges, etc).
+	 */
 	function draw_map(game) {
 
 		var canvas = $('canvas#map')[0];
@@ -237,20 +112,26 @@ $(document).ready(function() {
 			for (index in game.rooms) {
 				var room = game.rooms[index];
 				if (room.door_image && !room.door.locked) {
-					drawImage(ctx, room.door_image);
+					draw_image(ctx, room.door_image);
 				}
 			}
 
 			for (index in game.doors) {
 				var door = game.doors[index];
 				if (door.image && !door.locked) {
-					drawImage(ctx, door.image);
+					draw_image(ctx, door.image);
 				}
 			}
 
 		};
 	};
 
+	/*
+	 * Refresh the page:
+	 *   - toggle door lock/unlock buttons
+	 *   - toggle challenge validate/reset buttons
+	 *   - draw the map with all current information available about the game.
+	 */
 	function refresh_page() {
 
 		console.log('refreshing page');
@@ -276,6 +157,9 @@ $(document).ready(function() {
 		});
 	}
 
+	/*
+	 * Create the websocket to receive events from the server.
+	 */
 	function create_websocket() {
 
 		var port;
@@ -298,9 +182,9 @@ $(document).ready(function() {
 
 		var game_slug = $('button#reset-escapegame').val();
 
-		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify-' + game_slug + '?subscribe-broadcast');
-
 		var heartbeat_msg = '--heartbeat--', heartbeat_interval = null, missed_heartbeats = 0;
+
+		var ws = new WebSocket(protocol + '//' + location.hostname + port + '/ws/notify-' + game_slug + '?subscribe-broadcast');
 
 		ws.onopen = function() {
 			console.log('websocket connected');
@@ -326,19 +210,25 @@ $(document).ready(function() {
 
 		ws.onmessage = function(e) {
 			console.log('websocket received data: ' + e.data);
+
+			// Heartbeat messages
 			if (e.data === heartbeat_msg) {
-				// reset the counter for missed heartbeats
 				missed_heartbeats = 0;
 				return;
 			}
+
+			// Notify messages, meaning we have to refresh the page
 			if (e.data.startsWith('notify')) {
 				refresh_page();
+				return;
 			}
-			else
-				$('div#counter').text(e.data);
+
+			// Timer messages, meaning we have to update the game counter
+			$('div#counter').text(e.data);
 		};
 
 		ws.onerror = function(e) {
+			console.log('websocket error');
 			console.error(e);
 		};
 
@@ -347,7 +237,134 @@ $(document).ready(function() {
 		};
 	}
 
-	create_websocket();
+	/*
+	 * Assign click event handler for the escape game reset button.
+	 */
+	function game_control_handler(action)
+	{
+		$('button#' + action + '-escapegame').click(function() {
 
-	refresh_page();
+			ok = confirm('Are you really sure you want to reset the current escape game?\n\nThis will reset all challenge state and current score.');
+			if (ok !== true)
+				return;
+
+			$.ajax({
+				url: '/' + get_language() + '/' + this.value + '/' + action + '/',
+				success: function() {
+					refresh_page();
+					alert('Game reset was successful!');
+				},
+				error: function() {
+					alert('Failed to reset the game.');
+				},
+			});
+		});
+	}
+
+	/*
+	 * Assign click event handler for video control button.
+	 */
+	function video_control_handler(action)
+	{
+		$('button#video-' + action).click(function() {
+
+			if (action == 'pause') {
+
+				$('button#video-play').addClass('d-none');
+				$('button#video-pause').removeClass('d-none');
+			}
+			else {
+
+				$('button#video-play').removeClass('d-none');
+				$('button#video-pause').addClass('d-none');
+			}
+
+			$.ajax({
+				url: get_video_url(action),
+				timeout: timeout,
+				success: function() {
+					refresh_page();
+				},
+				error: function() {
+					alert('Could not connect to Raspberry Pi: ' + $('#selected-raspberry-pi').val());
+				},
+			});
+		});
+	}
+
+	/*
+	 * Assign click event handler for door control button.
+	 */
+	function door_control_handler(action)
+	{
+		$('button.' + action + '-button').click(function() {
+
+			ok = confirm('Are you really sure you want to ' + action + ' the door?');
+			if (ok !== true)
+				return;
+
+			$.ajax({
+				url: this.value,
+				success: function() {
+					refresh_page();
+				},
+				error: function() {
+					alert('Failed to ' + action + ' the door.');
+				},
+			});
+		});
+	}
+
+	/*
+	 * Assign click event handler for challenge control button.
+	 */
+	function challenge_control_handler(action)
+	{
+		$('a.challenge-' + action).click(function (e) {
+
+			ok = confirm('Are you really sure you want to ' + action + ' this challenge?');
+			if (ok !== true)
+				return;
+
+			// Don't follow href
+			e.preventDefault();
+
+			$.ajax({
+				url: this.href,
+				success: function() {
+					refresh_page();
+				},
+				error: function() {
+					alert('Failed to ' + action + ' this challenge.');
+				},
+			});
+		});
+	}
+
+	// Handler for the button to reset the escape game
+	game_control_handler('reset');
+
+	// Handler for the button to start the video
+	video_control_handler('play');
+
+	// Handler for the button to pause the video
+	video_control_handler('pause');
+
+	// Handler for the button to stop the video
+	video_control_handler('stop');
+
+	// Handler for the buttons to lock doors
+	door_control_handler('lock');
+
+	// Handler for the buttons to unlock doors
+	door_control_handler('unlock');
+
+	// Handler for the buttons to reset challenges
+	challenge_control_handler('reset');
+
+	// Handler for the buttons to validate challenges
+	challenge_control_handler('validate');
+
+	// Create our websocket
+	create_websocket();
 });
