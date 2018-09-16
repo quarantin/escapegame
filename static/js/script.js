@@ -21,7 +21,9 @@ function get_language()
  */
 function get_selected_raspi()
 {
-	return $('input[name=selected-raspberry-pi]:checked');
+	raspi = $('input[name=selected-raspberry-pi]:checked');
+
+	return (raspi.length > 0 ? raspi : false);
 }
 
 /*
@@ -32,8 +34,11 @@ function get_video_url(action)
 	selected_video = $('#selected-video').val();
 	selected_raspi = get_selected_raspi();
 
-	alert(selected_raspi.data('url'));
-	return selected_raspi.data('url') + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
+	raspi_url = '';
+	if (selected_raspi)
+		raspi_url = selected_raspi.data('raspi-url');
+
+	return raspi_url + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 }
 
 /*
