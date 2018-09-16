@@ -17,14 +17,9 @@ for APP in "${APPS[@]}"; do
 done
 
 
-# Celery
+# GPIO polling management task
 
-echo "@reboot ${ROOTDIR}/scripts/python-celery.sh" >> ${CRONTAB}
-
-
-# Django background tasks
-
-echo "@reboot ${ROOTDIR}/scripts/python-manage.sh process_tasks" >> ${CRONTAB}
+echo "@reboot ${ROOTDIR}/scripts/python-manage.py poll-gpios" >> ${CRONTAB}
 
 
 if [ ${HOSTNAME} = ${MASTER_HOSTNAME} ]; then
