@@ -108,7 +108,7 @@ class Controller(models.Model):
 		url = 'http://%s:%s/en/ping/' % (self.hostname, self.port)
 
 		try:
-			response = requests.get(url)
+			response = requests.get(url, timeout=5)
 			if response and response.content.decode('utf-8') == 'OK':
 				self.online = True
 
