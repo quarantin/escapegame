@@ -125,7 +125,6 @@ def get_pin(pin):
 			signal = GPIO.input(pin)
 
 		state = (signal and 'HIGH' or 'LOW')
-		print("Getting signal from PIN %d = %s" % (pin, state))
 		return 0, 'Success', signal
 
 	except Exception as err:
