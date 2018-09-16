@@ -32,7 +32,7 @@ echo "@reboot ${ROOTDIR}/scripts/python-manage.sh poll-gpios" >> ${CRONTAB}
 
 # Video player management task
 
-# echo "@reboot ${ROOTDIR}/scripts/python-manage.sh video-player" >> ${CRONTAB}
+echo "@reboot ${ROOTDIR}/scripts/python-manage.sh video-player" >> ${CRONTAB}
 
 
 # UWSGI instances for django and websockets
