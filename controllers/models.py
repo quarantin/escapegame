@@ -275,12 +275,13 @@ class ChallengeGPIO(GPIO):
 	""" Callback method to call when this challenge has just been solved
 	"""
 	def solve(self):
+
 		self.solved = True
 		if self.solved_at is None:
 			self.solved_at = timezone.localtime()
 
 		self.save()
-		return super(ChallengeGPIO, self).write(True)
+		return 0, 'Success'
 
 class CubeGPIO(ChallengeGPIO):
 
