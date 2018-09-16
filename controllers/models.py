@@ -72,8 +72,14 @@ class ArduinoSketch(models.Model):
 
 class Controller(models.Model):
 
+	PROTOCOL_CHOICES = (
+		('http', 'HTTP'),
+		('https', 'HTTPS'),
+	)
+
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
+	protocol = models.CharField(max_length=32, default='http', choices=PROTOCOL_CHOICES) # TODO limit choices to HTTP or HTTPS
 	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
 	online = models.BooleanField(default=False)

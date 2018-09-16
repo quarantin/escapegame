@@ -74,6 +74,7 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
 		'slug',
+		'protocol',
 		'hostname',
 		'port',
 		'online',
@@ -82,6 +83,7 @@ class RaspberryPiAdmin(admin.ModelAdmin):
 		('Raspberry Pi', { 'fields': (
 			'name',
 			'slug',
+			'protocol',
 			'hostname',
 			'port',
 			'online',
