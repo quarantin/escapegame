@@ -16,6 +16,7 @@ class Command(BaseCommand):
 		all_models = [
 			Image,
 			Video,
+			Controller,
 			RaspberryPi,
 			GPIO,
 			ChallengeGPIO,
