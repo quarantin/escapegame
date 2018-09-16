@@ -21,12 +21,6 @@ LOGGING = {
 			'formatter': 'default',
 			'filename': BASE_DIR + "/django-service.log",
 		},
-		'logfile_tasks': {
-			'level':'DEBUG',
-			'class':'logging.FileHandler',
-			'formatter': 'default',
-			'filename': BASE_DIR + "/django-background-tasks.log",
-		},
 		'logfile_db': {
 			'level':'DEBUG',
 			'class':'logging.FileHandler',

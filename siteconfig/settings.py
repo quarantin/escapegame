@@ -82,7 +82,6 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.staticfiles',
 
-	'background_task',
 	'channels',
 	'constance',
 	'constance.backends.database',

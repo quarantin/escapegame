@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.db import connection
-
-from background_task import background
-from background_task.models import Task
-
 from omxplayer import keys
 from omxplayer.player import OMXPlayer, OMXPlayerDeadError
 from omxplayer.bus_finder import BusFinder
@@ -17,7 +12,6 @@ import traceback
 FIFO_PATH = '/tmp/player.fifo'
 LOG_PATH = '/tmp/player.log'
 
-@background(schedule=0)
 def video_player_task(vid):
 
 	method = 'multimedia.tasks.video_player_task'
@@ -128,26 +122,3 @@ def video_player_task(vid):
 
 		except Exception as err:
 			print('[%s] Error: %s' % (method, traceback.format_exc()))
-
-def setup_background_tasks():
-
-	try:
-		task_name = 'multimedia.tasks.video_player_task'
-		verbose_name = task_name
-
-		try:
-			# If the task does not exist, this block will raise an exception.
-			# Otherwise the background task is already installed, and we're good.
-			task = Task.objects.get(task_name=task_name, verbose_name=verbose_name)
-			return
-
-		except Task.DoesNotExist:
-
-			# Instanciate the background task because we could not find it in database.
-			video_player_task(0, verbose_name=verbose_name)
-
-		except Exception as err:
-			print('Error: %s' % traceback.format_exc())
-
-	except Exception as err:
-		print("Adding background tasks failed! (Error: %s)" % traceback.format_exc())
