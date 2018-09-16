@@ -34,7 +34,6 @@ fi
 
 PIP_PACKAGES=(
 	asn1crypto==0.24.0
-	celery[redis]==4.2.1
 	cffi==1.11.5
 	channels==2.1.3
 	cryptography==2.3.1
@@ -124,17 +123,6 @@ fi
 
 # Configure timezone
 sudo timedatectl set-timezone ${TIMEZONE}
-
-# Prepare logfile for celery
-CELERY_LOG=/var/log/celery.log
-sudo touch ${CELERY_LOG}
-sudo chmod 644 ${CELERY_LOG}
-sudo chown ${USER}:${USER} ${CELERY_LOG}
-
-# Prepare /var/run folder for celery
-CELERY_RUN=/var/run/celery
-sudo mkdir -p -m 755 ${CELERY_RUN}
-sudo chown ${USER}:${USER} ${CELERY_RUN}
 
 # Hide GNU screen startup message
 sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc

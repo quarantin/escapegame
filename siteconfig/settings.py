@@ -83,7 +83,6 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 
 	'background_task',
-	'celery',
 	'channels',
 	'constance',
 	'constance.backends.database',
@@ -265,11 +264,6 @@ WS4REDIS_CONNECTION = {
 
 # Heart beat for websocket
 WS4REDIS_HEARTBEAT = '--heartbeat--'
-
-
-# Celery broker URL
-
-CELERY_BROKER_URL = 'redis://%s:%s/' % (REDIS_HOST, REDIS_PORT)
 
 
 # Constance settings
