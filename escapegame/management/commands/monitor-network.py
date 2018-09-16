@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
 		self.reset_online_status()
 
-		delay = os.getenv('WEBSOCKET_DELAY') or 10
+		delay = os.getenv('SLEEP_DELAY') or 5
 
 		status = {}
 
@@ -45,8 +45,7 @@ class Command(BaseCommand):
 					if online != status[raspi.hostname]:
 						status[raspi.hostname] = online
 						libraspi.notify_frontend()
-
-					print(status)
+						print(status)
 
 			except KeyboardInterrupt:
 				print('Quitting! (because we received SIGINT)')
