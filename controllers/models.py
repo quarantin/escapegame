@@ -275,6 +275,16 @@ class ChallengeGPIO(GPIO):
 		self.clean()
 		super(ChallengeGPIO, self).save(*args, **kwargs)
 
+	""" Check if this challenge is solved by reading the GPIO value
+	"""
+	def check_solved(self):
+
+		status, message, signal = self.read()
+		if status != 0:
+			raise Exception('GPIO.read() failed!')
+
+		return signal
+
 	""" Reset this challenge state
 	"""
 	def reset(self):
