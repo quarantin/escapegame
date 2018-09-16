@@ -6,6 +6,8 @@ from django.core import serializers
 
 from escapegame import libraspi
 from escapegame.models import *
+from controllers.models import *
+from multimedia.models import *
 
 from collections import OrderedDict
 from datetime import datetime
@@ -16,6 +18,7 @@ import json
 model_mapping = [
 	('images', Image),
 	('videos', Video),
+	('controllers', Controller),
 	('raspberry_pis', RaspberryPi),
 	('GPIOs', GPIO),
 	('cubeGPIOs', CubeGPIO),
