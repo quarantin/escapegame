@@ -44,26 +44,16 @@
 					</div>
 
 					<div class="row">
-						<div id="selected-raspberry-pi" class="head_block dropdown mx-auto">
+						<div class="col radio width-70">
 
-							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								{% with raspi=raspberry_pis.0 %}
-								<span class="">
-									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
-									&nbsp;
-									<span id="raspberry-pi-selected" class="col-3 float-right badge badge-{{ raspi.badge }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
-								</span>
-								{% endwith %}
-							</button>
-							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 {% for raspi in raspberry_pis %}
-								<a class="dropdown-item" href="">
-									<span class="col-8 float-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
-									&nbsp;
-									<span id="raspberry-pi-{{ raspi.slug }}" class="col-3 float-right badge badge-{{ raspi.badge }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
-								</a>
+							<label class="row width-80 mx-auto">
+								<input class="col-1" name="selected-raspberry-pi" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
+								&nbsp;
+								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
+								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
+							</label>
 {% endfor %}
-							</div>
 						</div>
 					</div>
 

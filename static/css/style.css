@@ -115,14 +115,18 @@ img.map {
 	background-color: #007bff;
 }
 
-#selected-video,
-#selected-raspberry-pi {
+#selected-video {
 	width: 70%;
 }
 
-#selected-raspberry-pi button {
-	color: #495057;
-	background-color: #ffffff;
-	border: 1px solid #ced4da;
-	width: 100%;
+.width-70 {
+	width: 70%;
+}
+
+.width-80 {
+	width: 80%;
+}
+
+.badge {
+	min-width: 20%;
 }

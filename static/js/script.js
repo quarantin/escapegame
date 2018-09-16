@@ -24,7 +24,7 @@ $(document).ready(function() {
 	function get_video_url(action)
 	{
 		selected_video = $('#selected-video').val();
-		selected_raspi = $('#selected-raspberry-pi').val();
+		selected_raspi = $('#selected-raspberry-pi').val();// TODO Use value from radio button group
 
 		return selected_raspi + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 	}
@@ -47,22 +47,25 @@ $(document).ready(function() {
 	/*
 	 * Toggle online status for the supplied Raspberry Pi
 	 */
-	function toggle_online_status(raspi, selected_raspi)
+	function toggle_online_status(raspi)
 	{
-		var raspi_id = 'raspberry-pi-' + raspi.slug;
+		console.log('toggle_online_status');
 
-		var online_elem = $(raspi_id);
-		console.log("WTF");
-		console.log(raspi);
+		var span = $('#raspberry-pi-' + raspi.slug);
+		var input = span.parent().find('input');
 
-		online_elem.removeClass('badge-' + raspi.not_badge);
-		online_elem.addClass('badge-' + raspi.badge);
-		online_elem.text(raspi.status);
+		span.removeClass('badge-' + raspi.not_badge);
+		span.addClass('badge-' + raspi.badge);
+		span.text(raspi.status);
+		input.prop('disabled', !raspi.online);
 
-		if (raspi.slug == selected_raspi.data('slug')) {
-			selected_raspi.removeClass('badge-' + raspi.not_badge);
-			selected_raspi.addClass('badge-' + raspi.badge);
-			selected_raspi.text(raspi.status);
+		if (!raspi.online)
+			input.prop('checked', false);
+
+		selected_raspi = $('input[name=selected-raspberry-pi]:checked');
+		alert(selected_raspi + ": " + !selected_raspi);
+		if (!selected_raspi) {
+			$('input[name=selected-raspberry-pi]:not([disabled]):first').prop('checked', true);
 		}
 	}
 
@@ -75,15 +78,13 @@ $(document).ready(function() {
 	function toggle_all_elements(game) {
 
 		output = '';
-		// TODO: selected element from fake <select>: raspberry-pi-selected
-		var selected_raspi = $('#raspberry-pi-selected')
 
 		for (var raspi_index in game.raspberrypis) {
 
 			var raspi = game.raspberrypis[raspi_index];
 
-			toggle_online_status(raspi, selected_raspi);
-			output += 'Raspberry Pi: ' + raspi.hostname + ' ' + raspi.status;
+			toggle_online_status(raspi);
+			output += 'Raspberry Pi: ' + raspi.hostname + ' ' + raspi.status + '\n';
 		}
 
 		for (var door_index in game.doors) {
