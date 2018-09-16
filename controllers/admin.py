@@ -165,16 +165,29 @@ class CubeGPIOAdmin(ChallengeGPIOAdmin):
 		'placed_at',
 	]
 
-	fieldsets = ChallengeGPIOAdmin.fieldsets + (
+	fieldsets = (
 
 		('Cube GPIO', { 'fields': (
+			'name',
+			'slug',
+			'controller',
+		)}),
+
+
+		('Challenge', { 'fields': (
+			'challenge',
+			'solved',
+			'solved_at',
+		)}),
+
+		('Cube', { 'fields': (
 			'game',
 			'tag_id',
 			'taken_at',
 			'placed_at',
 		)}),
 
-	)
+	) + GPIOAdmin.fieldsets
 
 	def get_readonly_fields(self, request, obj=None):
 		return super(CubeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'taken_at', 'placed_at' )
