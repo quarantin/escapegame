@@ -205,6 +205,9 @@ class EscapeGameChallenge(models.Model):
 	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
 	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
+	callback_url_solve = models.URLField(default='')
+	callback_url_reset = models.URLField(default='')
+
 	def __str__(self):
 		return 'Challenge - %s / %s / %s' % (self.room.game.name, self.room.name, self.name)
 
@@ -212,6 +215,15 @@ class EscapeGameChallenge(models.Model):
 		new_slug = slugify(self.name)
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
+
+		lang = 'en'
+		raspi = RaspberryPi.get_myself()
+		host, port, protocol = libraspi.get_net_info(raspi)
+
+		base_url = '%s://%s%s/%s/%s/%s/%s' % (protocol, host, port, lang, self.room.game.slug, self.room.slug, self.slug)
+
+		self.callback_url_solve = '%s/validate/' % base_url
+		self.callback_url_reset = '%s/reset/' % base_url
 
 		self.clean()
 		super(EscapeGameChallenge, self).save(*args, **kwargs)

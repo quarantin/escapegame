@@ -101,6 +101,8 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'solved_video',
 		'challenge_image',
 		'challenge_solved_image',
+		'callback_url_solve',
+		'callback_url_reset',
 	]
 	fieldsets = (
 		('Escape Game Challenge', { 'fields': (
@@ -118,10 +120,14 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			'challenge_image',
 			'challenge_solved_image',
 			)}),
+		('URLs', { 'fields': (
+			'callback_url_solve',
+			'callback_url_reset',
+			)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', 'solved_time' )
+		return self.readonly_fields + ( 'slug', 'solved_time', 'callback_url_solve', 'callback_url_reset' )
 
 
 # Our custom admin site
