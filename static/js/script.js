@@ -75,9 +75,8 @@ function toggle_online_status(raspi)
 		input.prop('checked', false);
 
 	selected_raspi = get_selected_raspi();
-	if (selected_raspi === undefined || !selected_raspi) {
-		$('input[name=selected-raspberry-pi]:not([disabled]):first').prop('checked', true);
-	}
+	if (!selected_raspi)
+		$('input[name=selected-raspberry-pi]:enabled:first').prop('checked', true);
 }
 
 /*
