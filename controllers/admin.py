@@ -104,12 +104,8 @@ class GPIOAdmin(admin.ModelAdmin):
 		'reset_url',
 		'image',
 	]
+
 	fieldsets = (
-		('GPIO', { 'fields': (
-			'name',
-			'slug',
-			'controller',
-		)}),
 
 		('Action configuration', { 'fields': (
 			'action_pin',
@@ -123,7 +119,7 @@ class GPIOAdmin(admin.ModelAdmin):
 
 		('Multimedia', { 'fields': (
 			'image',
-		)})
+		)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):
@@ -139,17 +135,24 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 		'solved_at',
 	]
 
-	fieldsets = GPIOAdmin.fieldsets + (
+	fieldsets = (
 
 		('Challenge GPIO', { 'fields': (
-			'challenge'
+			'name',
+			'slug',
+			'controller',
+		)}),
+
+		('Challenge', { 'fields': (
+			'challenge',
 			'solved',
 			'solved_at',
 		)}),
-	)
+
+	) + GPIOAdmin.fieldsets
 
 	def get_readonly_fields(self, request, obj=None):
-		return super(ChallengeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'solved_at', )
+		return super(ChallengeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'solved', 'solved_at' )
 
 class CubeGPIOAdmin(ChallengeGPIOAdmin):
 
@@ -187,15 +190,22 @@ class DoorGPIOAdmin(GPIOAdmin):
 		'unlocked_at',
 	]
 
-	fieldsets = GPIOAdmin.fieldsets + (
+	fieldsets = (
 
 		('Door GPIO', { 'fields': (
+			'name',
+			'slug',
+			'controller',
+		)}),
+
+		('Door', { 'fields': (
 			'game',
 			'room',
 			'locked',
 			'unlocked_at',
 		)}),
-	)
+
+	) + GPIOAdmin.fieldsets
 
 	def clean(self):
 
@@ -215,7 +225,7 @@ class DoorGPIOAdmin(GPIOAdmin):
 			})
 
 	def get_readonly_fields(self, request, obj=None):
-		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'unlocked_at', )
+		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'locked', 'unlocked_at' )
 
 # Register our models to our custom admin site
 site.register(ArduinoSketch, ArduinoSketchAdmin)
