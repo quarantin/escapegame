@@ -48,10 +48,10 @@
 
 {% for raspi in raspberry_pis %}
 							<label class="row width-80 mx-auto">
-								<input class="col-1" name="selected-raspberry-pi" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
+								<input class="col-1" name="selected-raspberry-pi"  data-url="{{ raspi.url }}" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
 								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
-								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}" data-slug="{{ raspi.slug }}">{{ raspi.status }}</span>
+								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
 							</label>
 {% endfor %}
 						</div>

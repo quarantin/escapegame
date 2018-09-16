@@ -17,14 +17,23 @@ function get_language()
 }
 
 /*
+ * Retrieve the URL of the Raspberry Pi selected in the radio button list.
+ */
+function get_selected_raspi()
+{
+	return $('input[name=selected-raspberry-pi]:checked');
+}
+
+/*
  * Return the video URL for the video selected in select field.
  */
 function get_video_url(action)
 {
 	selected_video = $('#selected-video').val();
-	selected_raspi = $('#selected-raspberry-pi').val();// TODO Use value from radio button group
+	selected_raspi = get_selected_raspi();
 
-	return selected_raspi + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
+	alert(selected_raspi.data('url'));
+	return selected_raspi.data('url') + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
 }
 
 /*
@@ -60,9 +69,8 @@ function toggle_online_status(raspi)
 	if (!raspi.online)
 		input.prop('checked', false);
 
-	selected_raspi = $('input[name=selected-raspberry-pi]:checked');
-	alert(selected_raspi + ": " + !selected_raspi);
-	if (!selected_raspi) {
+	selected_raspi = get_selected_raspi();
+	if (selected_raspi === undefined || !selected_raspi) {
 		$('input[name=selected-raspberry-pi]:not([disabled]):first').prop('checked', true);
 	}
 }
@@ -312,14 +320,16 @@ function video_control_handler(action)
 			$('button#video-pause').addClass('d-none');
 		}
 
+		var video_url = get_video_url(action);
+
 		$.ajax({
-			url: get_video_url(action),
+			url: video_url,
 			timeout: timeout,
 			success: function() {
 				refresh_page();
 			},
 			error: function() {
-				alert('Could not connect to Raspberry Pi: ' + $('#selected-raspberry-pi').val());
+				alert('Could not connect to URL: ' + video_url);
 			},
 		});
 	});

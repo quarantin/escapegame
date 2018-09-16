@@ -83,6 +83,7 @@ class Controller(models.Model):
 	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
 	online = models.BooleanField(default=False)
+	url = models.URLField(default='')
 
 	def __str__(self):
 		return 'Controller - %s' % self.name
@@ -92,8 +93,14 @@ class Controller(models.Model):
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
+		self.url = self.get_url()
+
 		self.clean()
 		super(Controller, self).save(*args, **kwargs)
+
+	def get_url(self):
+		host, port, protocol = libraspi.get_net_info(self)
+		return '%s://%s%s' % (protocol, host, port)
 
 	def is_myself(self, hostname=None):
 		if hostname is None:
@@ -105,7 +112,7 @@ class Controller(models.Model):
 
 		self.online = False
 
-		url = 'http://%s:%s/en/ping/' % (self.hostname, self.port)
+		url = '%s/en/ping/' % self.get_url()
 
 		try:
 			response = requests.get(url, timeout=5)
