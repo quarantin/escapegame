@@ -67,7 +67,7 @@ class Video(models.Model):
 		from controllers.models import RaspberryPi
 		from escapegame import libraspi
 		controller = controller or RaspberryPi.get_myself()
-		host, port, protocol = libraspi.get_net_info(request, controller)
+		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.video_path.url)
 
 	def control(self, action):

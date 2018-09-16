@@ -436,7 +436,7 @@ class DoorGPIO(GPIO):
 
 		# Otherwise forward the request to the controller
 		else:
-			host, port, protocol = libraspi.get_net_info(request, controller)
+			host, port, protocol = libraspi.get_net_info(controller)
 
 			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
 
