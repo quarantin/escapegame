@@ -8,24 +8,10 @@ from django.template.defaultfilters import slugify
 from constance import config
 
 from escapegame import libraspi
-
-from multimedia.models import *
-
-from controllers.models import *
+from multimedia.models import Image, Video
+from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO
 
 from datetime import timedelta
-
-from PIL import Image as PIL
-
-from io import BytesIO
-
-from escapegame.apps import EscapegameConfig as AppConfig
-logger = AppConfig.logger
-
-
-def paste_image(to_image, from_image_field):
-	from_image = PIL.open(from_image_field.image_path.path)
-	to_image.paste(from_image, (0, 0), from_image)
 
 
 # Escape game classes
