@@ -14,7 +14,14 @@ fi
 
 URL=${2}
 if [ RUNNING_ON_PI = true ]; then
-	/usr/bin/omxplayer --no-osd ${URL} < ${FIFO}
+
+	# omxplayer needs to receive '.' on
+	# the FIFO to start playing the video.
+	echo -n . > ${FIFO} &
+
+	/usr/bin/omxplayer --no-osd --no-keys ${URL} < ${FIFO}
 else
 	/usr/bin/mpv --input-file ${FIFO} ${URL}
 fi
+
+rm -f ${FIFO}
