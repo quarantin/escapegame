@@ -12,6 +12,7 @@ from multimedia.models import Image, Video
 from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO
 
 from datetime import timedelta
+import traceback
 
 
 # Escape game classes
