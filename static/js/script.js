@@ -313,7 +313,7 @@ function video_control_handler(action)
 {
 	$('button#video-' + action).click(function() {
 
-		if (action == 'pause') {
+		if (action == 'play') {
 
 			$('button#video-play').addClass('d-none');
 			$('button#video-pause').removeClass('d-none');
@@ -330,7 +330,7 @@ function video_control_handler(action)
 			url: video_url,
 			timeout: timeout,
 			success: function() {
-				refresh_page();
+				//refresh_page();
 			},
 			error: function() {
 				alert('Could not connect to URL: ' + video_url);
