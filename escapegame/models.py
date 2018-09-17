@@ -221,7 +221,7 @@ class EscapeGameChallenge(models.Model):
 		raspi = RaspberryPi.get_myself()
 		host, port, protocol = libraspi.get_net_info(raspi)
 
-		base_url = '%s://%s%s/%s/%s/%s/%s' % (protocol, host, port, lang, self.room.game.slug, self.room.slug, self.slug)
+		base_url = '%s://%s%s/%s/api/challenge/%s/%s/%s' % (protocol, host, port, lang, self.room.game.slug, self.room.slug, self.slug)
 
 		self.callback_url_solve = '%s/validate/' % base_url
 		self.callback_url_reset = '%s/reset/' % base_url
