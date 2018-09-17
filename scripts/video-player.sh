@@ -13,7 +13,7 @@ if [ ! -p ${FIFO} ]; then
 fi
 
 URL=${2}
-if [ RUNNING_ON_PI = true ]; then
+if [ ${RUNNING_ON_PI} = true ]; then
 
 	# omxplayer needs to receive '.' on
 	# the FIFO to start playing the video.
