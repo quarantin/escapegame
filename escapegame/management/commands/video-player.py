@@ -36,11 +36,14 @@ class Command(BaseCommand):
 
 		print('Video player: %s %s' % (action, url is not None and url or ''))
 
+		if not action:
+			return
+
 		if action not in self.actions:
 			raise Exception('Invalid player action: `%s`' % action)
 
-		# If we don't have a valid URL, and if the video process has already been instanciated and is still running...
-		if url is None and self.process is not None and self.process.poll() is None:
+		# If the video process has already been instanciated and is still running...
+		if self.process is not None and self.process.poll() is None:
 
 			# then we can communicate the command to the video process directly
 			command = self.actions[action]
