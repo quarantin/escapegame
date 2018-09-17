@@ -58,6 +58,12 @@ MASTER_TLD = MASTER.TLD
 # My hostname
 HOSTNAME = '%s%s' % (socket.gethostname(), MASTER.TLD)
 
+# The FIFO to use to control the video player
+VIDEO_CONTROL_FIFO = '/tmp/video-control.fifo'
+
+# The FIFO to use for the video player
+VIDEO_PLAYER_FIFO = '/tmp/video-player.fifo'
+
 # Root URL configuration
 ROOT_URLCONF = 'siteconfig.urls'
 
