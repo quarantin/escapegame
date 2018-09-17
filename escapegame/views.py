@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from controllers.models import ChallengeGPIO, DoorGPIO, RaspberryPi
 from multimedia.models import Image, Video
 from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from escapegame import libraspi
 
 import os
 import traceback
@@ -193,6 +194,8 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 		status, message = chall.set_solved(request, game_slug, room_slug, action)
 		if status != 0:
 			raise Exception('call to chall.set_solved() failed with error `%s`' % message)
+
+		status, message = libraspi.notify_frontend(game)
 
 		return JsonResponse({
 			'status': status,
