@@ -51,13 +51,15 @@ class Video(models.Model):
 
 	def send_command(self, command):
 		try:
-			from .tasks import FIFO_PATH
-			if not os.path.exists(FIFO_PATH):
+			from siteconfig import settings
+			fifo_path = settings.VIDEO_CONTROL_FIFO
+			if not os.path.exists(fifo_path):
 				raise Exception('Player fifo does not exist!')
 
-			fifo = open(FIFO_PATH, 'w')
+			fifo = open(fifo_path, 'w')
 			fifo.write(command)
 			fifo.close()
+
 			return 0, 'Success'
 
 		except:
@@ -87,7 +89,7 @@ class Video(models.Model):
 		return self.send_command('pause')
 
 	def play(self):
-		return self.send_command(self.get_url())
+		return self.send_command('play %s' % self.get_url())
 
 	def stop(self):
 		return self.send_command('stop')
