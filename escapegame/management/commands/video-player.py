@@ -18,9 +18,9 @@ MPV_ACTIONS = {
 }
 
 OMX_ACTIONS = {
-	'pause': 'pause\n',
-	'play':  'pause\n',
-	'stop':  'stop\n',
+	'pause': 'p',
+	'play':  'p',
+	'stop':  'q',
 }
 
 class Command(BaseCommand):
