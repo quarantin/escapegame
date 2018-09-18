@@ -15,7 +15,10 @@ fi
 
 DEBIAN_PACKAGES=(
 	bc
+	git
 	$NGINX_PKG
+	python3
+	python3-pip
 	screen
 	uwsgi
 	uwsgi-plugin-python3
@@ -69,11 +72,16 @@ UWSGI_CONF_DEFAULT='defaults.ini'
 UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
 UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
 
+# TODO select en_US.UTF-8 and fr_FR.UTF-8
+# TODO sudo dpkg-reconfigure locales
+
 # Install Debian packages
+echo "Installing the following Debian packages: ${DEBIAN_PACKAGES[@]}"
 sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 
 # Install pip packages
-sudo -H ${PIP} install --quiet "${PIP_PACKAGES[@]}"
+echo "Installing the following pip packages: ${PIP_PACKAGES[@]}"
+sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
 
 # Install golang 1.11
 GOLANG_VERSION=1.11
