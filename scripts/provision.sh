@@ -47,7 +47,6 @@ PIP_PACKAGES=(
 	gevent==1.3.6
 	greenlet==0.4.14
 	mysqlclient==1.3.13
-	omxplayer-wrapper==0.2.5
 	pyasn1==0.4.4
 	pyOpenSSL==18.0.0
 	redis==2.10.6
