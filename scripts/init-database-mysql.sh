@@ -135,6 +135,9 @@ MASTER(){
 	#for RASPI in $RASPIS; do
 	#	CREATE_MYSQL_USER $RASPI
 	#done
+
+	# Configure munin (sort of post-provision.sh for now, will be improved in the future)
+	${ROOTDIR}/scripts/configure-munin.sh
 }
 
 
