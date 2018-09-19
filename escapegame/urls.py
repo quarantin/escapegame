@@ -34,6 +34,9 @@ urlpatterns = [
 	# Door controls
 	path('api/door/<slug:game_slug>/<slug:room_slug>/<str:action>/', views.rest_door_control),
 
+	# Lift controls
+	path('api/lift/<slug:game_slug>/<slug:lift_slug>/<str:action>/', views.rest_lift_control),
+
 	# Video controls
 	path('api/video/<slug:video_slug>/<str:action>/', views.rest_video_control),
 ]

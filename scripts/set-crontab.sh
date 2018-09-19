@@ -35,6 +35,11 @@ echo "@reboot ${ROOTDIR}/scripts/python-manage.sh poll-gpios" >> ${CRONTAB}
 echo "@reboot ${ROOTDIR}/scripts/python-manage.sh video-player" >> ${CRONTAB}
 
 
+# Lift control management task
+
+echo "@reboot ${ROOTDIR}/scripts/python-manage.sh lift-control" >> ${CRONTAB}
+
+
 # UWSGI instances for django and websockets
 
 for APP in "${APPS[@]}"; do

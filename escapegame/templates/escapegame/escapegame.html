@@ -28,6 +28,37 @@
 				</div>
 			</div>
 
+			<!-- Lift controls -->
+			<label class="head_block head_border">{% trans "Lift controls" %}</label>
+			<div class="row head_block">
+				<div class="col"></div>
+			{% for lift in game.lifts %}
+				{% with lift_prefix=lift.name|slice:"0:1"|lower lift_suffix=lift.name|slice:"1:" %}
+	            {% with lift_name=lift_prefix|add:lift_suffix %}
+
+				<div class="col">
+
+					<!-- Raise lift button -->
+					<button id="raise-{{ game.slug }}-{{ lift.slug }}" class="raise-lift" value="{{ lift.url_callback }}/raise/" type="submit">
+						<img src="{% static 'img/icons8-raise-100.png' %}" title="{% trans "Raise lift" %} {{ lift_name }}">
+					</button>
+
+					<!-- Lower lift button -->
+					<button id="lower-{{ game.slug }}-{{ lift.slug }}" class="lower-lift" value="{{ lift.url_callback }}/lower/" type="submit">
+						<img src="{% static 'img/icons8-lower-100.png' %}" title="{% trans "Lower lift" %} {{ lift_name }}">
+					</button>
+
+					<div class="image-with-caption">
+						<p>{% trans "Lift" %} {{ lift_name }}</p>
+					</div>
+
+				</div>
+				{% endwith %}
+				{% endwith %}
+			{% endfor %}
+				<div class="col"></div>
+			</div>
+
 			<!-- Video controls -->
 			<label class="head_block head_border">{% trans "Video controls" %}</label>
 			<div class="row head_block">

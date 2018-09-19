@@ -58,6 +58,9 @@ MASTER_TLD = MASTER.TLD
 # My hostname
 HOSTNAME = '%s%s' % (socket.gethostname(), MASTER.TLD)
 
+# The FIFO to use to control the lifts
+LIFT_CONTROL_FIFO = '/tmp/lift-control.fifo'
+
 # The FIFO to use to control the video player
 VIDEO_CONTROL_FIFO = '/tmp/video-control.fifo'
 

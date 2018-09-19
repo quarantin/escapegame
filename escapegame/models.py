@@ -9,7 +9,7 @@ from constance import config
 
 from escapegame import libraspi
 from multimedia.models import Image, Video
-from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO
+from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO, LiftGPIO
 
 from datetime import timedelta
 import traceback
@@ -65,8 +65,9 @@ class EscapeGame(models.Model):
 		self.finish_time = None
 		self.save()
 
-		# TODO fetch cubes and reset them
-		#self.cube.reset()
+		lifts = LiftGPIO.objects.filter(game=self)
+		for lift in lifts:
+			lift.lower_lift()
 
 		doors = DoorGPIO.objects.filter(game=self)
 		for door in doors:

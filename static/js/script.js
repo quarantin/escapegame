@@ -307,7 +307,7 @@ function game_control_handler(action)
 }
 
 /*
- * Assign click event handler for video control button.
+ * Assign click event handler for video control buttons.
  */
 function video_control_handler(action)
 {
@@ -340,7 +340,30 @@ function video_control_handler(action)
 }
 
 /*
- * Assign click event handler for door control button.
+ * Assign click event handler for lift control buttons.
+ */
+function lift_control_handler(action)
+{
+	$('button.' + action + '-lift').click(function() {
+
+		ok = confirm('Are you really sure you want to ' + action + ' the lift?');
+		if (ok !== true)
+			return;
+
+		$.ajax({
+			url: this.value,
+			success: function() {
+				refresh_page();
+			},
+			error: function() {
+				alert('Failed to ' + action + ' the lift.');
+			},
+		});
+	});
+}
+
+/*
+ * Assign click event handler for door control buttons.
  */
 function door_control_handler(action)
 {
@@ -363,7 +386,7 @@ function door_control_handler(action)
 }
 
 /*
- * Assign click event handler for challenge control button.
+ * Assign click event handler for challenge control buttons.
  */
 function challenge_control_handler(action)
 {
@@ -401,6 +424,12 @@ $(document).ready(function() {
 
 	// Handler for the button to stop the video
 	video_control_handler('stop');
+
+	// Handler for the buttons to raise the lifts
+	lift_control_handler('raise');
+
+	// Handler for the buttons to lower the lifts
+	lift_control_handler('lower');
 
 	// Handler for the buttons to lock doors
 	door_control_handler('lock');

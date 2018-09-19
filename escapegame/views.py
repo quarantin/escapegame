@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from controllers.models import ChallengeGPIO, DoorGPIO, RaspberryPi
+from controllers.models import ChallengeGPIO, DoorGPIO, LiftGPIO, RaspberryPi
 from multimedia.models import Image, Video
 from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 from escapegame import libraspi
@@ -51,6 +51,10 @@ def escapegame_detail(request, game_slug):
 	game.doors = DoorGPIO.objects.filter(game=game)
 	for door in game.doors:
 		door.url_callback = '/%s/api/door/%s/%s' % (lang, game.slug, door.slug)
+
+	game.lifts = LiftGPIO.objects.filter(game=game)
+	for lift in game.lifts:
+		lift.url_callback = '/%s/api/lift/%s/%s' % (lang, game.slug, lift.slug)
 
 	for raspi in raspberry_pis:
 
@@ -127,6 +131,7 @@ def escapegame_status(request, game_slug):
 		game['raspberrypis'] = [ x for x in RaspberryPi.objects.values() ]
 		game['rooms'] = []
 		game['doors'] = []
+		game['lifts'] = []
 
 		for raspi in game['raspberrypis']:
 
@@ -139,6 +144,10 @@ def escapegame_status(request, game_slug):
 		for door in doors:
 			__populate_images(door, 'image')
 			game['doors'].append(door)
+
+		lifts = LiftGPIO.objects.filter(game=game['id']).values()
+		for lift in lifts:
+			game['lifts'].append(lift)
 
 		__populate_images(game, 'map_image')
 
@@ -246,6 +255,34 @@ def rest_door_control(request, game_slug, room_slug, action):
 			'traceback': traceback.format_exc(),
 		})
 
+def rest_lift_control(request, game_slug, lift_slug, action):
+
+	method = 'escapegame.views.rest_lift_control'
+
+	try:
+		if action not in [ 'lower', 'raise' ]:
+			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
+
+		raised = (action == 'raise')
+
+		game = EscapeGame.objects.get(slug=game_slug)
+		lift = LiftGPIO.objects.get(game=game, slug=lift_slug)
+
+		status, message = lift.set_raised(raised, from_gamemaster=True)
+
+		return JsonResponse({
+			'status': status,
+			'method': method,
+			'message': message,
+		})
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'method': method,
+			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
+		})
 """
 	REST video controls, no login required for now (REST API)
 """
@@ -260,6 +297,19 @@ def rest_video_control(request, video_slug, action):
 		video = Video.objects.get(slug=video_slug)
 
 		status, message = video.control(action)
+		if status != 0:
+			return JsonResponse({
+				'status': status,
+				'method': method,
+				'message': message,
+			})
+
+		try:
+			lift = LiftGPIO.objects.get(video=video)
+			status, message = lift.raise_lift()
+
+		except LiftGPIO.DoesNotExist:
+			pass
 
 		return JsonResponse({
 			'status': status,

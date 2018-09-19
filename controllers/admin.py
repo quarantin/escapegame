@@ -53,6 +53,12 @@ class DoorGPIOForm(GPIOForm):
 		model = DoorGPIO
 		exclude = []
 
+class LiftGPIOForm(forms.ModelForm):
+
+	class Meta:
+		model = LiftGPIO
+		exclude = []
+
 #
 # Controllers admin classes
 #
@@ -242,9 +248,48 @@ class DoorGPIOAdmin(GPIOAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'locked', 'unlocked_at' )
 
+class LiftGPIOAdmin(admin.ModelAdmin):
+
+	form = LiftGPIOForm
+
+	list_display = [
+		'name',
+		'slug',
+		'controller',
+		'game',
+		'video',
+		'pin',
+		'raised',
+		'image',
+	]
+
+	fieldsets = (
+
+		('Lift GPIO', { 'fields': (
+			'name',
+			'slug',
+			'controller',
+		)}),
+
+		('Lift', { 'fields': (
+			'game',
+			'video',
+			'pin',
+			'raised',
+		)}),
+
+		('Multimedia', { 'fields': (
+			'image',
+		)}),
+	)
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', )
+
 # Register our models to our custom admin site
 site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)
 site.register(ChallengeGPIO, ChallengeGPIOAdmin)
 site.register(CubeGPIO, CubeGPIOAdmin)
 site.register(DoorGPIO, DoorGPIOAdmin)
+site.register(LiftGPIO, LiftGPIOAdmin)

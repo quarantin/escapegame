@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 
 from constance import config
 
+from siteconfig import settings
 from multimedia.models import Image
 from escapegame import libraspi
 
@@ -261,7 +262,9 @@ class GPIO(models.Model):
 			if status != 0:
 				return status, message
 
-			# Wait for the controller to have time to read the value
+			# Wait for the controller to have time to read the value.
+			# This is probably not needed since we're supposed to use
+			# interrupts for reset action.
 			time.sleep(0.1)
 
 			# Set reset pin to LOW to stop triggering controller reset
@@ -363,18 +366,6 @@ class CubeGPIO(ChallengeGPIO):
 		if self.placed_time is None:
 			self.placed_time = timezone.localtime()
 			self.save()
-		return 0, 'Success'
-
-	""" Raise the cube stand
-	"""
-	def raiseStand(self):
-		# TODO: Implement me
-		return 0, 'Success'
-
-	""" Lower the cube stand
-	"""
-	def lowerStand(self):
-		# TODO: Implement me
 		return 0, 'Success'
 
 class DoorGPIO(GPIO):
@@ -481,3 +472,67 @@ class DoorGPIO(GPIO):
 			status, message, html = libraspi.do_get(url)
 
 		return status, message
+
+class LiftGPIO(models.Model):
+
+	slug = models.SlugField(max_length=255, unique=True, blank=True)
+	name = models.CharField(max_length=255, unique=True)
+	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
+
+	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE, blank=True, null=True)
+	video = models.ForeignKey('multimedia.Video', on_delete=models.CASCADE, blank=True, null=True)
+
+	pin = models.IntegerField(default=11)
+	raised = models.BooleanField(default=False)
+
+	image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL)
+
+	class Meta:
+		verbose_name = 'Lift GPIO'
+		verbose_name_plural = 'Lift GPIOs'
+
+	def __str__(self):
+		return 'Lift GPIO - %s' % self.name
+
+	def save(self, *args, **kwargs):
+
+		new_slug = slugify(self.name)
+		if self.slug is None or self.slug != new_slug:
+			self.slug = new_slug
+
+		self.clean()
+		super(LiftGPIO, self).save(*args, **kwargs)
+
+	def reset(self):
+		return self.lowerCube()
+
+	def set_raised(self, raised, from_gamemaster=False):
+		self.raised = raised
+
+		delay = raised and self.game.cube_delay or 0
+
+		# We never want to have a delay when the
+		# gamemaster asks to lower/raise a lift.
+		if from_gamemaster is True:
+			delay = 0
+
+		fifo_path = settings.LIFT_CONTROL_FIFO
+		if not os.path.exists(fifo_path):
+			raise Exception('Could not find FIFO at `%s`' % fifo_path)
+
+		action = (raised and 'raise' or 'lower')
+
+		command = '%s %s %s' % (action, self.slug, delay)
+
+		fifo = open(fifo_path, 'w')
+		fifo.write(command)
+		fifo.close()
+
+		self.save()
+		return 0, 'Success'
+
+	def lower_lift(self, from_gamemaster=False):
+		return self.set_raised(False, from_gamemaster)
+
+	def raise_lift(self, from_gamemaster=False):
+		return self.set_raised(True, from_gamemaster)
