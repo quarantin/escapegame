@@ -14,6 +14,8 @@ from threading import Thread
 class Command(BaseCommand):
 	help = 'Monitor which Raspberry Pis are online'
 
+	running = True
+
 	raspis = {}
 	threads = {}
 
@@ -21,7 +23,7 @@ class Command(BaseCommand):
 
 		status = False
 
-		while raspi in self.raspis:
+		while self.running and raspi in self.raspis:
 
 			try:
 				# Update online status of Raspberry Pi
@@ -29,6 +31,7 @@ class Command(BaseCommand):
 
 			except KeyboardInterrupt:
 				print('Quitting from thread! (because we received SIGINT)')
+				self.running = False
 				break
 			except:
 				self.stdout.write(traceback.format_exc())
@@ -38,11 +41,13 @@ class Command(BaseCommand):
 
 			except KeyboardInterrupt:
 				print('Quitting from thread! (because we received SIGINT)')
+				self.running = False
 				break
 			except:
 				self.stdout.write(traceback.format_exc())
 
-		print('Raspberry Pi %s is not registered anymore, quitting thread!' % raspi.hostname)
+		if self.running:
+			print('Raspberry Pi %s is not registered anymore, quitting thread!' % raspi.hostname)
 
 	def cleanup_threads(self):
 
@@ -66,7 +71,7 @@ class Command(BaseCommand):
 
 		delay = os.getenv('SLEEP_DELAY') or 5
 
-		while True:
+		while self.running:
 
 			try:
 				# Retrieve all Raspberry Pis from database
@@ -80,6 +85,7 @@ class Command(BaseCommand):
 
 						# Create new monitoring thread for this Raspberry Pi
 						self.threads[raspi] = Thread(target=self.monitor_thread, args=(raspi, delay))
+						self.threads[raspi].daemon = True
 						self.threads[raspi].start()
 
 						print('Starting new monitoring thread for Raspberry Pi `%s`' % raspi.hostname)
@@ -89,6 +95,7 @@ class Command(BaseCommand):
 
 			except KeyboardInterrupt:
 				print('Quitting! (because we received SIGINT)')
+				self.running = False
 				break
 			except:
 				self.stdout.write(traceback.format_exc())
@@ -98,6 +105,7 @@ class Command(BaseCommand):
 
 			except KeyboardInterrupt:
 				print('Quitting! (because we received SIGINT)')
+				self.running = False
 				break
 			except:
 				self.stdout.write(traceback.format_exc())
