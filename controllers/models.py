@@ -115,6 +115,7 @@ class Controller(models.Model):
 
 	def is_online(self):
 
+		status = self.online
 		self.online = False
 
 		url = '%s/en/ping/' % self.get_url()
@@ -128,6 +129,9 @@ class Controller(models.Model):
 			pass
 
 		self.save()
+
+		if status != self.online:
+			libraspi.notify_frontend()
 
 		return self.online
 
