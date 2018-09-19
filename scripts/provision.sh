@@ -16,6 +16,8 @@ fi
 DEBIAN_PACKAGES=(
 	bc
 	git
+	libdbd-mysql-perl
+	munin-node
 	$NGINX_PKG
 	python3
 	python3-pip
@@ -26,6 +28,7 @@ DEBIAN_PACKAGES=(
 )
 
 SERVER_PACKAGES=(
+	munin
 	mysql-server
 	redis-server
 )
@@ -135,6 +138,9 @@ sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
 
 # Disable server tokens for nginx (hide the version)
 sudo sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf
+
+# Configure munin-node
+sudo munin-node-configure --shell --families=contrib,auto | sudo sh -x
 
 # Remove default and old configs of nginx and uwsgi
 sudo rm -f                     \
