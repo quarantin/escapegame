@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from constance import config
 
@@ -72,14 +73,17 @@ class ArduinoSketch(models.Model):
 
 class Controller(models.Model):
 
+	PROTO_HTTP = 'http'
+	PROTO_HTTPS = 'https'
+
 	PROTOCOL_CHOICES = (
-		('http', 'HTTP'),
-		('https', 'HTTPS'),
+		(PROTO_HTTP, _('HTTP')),
+		(PROTO_HTTPS, _('HTTPS')),
 	)
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
-	protocol = models.CharField(max_length=32, default='http', choices=PROTOCOL_CHOICES) # TODO limit choices to HTTP or HTTPS
+	protocol = models.CharField(max_length=6, default=PROTO_HTTP, choices=PROTOCOL_CHOICES)
 	hostname = models.CharField(max_length=255, unique=True)
 	port = models.IntegerField(default=80)
 	online = models.BooleanField(default=False)
@@ -127,6 +131,16 @@ class Controller(models.Model):
 		return self.online
 
 class RaspberryPi(Controller):
+
+	TYPE_AUDIO = 'audio'
+	TYPE_VIDEO = 'video'
+
+	MEDIA_TYPES = (
+		( TYPE_AUDIO, _('Audio') ),
+		( TYPE_VIDEO, _('Video') ),
+	)
+
+	media_type = models.CharField(max_length=6, default=TYPE_VIDEO, choices=MEDIA_TYPES)
 
 	class Meta:
 		verbose_name = 'Raspberry Pi'
