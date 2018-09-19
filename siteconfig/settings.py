@@ -318,6 +318,7 @@ CONSTANCE_CONFIG = {
 	# Upload Settings
 	'UPLOAD_IMAGE_PATH':     ( 'uploads/images',   'The directory to upload images.',                                  'text_field' ),
 	'UPLOAD_VIDEO_PATH':     ( 'uploads/videos',   'The directory to upload videos.',                                  'text_field' ),
+	'UPLOAD_AUDIO_PATH':     ( 'uploads/audios',   'The directory to upload audios.',                                  'text_field' ),
 	'UPLOAD_SKETCH_PATH':    ( 'uploads/sketches', 'The directory to upload Arduino sketches.',                        'text_field' ),
 
 	# Video Settings
