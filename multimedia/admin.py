@@ -37,7 +37,25 @@ class VideoAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', )
 
+class AudioAdmin(admin.ModelAdmin):
+	list_display = [
+		'audio_name',
+		'slug',
+		'audio_path',
+	]
+	fieldsets = (
+		('Audio', { 'fields': (
+			'audio_name',
+			'slug',
+			'audio_path',
+		)}),
+	)
+
+	def get_readonly_fields(self, request, obj=None):
+		return self.readonly_fields + ( 'slug', )
+
 
 # Register our models to our custom admin site
 site.register(Image, ImageAdmin)
 site.register(Video, VideoAdmin)
+site.register(Audio, AudioAdmin)
