@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from controllers.models import ChallengeGPIO, DoorGPIO, LiftGPIO, RaspberryPi
-from multimedia.models import Image, Video
+from multimedia.models import Image, Video, Audio
 from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
 from escapegame import libraspi
 
@@ -40,6 +40,7 @@ def escapegame_detail(request, game_slug):
 	rooms = EscapeGameRoom.objects.filter(game=game)
 	raspberry_pis = RaspberryPi.objects.all()
 	videos = game.get_videos()
+	audios = Audio.objects.all()
 	#videos = Video.objects.all()
 
 	for room in rooms:
@@ -67,6 +68,7 @@ def escapegame_detail(request, game_slug):
 		'game': game,
 		'rooms': rooms,
 		'videos': videos,
+		'audios': audios,
 		'raspberry_pis': raspberry_pis,
 	}
 
