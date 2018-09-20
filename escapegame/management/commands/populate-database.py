@@ -16,6 +16,7 @@ class Command(BaseCommand):
 		all_models = [
 			Image,
 			Video,
+			Audio,
 			Controller,
 			RaspberryPi,
 			GPIO,
@@ -101,6 +102,15 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 #
+# Audio
+#
+
+		self.stdout.write('  Populating model `Audio`', ending='')
+		demo_audio = Audio(audio_name= 'Audio Demo', audio_path='uploads/audios/test.h264')
+		demo_audio.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+#
 # Images
 #
 
@@ -165,9 +175,18 @@ class Command(BaseCommand):
 		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits', hostname='les-1001-nuits.local')
 		raspi_1001_nuits.save()
 
+		# Raspberry Pi: Sons Les 1001 nuits
+		raspi_sons_1001_nuits = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
+		raspi_sons_1001_nuits.save()
+
 		# Raspberry Pi: Stranger Things
 		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
 		raspi_stranger_things.save()
+
+		# Raspberry Pi: Son Stranger Things
+		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
+		raspi_son_stranger_things.save()
+
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
