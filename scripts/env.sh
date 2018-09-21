@@ -25,7 +25,7 @@ CPU=$(uname -a | awk '{ print $(NF-1) }')
 RUNNING_ON_PI=true
 RUNNING_ON_PI_V3=true
 
-if [[ ${CPU} == 'armv*' ]]; then
+if [[ ${CPU} == 'armv'* ]]; then
 
 	if [ ${CPU} != 'armv7l' ]; then
 		RUNNING_ON_PI_V3=$?
