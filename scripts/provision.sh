@@ -23,7 +23,6 @@ fi
 # Source env.sh again to update HOSTNAME
 . $(dirname $0)/env.sh
 
-exit
 TIMEZONE='Europe/Paris'
 
 ARCH=amd64
