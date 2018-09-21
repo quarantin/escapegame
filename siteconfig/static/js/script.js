@@ -19,26 +19,50 @@ function get_language()
 /*
  * Retrieve the URL of the Raspberry Pi selected in the radio button list.
  */
-function get_selected_raspi()
+function get_selected_video_raspi()
 {
-	raspi = $('input[name=selected-raspberry-pi]:checked');
+	raspi = $('input[name=selected-raspberry-pi-video]:checked');
 
 	return (raspi.length > 0 ? raspi : false);
 }
 
+
+function get_selected_audio_raspi()
+{
+	raspi = $('input[name=selected-raspberry-pi-audio]:checked');
+
+	return (raspi.length > 0 ? raspi : false);
+}
 /*
  * Return the video URL for the video selected in select field.
  */
 function get_video_url(action)
 {
 	selected_video = $('#selected-video').val();
-	selected_raspi = get_selected_raspi();
+	selected_raspi = get_selected_video_raspi();
 
 	raspi_url = '';
 	if (selected_raspi)
 		raspi_url = selected_raspi.data('raspi-url');
 
 	return raspi_url + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
+}
+
+
+/*
+ *Return the audio URL for the audio selected in select field.
+ */
+
+function get_audio_url(action)
+{
+	selected_audio = $('#selected-audio').val();
+	selected_raspi = get_selected_audio_raspi();
+
+	raspi_url = '';
+	if (selected_raspi)
+		raspi_url = selected_raspi.data('raspi-url');
+	return raspi_url + '/' + get_language() + '/api/audio/' + selected_audio + '/' + action + '/';
+
 }
 
 /*
@@ -74,9 +98,15 @@ function toggle_online_status(raspi)
 	if (!raspi.online)
 		input.prop('checked', false);
 
-	selected_raspi = get_selected_raspi();
-	if (!selected_raspi)
-		$('input[name=selected-raspberry-pi]:enabled:first').prop('checked', true);
+	selected_raspi_video = get_selected_video_raspi();
+	selected_raspi_audio = get_selected_audio_raspi();
+
+	if (!selected_raspi_video)
+		$('input[name=selected-raspberry-pi-video]:enabled:first').prop('checked', true);
+
+
+	if (!selected_raspi_audio)
+		$('input[name=selected-raspberry-pi-audio]:enabled:first').prop('checked', true);
 }
 
 /*
@@ -339,6 +369,37 @@ function video_control_handler(action)
 	});
 }
 
+function audio_control_handler(action)
+{
+	$('button#audio-' + action).click(function(){
+		if (action == 'play') {
+			$('button#audio-play').addClass('d-none');
+			$('button#audio-pause').removeClass('d-none');
+		}
+		else{
+			$('button#audio-play').removeClass('d-none');
+			$('button#audio-pause').addClass('d-none');
+
+		}
+
+		var audio_url = get_audio_url(action);
+
+		$.ajax({
+			url: audio_url,
+			timeout: timeout,
+			success: function() {
+				//refresh_page();
+			},
+			error: function() {
+				alert('Could not connect to URL: ' + audio_url);
+			},
+		});
+
+	});
+
+}
+
+
 /*
  * Assign click event handler for lift control buttons.
  */
@@ -424,6 +485,15 @@ $(document).ready(function() {
 
 	// Handler for the button to stop the video
 	video_control_handler('stop');
+
+	// Handler for the button to start the audio
+	audio_control_handler('play');
+
+	// Handler for the button to pause the audio
+	audio_control_handler('pause');
+
+	// Handler for the button to stop the audio
+	audio_control_handler('stop');
 
 	// Handler for the buttons to raise the lifts
 	lift_control_handler('raise');
