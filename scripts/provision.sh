@@ -7,10 +7,10 @@ TIMEZONE='Europe/Paris'
 ARCH=amd64
 NGINX_PKG=nginx-full
 MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
-if [ "$RUNNING_ON_PI" = true ]; then
+if [ ${RUNNING_ON_PI} = true ]; then
 	ARCH=armv6l
 	NGINX_PKG=nginx-light
-	if [ "$RUNNING_ON_PI_V3" = true ]; then
+	if [ ${RUNNING_ON_PI_V3} = true ]; then
 		MYSQL_CONFIG='/etc/mysql/mariadb.conf.d/50-server.cnf'
 	fi
 
@@ -63,20 +63,20 @@ PIP_PACKAGES=(
 	six==1.10.0
 )
 
-DJANGO='django'
-WEBSOCKET='websocket'
+DJANGO=django
+WEBSOCKET=websocket
 
-SOCKET_DJANGO="/tmp/uwsgi.${DJANGO}.socket"
-SOCKET_WEBSOCKET="/tmp/uwsgi.${WEBSOCKET}.socket"
+SOCKET_DJANGO=/tmp/uwsgi.${DJANGO}.socket
+SOCKET_WEBSOCKET=/tmp/uwsgi.${WEBSOCKET}.socket
 
-NGINX_CONF='nginx.conf'
-NGINX_SITES_ENABLED='/etc/nginx/sites-enabled'
-NGINX_SITES_AVAILABLE='/etc/nginx/sites-available'
+NGINX_CONF=nginx.conf
+NGINX_SITES_ENABLED=/etc/nginx/sites-enabled
+NGINX_SITES_AVAILABLE=/etc/nginx/sites-available
 
-UWSGI_CONF='uwsgi.ini'
-UWSGI_CONF_DEFAULT='defaults.ini'
-UWSGI_APPS_ENABLED='/etc/uwsgi/apps-enabled'
-UWSGI_APPS_AVAILABLE='/etc/uwsgi/apps-available'
+UWSGI_CONF=uwsgi.ini
+UWSGI_CONF_DEFAULT=defaults.ini
+UWSGI_APPS_ENABLED=/etc/uwsgi/apps-enabled
+UWSGI_APPS_AVAILABLE=/etc/uwsgi/apps-available
 
 # TODO select en_US.UTF-8 and fr_FR.UTF-8
 # TODO sudo dpkg-reconfigure locales
@@ -91,14 +91,14 @@ sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
 
 # Install golang 1.11
 GOLANG_VERSION=1.11
-GOLANG_PKG="go${GOLANG_VERSION}.linux-${ARCH}.tar.gz"
-GOLANG_URL="https://storage.googleapis.com/golang/${GOLANG_PKG}"
-wget -q -O "/tmp/${GOLANG_PKG}" "${GOLANG_URL}"
+GOLANG_PKG=go${GOLANG_VERSION}.linux-${ARCH}.tar.gz
+GOLANG_URL=https://storage.googleapis.com/golang/${GOLANG_PKG}
+wget -q -O /tmp/${GOLANG_PKG} ${GOLANG_URL}
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf "/tmp/${GOLANG_PKG}"
+sudo tar -C /usr/local -xf /tmp/${GOLANG_PKG}
 export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin
-rm -f "/tmp/${GOLANG_PKG}"
+rm -f /tmp/${GOLANG_PKG}
 
 # Install arduino-cli
 GO_DIR=~/golang
@@ -113,18 +113,18 @@ ${GO_DIR}/bin/arduino-cli core install arduino:avr
 
 # Install github.com/elechouse/PN532 (NFC library for Arduino)
 PN532_PKG=PN532_HSU.zip
-PN532_URL="https://github.com/elechouse/PN532/archive/${PN532_PKG}"
+PN532_URL=https://github.com/elechouse/PN532/archive/${PN532_PKG}
 ARDUINO_LIBS=~/Arduino/libraries/
 mkdir -p ${ARDUINO_LIBS}
 rm -rf ${ARDUINO_LIBS}/*
-wget -q -O "/tmp/${PN532_PKG}" "${PN532_URL}"
-unzip -q "/tmp/${PN532_PKG}" -d ${ARDUINO_LIBS}
-rm -f "/tmp/${PN532_PKG}"
+wget -q -O /tmp/${PN532_PKG} ${PN532_URL}
+unzip -q /tmp/${PN532_PKG} -d ${ARDUINO_LIBS}
+rm -f /tmp/${PN532_PKG}
 mv ${ARDUINO_LIBS}/PN532-PN532_HSU/* ${ARDUINO_LIBS}
-rm -rf "${ARDUINO_LIBS}/PN532-PN532_HSU"
+rm -rf ${ARDUINO_LIBS}/PN532-PN532_HSU
 
 # Creates default ~/.vimrc
-if [ "$USER" = "pi" ]; then
+if [ ${USER} = 'pi' ]; then
 cat << EOF > ~/.vimrc
 syntax on
 set ic
@@ -153,14 +153,14 @@ sudo rm -f                     \
 	${UWSGI_APPS_AVAILABLE}/*
 
 # Deploy our custom nginx and uwsgi configs
-sudo cp "${ROOTDIR}/conf/${NGINX_CONF}" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
-sudo cp "${ROOTDIR}/conf/${UWSGI_CONF}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
-sudo cp "${ROOTDIR}/conf/${UWSGI_CONF_DEFAULT}" "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
+sudo cp ${ROOTDIR}/conf/${NGINX_CONF} ${NGINX_SITES_AVAILABLE}/${NGINX_CONF}
+sudo cp ${ROOTDIR}/conf/${UWSGI_CONF} ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}
+sudo cp ${ROOTDIR}/conf/${UWSGI_CONF_DEFAULT} ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}
 
 CONFIGS=(
-	"${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
-	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
-	"${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
+	${NGINX_SITES_AVAILABLE}/${NGINX_CONF}
+	${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}
+	${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}
 )
 
 # Substitue our placeholder variables
@@ -177,23 +177,24 @@ done
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 
 	# Configure mysql to listen on the network
-	sudo sed -i 's/^bind-address[^a-z]*= 127.0.0.1$/bind-address = 0.0.0.0/' "${MYSQL_CONFIG}" || true
+	sudo sed -i 's/^bind-address[^a-z]*= 127.0.0.1$/bind-address = 0.0.0.0/' ${MYSQL_CONFIG} || true
 
 	# Configure redis to listen on the network
 	REDIS_CONFIG='/etc/redis/redis.conf'
-	sudo sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' "${REDIS_CONFIG}" || true
+	sudo sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' ${REDIS_CONFIG} || true
 fi
 
 # Creates corresponding symlinks
-sudo ln -s -r -t "${NGINX_SITES_ENABLED}/" "${NGINX_SITES_AVAILABLE}/${NGINX_CONF}"
-sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}"
-sudo ln -s -r -t "${UWSGI_APPS_ENABLED}/"  "${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}"
+sudo ln -s -r -t ${NGINX_SITES_ENABLED}/ ${NGINX_SITES_AVAILABLE}/${NGINX_CONF}
+sudo ln -s -r -t ${UWSGI_APPS_ENABLED}/  ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}
+sudo ln -s -r -t ${UWSGI_APPS_ENABLED}/  ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}
 
 # Enable nginx service at boot time
 sudo update-rc.d nginx defaults
 
 # Enable uwsgi services at boot time
-"${ROOTDIR}/scripts/set-crontab.sh"
+${ROOTDIR}/scripts/set-crontab.sh
+
 
 # Restart all services
-"${ROOTDIR}/scripts/restart-all.sh"
+${ROOTDIR}/scripts/restart-all.sh
