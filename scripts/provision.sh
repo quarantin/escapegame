@@ -2,6 +2,28 @@
 
 . $(dirname $0)/env.sh
 
+# Ask sudo password before anything else to avoid polluting script output.
+sudo echo -n
+
+NEW_HOSTNAME=$1
+if [ -z ${NEW_HOSTNAME} ]; then
+	echo "Usage: ${0} <hostname>"
+	exit
+fi
+
+# Fix hostname in case user also supplied the .local part
+NEW_HOSTNAME=$(echo ${NEW_HOSTNAME} | sed 's/\.local//')
+
+# Configure hostname of the machine
+if [ ${HOSTNAME} != ${NEW_HOSTNAME} ]; then
+	echo "[ * ] Configuring new hostname ${NEW_HOSTNAME} (current: ${HOSTNAME})"
+	sudo ${ROOTDIR}/scripts/set-hostname.sh ${NEW_HOSTNAME}
+fi
+
+# Source env.sh again to update HOSTNAME
+. $(dirname $0)/env.sh
+
+exit
 TIMEZONE='Europe/Paris'
 
 ARCH=amd64
@@ -195,6 +217,28 @@ sudo update-rc.d nginx defaults
 # Enable uwsgi services at boot time
 ${ROOTDIR}/scripts/set-crontab.sh
 
+# Create and populate the database
+${ROOTDIR}/scripts/init-database-mysql.sh
 
 # Restart all services
 ${ROOTDIR}/scripts/restart-all.sh
+
+# Ask user if ready for reboot
+echo 'You should now reboot this host to finish the installation.'
+
+while true; do
+
+	echo 'Do you want to reboot now? [y/n]'
+
+	read ANSWER
+
+	if [ ${ANSWER} = 'y' ]; then
+		sudo reboot
+
+	elif [ ${ANSWER} = 'n' ]; then
+		echo 'Quitting without rebooting!'
+		break
+	fi
+
+	echo 'Please press y or n.'
+done
