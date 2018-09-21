@@ -39,4 +39,7 @@ urlpatterns = [
 
 	# Video controls
 	path('api/video/<slug:video_slug>/<str:action>/', views.rest_video_control),
+
+	# Audio controls
+	path('api/audio/<slug:audio_slug>/<str:action>/', views.rest_audio_control),
 ]

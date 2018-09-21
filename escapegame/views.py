@@ -326,3 +326,36 @@ def rest_video_control(request, video_slug, action):
 			'message': 'Error: %s' % err,
 			'traceback': traceback.format_exc(),
 		})
+
+def rest_audio_control(request, audio_slug, action):
+
+	method = 'escapegame.views.rest_audio_control'
+
+	try:
+		if action not in [ 'pause', 'play', 'stop' ]:
+			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
+
+		audio = Audio.objects.get(slug=audio_slug)
+
+		status, message = audio.control(action)
+		if status != 0:
+			return JsonResponse({
+				'status': status,
+				'method': method,
+				'message': message,
+			})
+
+		return JsonResponse({
+			'status': status,
+			'method': method,
+			'message': message,
+		})
+
+
+	except Exception as err:
+		return JsonResponse({
+			'status': 1,
+			'method': method,
+			'message': 'Error: %s' % err,
+			'traceback': traceback.format_exc(),
+		})
