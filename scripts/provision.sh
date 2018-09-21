@@ -32,10 +32,7 @@ MYSQL_CONFIG='/etc/mysql/mysql.conf.d/mysqld.cnf'
 if [ ${RUNNING_ON_PI} = true ]; then
 	ARCH=armv6l
 	NGINX_PKG=nginx-light
-	if [ ${RUNNING_ON_PI_V3} = true ]; then
-		MYSQL_CONFIG='/etc/mysql/mariadb.conf.d/50-server.cnf'
-	fi
-
+	MYSQL_CONFIG='/etc/mysql/mariadb.conf.d/50-server.cnf'
 fi
 
 DEBIAN_PACKAGES=(
