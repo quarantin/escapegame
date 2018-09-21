@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 SCRIPTDIR="$(dirname "${0}")"
 
@@ -22,16 +22,4 @@ PLAYER_FIFO=/tmp/video-control.fifo
 
 CPU=$(uname -a | awk '{ print $(NF-1) }')
 
-RUNNING_ON_PI=true
-RUNNING_ON_PI_V3=true
-
-if [[ ${CPU} == 'armv'* ]]; then
-
-	if [ ${CPU} != 'armv7l' ]; then
-		RUNNING_ON_PI_V3=$?
-	fi
-
-else
-	RUNNING_ON_PI=false
-	RUNNING_ON_PI_V3=false
-fi
+[[ ${CPU} == 'armv'* ]] && RUNNING_ON_PI=true || RUNNING_ON_PI=false
