@@ -80,7 +80,7 @@ CREATE_MYSQL_USER(){
 
 	echo -n "[ * ] Creating MySQL user for \`${DBUSER}\`@\`${DB_HOST}\` on database \`${DBNAME}\`... "
 
-	sudo mysql -u root -e "DROP USER ${IF_EXISTS} '${DBUSER}'@'${DB_HOST}'"
+	sudo mysql -u root -e "DROP USER ${IF_EXISTS} '${DBUSER}'@'${DB_HOST}'" || true
 	sudo mysql -u root -e "CREATE USER '${DBUSER}'@'${DB_HOST}' IDENTIFIED BY '${DBPASS}'"
 	sudo mysql -u root -e "GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${DBUSER}'@'${DB_HOST}'"
 	sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test_${DBNAME}.* TO '${DBUSER}'@'${DB_HOST}'"
