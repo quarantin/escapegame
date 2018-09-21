@@ -121,7 +121,7 @@ wget -q -O "/tmp/${PN532_PKG}" "${PN532_URL}"
 unzip -q "/tmp/${PN532_PKG}" -d ${ARDUINO_LIBS}
 rm -f "/tmp/${PN532_PKG}"
 mv ${ARDUINO_LIBS}/PN532-PN532_HSU/* ${ARDUINO_LIBS}
-rmdir "${ARDUINO_LIBS}/PN532-PN532_HSU"
+rm -rf "${ARDUINO_LIBS}/PN532-PN532_HSU"
 
 # Creates default ~/.vimrc
 if [ "$USER" = "pi" ]; then
