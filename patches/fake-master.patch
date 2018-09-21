@@ -1,0 +1,38 @@
+diff --git a/scripts/init-database-mysql.sh b/scripts/init-database-mysql.sh
+index 163fb28..acbc94a 100755
+--- a/scripts/init-database-mysql.sh
++++ b/scripts/init-database-mysql.sh
+@@ -141,8 +141,8 @@ MASTER(){
+ }
+ 
+ 
+-if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
++#if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
+ 	MASTER
+-fi
++#fi
+ 
+ CREATE_MYSQL_CLIENT_CONFIG "${MASTER_HOSTNAME}"
+diff --git a/siteconfig/settings.py b/siteconfig/settings.py
+index 556815e..d0c1ea0 100644
+--- a/siteconfig/settings.py
++++ b/siteconfig/settings.py
+@@ -149,7 +149,7 @@ DATABASE_MYSQL = {
+ 	'NAME': 'escapegame',
+ 	'USER': 'escapegame',
+ 	'PASSWORD': 'escapegame',
+-	'HOST': MASTER_HOSTNAME,
++	'HOST': 'localhost',
+ 	'OPTIONS': {
+ 		'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+ 	},
+@@ -233,7 +233,8 @@ WEBSOCKET_URL = '/ws/'
+ # Use Redis as the session engine
+ # https://django-websocket-redis.readthedocs.io/en/latest/installation.html#replace-memcached-with-redis
+ 
+-REDIS_HOST = MASTER_HOSTNAME
++#REDIS_HOST = MASTER_HOSTNAME
++REDIS_HOST = 'localhost'
+ REDIS_PORT = 6379
+ 
+ SESSION_REDIS_PREFIX = 'session'
