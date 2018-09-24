@@ -1,23 +1,19 @@
 #!/bin/bash
 
-for F in */migrations/0*.py; do
-	echo -n "Fixing $F..."
-	DIFF=$(git diff $F)
-	COUNT=$(git diff $F | wc -l)
+. $(dirname $0)/env.sh
 
-	if [ "$COUNT" -eq "10" ] || [ "$COUNT" -eq "20" ]; then
-		git checkout $F
-		echo ' RESET'
+cd "${ROOTDIR}"
 
-	elif [ "$COUNT" -ne "0" ]; then
-		echo ' MODIFIED'
-	#	ADDS=$(echo $DIFF | grep '^+[^+]' | sed 's/^+//' | tail -n +2)
-	#	DELS=$(echo $DIFF | grep '^-[^-]' | sed 's/^-//' | tail -n +2)
-	#
-	#	if [ "$ADDS" == "$DELS" ]; then
-	#		git checkout $F
-	#	fi
-	else
-		echo ' NOT TOUCHED'
-	fi
-done
+rm -f */migrations/0*.py
+
+${PYTHON} manage.py makemigrations
+
+TRACKED=$(git status | grep deleted | awk '{ print $2 }')
+UNTRACKED=$(git ls-files --others --exclude-standard | grep controllers/migrations/0002_auto_)
+
+if [ ! -z "${TRACKED}" ] && [ ! -z "${UNTRACKED}" ]; then
+	echo "Restoring untracked file '${UNTRACKED}' => '${TRACKED}'"
+	mv ${UNTRACKED} ${TRACKED}
+fi
+
+${ROOTDIR}/scripts/reset-migrations.sh
