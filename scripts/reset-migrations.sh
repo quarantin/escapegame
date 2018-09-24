@@ -36,12 +36,12 @@ for F in */migrations/0*.py; do
 		continue
 
 	elif [ ${#DIFF[@]} -eq 0 ]; then
-		#git checkout $F
+		git checkout $F
 		echo RESET
 		#printf "%s" "${DIFF[@]}"
 
 	elif [ $SAME_FILE -eq 0 ]; then
-		#git checkout $F
+		git checkout $F
 		echo RESET" (same file)"
 		#printf "%s" "${DIFF[@]}"
 
