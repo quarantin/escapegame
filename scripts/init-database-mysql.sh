@@ -114,13 +114,8 @@ MASTER(){
 	# Disable this line when reverse dns is enabled
 	CREATE_MYSQL_USER %
 
-	# Make migrations
-	echo "[ * ] Running ${PYTHON} manage.py makemigrations..."
-	${PYTHON} manage.py makemigrations
-
-	# Migrate
-	echo "[ * ] Running ${PYTHON} manage.py migrate..."
-	${PYTHON} manage.py migrate
+	# Create migration files and migrate the data
+	./scripts/update-migrations.sh
 
 	CREATE_DJANGO_USER
 
@@ -137,7 +132,7 @@ MASTER(){
 	#done
 
 	# Configure munin (sort of post-provision.sh for now, will be improved in the future)
-	${ROOTDIR}/scripts/configure-munin.sh
+	./scripts/configure-munin.sh
 }
 
 
