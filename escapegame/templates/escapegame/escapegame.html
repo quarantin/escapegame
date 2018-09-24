@@ -67,7 +67,7 @@
 				<div class="col">
 
 					<div class="row">
-						<select id="selected-video" class="head_block form-control mx-auto">{% for video in videos %}
+						<select id="selected-video" class="head_block form-control mx-auto select-media">{% for video in videos %}
 							<option name="{{ video.video_name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
 								{% trans "Video" %} - {{ video.video_name }}
 							</option>{% endfor %}
@@ -75,11 +75,11 @@
 					</div>
 
 					<div class="row">
-						<div class="col radio width-70">
+						<div class="col radio radio-raspi">
 
 {% for raspi in raspberry_pis %}
 							{% if raspi.media_type == "video" %}
-							<label class="row width-80 mx-auto">
+							<label class="row mx-auto">
 								<input class="col-1" name="selected-raspberry-pi-video"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
 								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
@@ -132,7 +132,7 @@
 				<div class="col">
 
 					<div class="row">
-						<select id="selected-audio" class="head_block form-control mx-auto">{% for audio in audios %}
+						<select id="selected-audio" class="head_block form-control mx-auto select-media">{% for audio in audios %}
 							<option name="{{ audio.audio_name }}" value="{{ audio.slug }}">
 								{% trans "Audio" %} - {{ audio.audio_name }}
 							</option>{% endfor %}
@@ -140,11 +140,11 @@
 					</div>
 
 					<div class="row">
-						<div class="col radio width-70">
+						<div class="col radio radio-raspi">
 
 						{% for raspi in raspberry_pis %}
 							{% if raspi.media_type == "audio" %}
-							<label class="row width-80 mx-auto">
+							<label class="row mx-auto">
 								<input class="col-1" name="selected-raspberry-pi-audio"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
 								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>

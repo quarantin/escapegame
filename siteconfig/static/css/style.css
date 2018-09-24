@@ -115,15 +115,11 @@ img.map {
 	background-color: #007bff;
 }
 
-#selected-video {
-	width: 70%;
+select.select-media {
+	width: 90%;
 }
 
-.width-70 {
-	width: 70%;
-}
-
-.width-80 {
+div.radio-raspi {
 	width: 80%;
 }
 
