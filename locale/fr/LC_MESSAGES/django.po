@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-19 13:13+0200\n"
+"POT-Creation-Date: 2018-09-19 15:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,10 +27,12 @@ msgid "HTTPS"
 msgstr "HTTPS"
 
 #: controllers/models.py:140
+#: escapegame/templates/escapegame/escapegame.html:135
 msgid "Audio"
 msgstr "Audio"
 
-#: controllers/models.py:141 escapegame/templates/escapegame/escapegame.html:72
+#: controllers/models.py:141
+#: escapegame/templates/escapegame/escapegame.html:72
 msgid "Video"
 msgstr "Vidéo"
 
@@ -132,6 +134,7 @@ msgid "Video controls"
 msgstr "Contrôles des vidéo"
 
 #: escapegame/templates/escapegame/escapegame.html:84
+#: escapegame/templates/escapegame/escapegame.html:148
 msgid "Raspberry Pi"
 msgstr "Raspberry Pi"
 
@@ -154,68 +157,90 @@ msgid "Stop video"
 msgstr "Arrêt"
 
 #: escapegame/templates/escapegame/escapegame.html:126
+msgid "Audio controls"
+msgstr "Contrôles des audio"
+
+#: escapegame/templates/escapegame/escapegame.html:162
+msgid "Play audio"
+msgstr "Lecture"
+
+#: escapegame/templates/escapegame/escapegame.html:163
+msgid "Start audio"
+msgstr "Lecture"
+
+#: escapegame/templates/escapegame/escapegame.html:170
+#: escapegame/templates/escapegame/escapegame.html:171
+msgid "Pause audio"
+msgstr "Pause"
+
+#: escapegame/templates/escapegame/escapegame.html:178
+#: escapegame/templates/escapegame/escapegame.html:179
+msgid "Stop audio"
+msgstr "Arrêt"
+
+#: escapegame/templates/escapegame/escapegame.html:191
 msgid "Door controls"
 msgstr "Contrôles des portes"
 
-#: escapegame/templates/escapegame/escapegame.html:137
-#: escapegame/templates/escapegame/escapegame.html:138
-#: escapegame/templates/escapegame/escapegame.html:232
-#: escapegame/templates/escapegame/escapegame.html:233
+#: escapegame/templates/escapegame/escapegame.html:202
+#: escapegame/templates/escapegame/escapegame.html:203
+#: escapegame/templates/escapegame/escapegame.html:297
+#: escapegame/templates/escapegame/escapegame.html:298
 msgid "Unlock"
 msgstr "Déverrouiller"
 
-#: escapegame/templates/escapegame/escapegame.html:143
-#: escapegame/templates/escapegame/escapegame.html:144
-#: escapegame/templates/escapegame/escapegame.html:238
-#: escapegame/templates/escapegame/escapegame.html:239
+#: escapegame/templates/escapegame/escapegame.html:208
+#: escapegame/templates/escapegame/escapegame.html:209
+#: escapegame/templates/escapegame/escapegame.html:303
+#: escapegame/templates/escapegame/escapegame.html:304
 msgid "Lock"
 msgstr "Vérrouiller"
 
-#: escapegame/templates/escapegame/escapegame.html:156
+#: escapegame/templates/escapegame/escapegame.html:221
 msgid "Time Elapsed"
 msgstr "Temps écoulé"
 
-#: escapegame/templates/escapegame/escapegame.html:172
+#: escapegame/templates/escapegame/escapegame.html:237
 msgid "No room configured yet for this escape game."
 msgstr "Aucune salle configurée pour ce jeu d'évasion."
 
-#: escapegame/templates/escapegame/escapegame.html:174
-#: escapegame/templates/escapegame/escapegame.html:195
+#: escapegame/templates/escapegame/escapegame.html:239
+#: escapegame/templates/escapegame/escapegame.html:260
 #: escapegame/templates/escapegame/index.html:11
 msgid "You can visit"
 msgstr "Vous pouvez visiter"
 
-#: escapegame/templates/escapegame/escapegame.html:176
-#: escapegame/templates/escapegame/escapegame.html:197
+#: escapegame/templates/escapegame/escapegame.html:241
+#: escapegame/templates/escapegame/escapegame.html:262
 #: escapegame/templates/escapegame/index.html:11
 msgid "this"
 msgstr "cette"
 
-#: escapegame/templates/escapegame/escapegame.html:178
+#: escapegame/templates/escapegame/escapegame.html:243
 msgid "page to create new rooms."
 msgstr "page pour créer de nouvelle salles."
 
-#: escapegame/templates/escapegame/escapegame.html:193
+#: escapegame/templates/escapegame/escapegame.html:258
 msgid "No challenge configured yet for this room."
 msgstr "Aucune énigme configurée pour cette salle."
 
-#: escapegame/templates/escapegame/escapegame.html:199
+#: escapegame/templates/escapegame/escapegame.html:264
 msgid "page to create new challenges."
 msgstr "page pour créer de nouvelles énigmes."
 
-#: escapegame/templates/escapegame/escapegame.html:208
+#: escapegame/templates/escapegame/escapegame.html:273
 msgid "Challenge"
 msgstr "Énigme"
 
-#: escapegame/templates/escapegame/escapegame.html:209
+#: escapegame/templates/escapegame/escapegame.html:274
 msgid "Status"
 msgstr "Statut"
 
-#: escapegame/templates/escapegame/escapegame.html:250
+#: escapegame/templates/escapegame/escapegame.html:315
 msgid "Map"
 msgstr "Plan"
 
-#: escapegame/templates/escapegame/escapegame.html:252
+#: escapegame/templates/escapegame/escapegame.html:317
 msgid "No map data available."
 msgstr "Pas de carte disponible."
 
