@@ -218,9 +218,6 @@ ${ROOTDIR}/scripts/set-crontab.sh
 # Create and populate the database
 ${ROOTDIR}/scripts/init-database-mysql.sh
 
-# Restart all services
-${ROOTDIR}/scripts/restart-all.sh
-
 # Ask user if ready for reboot
 echo 'You should now reboot this host to finish the installation.'
 
