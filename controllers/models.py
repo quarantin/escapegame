@@ -494,7 +494,7 @@ class LiftGPIO(models.Model):
 
 		action = (raised and 'raise' or 'lower')
 
-		command = '%s %s %s' % (action, self.slug, int(delay.total_seconds))
+		command = '%s %s %s' % (action, self.slug, int(delay.total_seconds()))
 
 		fifo = open(fifo_path, 'w')
 		fifo.write(command)
