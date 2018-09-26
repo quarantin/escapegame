@@ -38,6 +38,7 @@ DEBIAN_PACKAGES=(
 	bc
 	git
 	libdbd-mysql-perl
+	libssl-dev
 	munin-node
 	$NGINX_PKG
 	python3
@@ -74,6 +75,7 @@ PIP_PACKAGES=(
 	gevent==1.3.6
 	greenlet==0.4.14
 	mysqlclient==1.3.13
+	Pillow==5.2.0
 	pyasn1==0.4.4
 	pyOpenSSL==18.0.0
 	redis==2.10.6
@@ -228,10 +230,10 @@ while true; do
 
 	read ANSWER
 
-	if [ ${ANSWER} = 'y' ]; then
+	if [ "${ANSWER}" = 'y' ]; then
 		sudo reboot
 
-	elif [ ${ANSWER} = 'n' ]; then
+	elif [ "${ANSWER}" = 'n' ]; then
 		echo 'Quitting without rebooting!'
 		break
 	fi
