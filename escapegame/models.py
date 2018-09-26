@@ -121,6 +121,15 @@ class EscapeGame(models.Model):
 	class Meta:
 		ordering = [ 'name' ]
 
+class EscapeGameCube(models.Model):
+
+	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
+	tag_id = models.CharField(max_length=8, default="FFFFFFFF")
+
+	def __str__(self):
+		return 'Cube - %s - %s' % (self.game.name, self.tag_id)
+
+	# TODO write clean method to validate hex input for tag_id
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
@@ -131,7 +140,6 @@ class EscapeGameRoom(models.Model):
 	is_sas = models.BooleanField(default=False)
 
 	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
-	door_pin = models.IntegerField(default=11)
 
 	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
 	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
@@ -152,7 +160,7 @@ class EscapeGameRoom(models.Model):
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, room=self, controller=self.get_controller(), image=self.door_image, action_pin=self.door_pin)
+			door = DoorGPIO(name=name, room=self, controller=self.get_controller(), image=self.door_image)
 			door.save()
 			self.door = door
 			super(EscapeGameRoom, self).save(*args, **kwargs)
@@ -200,7 +208,7 @@ class EscapeGameChallenge(models.Model):
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
 	gpio = models.ForeignKey(ChallengeGPIO, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
-	gpio_pin = models.IntegerField(default=31)
+	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
 	solved_video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_video')
 
@@ -231,22 +239,26 @@ class EscapeGameChallenge(models.Model):
 		super(EscapeGameChallenge, self).save(*args, **kwargs)
 
 		if self.gpio is None:
-			name = 'Challenge - %s' % self.name
-			gpio = ChallengeGPIO(name=name, challenge=self, controller=self.get_controller(), action_pin=self.gpio_pin)
+			name = 'GPIO - %s' % self.name
+			controller = self.room.controller or self.room.game.controller
+			gpio = ChallengeGPIO(name=name, controller=controller)
 			gpio.save()
 			self.gpio = gpio
 			super(EscapeGameChallenge, self).save(*args, **kwargs)
 
-		if self.gpio_pin != self.gpio.action_pin:
-			self.gpio.action_pin = self.gpio_pin
-			self.gpio.save()
-
 	def get_controller(self):
-		return self.room.get_controller()
+		return self.gpio.controller or self.room.controller or self.room.game.controller
 
 	def reset(self):
 		self.gpio.reset()
 		self.save()
+
+	def check_solved(self):
+
+		if self.dependent_on is not None and self.dependent_on.solved is False:
+			return False
+
+		return self.gpio.check_solved()
 
 	def set_solved(self, request, game_slug, room_slug, action):
 		try:

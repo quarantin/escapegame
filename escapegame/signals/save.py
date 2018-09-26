@@ -3,18 +3,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from controllers.models import ChallengeGPIO, CubeGPIO, DoorGPIO
+from controllers.models import ChallengeGPIO, DoorGPIO
 from escapegame import libraspi
 
 
 @receiver(post_save, sender=ChallengeGPIO)
 def save_challenge_gpio(sender, instance, created, **kwargs):
-	pass
-	#if instance.challenge is not None:
-	#	libraspi.notify_frontend()
-
-@receiver(post_save, sender=CubeGPIO)
-def save_cube_gpio(sender, instance, created, **kwargs):
 	pass
 	#if instance.challenge is not None:
 	#	libraspi.notify_frontend()

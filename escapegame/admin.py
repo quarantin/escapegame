@@ -61,6 +61,18 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'start_time', 'finish_time' )
 
+class EscapeGameCubeAdmin(admin.ModelAdmin):
+	list_display = [
+		'game',
+		'tag_id',
+	]
+	fieldsets = (
+		('Escape Game Cube', { 'fields': (
+			'game',
+			'tag_id',
+		)}),
+	)
+
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
@@ -254,6 +266,7 @@ site = EscapeGameAdminSite(name='escapegame')
 
 # Register our models to our custom admin site
 site.register(EscapeGame, EscapeGameAdmin)
+site.register(EscapeGameCube, EscapeGameCubeAdmin)
 site.register(EscapeGameRoom, EscapeGameRoomAdmin)
 site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)
 

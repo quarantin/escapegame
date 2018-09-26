@@ -284,7 +284,18 @@ class ChallengeGPIO(GPIO):
 		verbose_name = 'Challenge GPIO'
 		verbose_name_plural = 'Challenge GPIOs'
 
-	challenge = models.ForeignKey('escapegame.EscapeGameChallenge', on_delete=models.CASCADE, blank=True, null=True)
+	TYPE_DEFAULT = 'default'
+	TYPE_PUT_CUBE = 'put-cube'
+	TYPE_TAKE_CUBE = 'take-cube'
+
+	CHALLENGE_TYPES = (
+		(TYPE_DEFAULT, _('Default')),
+		(TYPE_PUT_CUBE, _('Put the cube')),
+		(TYPE_TAKE_CUBE, _('Take the cube')),
+	)
+
+	challenge_type = models.CharField(max_length=32, default=TYPE_DEFAULT, choices=CHALLENGE_TYPES)
+	cube = models.ForeignKey('escapegame.EscapeGameCube', on_delete=models.CASCADE, blank=True, null=True)
 
 	solved = models.BooleanField(default=False)
 	solved_at = models.DateTimeField(blank=True, null=True)
@@ -303,6 +314,9 @@ class ChallengeGPIO(GPIO):
 		status, message, signal = self.read()
 		if status != 0:
 			raise Exception('GPIO.read() failed!')
+
+		if self.challenge_type == ChallengeGPIO.TYPE_TAKE_CUBE:
+			return not signal
 
 		return signal
 
@@ -325,51 +339,6 @@ class ChallengeGPIO(GPIO):
 			self.solved_at = timezone.localtime()
 
 		self.save()
-		return 0, 'Success'
-
-class CubeGPIO(ChallengeGPIO):
-
-	class Meta:
-		verbose_name = 'Cube GPIO'
-		verbose_name_plural = 'Cube GPIOs'
-
-	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE)
-
-	tag_id = models.CharField(max_length=32)
-	taken_at = models.DateTimeField(blank=True, null=True)
-	placed_at = models.DateTimeField(blank=True, null=True)
-
-	def __str__(self):
-		return 'Cube GPIO - %s' % self.name
-
-	""" Reset this cube state
-	"""
-	def reset(self):
-
-		self.taken_at = None
-		self.placed_at = None
-		self.save()
-
-		status, message = self.lowerStand()
-		if status != 0:
-			return status, message
-
-		return super(CubeGPIO, self).reset()
-
-	""" Callback method to call when the cube has just been taken from the NFC reader
-	"""
-	def taken(self):
-		if self.taken_time is None:
-			self.taken_time = timezone.localtime()
-			self.save()
-		return 0, 'Success'
-
-	""" Callback method to call when the cube has just been placed on the NFC reader
-	"""
-	def placed(self):
-		if self.placed_time is None:
-			self.placed_time = timezone.localtime()
-			self.save()
 		return 0, 'Success'
 
 class DoorGPIO(GPIO):

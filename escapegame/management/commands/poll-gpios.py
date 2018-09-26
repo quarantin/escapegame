@@ -2,7 +2,8 @@
 
 from django.core.management.base import BaseCommand
 
-from controllers.models import ChallengeGPIO, RaspberryPi
+from controllers.models import RaspberryPi
+from escapegame.models import EscapeGameChallenge
 
 import os
 import time
@@ -22,23 +23,28 @@ class Command(BaseCommand):
 		while True:
 
 			try:
-				# Retrive the local Raspberry Pi
+				# Retrieve the local Raspberry Pi
 				myself = RaspberryPi.get_myself()
 				if myself is None:
 					raise Exception('I\'m not a registered controller, no GPIO to poll for.')
 
-				# Retrieve all GPIOs from this controller
-				gpios = ChallengeGPIO.objects.filter(controller=myself)
+				# Retrieve all challenges
+				challenges = EscapeGameChallenge.objects.all()
 
-				# For each GPIO check if the challenge is solved and notify the master if it is
-				for gpio in gpios:
+				# For each challenge assigned to this controller (myself),
+				# check if the gpio is solved and notify the master if it is
+				for chall in challenges:
+
+					# We don't want to process challenges assigned to other controllers
+					if chall.get_controller() != myself:
+						continue
 
 					# If the challenge is not already solved in database, but the GPIO indicates it is solved...
-					if not gpio.solved and gpio.check_solved():
+					if not chall.gpio.solved and chall.check_solved():
 
-						# then notify the master about this challenge being solved
-						print('Challenge solved on GPIO %d (%s)' % (gpio.action_pin, gpio.challenge.slug))
-						requests.get(gpio.challenge.callback_url_solve)
+						# then notify the master about this challenge being solved, the master will update the database himself.
+						print('Challenge solved on GPIO %d (%s)' % (chall.gpio.action_pin, chall.slug))
+						requests.get(chall.callback_url_solve)
 
 			except KeyboardInterrupt:
 				print('Quitting! (Because we received SIGINT from user)')

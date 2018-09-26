@@ -41,11 +41,15 @@ class ChallengeGPIOForm(GPIOForm):
 		model = ChallengeGPIO
 		exclude = []
 
-class CubeGPIOForm(GPIOForm):
+	def clean(self):
 
-	class Meta:
-		model = CubeGPIO
-		exclude = []
+		cube = 'cube' in self.cleaned_data and self.cleaned_data['cube'] or None
+		chall_type = 'challenge_type' in self.cleaned_data and self.cleaned_Data['challenge_type'] or None
+
+		if chall_type != ChallengeGPIO.TYPE_DEFAULT and cube is None:
+			raise ValidationError({
+				'cube': 'Cube field cannot be empty for cube challenges',
+			})
 
 class DoorGPIOForm(GPIOForm):
 
@@ -138,7 +142,8 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 	form = ChallengeGPIOForm
 
 	list_display = GPIOAdmin.list_display + [
-		'challenge',
+		'challenge_type',
+		'cube',
 		'solved',
 		'solved_at',
 	]
@@ -152,7 +157,8 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 		)}),
 
 		('Challenge', { 'fields': (
-			'challenge',
+			'challenge_type',
+			'cube',
 			'solved',
 			'solved_at',
 		)}),
@@ -161,44 +167,6 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 
 	def get_readonly_fields(self, request, obj=None):
 		return super(ChallengeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'solved', 'solved_at' )
-
-class CubeGPIOAdmin(ChallengeGPIOAdmin):
-
-	form = CubeGPIOForm
-
-	list_display = ChallengeGPIOAdmin.list_display + [
-		'game',
-		'tag_id',
-		'taken_at',
-		'placed_at',
-	]
-
-	fieldsets = (
-
-		('Cube GPIO', { 'fields': (
-			'name',
-			'slug',
-			'controller',
-		)}),
-
-
-		('Challenge', { 'fields': (
-			'challenge',
-			'solved',
-			'solved_at',
-		)}),
-
-		('Cube', { 'fields': (
-			'game',
-			'tag_id',
-			'taken_at',
-			'placed_at',
-		)}),
-
-	) + GPIOAdmin.fieldsets
-
-	def get_readonly_fields(self, request, obj=None):
-		return super(CubeGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'taken_at', 'placed_at' )
 
 class DoorGPIOAdmin(GPIOAdmin):
 
@@ -290,6 +258,5 @@ class LiftGPIOAdmin(admin.ModelAdmin):
 site.register(ArduinoSketch, ArduinoSketchAdmin)
 site.register(RaspberryPi, RaspberryPiAdmin)
 site.register(ChallengeGPIO, ChallengeGPIOAdmin)
-site.register(CubeGPIO, CubeGPIOAdmin)
 site.register(DoorGPIO, DoorGPIOAdmin)
 site.register(LiftGPIO, LiftGPIOAdmin)
