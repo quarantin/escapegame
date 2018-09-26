@@ -70,9 +70,6 @@ class Command(BaseCommand):
 					elif game_started[game]:
 						game_started[game] = False
 						self.publish_reset(game)
-
-					else:
-						self.stdout.write('  No message to send [facility=notify-%s]' % game.slug)
 			except:
 				self.stdout.write(traceback.format_exc())
 
