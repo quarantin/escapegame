@@ -152,18 +152,14 @@ class EscapeGameRoom(models.Model):
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
-		if self.controller is None:
-			self.controller = self.game.controller
+		if self.door is None:
+			name = 'Exit Door - %s' % self.name
+			door = DoorGPIO(name=name, controller=self.get_controller(), image=self.door_image)
+			door.save()
+			self.door = door
 
 		self.clean()
 		super(EscapeGameRoom, self).save(*args, **kwargs)
-
-		if self.door is None:
-			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, room=self, controller=self.get_controller(), image=self.door_image)
-			door.save()
-			self.door = door
-			super(EscapeGameRoom, self).save(*args, **kwargs)
 
 	def all_challenge_validated(self):
 		try:
@@ -260,7 +256,7 @@ class EscapeGameChallenge(models.Model):
 
 		return self.gpio.check_solved()
 
-	def set_solved(self, request, game_slug, room_slug, action):
+	def set_solved(self, request, action):
 		try:
 			solved = (action == 'validate')
 			actionstr = (solved and 'Solving' or 'Reseting')
@@ -277,7 +273,7 @@ class EscapeGameChallenge(models.Model):
 			if self.room.all_challenge_validated():
 
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
-				status, message = self.room.door.forward_lock_request(request, game_slug, room_slug, 'unlock')
+				status, message = self.room.door.forward_lock_request(request, self.room.game, self.room, 'unlock')
 				if status != 0:
 					raise Exception(message)
 

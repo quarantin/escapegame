@@ -348,7 +348,6 @@ class DoorGPIO(GPIO):
 		verbose_name_plural = 'Door GPIOs'
 
 	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE, blank=True, null=True)
-	room = models.ForeignKey('escapegame.EscapeGameRoom', on_delete=models.CASCADE, blank=True, null=True)
 
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
@@ -406,40 +405,40 @@ class DoorGPIO(GPIO):
 
 	""" Forward a lock request to the appropriate controller
 	"""
-	def forward_lock_request(self, request, game_slug, room_slug, action):
+	def forward_lock_request(self, request, game, room, action):
 
 		locked = (action == 'lock')
 
 		# Try to use our own controller
 		controller = self.controller
 
-		# Fallback to self.room controller
-		if controller is None and self.room is not None:
-			controller = self.room.controller
+		# Fallback to room controller
+		if controller is None and room is not None:
+			controller = room.controller
 
-		# Fallback to self.game controller
-		if controller is None and self.game is not None:
-			controller = self.game.controller
+		# Fallback to game controller
+		if controller is None and game is not None:
+			controller = game.controller
 
-		# Fallback to self.room.game controller
-		if controller is None and self.room is not None:
-			controller = self.room.game.controller
+		# Fallback to master controller
+		if controller is None:
+			controller = RaspberryPi.get_master()
 
 		# If we're the controller, proceed to lock/unlock sequence and notify frontend
-		if controller is not None and controller.is_myself():
+		if controller.is_myself():
 
 			print("\n#\nI am the controller, lets proceed")
 			status, message = (locked and self.lock() or self.unlock())
 			if status != 0:
 				return status, message
 
-			status, message = libraspi.notify_frontend()
+			libraspi.notify_frontend()
 
 		# Otherwise forward the request to the controller
 		else:
 			host, port, protocol = libraspi.get_net_info(controller)
 
-			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game_slug, room_slug, action)
+			url = '%s://%s%s/%s/api/door/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game.slug, room.slug, action)
 
 			print("\n#\nI am *NOT* the controller, lets forward to %s" % url)
 			status, message, html = libraspi.do_get(url)
@@ -495,7 +494,7 @@ class LiftGPIO(models.Model):
 
 		action = (raised and 'raise' or 'lower')
 
-		command = '%s %s %s' % (action, self.slug, delay)
+		command = '%s %s %s' % (action, self.slug, int(delay.total_seconds))
 
 		fifo = open(fifo_path, 'w')
 		fifo.write(command)

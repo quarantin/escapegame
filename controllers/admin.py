@@ -2,6 +2,7 @@
 
 from django import forms
 from django.contrib import admin
+from django.utils.translation import gettext as _
 
 from escapegame.admin import site
 
@@ -20,17 +21,31 @@ class GPIOForm(forms.ModelForm):
 
 	def clean(self):
 
-		reset_pin = self.cleaned_data['reset_pin']
-		action_pin = self.cleaned_data['action_pin']
+		reset_pin = 'reset_pin' in self.cleaned_data and self.cleaned_data['reset_pin'] or None
+		reset_url = 'reset_url' in self.cleaned_data and self.cleaned_data['reset_url'] or None
+		action_pin = 'action_pin' in self.cleaned_data and self.cleaned_data['action_pin'] or None
+		action_url = 'action_url' in self.cleaned_data and self.cleaned_data['action_url'] or None
 
 		if reset_pin is not None and not libraspi.is_valid_pin(reset_pin):
 			raise ValidationError({
-				'reset_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % reset_pin,
+				'reset_pin': _('PIN number %d is not a valid GPIO on a Raspberry Pi v3') % reset_pin,
 			})
 
 		if action_pin is not None and not libraspi.is_valid_pin(action_pin):
 			raise ValidationError({
-				'action_pin': 'PIN number %d is not a valid GPIO on a Raspberry Pi v3' % action_pin,
+				'action_pin': _('PIN number %d is not a valid GPIO on a Raspberry Pi v3') % action_pin,
+			})
+
+		if action_pin is not None and action_url is not None:
+			raise ValidationError({
+				'action_pin': _('You can only specify an action pin, or an action URL, but not both'),
+				'action_url': '',
+			})
+
+		if reset_pin is not None and reset_url is not None:
+			raise ValidationError({
+				'reset_pin': _('You can only specify a reset pin, or a reset URL, but not both'),
+				'reset_url': '',
 			})
 
 		return self.cleaned_data
@@ -44,11 +59,11 @@ class ChallengeGPIOForm(GPIOForm):
 	def clean(self):
 
 		cube = 'cube' in self.cleaned_data and self.cleaned_data['cube'] or None
-		chall_type = 'challenge_type' in self.cleaned_data and self.cleaned_Data['challenge_type'] or None
+		chall_type = 'challenge_type' in self.cleaned_data and self.cleaned_data['challenge_type'] or None
 
 		if chall_type != ChallengeGPIO.TYPE_DEFAULT and cube is None:
 			raise ValidationError({
-				'cube': 'Cube field cannot be empty for cube challenges',
+				'cube': _('Cube field cannot be empty for cube challenges'),
 			})
 
 class DoorGPIOForm(GPIOForm):
@@ -174,7 +189,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 
 	list_display = GPIOAdmin.list_display + [
 		'game',
-		'room',
 		'locked',
 		'unlocked_at',
 	]
@@ -189,7 +203,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 
 		('Door', { 'fields': (
 			'game',
-			'room',
 			'locked',
 			'unlocked_at',
 		)}),

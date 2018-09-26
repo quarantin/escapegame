@@ -16,13 +16,15 @@ import json
 
 
 model_mapping = [
+	('audios', Audio),
 	('images', Image),
 	('videos', Video),
 	('controllers', Controller),
 	('raspberry_pis', RaspberryPi),
 	('GPIOs', GPIO),
-	('liftGPIOs', LiftGPIO),
 	('escapegames', EscapeGame),
+	('liftGPIOs', LiftGPIO),
+	('cubes', EscapeGameCube),
 	('doorGPIOs', DoorGPIO),
 	('rooms', EscapeGameRoom),
 	('challengeGPIOs', ChallengeGPIO),

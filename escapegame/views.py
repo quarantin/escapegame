@@ -192,7 +192,6 @@ def escapegame_status(request, game_slug):
 def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action):
 
 	method = 'escapegame.views.rest_challenge_control'
-	validated = (action == 'validate')
 
 	try:
 		if action not in [ 'validate', 'reset' ]:
@@ -202,11 +201,11 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 		room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
 		chall = EscapeGameChallenge.objects.get(slug=challenge_slug, room=room)
 
-		status, message = chall.set_solved(request, game_slug, room_slug, action)
+		status, message = chall.set_solved(request, action)
 		if status != 0:
 			raise Exception('call to chall.set_solved() failed with error `%s`' % message)
 
-		status, message = libraspi.notify_frontend(game)
+		libraspi.notify_frontend(game)
 
 		return JsonResponse({
 			'status': status,
@@ -238,10 +237,12 @@ def rest_door_control(request, game_slug, room_slug, action):
 		try:
 			room = EscapeGameRoom.objects.get(slug=room_slug, game=game)
 			door = room.door
+
 		except EscapeGameRoom.DoesNotExist:
 			door = DoorGPIO.objects.get(slug=room_slug, game=game)
+			room = door
 
-		status, message = door.forward_lock_request(request, game_slug, room_slug, action)
+		status, message = door.forward_lock_request(request, game, room, action)
 
 		return JsonResponse({
 			'status': status,
