@@ -10,6 +10,9 @@ MASTER_HOSTNAME="${HOSTNAME}${TLD}"
 
 HOSTNAME="$(hostname)${TLD}"
 
+PI_UID=1000
+PI_GID=1000
+
 PIP=pip3
 
 PYTHON=python3
