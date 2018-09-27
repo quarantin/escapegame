@@ -110,6 +110,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'slug',
 		'room',
 		'gpio',
+		'dependent_on',
 		'solved_video',
 		'challenge_image',
 		'challenge_solved_image',
@@ -121,6 +122,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 			'name',
 			'slug',
 			'room',
+			'dependent_on',
 			)}),
 		('Challenge Controls', { 'fields': (
 			'gpio',
