@@ -1,8 +1,8 @@
 diff --git a/escapegame/management/commands/populate-database.py b/escapegame/management/commands/populate-database.py
-index 9e2cd19..1a489fb 100644
+index 74c00f8..f246a28 100644
 --- a/escapegame/management/commands/populate-database.py
 +++ b/escapegame/management/commands/populate-database.py
-@@ -188,6 +188,11 @@ class Command(BaseCommand):
+@@ -187,6 +187,12 @@ class Command(BaseCommand):
  		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
  		raspi_son_stranger_things.save()
  
@@ -11,9 +11,10 @@ index 9e2cd19..1a489fb 100644
 +		raspi_sons_1001_nuits = raspi_master
 +		raspi_stranger_things = raspi_master
 +		raspi_son_stranger_things = raspi_master
- 
++
  		self.stdout.write(self.style.SUCCESS(' OK'))
  
+ #
 diff --git a/scripts/init-database-mysql.sh b/scripts/init-database-mysql.sh
 index fc582ce..53ae431 100755
 --- a/scripts/init-database-mysql.sh
