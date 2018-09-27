@@ -19,7 +19,7 @@ if [ ${RUNNING_ON_PI} = true ]; then
 	# the FIFO to start playing the video.
 	echo > ${FIFO} &
 
-	/usr/bin/omxplayer --no-osd ${URL} < ${FIFO}
+	/usr/bin/omxplayer --no-osd --adev both ${URL} < ${FIFO}
 else
 	/usr/bin/mpv --input-file ${FIFO} ${URL}
 fi
