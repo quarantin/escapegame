@@ -24,13 +24,12 @@ class Command(BaseCommand):
 
 	def delayed_control(self, pin, signal, delay):
 
+		signal_str = signal and 'HIGH' or 'LOW'
+		print('Lift control: delayed_control(pin=%s, signal=%s, delay=%s)' % (pin, signal_str, delay))
+
 		time.sleep(int(delay))
 
 		libraspi.set_pin(pin, signal)
-
-		signal_str = signal and 'HIGH' or 'LOW'
-
-		print('Lift control: delayed_control(pin=%s, signal=%s, delay=%s)' % (pin, signal_str, delay))
 
 	def control(self, action, lift_slug, delay):
 
