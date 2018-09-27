@@ -18,5 +18,8 @@ for SERVICE in ${SERVICES}; do
 			echo "Killing PID: ${PID}"
 			kill -9 -${PID} 2>/dev/null || kill -9 ${PID}
 		done
+
+		# TODO: This is horrible, find a better way!
+		killall python3
 	fi
 done
