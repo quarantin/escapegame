@@ -53,7 +53,6 @@ class Command(BaseCommand):
 #
 # Audio
 #
-
 		self.stdout.write('  Populating model `Audio`', ending='')
 		demo_audio = Audio(audio_name= 'Audio Demo', audio_path='uploads/audios/test.h264')
 		demo_audio.save()
@@ -188,7 +187,6 @@ class Command(BaseCommand):
 		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
 		raspi_son_stranger_things.save()
 
-
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 #
@@ -264,7 +262,7 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: Retour au SAS des 1001 nuits (SAS 1)
-		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Retour au SAS des 1001 nuits', is_sas=True)
+		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Retour au SAS des 1001 nuits')
 		room_sas_1_retour.save()
 
 		# Room: Retour dans la salle de briefing des 1001 nuits
@@ -283,7 +281,7 @@ class Command(BaseCommand):
 		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', is_sas=True)
 		room_sas_2.save()
 
-		# Room: Le sas clair de Stranger Things (SAS 3)
+		# Room: Le SAS clair de Stranger Things (SAS 3)
 		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', is_sas=True)
 		room_sas_3.save()
 
@@ -300,11 +298,11 @@ class Command(BaseCommand):
 		room_foret.save()
 
 		# Room: Retour au SAS obscur (SAS 2)
-		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Retour au SAS obscur', is_sas=True)
+		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Retour au SAS obscur')
 		room_sas_2_retour.save()
 
 		# Room: Rettour au SAS clair (SAS 3)
-		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Retour au SAS clair', is_sas=True)
+		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Retour au SAS clair')
 		room_sas_3_retour.save()
 
 		# Room: Salle de briefing - Stranger Things (Retour)
