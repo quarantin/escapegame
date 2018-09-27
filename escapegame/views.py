@@ -309,6 +309,8 @@ def rest_video_control(request, video_slug, action):
 				lift = LiftGPIO.objects.get(video=video)
 				status, message = lift.raise_lift()
 
+				libraspi.notify_frontend()
+
 		except LiftGPIO.DoesNotExist:
 			print('Not raising lift because no lift associated to video `%s`' % video.video_name)
 			pass
