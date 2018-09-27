@@ -115,23 +115,19 @@ function toggle_online_status(raspi)
  *   - door lock/unlock buttons
  *   - challenge validate/reset buttons
  */
-function toggle_all_elements(game) {
-
-	output = '';
-
+function toggle_all_elements(game)
+{
 	for (var raspi_index in game.raspberrypis) {
 
 		var raspi = game.raspberrypis[raspi_index];
 
 		toggle_online_status(raspi);
-		output += 'Raspberry Pi: ' + raspi.hostname + ' ' + raspi.status + '\n';
 	}
 
 	for (var door_index in game.doors) {
 
 		var door = game.doors[door_index];
 		var door_name = game.slug + '-extra-' + door.slug;
-		output += 'EXTRA DOOR ' + door_name + ' locked=' + door.locked + '\n';
 		toggle_elements('button#lock-' + door_name, 'button#unlock-' + door_name, door.locked);
 	}
 
@@ -140,64 +136,56 @@ function toggle_all_elements(game) {
 		var room = game.rooms[room_index];
 		var door = room.door;
 		var door_name = game.slug + '-' + room.slug + '-' + door.slug;
-		output += 'ROOM DOOR ' + door_name + ' locked=' + door.locked + '\n';
 		toggle_elements('button#lock-' + door_name , 'button#unlock-' + door_name, door.locked);
 
 		for (var chall_index in room.challenges) {
 
 			var chall = room.challenges[chall_index];
 			var chall_name = game.slug + '-' + chall.slug;
-			output += 'CHALL ' + chall.slug + ' solved=' + chall.solved + '\n';
 			toggle_elements('a#validate-' + chall_name, 'a#reset-' + chall_name, chall.solved);
 		}
 	}
-
-	console.log(output);
 }
 
 /*
  * Draw the given image onto the supplied context.
  */
-function draw_image(ctx, imageObj) {
+function draw_image(ctx, imageObj)
+{
 	image = new Image();
 	image.src = '/media/' + imageObj.image_path;
+	console.log("Drawing image: " + image.src);
 	ctx.drawImage(image, 0, 0, imageObj.width, imageObj.height);
 }
 
 /*
  * Draw the map of the game and its elements (doors, challenges, etc).
  */
-function draw_map(game) {
-
+function draw_map(game)
+{
+	var index;
 	var canvas = $('canvas#map')[0];
 	var ctx = canvas.getContext('2d');
 
-	var map_image = new Image();
+	// Reset canvas
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	map_image.src = '/media/' + game.map_image.image_path;
-	map_image.onload = function () {
+	if (game.map_image)
+		draw_image(ctx, game.map_image);
 
-		if (game.map_image) {
-			ctx.drawImage(map_image, 0, 0, game.map_image.width, game.map_image.height);
-		}
+	for (index in game.rooms) {
 
-		var index;
+		var room = game.rooms[index];
+		if (room.door_image && !room.door.locked)
+			draw_image(ctx, room.door_image);
+	}
 
-		for (index in game.rooms) {
-			var room = game.rooms[index];
-			if (room.door_image && !room.door.locked) {
-				draw_image(ctx, room.door_image);
-			}
-		}
+	for (index in game.doors) {
 
-		for (index in game.doors) {
-			var door = game.doors[index];
-			if (door.image && !door.locked) {
-				draw_image(ctx, door.image);
-			}
-		}
-
-	};
+		var door = game.doors[index];
+		if (door.image && !door.locked)
+			draw_image(ctx, door.image);
+	}
 };
 
 /*
@@ -206,8 +194,8 @@ function draw_map(game) {
  *   - toggle challenge validate/reset buttons
  *   - draw the map with all current information available about the game.
  */
-function refresh_page() {
-
+function refresh_page()
+{
 	console.log('refreshing page');
 
 	var game_slug = $('button#reset-escapegame').val();
@@ -234,8 +222,8 @@ function refresh_page() {
 /*
  * Create the websocket to receive events from the server.
  */
-function create_websocket() {
-
+function create_websocket()
+{
 	var port;
 	var protocol;
 
@@ -379,7 +367,6 @@ function audio_control_handler(action)
 		else{
 			$('button#audio-play').removeClass('d-none');
 			$('button#audio-pause').addClass('d-none');
-
 		}
 
 		var audio_url = get_audio_url(action);
@@ -394,11 +381,8 @@ function audio_control_handler(action)
 				alert('Could not connect to URL: ' + audio_url);
 			},
 		});
-
 	});
-
 }
-
 
 /*
  * Assign click event handler for lift control buttons.
