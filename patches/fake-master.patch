@@ -1,8 +1,24 @@
+diff --git a/escapegame/management/commands/populate-database.py b/escapegame/management/commands/populate-database.py
+index 9e2cd19..1a489fb 100644
+--- a/escapegame/management/commands/populate-database.py
++++ b/escapegame/management/commands/populate-database.py
+@@ -188,6 +188,11 @@ class Command(BaseCommand):
+ 		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
+ 		raspi_son_stranger_things.save()
+ 
++		# Just for debug so that everything points to master
++		raspi_1001_nuits = raspi_master
++		raspi_sons_1001_nuits = raspi_master
++		raspi_stranger_things = raspi_master
++		raspi_son_stranger_things = raspi_master
+ 
+ 		self.stdout.write(self.style.SUCCESS(' OK'))
+ 
 diff --git a/scripts/init-database-mysql.sh b/scripts/init-database-mysql.sh
-index 163fb28..acbc94a 100755
+index fc582ce..53ae431 100755
 --- a/scripts/init-database-mysql.sh
 +++ b/scripts/init-database-mysql.sh
-@@ -141,8 +141,8 @@ MASTER(){
+@@ -139,8 +139,8 @@ MASTER(){
  }
  
  
@@ -14,7 +30,7 @@ index 163fb28..acbc94a 100755
  
  CREATE_MYSQL_CLIENT_CONFIG "${MASTER_HOSTNAME}"
 diff --git a/siteconfig/settings.py b/siteconfig/settings.py
-index 556815e..d0c1ea0 100644
+index f03f00c..d775832 100644
 --- a/siteconfig/settings.py
 +++ b/siteconfig/settings.py
 @@ -149,7 +149,7 @@ DATABASE_MYSQL = {
