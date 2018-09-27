@@ -305,10 +305,12 @@ def rest_video_control(request, video_slug, action):
 			})
 
 		try:
-			lift = LiftGPIO.objects.get(video=video)
-			status, message = lift.raise_lift()
+			if action == 'play':
+				lift = LiftGPIO.objects.get(video=video)
+				status, message = lift.raise_lift()
 
 		except LiftGPIO.DoesNotExist:
+			print('Not raising lift because no lift associated to video `%s`' % video.video_name)
 			pass
 
 		return JsonResponse({
