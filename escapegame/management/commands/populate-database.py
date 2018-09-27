@@ -511,12 +511,6 @@ class Command(BaseCommand):
 #
 		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
 
-		door_briefing_room = DoorGPIO(name='La salle de briefing des 1001 nuits', game=game_1001_nuits, image=door_briefing_room_image, action_pin=11)
-		door_briefing_room.save()
-
-		door_briefing_room = DoorGPIO(name='La salle de briefing Stranger Things', game=game_stranger_things, image=door_briefing_room_image, action_pin=11)
-		door_briefing_room.save()
-
 		# SAS 1 is for Les 1001 nuits
 		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, image=door_corridor_sas_1_image, action_pin=11)
 		door_corridor_sas_1.save()
