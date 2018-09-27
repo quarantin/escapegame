@@ -481,7 +481,7 @@ class LiftGPIO(models.Model):
 	def set_raised(self, raised, from_gamemaster=False):
 		self.raised = raised
 
-		delay = raised and self.game.cube_delay or 0
+		delay = raised and self.game.cube_delay.total_seconds() or 0
 
 		# We never want to have a delay when the
 		# gamemaster asks to lower/raise a lift.
@@ -494,7 +494,7 @@ class LiftGPIO(models.Model):
 
 		action = (raised and 'raise' or 'lower')
 
-		command = '%s %s %s' % (action, self.slug, int(delay.total_seconds()))
+		command = '%s %s %s' % (action, self.slug, int(delay))
 
 		fifo = open(fifo_path, 'w')
 		fifo.write(command)
