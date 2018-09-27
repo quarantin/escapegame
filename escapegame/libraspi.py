@@ -71,7 +71,7 @@ def send_message(channel, message):
 	facility = 'notify-%s' % channel
 	redis_publisher = RedisPublisher(facility=facility, broadcast=True)
 	redis_publisher.publish_message(RedisMessage(message))
-	print('notify_frontend("%s")' % message)
+	print('notify_frontend(channel="%s", message="%s")' % (channel, message))
 
 #
 # Notify the game websocket frontend with supplied message.
