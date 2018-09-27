@@ -99,6 +99,7 @@ div.challenge-status {
 
 table.challenge-status {
 	margin-bottom: 30px;
+	width: 100%;
 }
 
 img.map {
