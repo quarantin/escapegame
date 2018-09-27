@@ -130,24 +130,24 @@ function toggle_all_elements(game) {
 	for (var door_index in game.doors) {
 
 		var door = game.doors[door_index];
-		var door_name = game.slug + '-' + door.slug;
+		var door_name = game.slug + '-extra-' + door.slug;
 		output += 'EXTRA DOOR ' + door_name + ' locked=' + door.locked + '\n';
-		toggle_elements('button#lock-' + door_name, 'button#unlock_' + door_name, door.locked);
+		toggle_elements('button#lock-' + door_name, 'button#unlock-' + door_name, door.locked);
 	}
 
 	for (var room_index in game.rooms) {
 
 		var room = game.rooms[room_index];
 		var door = room.door;
-		var door_name = game.slug + '-' + door.slug;
+		var door_name = game.slug + '-' + room.slug + '-' + door.slug;
 		output += 'ROOM DOOR ' + door_name + ' locked=' + door.locked + '\n';
-		toggle_elements('button#lock-' + door_name , 'button#unlock_' + door_name, door.locked);
+		toggle_elements('button#lock-' + door_name , 'button#unlock-' + door_name, door.locked);
 
 		for (var chall_index in room.challenges) {
 
 			var chall = room.challenges[chall_index];
 			var chall_name = game.slug + '-' + chall.slug;
-			output += 'CHALL ' + chall.slug + ' solved=' + chall.solved+ '\n';
+			output += 'CHALL ' + chall.slug + ' solved=' + chall.solved + '\n';
 			toggle_elements('a#validate-' + chall_name, 'a#reset-' + chall_name, chall.solved);
 		}
 	}
