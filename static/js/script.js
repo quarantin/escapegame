@@ -499,4 +499,9 @@ $(document).ready(function() {
 
 	// Create our websocket
 	create_websocket();
+
+	// Call refresh_page() to draw the map
+	refresh_page();
+	refresh_page();
+	refresh_page();
 });
