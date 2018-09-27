@@ -471,10 +471,9 @@ class LiftGPIO(models.Model):
 		super(LiftGPIO, self).save(*args, **kwargs)
 
 	def reset(self):
-		return self.lowerCube()
+		return self.lower_lift()
 
 	def set_raised(self, raised, from_gamemaster=False):
-		self.raised = raised
 
 		delay = raised and self.game.cube_delay.total_seconds() or 0
 
@@ -489,13 +488,12 @@ class LiftGPIO(models.Model):
 
 		action = (raised and 'raise' or 'lower')
 
-		command = '%s %s %s' % (action, self.slug, int(delay))
+		command = '%s %s %s\n' % (action, self.slug, int(delay))
 
 		fifo = open(fifo_path, 'w')
 		fifo.write(command)
 		fifo.close()
 
-		self.save()
 		return 0, 'Success'
 
 	def lower_lift(self, from_gamemaster=False):

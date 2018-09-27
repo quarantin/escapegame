@@ -22,14 +22,19 @@ class Command(BaseCommand):
 
 	processes = {}
 
-	def delayed_control(self, pin, signal, delay):
+	def delayed_control(self, lift, signal, delay):
 
 		signal_str = signal and 'HIGH' or 'LOW'
-		print('Lift control: delayed_control(pin=%s, signal=%s, delay=%s)' % (pin, signal_str, delay))
+		print('Lift control: delayed_control(lift=%s, signal=%s, delay=%s)' % (lift, signal_str, delay))
 
 		time.sleep(int(delay))
 
-		libraspi.set_pin(pin, signal)
+		libraspi.set_pin(lift.pin, signal)
+
+		lift.raised = signal
+		lift.save()
+
+		libraspi.notify_frontend()
 
 	def control(self, action, lift_slug, delay):
 
@@ -40,7 +45,7 @@ class Command(BaseCommand):
 
 		lift = LiftGPIO.objects.get(slug=lift_slug)
 
-		Thread(target=self.delayed_control, args=(lift.pin, signal, delay)).start()
+		Thread(target=self.delayed_control, args=(lift, signal, delay)).start()
 
 	def handle(self, *args, **options):
 
@@ -55,10 +60,13 @@ class Command(BaseCommand):
 					os.mkfifo(self.fifo)
 
 				fifo = open(self.fifo, 'r')
-				command = fifo.read().strip().split(' ', 2)
+				lines = fifo.read().strip().split('\n')
 				fifo.close()
 
-				self.control(*command)
+				for command in lines:
+					cmd = command.strip().split(' ', 2)
+					self.control(*cmd)
+
 				continue
 
 			except KeyboardInterrupt:
