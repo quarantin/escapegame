@@ -266,11 +266,6 @@ class GPIO(models.Model):
 			if status != 0:
 				return status, message
 
-			# Wait for the controller to have time to read the value.
-			# This is probably not needed since we're supposed to use
-			# interrupts for reset action.
-			time.sleep(0.1)
-
 			# Set reset pin to LOW to stop triggering controller reset
 			status, message = libraspi.set_pin(self.reset_pin, False)
 			if status != 0:
