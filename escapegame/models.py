@@ -243,7 +243,11 @@ class EscapeGameChallenge(models.Model):
 			super(EscapeGameChallenge, self).save(*args, **kwargs)
 
 	def get_controller(self):
-		return self.gpio.controller or self.room.controller or self.room.game.controller
+
+		if self.gpio is not None and self.gpio.controller is not None:
+			return self.gpio.controller
+
+		return self.room.controller or self.room.game.controller
 
 	def reset(self):
 		self.gpio.reset()
