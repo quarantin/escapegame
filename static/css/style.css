@@ -127,3 +127,7 @@ div.radio-raspi {
 .badge {
 	min-width: 20%;
 }
+
+.button-disabled {
+	opacity: 0.2;
+}

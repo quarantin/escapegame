@@ -109,6 +109,26 @@ function toggle_online_status(raspi)
 		$('input[name=selected-raspberry-pi-audio]:enabled:first').prop('checked', true);
 }
 
+/**
+ * Toggle lifts according to their state
+ */
+function toggle_lifts(game)
+{
+	for (var lift_index in game.lifts) {
+
+		var lift = game.lifts[lift_index];
+		var lift_id = game.slug + '-' + lift.slug;
+		if (lift.raised) {
+			$('button#raise-' + lift_id).addClass('button-disabled');
+			$('button#lower-' + lift_id).removeClass('button-disabled');
+		}
+		else {
+			$('button#raise-' + lift_id).removeClass('button-disabled');
+			$('button#lower-' + lift_id).addClass('button-disabled');
+		}
+	}
+}
+
 /*
  * Toggle all elements in the page:
  *   - raspberry pis online status
@@ -117,6 +137,8 @@ function toggle_online_status(raspi)
  */
 function toggle_all_elements(game)
 {
+	toggle_lifts(game);
+
 	for (var raspi_index in game.raspberrypis) {
 
 		var raspi = game.raspberrypis[raspi_index];
@@ -390,6 +412,10 @@ function audio_control_handler(action)
 function lift_control_handler(action)
 {
 	$('button.' + action + '-lift').click(function() {
+
+		var disabled = $(this).hasClass('button-disabled')
+		if (disabled)
+			return;
 
 		ok = confirm('Are you really sure you want to ' + action + ' the lift?');
 		if (ok !== true)

@@ -42,12 +42,12 @@
 				<div class="col">
 
 					<!-- Raise lift button -->
-					<button id="raise-{{ game.slug }}-{{ lift.slug }}" class="raise-lift" value="{{ lift.url_callback }}/raise/" type="submit">
+					<button id="raise-{{ game.slug }}-{{ lift.slug }}" class="raise-lift{% if lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/raise/" type="submit">
 						<img src="{% static 'img/icons8-raise-100.png' %}" title="{% trans "Raise lift" %} {{ lift_name }}">
 					</button>
 
 					<!-- Lower lift button -->
-					<button id="lower-{{ game.slug }}-{{ lift.slug }}" class="lower-lift" value="{{ lift.url_callback }}/lower/" type="submit">
+					<button id="lower-{{ game.slug }}-{{ lift.slug }}" class="lower-lift{% if not lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/lower/" type="submit">
 						<img src="{% static 'img/icons8-lower-100.png' %}" title="{% trans "Lower lift" %} {{ lift_name }}">
 					</button>
 
