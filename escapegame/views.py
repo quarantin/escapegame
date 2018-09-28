@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -41,7 +42,6 @@ def escapegame_detail(request, game_slug):
 	raspberry_pis = RaspberryPi.objects.all()
 	videos = game.get_videos()
 	audios = Audio.objects.all()
-	#videos = Video.objects.all()
 
 	for room in rooms:
 		room.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, room.slug, room.door.slug)
@@ -49,9 +49,13 @@ def escapegame_detail(request, game_slug):
 		for chall in room.challs:
 			chall.url_callback = '/%s/api/challenge/%s/%s/%s' % (lang, game.slug, room.slug, chall.slug)
 
-	game.doors = DoorGPIO.objects.filter(game=game)
-	for door in game.doors:
-		door.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, 'extra', door.slug)
+	game.doors = []
+
+	doors = DoorGPIO.objects.filter(~Q(dependent_on=None))
+	for door in doors:
+		if door.dependent_on.room.game == game:
+			door.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, 'extra', door.slug)
+			game.doors.append(door)
 
 	game.lifts = LiftGPIO.objects.filter(game=game)
 	for lift in game.lifts:
@@ -142,11 +146,6 @@ def escapegame_status(request, game_slug):
 
 			raspi['status'], raspi['badge'], raspi['not_badge'] = raspi['online'] and success or failure
 
-		doors = DoorGPIO.objects.filter(game=game['id']).values()
-		for door in doors:
-			__populate_images(door, 'image')
-			game['doors'].append(door)
-
 		lifts = LiftGPIO.objects.filter(game=game['id']).values()
 		for lift in lifts:
 			game['lifts'].append(lift)
@@ -166,6 +165,12 @@ def escapegame_status(request, game_slug):
 				chall['solved'] = gpio['solved']
 
 				__populate_images(chall, 'challenge_solved_image')
+
+
+				extra_doors = DoorGPIO.objects.filter(dependent_on=chall['id']).values()
+				for door in extra_doors:
+					__populate_images(door, 'image')
+					game['doors'].append(door)
 
 				room['challenges'].append(chall)
 

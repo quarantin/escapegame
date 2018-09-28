@@ -2,7 +2,7 @@
 
 from django import forms
 from django.contrib import admin
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from escapegame.admin import site
 
@@ -188,7 +188,7 @@ class DoorGPIOAdmin(GPIOAdmin):
 	form = DoorGPIOForm
 
 	list_display = GPIOAdmin.list_display + [
-		'game',
+		'dependent_on',
 		'locked',
 		'unlocked_at',
 	]
@@ -202,7 +202,7 @@ class DoorGPIOAdmin(GPIOAdmin):
 		)}),
 
 		('Door', { 'fields': (
-			'game',
+			'dependent_on',
 			'locked',
 			'unlocked_at',
 		)}),
@@ -211,20 +211,19 @@ class DoorGPIOAdmin(GPIOAdmin):
 
 	def clean(self):
 
-		game = self.cleaned_data['reset_pin']
-		room = self.cleaned_data['reset_url']
+		has_dependency = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
 
-		if game is None and room is None:
-			raise ValidationError({
-				'game': 'You have to supply at least one of \'Game\' or \'Room\'',
-				'room': '',
-			})
+		if has_dependency:
 
-		if game is not None and room is not None:
-			raise ValidationError({
-				'game': 'Only one of \'Game\' or \'Room\' can be supplied',
-				'room': '',
-			})
+			try:
+				room = EscapeGameRoom.objects.get(door=self)
+
+				raise ValidationError({
+					'dependent_on': _('You cannot create a dependency for this door GPIO because it is already assigned to room `%s`.\nIf you really want to create a dependency for this door GPIO, please unassign it from the room first' % room.name),
+				})
+
+			except EscapeGameRoom.DoesNotExist:
+				pass
 
 	def get_readonly_fields(self, request, obj=None):
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'locked', 'unlocked_at' )

@@ -523,15 +523,15 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
 
 		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', game=game_1001_nuits, controller=raspi_master, image=door_corridor_sas_1_image, action_pin=11)
+		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', dependent_on=chall_briefing_1001_nuits_take_cube, controller=raspi_master, image=door_corridor_sas_1_image, action_pin=11)
 		door_corridor_sas_1.save()
 
 		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', game=game_stranger_things, controller=raspi_master, image=door_corridor_sas_2_image, action_pin=11)
+		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', dependent_on=chall_briefing_stranger_things_take_cube_obscur, controller=raspi_master, image=door_corridor_sas_2_image, action_pin=11)
 		door_corridor_sas_2.save()
 
 		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', game=game_stranger_things, controller=raspi_master, image=door_corridor_sas_3_image, action_pin=11)
+		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', dependent_on=chall_briefing_stranger_things_take_cube_clair, controller=raspi_master, image=door_corridor_sas_3_image, action_pin=11)
 		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

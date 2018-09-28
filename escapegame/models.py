@@ -275,8 +275,24 @@ class EscapeGameChallenge(models.Model):
 			if status != 0:
 				raise Exception(message)
 
-			if self.gpio.solved and self.solved_video:
-				self.solved_video.play()
+			if self.gpio.solved:
+
+				# If we have an associated video, play it
+				if self.solved_video:
+					self.solved_video.play()
+
+				# Open extra doors with a dependency on me
+				try:
+					extra_doors = DoorGPIO.objects.filter(dependent_on=self)
+
+				except DoorGPIO.DoesNotExist:
+					extra_doors = []
+
+				for extra_door in extra_doors:
+
+					status, message = extra_door.forward_lock_request(request, game, room, 'unlock')
+					if status != 0:
+						raise Exception(message)
 
 			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
@@ -288,8 +304,10 @@ class EscapeGameChallenge(models.Model):
 
 				# Was this the last room of this game?
 				if self.room.is_last_room():
+
 					print('This was the last room, stopping escape game counter')
 					self.room.game.finish(request)
+
 				else:
 					print('Still some rooms to explore')
 			else:
