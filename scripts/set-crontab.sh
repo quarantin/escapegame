@@ -14,14 +14,20 @@ CRONTAB=$(mktemp)
 
 if [ ${HOSTNAME} = ${MASTER_HOSTNAME} ]; then
 
-	# Django websocket timer process
 
-	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
+	# Lift control management task
+
+	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh lift-control" >> ${CRONTAB}
 
 
 	# Monitor the network to see which Raspberry Pis are alive
 
 	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh monitor-network" >> ${CRONTAB}
+
+
+	# Django websocket timer process
+
+	echo "@reboot ${ROOTDIR}/scripts/python-manage.sh websocket-timer" >> ${CRONTAB}
 fi
 
 
@@ -33,11 +39,6 @@ echo "@reboot ${ROOTDIR}/scripts/python-manage.sh poll-gpios" >> ${CRONTAB}
 # Video player management task
 
 echo "@reboot ${ROOTDIR}/scripts/python-manage.sh video-player" >> ${CRONTAB}
-
-
-# Lift control management task
-
-echo "@reboot ${ROOTDIR}/scripts/python-manage.sh lift-control" >> ${CRONTAB}
 
 
 # UWSGI instances for django and websockets
