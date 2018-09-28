@@ -163,7 +163,7 @@
 			<div class="row head_block">
 				<div class="col"></div>
 		{% if game.lifts|length < 1 %}
-			<p>{% trans "No lift available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create a new lift." %}</p>
+			<p>{% trans "No lift available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create new lifts." %}</p>
 		{% else %}
 			{% for lift in game.lifts %}
 				{% with lift_prefix=lift.name|slice:"0:1"|lower lift_suffix=lift.name|slice:"1:" %}
@@ -199,7 +199,7 @@
 				<div class="col">
 
 			{% if game.doors|length < 1 %}
-				<p>{% trans "No door available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/doorgpio/">{% trans "this" %}</a> {% trans "page to create a new door." %}</p>
+				<p>{% trans "No door available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/doorgpio/">{% trans "this" %}</a> {% trans "page to create new doors." %}</p>
 			{% else %}
 				{% for door in game.doors %}
 					{% with door_prefix=door.name|slice:"0:1"|lower door_suffix=door.name|slice:"1:" %}
