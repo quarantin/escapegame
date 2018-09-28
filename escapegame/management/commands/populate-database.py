@@ -424,7 +424,37 @@ class Command(BaseCommand):
 		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
 		gpio.save()
 
-		# TODO SAS Challenges for both clair obscure PUT/TAKE
+		# Cube Challenge: SAS obscur Stranger Things - Poser le cube obscur
+		chall_sas_2_put_cube_obscur = EscapeGameChallenge(room=room_sas_2, name='SAS obscur Stranger Things - Poser le cube obscur', dependent_on=chall_briefing_stranger_things_take_cube_obscur)
+		chall_sas_2_put_cube_obscur.save()
+		gpio = chall_sas_2_put_cube_obscur.gpio
+		gpio.cube = cube_obscur
+		gpio.challenge_type = ChallengeGPIO.TYPE_PUT_CUBE
+		gpio.save()
+
+		# Cube Challenge: SAS obscur Stranger Things - Prendre le cube obscur
+		chall_sas_2_take_cube_obscur = EscapeGameChallenge(room=room_sas_2, name='SAS obscur Stranger Things - Prendre le cube obscur', dependent_on=chall_sas_2_put_cube_obscur)
+		chall_sas_2_take_cube_obscur.save()
+		gpio = chall_sas_2_take_cube_obscur.gpio
+		gpio.cube = cube_obscur
+		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
+		gpio.save()
+
+		# Cube Challenge: SAS clair Stranger Things - Poser le cube clair
+		chall_sas_3_put_cube_clair = EscapeGameChallenge(room=room_sas_3, name='SAS clair Stranger Things - Poser le cube clair', dependent_on=chall_briefing_stranger_things_take_cube_clair)
+		chall_sas_3_put_cube_clair.save()
+		gpio = chall_sas_3_put_cube_clair.gpio
+		gpio.cube = cube_clair
+		gpio.challenge_type = ChallengeGPIO.TYPE_PUT_CUBE
+		gpio.save()
+
+		# Cube Challenge: SAS clair Stranger Things - Prendre le cube clair
+		chall_sas_3_take_cube_clair = EscapeGameChallenge(room=room_sas_3, name='SAS obscur Stranger Things - Prendre le cube clair', dependent_on=chall_sas_3_put_cube_clair)
+		chall_sas_3_take_cube_clair.save()
+		gpio = chall_sas_3_take_cube_clair.gpio
+		gpio.cube = cube_clair
+		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
+		gpio.save()
 
 		# Challenge: 1 (Stranger Things / La salle claire)
 		chall = EscapeGameChallenge(room=room_claire, name='chall1 (salle claire)')
@@ -454,32 +484,32 @@ class Command(BaseCommand):
 		chall_la_foret_2 = EscapeGameChallenge(room=room_foret, name='chall2 (la forêt)')
 		chall_la_foret_2.save()
 
-		# Cube Challenge: Retour au SAS obscur - Poser le cube
-		chall_sas_2_put_cube_obscur_retour = EscapeGameChallenge(room=room_sas_2, name='Retour au SAS obscur - Poser le cube', dependent_on=chall_la_foret_2)
+		# Cube Challenge: Retour au SAS obscur - Poser le cube obscur
+		chall_sas_2_put_cube_obscur_retour = EscapeGameChallenge(room=room_sas_2, name='Retour au SAS obscur - Poser le cube obscur', dependent_on=chall_la_foret_2)
 		chall_sas_2_put_cube_obscur_retour.save()
 		gpio = chall_sas_2_put_cube_obscur_retour.gpio
 		gpio.cube = cube_obscur
 		gpio.challenge_type = ChallengeGPIO.TYPE_PUT_CUBE
 		gpio.save()
 
-		# Cube Challenge: Retour au SAS obscur - Prendre le cube
-		chall_sas_2_take_cube_obscur_retour = EscapeGameChallenge(room=room_sas_2, name='Retour au SAS obscur - Prendre le cube', dependent_on=chall_sas_2_put_cube_obscur_retour)
+		# Cube Challenge: Retour au SAS obscur - Prendre le cube obscur
+		chall_sas_2_take_cube_obscur_retour = EscapeGameChallenge(room=room_sas_2, name='Retour au SAS obscur - Prendre le cube obscur', dependent_on=chall_sas_2_put_cube_obscur_retour)
 		chall_sas_2_take_cube_obscur_retour.save()
 		gpio = chall_sas_2_take_cube_obscur_retour.gpio
 		gpio.cube = cube_obscur
 		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
 		gpio.save()
 
-		# Cube Challenge: Retour au SAS clair - Poser le cube
-		chall_sas_3_put_cube_clair_retour = EscapeGameChallenge(room=room_sas_3, name='Retour au SAS clair - Poser le cube', dependent_on=chall_la_foret_2)
+		# Cube Challenge: Retour au SAS clair - Poser le cube clair
+		chall_sas_3_put_cube_clair_retour = EscapeGameChallenge(room=room_sas_3, name='Retour au SAS clair - Poser le cube clair', dependent_on=chall_la_foret_2)
 		chall_sas_3_put_cube_clair_retour.save()
 		gpio = chall_sas_3_put_cube_clair_retour.gpio
 		gpio.cube = cube_clair
 		gpio.challenge_type = ChallengeGPIO.TYPE_PUT_CUBE
 		gpio.save()
 
-		# Cube Challenge: Retour au SAS clair - Prendre le cube
-		chall_sas_3_take_cube_clair_retour = EscapeGameChallenge(room=room_sas_3, name='Retour au SAS clair - Prendre le cube', dependent_on=chall_sas_3_put_cube_clair_retour)
+		# Cube Challenge: Retour au SAS clair - Prendre le cube clair
+		chall_sas_3_take_cube_clair_retour = EscapeGameChallenge(room=room_sas_3, name='Retour au SAS clair - Prendre le cube clair', dependent_on=chall_sas_3_put_cube_clair_retour)
 		chall_sas_3_take_cube_clair_retour.save()
 		gpio = chall_sas_3_take_cube_clair_retour.gpio
 		gpio.cube = cube_clair
@@ -487,7 +517,7 @@ class Command(BaseCommand):
 		gpio.save()
 
 		# Cube Challenge: Salle de briefing Stranger Things - Poser le cube obscur
-		chall_briefing_stranger_things_put_cube_obscur = EscapeGameChallenge(room=room_briefing_stranger_things_retour, name='Retour dans la salle de briefing Stranger Things - Poser le cube obscur')
+		chall_briefing_stranger_things_put_cube_obscur = EscapeGameChallenge(room=room_briefing_stranger_things_retour, name='Retour dans la salle de briefing Stranger Things - Poser le cube obscur', dependent_on=chall_sas_2_take_cube_obscur_retour)
 		chall_briefing_stranger_things_put_cube_obscur.save()
 		gpio = chall_briefing_stranger_things_put_cube_obscur.gpio
 		gpio.cube = cube_obscur
@@ -495,7 +525,7 @@ class Command(BaseCommand):
 		gpio.save()
 
 		# Cube Challenge: Salle de briefing Stranger Things - Poser le cube clair
-		chall_briefing_stranger_things_put_cube_clair = EscapeGameChallenge(room=room_briefing_stranger_things_retour, name='Retour dans la salle de briefing Stranger Things - Poser le cube clair')
+		chall_briefing_stranger_things_put_cube_clair = EscapeGameChallenge(room=room_briefing_stranger_things_retour, name='Retour dans la salle de briefing Stranger Things - Poser le cube clair', dependent_on=chall_sas_3_take_cube_clair_retour)
 		chall_briefing_stranger_things_put_cube_clair.save()
 		gpio = chall_briefing_stranger_things_put_cube_clair.gpio
 		gpio.cube = cube_clair
