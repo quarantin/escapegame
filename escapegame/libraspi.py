@@ -6,7 +6,8 @@ import time
 import requests
 
 
-RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+ARCH = ' '.join(os.uname()).strip()
+RUNNING_ON_PI = ARCH.endswith('armv7l') or ARCH.endswith('armv6l')
 if RUNNING_ON_PI:
 	import RPi.GPIO as GPIO
 	GPIO.setwarnings(False)

@@ -39,7 +39,8 @@ from . import logging
 SECRET_KEY = 'l7z2w=efd90^)1gi6a$u$^ohl&tnc=*aby*vr5z5)^-22^voh)'
 
 # Whether we are running on a Raspberry Pi or not
-RUNNING_ON_PI = ' '.join(os.uname()).strip().endswith('armv7l')
+ARCH = ' '.join(os.uname()).strip()
+RUNNING_ON_PI = ARCH.endswith('armv7l') or ARCH.endswith('armv6l')
 VIDEO_PLAYER = (RUNNING_ON_PI and '/usr/bin/omxplayer' or '/usr/bin/mpv')
 
 # Load python code from file without .py extension
