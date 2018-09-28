@@ -238,7 +238,7 @@ class LiftGPIOAdmin(admin.ModelAdmin):
 		'slug',
 		'controller',
 		'game',
-		'video',
+		'briefing_video',
 		'pin',
 		'raised',
 		'image',
@@ -254,7 +254,7 @@ class LiftGPIOAdmin(admin.ModelAdmin):
 
 		('Lift', { 'fields': (
 			'game',
-			'video',
+			'briefing_video',
 			'pin',
 			'raised',
 		)}),

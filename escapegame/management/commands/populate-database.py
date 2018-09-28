@@ -101,13 +101,13 @@ class Command(BaseCommand):
 		door_fontain_room_image = Image(image_name='Les 1001 nuits - La Fontaine Door', image_path='uploads/images/door-fontain-room.png')
 		door_fontain_room_image.save()
 
-		# Room "Salle claire" door image
-		door_salle_claire_image = Image(image_name='Stranger Things - Salle Claire Door', image_path='uploads/images/door-salle-claire.png')
-		door_salle_claire_image.save()
-
 		# Room "Salle obscure" door image
 		door_salle_obscure_image = Image(image_name='Stranger Things - Salle Obscure Door', image_path='uploads/images/door-salle-obscure.png')
 		door_salle_obscure_image.save()
+
+		# Room "Salle claire" door image
+		door_salle_claire_image = Image(image_name='Stranger Things - Salle Claire Door', image_path='uploads/images/door-salle-claire.png')
+		door_salle_claire_image.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
@@ -136,17 +136,13 @@ class Command(BaseCommand):
 		losers_video_1001_nuits = Video(video_name='Les 1001 nuits - Bad End', video_path='uploads/videos/test.h264')
 		losers_video_1001_nuits.save()
 
-		# Stranger Things - Salle claire - Briefing Video
-		briefing_video_stranger_things_salle_claire = Video(video_name='Stranger Things - Salle claire - Briefing', video_path='uploads/videos/test.h264')
-		briefing_video_stranger_things_salle_claire.save()
-
-		#
-		# TODO find a way to have two briefing videos on an escape game and use briefing_video_stranger_things_salle_obscure
-		#
-
 		# Stranger Things - Salle obscure - Briefing Video
 		briefing_video_stranger_things_salle_obscure = Video(video_name='Stranger Things - Salle obscure - Briefing', video_path='uploads/videos/test.h264')
 		briefing_video_stranger_things_salle_obscure.save()
+
+		# Stranger Things - Salle claire - Briefing Video
+		briefing_video_stranger_things_salle_claire = Video(video_name='Stranger Things - Salle claire - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_stranger_things_salle_claire.save()
 
 		# Stranger Things - Winners Video
 		winners_video_stranger_things = Video(video_name='Stranger Things - Good End', video_path='uploads/videos/test.h264')
@@ -199,7 +195,6 @@ class Command(BaseCommand):
 		game_1001_nuits = EscapeGame(
 			name='Les 1001 nuits',
 			time_limit=time_limit_1001_nuits,
-			briefing_video=briefing_video_1001_nuits,
 			winners_video=winners_video_1001_nuits,
 			losers_video=losers_video_1001_nuits,
 			controller=raspi_1001_nuits,
@@ -212,7 +207,6 @@ class Command(BaseCommand):
 		game_stranger_things = EscapeGame(
 			name='Stranger Things',
 			time_limit=time_limit_stranger_things,
-			briefing_video=briefing_video_stranger_things_salle_claire,
 			winners_video=winners_video_stranger_things,
 			losers_video=losers_video_stranger_things,
 			controller=raspi_stranger_things,
@@ -222,8 +216,9 @@ class Command(BaseCommand):
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
+#
 # Cubes
-
+#
 		cube_1001_nuits = EscapeGameCube(tag_id='FF000001', game=game_1001_nuits)
 		cube_1001_nuits.save()
 
@@ -547,15 +542,15 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `LiftGPIO`', ending='')
 
 		# Lift: cube les 1001 nuits
-		lift_1001_nuits = LiftGPIO(name='Les 1001 nuits', controller=raspi_master, game=game_1001_nuits, video=briefing_video_1001_nuits, pin=31)
+		lift_1001_nuits = LiftGPIO(name='Les 1001 nuits', controller=raspi_master, game=game_1001_nuits, briefing_video=briefing_video_1001_nuits, pin=31)
 		lift_1001_nuits.save()
 
-		# Lift: Stranger Things - Salle claire
-		lift_stranger_things_salle_claire = LiftGPIO(name='Stranger Things - Salle claire', controller=raspi_master, game=game_stranger_things, video=briefing_video_stranger_things_salle_claire, pin=32)
-		lift_stranger_things_salle_claire.save()
-
 		# Lift: Stranger Things - Salle obscure
-		lift_stranger_things_salle_obscure = LiftGPIO(name='Stranger Things - Salle obscure', controller=raspi_master, game=game_stranger_things, video=briefing_video_stranger_things_salle_obscure, pin=33)
+		lift_stranger_things_salle_obscure = LiftGPIO(name='Stranger Things - Salle obscure', controller=raspi_master, game=game_stranger_things, briefing_video=briefing_video_stranger_things_salle_obscure, pin=32)
 		lift_stranger_things_salle_obscure.save()
+
+		# Lift: Stranger Things - Salle claire
+		lift_stranger_things_salle_claire = LiftGPIO(name='Stranger Things - Salle claire', controller=raspi_master, game=game_stranger_things, briefing_video=briefing_video_stranger_things_salle_claire, pin=33)
+		lift_stranger_things_salle_claire.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

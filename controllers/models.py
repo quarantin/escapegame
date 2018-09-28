@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from constance import config
 
@@ -449,7 +449,7 @@ class LiftGPIO(models.Model):
 	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
 
 	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE, blank=True, null=True)
-	video = models.ForeignKey('multimedia.Video', on_delete=models.CASCADE, blank=True, null=True)
+	briefing_video = models.ForeignKey('multimedia.Video', on_delete=models.SET_NULL, null=True)
 
 	pin = models.IntegerField(default=11)
 	raised = models.BooleanField(default=False)

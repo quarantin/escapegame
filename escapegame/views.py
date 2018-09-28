@@ -306,7 +306,7 @@ def rest_video_control(request, video_slug, action):
 
 		try:
 			if action == 'play':
-				lift = LiftGPIO.objects.get(video=video)
+				lift = LiftGPIO.objects.get(briefing_video=video)
 				status, message = lift.raise_lift()
 
 				libraspi.notify_frontend()

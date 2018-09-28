@@ -31,7 +31,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'cube_delay',
 		'start_time',
 		'finish_time',
-		'briefing_video',
 		'winners_video',
 		'losers_video',
 		'map_image',
@@ -49,7 +48,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'finish_time',
 			)}),
 		('Videos', { 'fields': (
-			'briefing_video',
 			'winners_video',
 			'losers_video',
 			)}),

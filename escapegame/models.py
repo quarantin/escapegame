@@ -24,13 +24,12 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	time_limit = models.DurationField(default=timedelta(hours=1))
-	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, related_name='escapegame_controller')
+	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
 
 	cube_delay = models.DurationField(default=timedelta(seconds=30))
 
-	briefing_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_briefing_video')
-	winners_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_winners_video')
-	losers_video = models.ForeignKey(Video, null=True, on_delete=models.CASCADE, related_name='escapegame_losers_video')
+	winners_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_winners_video')
+	losers_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_losers_video')
 
 	start_time = models.DateTimeField(blank=True, null=True)
 	finish_time = models.DateTimeField(blank=True, null=True)
@@ -102,8 +101,14 @@ class EscapeGame(models.Model):
 
 		videos = []
 
-		if self.briefing_video is not None:
-			videos.append(self.briefing_video)
+		try:
+			lifts = LiftGPIO.objects.filter(game=self)
+
+			for lift in lifts:
+				videos.append(lift.briefing_video)
+
+		except LiftGPIO.DoesNotExist:
+			pass
 
 		if self.winners_video is not None:
 			videos.append(self.winners_video)
