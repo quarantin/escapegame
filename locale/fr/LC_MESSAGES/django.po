@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-28 16:57+0200\n"
+"POT-Creation-Date: 2018-09-28 17:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -225,7 +225,7 @@ msgstr "cette"
 
 #: escapegame/templates/escapegame/escapegame.html:166
 msgid "page to create new lifts."
-msgstr "page pour créer de nouveaux ascenseur."
+msgstr "page pour créer de nouveaux ascenseurs."
 
 #: escapegame/templates/escapegame/escapegame.html:176
 msgid "Raise lift"
