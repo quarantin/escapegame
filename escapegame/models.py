@@ -255,7 +255,7 @@ class EscapeGameChallenge(models.Model):
 
 	def check_solved(self):
 
-		if self.dependent_on is not None and self.dependent_on.gpio.solved_at is False:
+		if self.dependent_on is not None and self.dependent_on.gpio.solved_at is None:
 			return False
 
 		return self.gpio.check_solved()
