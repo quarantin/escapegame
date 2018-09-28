@@ -295,7 +295,7 @@ class EscapeGameChallenge(models.Model):
 
 				for extra_door in extra_doors:
 
-					status, message = extra_door.forward_lock_request(request, game, room, 'unlock')
+					status, message = extra_door.forward_lock_request(request, self.room.game, self.room, 'unlock')
 					if status != 0:
 						raise Exception(message)
 
