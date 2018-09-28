@@ -13,6 +13,7 @@ print("Please ensure pin %d is wired directly to the challenge pin you want to t
 input("[ Press enter to continue when ready ]")
 
 print("Configuring pin %d for output" % pin)
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(pin, GPIO.OUT)
 
