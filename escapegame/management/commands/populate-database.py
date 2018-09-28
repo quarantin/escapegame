@@ -306,7 +306,7 @@ class Command(BaseCommand):
 		room_sas_3_retour.save()
 
 		# Room: Salle de briefing - Stranger Things (Retour)
-		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing de Stranger Things')
+		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing de Stranger Things')
 		room_briefing_stranger_things_retour.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
