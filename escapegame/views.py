@@ -92,19 +92,6 @@ def escapegame_reset(request, game_slug):
 
 		game.reset()
 
-		# Stop video player
-		status, message = game.briefing_video.stop()
-
-		# We don't want to return an error if the stop action failed,
-		# because maybe there was no video running, in which case this
-		# call will fail but we're still good to go.
-		#if message != 'Success':
-		#	return JsonResponse({
-		#		'status': status,
-		#		'method': method,
-		#		'message': message,
-		#	})
-
 		return JsonResponse({
 			'status': 0,
 			'method': method,
