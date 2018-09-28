@@ -242,7 +242,7 @@ class Command(BaseCommand):
 		#
 
 		# Room: La salle de briefing des 1001 nuits
-		room_briefing_1001_nuits = EscapeGameRoom(game=game_1001_nuits, door_image=door_briefing_room_image, name='Salle de briefing des 1001 nuits')
+		room_briefing_1001_nuits = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Salle de briefing des 1001 nuits')
 		room_briefing_1001_nuits.save()
 
 		# Room: Le SAS des 1001 nuits (SAS 1)
@@ -266,7 +266,7 @@ class Command(BaseCommand):
 		room_sas_1_retour.save()
 
 		# Room: Retour dans la salle de briefing des 1001 nuits
-		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_briefing_room_image, name='Retour dans la salle de briefing des 1001 nuits')
+		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing des 1001 nuits')
 		room_briefing_1001_nuits_retour.save()
 
 		#
@@ -274,7 +274,7 @@ class Command(BaseCommand):
 		#
 
 		# Room: La salle de briefing de Stranger Things
-		room_briefing_stranger_things = EscapeGameRoom(game=game_1001_nuits, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things')
+		room_briefing_stranger_things = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things')
 		room_briefing_stranger_things.save()
 
 		# Room: Le SAS obscur de Stranger Things (SAS 2)
@@ -306,7 +306,7 @@ class Command(BaseCommand):
 		room_sas_3_retour.save()
 
 		# Room: Salle de briefing - Stranger Things (Retour)
-		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_briefing_room_image, name='Retour dans la salle de briefing de Stranger Things')
+		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing de Stranger Things')
 		room_briefing_stranger_things_retour.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
