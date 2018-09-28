@@ -14,6 +14,7 @@ for SERVICE in ${SERVICES}; do
 		echo "No $@ process found to kill."
 
 	else
+		echo "Stopping service \`${SERVICE}\`..."
 		for PID in ${PIDS}; do
 			echo "Killing PID: ${PID}"
 			kill -9 -${PID} 2>/dev/null || kill -9 ${PID}
