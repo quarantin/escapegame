@@ -2,15 +2,16 @@
 
 . $(dirname $0)/env.sh
 
-COMMAND=$1
+SERVICES=$@
 
-if [ -z "${COMMAND}" ]; then
-	echo "Usage: ${0} <command>"
-	exit
+if [ -z "${SERVICES}" ]; then
+	SERVICES=$(echo lift-control video-player monitor-network poll-gpios websocket-timer)
 fi
 
-echo -n "[ * ] Starting background task for management command ${COMMAND} "
+for SERVICE in ${SERVICES}; do
+	echo -n "[ * ] Starting background task for management command ${SERVICE} "
 
-${ROOTDIR}/scripts/python-manage.sh ${COMMAND} &
+	${ROOTDIR}/scripts/python-manage.sh ${SERVICE} &
 
-echo OK
+	echo OK
+done
