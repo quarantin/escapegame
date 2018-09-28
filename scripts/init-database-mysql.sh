@@ -105,6 +105,9 @@ CREATE_DJANGO_USER(){
 
 MASTER(){
 
+	# Stop all Django background services because they use the database
+	./scripts/stop-django-service.sh
+
 	CREATE_MYSQL_ROOT_CONFIG
 
 	KILL_MYSQL_TASKS
@@ -133,14 +136,13 @@ MASTER(){
 
 	# Configure munin (sort of post-provision.sh for now, will be improved in the future)
 	./scripts/configure-munin.sh
-
-	# Restart Django because models might have changed in database and the old code is still running
-	./scripts/restart-django.sh
 }
-
 
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then
 	MASTER
 fi
 
 CREATE_MYSQL_CLIENT_CONFIG "${MASTER_HOSTNAME}"
+
+# Restart Django because models might have changed in database and the old code is still running
+./scripts/restart-django.sh
