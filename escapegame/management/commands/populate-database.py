@@ -419,7 +419,7 @@ class Command(BaseCommand):
 		# Cube Challenge: Salle de briefing Stranger Things - Prendre le cube clair
 		chall_briefing_stranger_things_take_cube_clair = EscapeGameChallenge(room=room_briefing_stranger_things, name='Salle de briefing Stranger Things - Prendre le cube clair')
 		chall_briefing_stranger_things_take_cube_clair.save()
-		gpio = chall_briefing_stranger_things_take_cube_obscur.gpio
+		gpio = chall_briefing_stranger_things_take_cube_clair.gpio
 		gpio.cube = cube_clair
 		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
 		gpio.save()
