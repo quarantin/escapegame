@@ -312,18 +312,6 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
 #
-# Timers
-#
-
-		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle obscure
-		chall_sas_2_timer = EscapeGameChallenge(room=room_sas_2, name='Début du jeu \'Salle obscure\'')
-		chall_sas_2_timer.save()
-
-		# Challenge: Timer, premier challenge du SAS Stranger Things - Salle claire
-		chall_sas_3_timer = EscapeGameChallenge(room=room_sas_3, name='Début du jeu \'Salle claire\'')
-		chall_sas_3_timer.save()
-
-#
 # Challenges
 #
 		self.stdout.write('  Populating model `EscapeGameChallenge`', ending='')
@@ -365,8 +353,8 @@ class Command(BaseCommand):
 		chall_marchand.save()
 
 		# Challenge: Le lanceur de couteaux
-		chall_couteux = EscapeGameChallenge(room=room_caverne, name='Le lanceur de couteaux')
-		chall_couteux.save()
+		chall_couteaux = EscapeGameChallenge(room=room_caverne, name='Le lanceur de couteaux')
+		chall_couteaux.save()
 
 		# Challenge: Le charmeur de serpents
 		chall_serpents = EscapeGameChallenge(room=room_caverne, name='Le charmeur de serpents')
@@ -456,32 +444,32 @@ class Command(BaseCommand):
 		gpio.challenge_type = ChallengeGPIO.TYPE_TAKE_CUBE
 		gpio.save()
 
-		# Challenge: 1 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(room=room_claire, name='chall1 (salle claire)')
-		chall.save()
+		# Challenge: Stranger Things / La salle obscure / 1
+		chall_salle_obscure_1 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall1')
+		chall_salle_obscure_1.save()
 
-		# Challenge: 2 (Stranger Things / La salle claire)
-		chall = EscapeGameChallenge(room=room_claire, name='chall2 (salle claire)')
-		chall.save()
+		# Challenge: Stranger Things / La salle obscure / 2
+		chall_salle_obscure_2 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall2')
+		chall_salle_obscure_2.save()
 
-		# Challenge: 1 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(room=room_obscure, name='chall1 (salle obscure)')
-		chall.save()
+		# Challenge: Stranger Things / La salle claire / 1
+		chall_salle_claire_1 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall1')
+		chall_salle_claire_1.save()
 
-		# Challenge: 2 (Stranger Things / La salle obscure)
-		chall = EscapeGameChallenge(room=room_obscure, name='chall2 (salle obscure)')
-		chall.save()
+		# Challenge: Stranger Things / La salle claire / 2
+		chall_salle_claire_2 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall2')
+		chall_salle_claire_2.save()
 
 		# Challenge: La radio (Stranger Things / La salle obscure)
 		chall_radio = EscapeGameChallenge(room=room_obscure, name='La radio')
 		chall_radio.save()
 
-		# Challenge: 1 (Stranger Things / La forêt)
-		chall = EscapeGameChallenge(room=room_foret, name='chall1 (la forêt)', solved_video=video_la_foret)
-		chall.save()
+		# Challenge: Stranger Things / La forêt / 1
+		chall_la_foret_1 = EscapeGameChallenge(room=room_foret, name='La forêt - chall1', solved_video=video_la_foret)
+		chall_la_foret_1.save()
 
-		# Challenge: 2 (Stranger Things / La forêt)
-		chall_la_foret_2 = EscapeGameChallenge(room=room_foret, name='chall2 (la forêt)')
+		# Challenge: Stranger Things / La forêt / 2
+		chall_la_foret_2 = EscapeGameChallenge(room=room_foret, name='La forêt - chall2')
 		chall_la_foret_2.save()
 
 		# Cube Challenge: Retour au SAS obscur - Poser le cube obscur
