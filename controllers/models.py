@@ -473,6 +473,7 @@ class LiftGPIO(models.Model):
 		super(LiftGPIO, self).save(*args, **kwargs)
 
 	def reset(self):
+		self.briefing_video.stop()
 		return self.lower_lift()
 
 	def set_raised(self, raised, from_gamemaster=False):
