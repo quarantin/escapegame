@@ -341,31 +341,31 @@ class Command(BaseCommand):
 		gpio.save()
 
 		# Challenge: La fontaine
-		chall_fontaine = EscapeGameChallenge(room=room_fontaine, name='La fontaine')
+		chall_fontaine = EscapeGameChallenge(room=room_fontaine, name='La fontaine', dependent_on=chall_sas_1_take_cube)
 		chall_fontaine.save()
 
 		# Challenge: Les dalles
-		chall_dalles = EscapeGameChallenge(room=room_fontaine, name='Les dalles')
+		chall_dalles = EscapeGameChallenge(room=room_fontaine, name='Les dalles', dependent_on=chall_fontaine)
 		chall_dalles.save()
 
 		# Challenge: Le marchand
-		chall_marchand = EscapeGameChallenge(room=room_caverne, name='Le marchand')
+		chall_marchand = EscapeGameChallenge(room=room_caverne, name='Le marchand', dependent_on=chall_dalles)
 		chall_marchand.save()
 
 		# Challenge: Le lanceur de couteaux
-		chall_couteaux = EscapeGameChallenge(room=room_caverne, name='Le lanceur de couteaux')
+		chall_couteaux = EscapeGameChallenge(room=room_caverne, name='Le lanceur de couteaux', dependent_on=chall_marchand)
 		chall_couteaux.save()
 
 		# Challenge: Le charmeur de serpents
-		chall_serpents = EscapeGameChallenge(room=room_caverne, name='Le charmeur de serpents')
+		chall_serpents = EscapeGameChallenge(room=room_caverne, name='Le charmeur de serpents', dependent_on=chall_couteaux)
 		chall_serpents.save()
 
 		# Challenge: Le fakir
-		chall_fakir = EscapeGameChallenge(room=room_caverne, name='Le fakir')
+		chall_fakir = EscapeGameChallenge(room=room_caverne, name='Le fakir', dependent_on=chall_serpents)
 		chall_fakir.save()
 
 		# Challenge La lampe
-		chall_lampe = EscapeGameChallenge(room=room_lampe, name='La lampe')
+		chall_lampe = EscapeGameChallenge(room=room_lampe, name='La lampe', dependent_on=chall_fakir)
 		chall_lampe.save()
 
 		# Cube Challenge: Retour au SAS des 1001 nuits - Poser le cube
@@ -445,31 +445,31 @@ class Command(BaseCommand):
 		gpio.save()
 
 		# Challenge: Stranger Things / La salle obscure / 1
-		chall_salle_obscure_1 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall1')
+		chall_salle_obscure_1 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall1', dependent_on=chall_sas_2_take_cube_obscur)
 		chall_salle_obscure_1.save()
 
 		# Challenge: Stranger Things / La salle obscure / 2
-		chall_salle_obscure_2 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall2')
+		chall_salle_obscure_2 = EscapeGameChallenge(room=room_obscure, name='Salle obscure - chall2', dependent_on=chall_salle_obscure_1)
 		chall_salle_obscure_2.save()
 
 		# Challenge: Stranger Things / La salle claire / 1
-		chall_salle_claire_1 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall1')
+		chall_salle_claire_1 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall1', dependent_on=chall_sas_3_take_cube_clair)
 		chall_salle_claire_1.save()
 
 		# Challenge: Stranger Things / La salle claire / 2
-		chall_salle_claire_2 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall2')
+		chall_salle_claire_2 = EscapeGameChallenge(room=room_claire, name='Salle claire - chall2', dependent_on=chall_salle_claire_1)
 		chall_salle_claire_2.save()
 
 		# Challenge: La radio (Stranger Things / La salle obscure)
-		chall_radio = EscapeGameChallenge(room=room_obscure, name='La radio')
+		chall_radio = EscapeGameChallenge(room=room_obscure, name='La radio', dependent_on=chall_salle_claire_2)
 		chall_radio.save()
 
 		# Challenge: Stranger Things / La forêt / 1
-		chall_la_foret_1 = EscapeGameChallenge(room=room_foret, name='La forêt - chall1', solved_video=video_la_foret)
+		chall_la_foret_1 = EscapeGameChallenge(room=room_foret, name='La forêt - chall1', solved_video=video_la_foret, dependent_on=chall_radio)
 		chall_la_foret_1.save()
 
 		# Challenge: Stranger Things / La forêt / 2
-		chall_la_foret_2 = EscapeGameChallenge(room=room_foret, name='La forêt - chall2')
+		chall_la_foret_2 = EscapeGameChallenge(room=room_foret, name='La forêt - chall2', dependent_on=chall_la_foret_1)
 		chall_la_foret_2.save()
 
 		# Cube Challenge: Retour au SAS obscur - Poser le cube obscur
