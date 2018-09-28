@@ -24,3 +24,5 @@ for SERVICE in ${SERVICES}; do
 		killall python3
 	fi
 done
+
+rm -f ${LIFT_FIFO} ${PLAYER_FIFO}

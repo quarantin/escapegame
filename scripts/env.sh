@@ -21,6 +21,7 @@ PYTHON_BIN=/usr/bin/python3.5
 
 MYSQL_ARCHIVE=/tmp/mysql-lib-folder.tar.gz
 
+LIFT_FIFO=/tmp/lift-control.fifo
 PLAYER_FIFO=/tmp/video-control.fifo
 
 CPU=$(uname -a | awk '{ print $(NF-1) }')
