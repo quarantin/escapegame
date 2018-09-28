@@ -274,7 +274,7 @@ class Command(BaseCommand):
 		#
 
 		# Room: La salle de briefing de Stranger Things
-		room_briefing_stranger_things = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things')
+		room_briefing_stranger_things = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things')
 		room_briefing_stranger_things.save()
 
 		# Room: Le SAS obscur de Stranger Things (SAS 2)
