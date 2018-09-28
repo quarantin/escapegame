@@ -202,7 +202,7 @@ class GPIO(models.Model):
 	def read(self):
 
 		status = 1
-		message = 'No action URL or action PIN defined for this GPIO!'
+		message = _('No action URL or action pin defined for this GPIO!')
 		signal = None
 
 		try:
@@ -228,7 +228,7 @@ class GPIO(models.Model):
 	def write(self, signal):
 
 		status = 1
-		message = 'No action URL or action PIN defined for this GPIO!'
+		message = _('No action URL or action pin defined for this GPIO!')
 
 		if self.action_url is not None:
 
@@ -249,7 +249,7 @@ class GPIO(models.Model):
 	def reset(self):
 
 		status = 1
-		message = 'No action URL or action PIN defined for this GPIO!'
+		message = _('No action URL or action pin defined for this GPIO!')
 
 		# Call reset URL if one is defined
 		if self.reset_url is not None:

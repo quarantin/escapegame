@@ -28,12 +28,12 @@ class GPIOForm(forms.ModelForm):
 
 		if reset_pin is not None and not libraspi.is_valid_pin(reset_pin):
 			raise ValidationError({
-				'reset_pin': _('PIN number %d is not a valid GPIO on a Raspberry Pi v3') % reset_pin,
+				'reset_pin': _('Pin number %d is not a valid GPIO on a Raspberry Pi v3') % reset_pin,
 			})
 
 		if action_pin is not None and not libraspi.is_valid_pin(action_pin):
 			raise ValidationError({
-				'action_pin': _('PIN number %d is not a valid GPIO on a Raspberry Pi v3') % action_pin,
+				'action_pin': _('Pin number %d is not a valid GPIO on a Raspberry Pi v3') % action_pin,
 			})
 
 		if action_pin is not None and action_url is not None:

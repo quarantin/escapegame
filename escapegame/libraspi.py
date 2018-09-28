@@ -97,7 +97,7 @@ def is_valid_gpio(gpio):
 	return gpio.pin not in invalid_pins
 
 #
-# Send signal to the supplied PIN number
+# Send signal to the supplied pin number
 #
 def set_pin(pin, signal):
 
@@ -115,7 +115,7 @@ def set_pin(pin, signal):
 		return 1, 'Error: %s' % err
 
 #
-# Get the state of the supplied PIN number
+# Get the state of the supplied pin number
 #
 def get_pin(pin):
 
@@ -132,7 +132,7 @@ def get_pin(pin):
 		return -1, 'Error: %s' % err, None
 
 #
-# Wait for state change on supplied PIN number until timeout expires (forever if timeout=-1)
+# Wait for state change on supplied pin number until timeout expires (forever if timeout=-1)
 #
 def wait_for_pin_state_change(pin, timeout=-1):
 
