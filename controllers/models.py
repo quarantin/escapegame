@@ -433,7 +433,9 @@ class DoorGPIO(GPIO):
 		else:
 			host, port, protocol = libraspi.get_net_info(controller)
 
-			url = '%s://%s%s/%s/api/door/%s/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game.slug, room.slug, self.slug, action)
+			room_slug = room is not None and room.slug or 'extra'
+
+			url = '%s://%s%s/%s/api/door/%s/%s/%s/%s/' % (protocol, host, port, request.LANGUAGE_CODE, game.slug, room_slug, self.slug, action)
 
 			print("\n#\nI am *NOT* the controller, lets forward to %s" % url)
 			status, message, html = libraspi.do_get(url)
