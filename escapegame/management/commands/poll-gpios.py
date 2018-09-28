@@ -36,11 +36,11 @@ class Command(BaseCommand):
 				for chall in challenges:
 
 					# We don't want to process challenges assigned to other controllers
-					if chall.get_controller() != myself:
+					if chall.get_controller().id != myself.id:
 						continue
 
 					# If the challenge is not already solved in database, but the GPIO indicates it is solved...
-					if not chall.gpio.solved and chall.check_solved():
+					if not chall.gpio.solved_at and chall.check_solved():
 
 						# then notify the master about this challenge being solved, the master will update the database himself.
 						print('Challenge solved on GPIO %d (%s)' % (chall.gpio.action_pin, chall.slug))
