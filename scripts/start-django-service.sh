@@ -5,7 +5,14 @@
 SERVICES=$@
 
 if [ -z "${SERVICES}" ]; then
-	SERVICES=$(echo lift-control video-player monitor-network poll-gpios websocket-timer)
+
+	if [ ${HOSTNAME} = ${MASTER_HOSTNAME} ]; then
+
+		SERVICES=$(echo lift-control video-player monitor-network poll-gpios websocket-timer)
+	else
+
+		SERVICES=$(echo video-player poll-gpios)
+	fi
 fi
 
 for SERVICE in ${SERVICES}; do
