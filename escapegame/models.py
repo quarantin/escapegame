@@ -66,7 +66,7 @@ class EscapeGame(models.Model):
 
 		lifts = LiftGPIO.objects.filter(game=self)
 		for lift in lifts:
-			lift.lower_lift()
+			lift.reset()
 
 		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
