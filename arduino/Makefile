@@ -6,7 +6,7 @@ PORT_UNO   := /dev/ttyUSB0
 BOARD_MEGA := arduino:avr:mega:cpu=atmega2560
 PORT_MEGA  := /dev/ttyACM0
 
-SKETCH     := nfc/
+SKETCH     := cube-new/
 
 arduino/uno: uno_compile uno_install
 
