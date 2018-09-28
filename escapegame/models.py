@@ -68,10 +68,6 @@ class EscapeGame(models.Model):
 		for lift in lifts:
 			lift.lower_lift()
 
-		doors = DoorGPIO.objects.filter(game=self)
-		for door in doors:
-			door.reset()
-
 		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
 			room.reset()
@@ -257,6 +253,15 @@ class EscapeGameChallenge(models.Model):
 	def reset(self):
 		self.gpio.reset()
 		self.save()
+
+		try:
+			doors = DoorGPIO.objects.filter(dependent_on=self)
+
+		except DoorGPIO.DoesNotExist:
+			doors = []
+
+		for door in doors:
+			door.reset()
 
 	def check_solved(self):
 
