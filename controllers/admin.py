@@ -58,6 +58,8 @@ class ChallengeGPIOForm(GPIOForm):
 
 	def clean(self):
 
+		super(ChallengeGPIOForm, self).clean()
+
 		cube = 'cube' in self.cleaned_data and self.cleaned_data['cube'] or None
 		chall_type = 'challenge_type' in self.cleaned_data and self.cleaned_data['challenge_type'] or None
 
@@ -71,6 +73,26 @@ class DoorGPIOForm(GPIOForm):
 	class Meta:
 		model = DoorGPIO
 		exclude = []
+
+	def clean(self):
+
+		super(DoorGPIOForm, self).clean()
+
+		has_dependency = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
+
+		if has_dependency:
+
+			from escapegame.models import EscapeGameRoom
+
+			try:
+				room = EscapeGameRoom.objects.get(door=self.instance)
+
+				raise ValidationError({
+					'dependent_on': _('You cannot create a dependency for this door GPIO because it is already assigned to room `%s`.\nIf you really want to create a dependency for this door GPIO, please unassign it from the room first.' % room.name),
+				})
+
+			except EscapeGameRoom.DoesNotExist:
+				pass
 
 class LiftGPIOForm(forms.ModelForm):
 
@@ -208,22 +230,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 		)}),
 
 	) + GPIOAdmin.fieldsets
-
-	def clean(self):
-
-		has_dependency = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
-
-		if has_dependency:
-
-			try:
-				room = EscapeGameRoom.objects.get(door=self)
-
-				raise ValidationError({
-					'dependent_on': _('You cannot create a dependency for this door GPIO because it is already assigned to room `%s`.\nIf you really want to create a dependency for this door GPIO, please unassign it from the room first' % room.name),
-				})
-
-			except EscapeGameRoom.DoesNotExist:
-				pass
 
 	def get_readonly_fields(self, request, obj=None):
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'locked', 'unlocked_at' )
