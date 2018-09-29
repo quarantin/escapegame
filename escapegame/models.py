@@ -77,6 +77,7 @@ class EscapeGame(models.Model):
 
 		#libraspi.notify_frontend(self)
 		libraspi.notify_frontend()
+		libraspi.notify_frontend(self, '0:00:00')
 
 	def get_challenges(self, controller=None):
 
