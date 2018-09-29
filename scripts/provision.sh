@@ -70,7 +70,6 @@ PIP_PACKAGES=(
 	django-cors-headers==2.4.0
 	django-extensions==2.1.0
 	django-redis-sessions==0.6.1
-	django-rest-framework==0.1.0
 	django-websocket-redis==0.5.2
 	gevent==1.3.6
 	greenlet==0.4.14

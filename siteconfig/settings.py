@@ -97,7 +97,6 @@ INSTALLED_APPS = [
 	'constance.backends.database',
 	'corsheaders',
 	'django_extensions',
-	'rest_framework.authtoken',
 	'ws4redis',
 ]
 
