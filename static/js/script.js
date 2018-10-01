@@ -175,7 +175,7 @@ function toggle_all_elements(game)
 function draw_image(ctx, imageObj)
 {
 	image = new Image();
-	image.src = '/media/' + imageObj.image_path;
+	image.src = '/media/' + imageObj.path;
 	console.log("Drawing image: " + image.src);
 	ctx.drawImage(image, 0, 0, imageObj.width, imageObj.height);
 }

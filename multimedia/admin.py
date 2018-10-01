@@ -11,8 +11,8 @@ from .models import *
 
 class ImageAdmin(admin.ModelAdmin):
 	list_display = [
-		'image_name',
-		'image_path',
+		'name',
+		'path',
 		'width',
 		'height',
 	]

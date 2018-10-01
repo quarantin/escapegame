@@ -93,47 +93,47 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `Image`', ending='')
 
 		# Full map image
-		map_image = Image(image_name='Escape Game Map - Full Map', image_path='uploads/images/map-base.png')
+		map_image = Image(name='Escape Game Map - Full Map', path='uploads/images/map-base.png')
 		map_image.save()
 
 		# Door briefing room image
-		door_briefing_room_image = Image(image_name='Door briefing room', image_path='uploads/images/door-briefing-room.png')
+		door_briefing_room_image = Image(name='Door briefing room', path='uploads/images/door-briefing-room.png')
 		door_briefing_room_image.save()
 
 		# Door corridor SAS 1
-		door_corridor_sas_1_image = Image(image_name='Door corridor SAS 1', image_path='uploads/images/door-corridor-sas-1.png')
+		door_corridor_sas_1_image = Image(name='Door corridor SAS 1', path='uploads/images/door-corridor-sas-1.png')
 		door_corridor_sas_1_image.save()
 
 		# Door corridor SAS 2
-		door_corridor_sas_2_image = Image(image_name='Door corridor SAS 2', image_path='uploads/images/door-corridor-sas-2.png')
+		door_corridor_sas_2_image = Image(name='Door corridor SAS 2', path='uploads/images/door-corridor-sas-2.png')
 		door_corridor_sas_2_image.save()
 
 		# Door corridor SAS 3
-		door_corridor_sas_3_image = Image(image_name='Door corridor SAS 3', image_path='uploads/images/door-corridor-sas-3.png')
+		door_corridor_sas_3_image = Image(name='Door corridor SAS 3', path='uploads/images/door-corridor-sas-3.png')
 		door_corridor_sas_3_image.save()
 
 		# SAS 1 door image
-		door_sas_1_image = Image(image_name='Les 1001 nuits - SAS Door', image_path='uploads/images/door-sas-1.png')
+		door_sas_1_image = Image(name='Les 1001 nuits - SAS Door', path='uploads/images/door-sas-1.png')
 		door_sas_1_image.save()
 
 		# SAS 2 door image
-		door_sas_2_image = Image(image_name='Stranger Things - SAS Door - Salle Claire', image_path='uploads/images/door-sas-2.png')
+		door_sas_2_image = Image(name='Stranger Things - SAS Door - Salle Claire', path='uploads/images/door-sas-2.png')
 		door_sas_2_image.save()
 
 		# SAS 3 door image
-		door_sas_3_image = Image(image_name='Stranger Things - SAS Door - Salle Obscure', image_path='uploads/images/door-sas-3.png')
+		door_sas_3_image = Image(name='Stranger Things - SAS Door - Salle Obscure', path='uploads/images/door-sas-3.png')
 		door_sas_3_image.save()
 
 		# Room "La Fontaine" door image
-		door_fontain_room_image = Image(image_name='Les 1001 nuits - La Fontaine Door', image_path='uploads/images/door-fontain-room.png')
+		door_fontain_room_image = Image(name='Les 1001 nuits - La Fontaine Door', path='uploads/images/door-fontain-room.png')
 		door_fontain_room_image.save()
 
 		# Room "Salle obscure" door image
-		door_salle_obscure_image = Image(image_name='Stranger Things - Salle Obscure Door', image_path='uploads/images/door-salle-obscure.png')
+		door_salle_obscure_image = Image(name='Stranger Things - Salle Obscure Door', path='uploads/images/door-salle-obscure.png')
 		door_salle_obscure_image.save()
 
 		# Room "Salle claire" door image
-		door_salle_claire_image = Image(image_name='Stranger Things - Salle Claire Door', image_path='uploads/images/door-salle-claire.png')
+		door_salle_claire_image = Image(name='Stranger Things - Salle Claire Door', path='uploads/images/door-salle-claire.png')
 		door_salle_claire_image.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

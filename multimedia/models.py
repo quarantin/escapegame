@@ -13,24 +13,24 @@ import traceback
 
 class Image(models.Model):
 
-	image_name = models.CharField(max_length=255, unique=True)
-	image_path = models.ImageField(upload_to=settings.UPLOAD_IMAGE_PATH)
+	name = models.CharField(max_length=255, unique=True)
+	path = models.ImageField(upload_to=settings.UPLOAD_IMAGE_PATH)
 	width = models.IntegerField()
 	height = models.IntegerField()
 
 	def __str__(self):
-		return 'Image - %s' % self.image_name
+		return 'Image - %s' % self.name
 
 	def save(self, *args, **kwargs):
-		self.width = self.image_path.width
-		self.height = self.image_path.height
+		self.width = self.path.width
+		self.height = self.path.height
 		super(Image, self).save(*args, **kwargs)
 
 	def natural_key(self):
-		return ( self.image_name, self.image_path.url, self.width, self.height )
+		return ( self.name, self.path.url, self.width, self.height )
 
 	class Meta:
-		ordering = [ 'image_name' ]
+		ordering = [ 'name' ]
 
 class PlayerControlMixin:
 
