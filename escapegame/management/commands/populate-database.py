@@ -117,43 +117,43 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `Video`', ending='')
 
 		# Demo Video
-		demo_video = Video(name='Video Demo', video_path='uploads/videos/test.h264')
+		demo_video = Video(name='Video Demo', path='uploads/videos/test.h264')
 		demo_video.save()
 
 		# Demo Video 2
-		demo_video_2 = Video(name='Video Demo 2', video_path='uploads/videos/small.mp4')
+		demo_video_2 = Video(name='Video Demo 2', path='uploads/videos/small.mp4')
 		demo_video_2.save()
 
 		# Les 1001 nuits - Briefing Video
-		briefing_video_1001_nuits = Video(name='Les 1001 nuits - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_1001_nuits = Video(name='Les 1001 nuits - Briefing', path='uploads/videos/test.h264')
 		briefing_video_1001_nuits.save()
 
 		# Les 1001 nuits - Winners Video
-		winners_video_1001_nuits = Video(name='Les 1001 nuits - Good End', video_path='uploads/videos/test.h264')
+		winners_video_1001_nuits = Video(name='Les 1001 nuits - Good End', path='uploads/videos/test.h264')
 		winners_video_1001_nuits.save()
 
 		# Les 1001 nuits - Losers Video
-		losers_video_1001_nuits = Video(name='Les 1001 nuits - Bad End', video_path='uploads/videos/test.h264')
+		losers_video_1001_nuits = Video(name='Les 1001 nuits - Bad End', path='uploads/videos/test.h264')
 		losers_video_1001_nuits.save()
 
 		# Stranger Things - Salle obscure - Briefing Video
-		briefing_video_stranger_things_salle_obscure = Video(name='Stranger Things - Salle obscure - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_stranger_things_salle_obscure = Video(name='Stranger Things - Salle obscure - Briefing', path='uploads/videos/test.h264')
 		briefing_video_stranger_things_salle_obscure.save()
 
 		# Stranger Things - Salle claire - Briefing Video
-		briefing_video_stranger_things_salle_claire = Video(name='Stranger Things - Salle claire - Briefing', video_path='uploads/videos/test.h264')
+		briefing_video_stranger_things_salle_claire = Video(name='Stranger Things - Salle claire - Briefing', path='uploads/videos/test.h264')
 		briefing_video_stranger_things_salle_claire.save()
 
 		# Stranger Things - Winners Video
-		winners_video_stranger_things = Video(name='Stranger Things - Good End', video_path='uploads/videos/test.h264')
+		winners_video_stranger_things = Video(name='Stranger Things - Good End', path='uploads/videos/test.h264')
 		winners_video_stranger_things.save()
 
 		# Stranger Things - Losers Video
-		losers_video_stranger_things = Video(name='Stranger Things - Bad End', video_path='uploads/videos/test.h264')
+		losers_video_stranger_things = Video(name='Stranger Things - Bad End', path='uploads/videos/test.h264')
 		losers_video_stranger_things.save()
 
 		# Stranger Things - Challenge Video - La Forêt
-		video_la_foret = Video(name='Stranger Things - Challenge - La Forêt', video_path='uploads/videos/test.h264')
+		video_la_foret = Video(name='Stranger Things - Challenge - La Forêt', path='uploads/videos/test.h264')
 		video_la_foret.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
