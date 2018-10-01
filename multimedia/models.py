@@ -115,7 +115,7 @@ class Audio(PlayerControlMixin, models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
-	audio_path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
+	path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
 
 	def __init__(self, *args, **kwargs):
 		super(Audio, self).__init__(*args, **kwargs)
@@ -139,7 +139,7 @@ class Audio(PlayerControlMixin, models.Model):
 		from escapegame import libraspi
 		controller = controller or RaspberryPi.get_master()
 		host, port, protocol = libraspi.get_net_info(controller)
-		return '%s://%s%s%s' % (protocol, host, port, self.audio_path.url)
+		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
 
 	class Meta:
 		ordering = [ 'name' ]

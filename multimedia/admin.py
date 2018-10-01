@@ -41,13 +41,13 @@ class AudioAdmin(admin.ModelAdmin):
 	list_display = [
 		'name',
 		'slug',
-		'audio_path',
+		'path',
 	]
 	fieldsets = (
 		('Audio', { 'fields': (
 			'name',
 			'slug',
-			'audio_path',
+			'path',
 		)}),
 	)
 

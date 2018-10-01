@@ -54,7 +54,7 @@ class Command(BaseCommand):
 # Audio
 #
 		self.stdout.write('  Populating model `Audio`', ending='')
-		demo_audio = Audio(name='Audio Demo', audio_path='uploads/audios/test.h264')
+		demo_audio = Audio(name='Audio Demo', path='uploads/audios/test.h264')
 		demo_audio.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
