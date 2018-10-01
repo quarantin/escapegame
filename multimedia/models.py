@@ -114,7 +114,7 @@ class Video(PlayerControlMixin, models.Model):
 class Audio(PlayerControlMixin, models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
-	audio_name = models.CharField(max_length=255, unique=True)
+	name = models.CharField(max_length=255, unique=True)
 	audio_path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
 
 	def __init__(self, *args, **kwargs):
@@ -124,10 +124,10 @@ class Audio(PlayerControlMixin, models.Model):
 		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
 
 	def __str__(self):
-		return 'Audio - %s' % self.audio_name
+		return 'Audio - %s' % self.name
 
 	def save(self, *args, **kwargs):
-		new_slug = slugify(self.audio_name)
+		new_slug = slugify(self.name)
 		if not self.slug or self.slug != new_slug:
 			self.slug = new_slug
 
@@ -142,4 +142,4 @@ class Audio(PlayerControlMixin, models.Model):
 		return '%s://%s%s%s' % (protocol, host, port, self.audio_path.url)
 
 	class Meta:
-		ordering = [ 'audio_name' ]
+		ordering = [ 'name' ]
