@@ -200,7 +200,7 @@ class EscapeGameAdminSite(admin.sites.AdminSite):
 		ordered_dict = OrderedDict()
 
 		# Fix app order
-		for app in [ 'constance', 'jsonexport', 'multimedia', 'escapegame', 'controllers' ]:
+		for app in [ 'jsonexport', 'multimedia', 'escapegame', 'controllers' ]:
 			if app in app_dict:
 				ordered_dict[app] = app_dict[app]
 
@@ -269,8 +269,3 @@ site.register(EscapeGame, EscapeGameAdmin)
 site.register(EscapeGameCube, EscapeGameCubeAdmin)
 site.register(EscapeGameRoom, EscapeGameRoomAdmin)
 site.register(EscapeGameChallenge, EscapeGameChallengeAdmin)
-
-# Register Constance to our custom admin site
-from constance.admin import Config as ConstanceConfig, ConstanceAdmin
-site.register([ConstanceConfig], ConstanceAdmin)
-admin.site.unregister([ConstanceConfig])

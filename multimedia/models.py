@@ -3,7 +3,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from constance import config
+from siteconfig import settings
 
 import os
 import traceback
@@ -14,7 +14,7 @@ import traceback
 class Image(models.Model):
 
 	image_name = models.CharField(max_length=255, unique=True)
-	image_path = models.ImageField(upload_to=config.UPLOAD_IMAGE_PATH)
+	image_path = models.ImageField(upload_to=settings.UPLOAD_IMAGE_PATH)
 	width = models.IntegerField()
 	height = models.IntegerField()
 
@@ -36,7 +36,7 @@ class Video(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	video_name = models.CharField(max_length=255, unique=True)
-	video_path = models.FileField(upload_to=config.UPLOAD_VIDEO_PATH)
+	video_path = models.FileField(upload_to=settings.UPLOAD_VIDEO_PATH)
 
 	def __str__(self):
 		return 'Video - %s' % self.video_name
@@ -101,7 +101,7 @@ class Audio(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	audio_name = models.CharField(max_length=255, unique=True)
-	audio_path = models.FileField(upload_to=config.UPLOAD_AUDIO_PATH)
+	audio_path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
 
 	def __str__(self):
 		return 'Audio - %s' % self.audio_name

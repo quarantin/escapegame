@@ -49,6 +49,13 @@ MASTER = imp.load_source(MASTER_FILE, os.path.join(BASE_DIR, MASTER_FILE))
 
 # Whether we are the master game controller
 IS_MASTER = (socket.gethostname() == MASTER.HOSTNAME)
+IS_SLAVE = not IS_MASTER
+
+# Upload Settings
+UPLOAD_IMAGE_PATH = 'uploads/images'
+UPLOAD_VIDEO_PATH = 'uploads/videos'
+UPLOAD_AUDIO_PATH = 'uploads/audios'
+UPLOAD_SKETCH_PATH = 'uploads/sketches'
 
 # Build full hostname by appending master hostname with master TLD
 MASTER_HOSTNAME = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
@@ -93,8 +100,6 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 
 	'channels',
-	'constance',
-	'constance.backends.database',
 	'corsheaders',
 	'django_extensions',
 	'ws4redis',
@@ -273,80 +278,6 @@ WS4REDIS_CONNECTION = {
 # Heart beat for websocket
 WS4REDIS_HEARTBEAT = '--heartbeat--'
 
-
-# Constance settings
-
-CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
-
-CONSTANCE_ADDITIONAL_FIELDS = {
-	'text_field': [
-		'django.forms.CharField',
-		{
-			'widget': 'django.forms.TextInput',
-		}
-	],
-	'hostname': [
-		'django.forms.CharField',
-		{
-			'widget': 'django.forms.TextInput',
-			'validators': [ forms.validate_hostname ],
-		}
-	],
-	'master_hostname': [
-		'django.forms.CharField',
-		{
-			'widget': 'django.forms.TextInput',
-			'validators': [ forms.validate_master_hostname ],
-		}
-	],
-
-}
-
-CONSTANCE_CONFIG = {
-
-	# System Settings
-	'IS_MASTER':             ( IS_MASTER,          'Whether this is the master host.'                                               ),
-	'IS_SLAVE':              ( not IS_MASTER,      'Whether this is a slave host.'                                                  ),
-	'RUNNING_ON_PI':         ( RUNNING_ON_PI,      'True if this application is running on a Raspberry PI, false otherwise.'        ),
-
-	# Network Settings
-	'HOSTNAME':              ( HOSTNAME,           'The full domain name of this host.',                               'hostname'   ),
-	'MASTER_HOSTNAME':       ( MASTER_HOSTNAME,    'The full domain name of the host acting as master.',          'master_hostname' ),
-	'MASTER_TLD':            ( MASTER_TLD,         'The TLD (Top-Level-Domain) of the Raspberry Pi acting as master.', 'text_field' ),
-	'MASTER_PORT':           ( 80,                 'The TCP port of the Raspberry Pi acting as master.'                             ),
-
-	# Upload Settings
-	'UPLOAD_IMAGE_PATH':     ( 'uploads/images',   'The directory to upload images.',                                  'text_field' ),
-	'UPLOAD_VIDEO_PATH':     ( 'uploads/videos',   'The directory to upload videos.',                                  'text_field' ),
-	'UPLOAD_AUDIO_PATH':     ( 'uploads/audios',   'The directory to upload audios.',                                  'text_field' ),
-	'UPLOAD_SKETCH_PATH':    ( 'uploads/sketches', 'The directory to upload Arduino sketches.',                        'text_field' ),
-
-	# Video Settings
-	'VIDEO_PLAYER':          ( VIDEO_PLAYER,       'The path of the executable to display videos.',                    'text_field' ),
-}
-
-CONSTANCE_CONFIG_FIELDSETS = OrderedDict([
-
-	( 'System Settings', [
-		'IS_MASTER',
-		'IS_SLAVE',
-		'RUNNING_ON_PI',
-	]),
-	( 'Network Settings', [
-		'HOSTNAME',
-		'MASTER_HOSTNAME',
-		'MASTER_TLD',
-		'MASTER_PORT',
-	]),
-	( 'Upload Settings', [
-		'UPLOAD_IMAGE_PATH',
-		'UPLOAD_VIDEO_PATH',
-		'UPLOAD_SKETCH_PATH',
-	]),
-	( 'Video Settings',   [
-		'VIDEO_PLAYER',
-	]),
-])
 
 # CORS settings
 

@@ -66,7 +66,6 @@ PIP_PACKAGES=(
 	channels==2.1.3
 	cryptography==2.3.1
 	django==2.0.7
-	django-constance[database]==2.2.0
 	django-cors-headers==2.4.0
 	django-extensions==2.1.0
 	django-redis-sessions==0.6.1

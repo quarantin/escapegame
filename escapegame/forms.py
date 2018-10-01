@@ -2,13 +2,13 @@
 
 from django.forms import ValidationError
 
-from constance import config
+from siteconfig import settings
 
 
 def __validate_hostname(key, hostname):
-	if not hostname.endswith(config.MASTER_TLD):
+	if not hostname.endswith(settings.MASTER_TLD):
 		raise ValidationError([{
-			'id_%s' % key: 'Hostnames must have the `%s` prefix.' % config.MASTER_TLD,
+			'id_%s' % key: 'Hostnames must have the `%s` prefix.' % settings.MASTER_TLD,
 		}])
 
 def validate_hostname(hostname):

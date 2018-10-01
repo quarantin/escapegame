@@ -5,8 +5,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 
-from constance import config
-
 from escapegame import libraspi
 from multimedia.models import Image, Video
 from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO, LiftGPIO

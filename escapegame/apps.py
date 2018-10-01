@@ -13,4 +13,3 @@ class EscapegameConfig(AppConfig):
 
 		# Register signals
 		from .signals import save
-		from .signals import constance

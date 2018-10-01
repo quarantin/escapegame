@@ -6,8 +6,6 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from constance import config
-
 from siteconfig import settings
 from multimedia.models import Image
 from escapegame import libraspi
@@ -28,7 +26,7 @@ class ArduinoSketch(models.Model):
 
 	sketch_name = models.CharField(max_length=255, unique=True)
 	sketch_code = models.TextField(max_length=10000)
-	sketch_path = models.FileField(upload_to=config.UPLOAD_SKETCH_PATH)
+	sketch_path = models.FileField(upload_to=settings.UPLOAD_SKETCH_PATH)
 
 	def __str(self):
 		return self.sketch_path.url
@@ -49,7 +47,7 @@ class ArduinoSketch(models.Model):
 
 	def save_code(self):
 
-		sketch_path = os.path.join(config.UPLOAD_SKETCH_PATH, self.sketch_path.path)
+		sketch_path = os.path.join(settings.UPLOAD_SKETCH_PATH, self.sketch_path.path)
 
 		if self.sketch_code:
 			fin = open(sketch_path, 'w')
@@ -109,7 +107,7 @@ class Controller(models.Model):
 
 	def is_myself(self, hostname=None):
 		if hostname is None:
-			hostname = '%s%s' % (socket.gethostname(), config.MASTER_TLD)
+			hostname = '%s%s' % (socket.gethostname(), settings.MASTER_TLD)
 
 		return hostname == self.hostname
 
@@ -161,10 +159,10 @@ class RaspberryPi(Controller):
 			return None
 
 	def get_master():
-		return RaspberryPi.get_by_name(config.MASTER_HOSTNAME)
+		return RaspberryPi.get_by_name(settings.MASTER_HOSTNAME)
 
 	def get_myself():
-		hostname = '%s%s' % (socket.gethostname(), config.MASTER_TLD)
+		hostname = '%s%s' % (socket.gethostname(), settings.MASTER_TLD)
 		return RaspberryPi.get_by_name(hostname)
 
 class GPIO(models.Model):
