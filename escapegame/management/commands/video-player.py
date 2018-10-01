@@ -75,10 +75,13 @@ class Command(BaseCommand):
 					os.mkfifo(self.fifo)
 
 				fifo = open(self.fifo, 'r')
-				command = fifo.read().strip().split(' ', 1)
+				lines = fifo.read().strip().split('\n')
 				fifo.close()
 
-				self.control(*command)
+				for command in lines:
+					cmd = command.strip().split(' ', 1)
+					self.control(*cmd)
+
 				continue
 
 			except KeyboardInterrupt:

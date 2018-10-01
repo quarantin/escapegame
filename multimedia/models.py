@@ -57,7 +57,7 @@ class Video(models.Model):
 				raise Exception('Player fifo does not exist!')
 
 			fifo = open(fifo_path, 'w')
-			fifo.write(command)
+			fifo.write('%s\n' % command)
 			fifo.close()
 
 			return 0, 'Success'
@@ -122,7 +122,7 @@ class Audio(models.Model):
 				raise Exception('Player fifo does not exist!')
 
 			fifo = open(fifo_path, 'w')
-			fifo.write(command)
+			fifo.write('%s\n' % command)
 			fifo.close()
 
 			return 0, 'Success'
