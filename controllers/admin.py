@@ -17,7 +17,12 @@ class GPIOForm(forms.ModelForm):
 
 	class Meta:
 		model = GPIO
-		exclude = []
+		fields = [
+			'action_pin',
+			'action_url',
+			'reset_pin',
+			'reset_url',
+		]
 
 	def clean(self):
 
@@ -54,7 +59,9 @@ class ChallengeGPIOForm(GPIOForm):
 
 	class Meta:
 		model = ChallengeGPIO
-		exclude = []
+		fields = [
+			'cube',
+		]
 
 	def clean(self):
 
@@ -72,7 +79,9 @@ class DoorGPIOForm(GPIOForm):
 
 	class Meta:
 		model = DoorGPIO
-		exclude = []
+		fields = [
+			'dependent_on',
+		]
 
 	def clean(self):
 
