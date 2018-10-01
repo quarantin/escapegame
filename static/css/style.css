@@ -131,3 +131,7 @@ div.radio-raspi {
 .button-disabled {
 	opacity: 0.2;
 }
+
+div.escapegame-card {
+	margin-bottom: 20px;
+}
