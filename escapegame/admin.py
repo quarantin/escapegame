@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django.forms.widgets import TimeInput, DateTimeInput
+from django import forms
 from django.db import models
 from django.apps import apps
 from django.contrib import admin
@@ -15,6 +18,7 @@ from collections import OrderedDict
 from datetime import datetime
 
 import json
+import re
 
 
 # Escape game admin classes
@@ -59,7 +63,26 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', 'start_time', 'finish_time' )
 
+class EscapeGameCubeForm(forms.ModelForm):
+
+	class Meta:
+		model = EscapeGameCube
+		fields = [ 'tag_id' ]
+
+	def clean(self):
+
+		if 'tag_id' not in self.cleaned_data:
+			return
+
+		tag_id = self.cleaned_data['tag_id']
+		match = re.search('^[0-9A-F]{8}$', tag_id) is not None
+		if not match:
+			raise ValidationError({
+				'tag_id': _('Invalid format for tag ID, must contain 8 hexadecimal digits (for example: `FF010203`)'),
+			})
+
 class EscapeGameCubeAdmin(admin.ModelAdmin):
+	form = EscapeGameCubeForm
 	list_display = [
 		'game',
 		'tag_id',
