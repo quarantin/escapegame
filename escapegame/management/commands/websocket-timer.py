@@ -29,6 +29,9 @@ class Command(BaseCommand):
 
 	def get_start_time(self, sas_rooms):
 
+		if not sas_rooms:
+			return None
+
 		for room in sas_rooms:
 			if room.door.unlocked_at is None:
 				return None
