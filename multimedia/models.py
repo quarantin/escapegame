@@ -65,7 +65,7 @@ class PlayerControlMixin:
 	def stop(self):
 		return self.fifo_control('stop')
 
-	def control(self, action):
+	def player_control(self, action):
 
 		if action == 'pause':
 			return self.pause()
@@ -83,12 +83,6 @@ class Video(PlayerControlMixin, models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	path = models.FileField(upload_to=settings.UPLOAD_VIDEO_PATH)
-
-	def __init__(self, *args, **kwargs):
-		super(Video, self).__init__(*args, **kwargs)
-
-		# Initialize PlayerControlMixin
-		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
 
 	def __str__(self):
 		return 'Video - %s' % self.name
@@ -108,6 +102,11 @@ class Video(PlayerControlMixin, models.Model):
 		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
 
+	def control(self, action):
+		# Initialize PlayerControlMixin
+		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
+		return self.player_control(action)
+
 	class Meta:
 		ordering = [ 'name' ]
 
@@ -116,12 +115,6 @@ class Audio(PlayerControlMixin, models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
-
-	def __init__(self, *args, **kwargs):
-		super(Audio, self).__init__(*args, **kwargs)
-
-		# Initialize PlayerControlMixin
-		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
 
 	def __str__(self):
 		return 'Audio - %s' % self.name
@@ -140,6 +133,11 @@ class Audio(PlayerControlMixin, models.Model):
 		controller = controller or RaspberryPi.get_master()
 		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
+
+	def control(self, action):
+		# Initialize PlayerControlMixin
+		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
+		return self.player_control(action)
 
 	class Meta:
 		ordering = [ 'name' ]
