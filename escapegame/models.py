@@ -118,7 +118,10 @@ class EscapeGame(models.Model):
 
 		return videos
 
-	def get_controllers(self):
+	def get_controllers(self, as_dict=False):
+		if as_dict:
+			return [ x for x in RaspberryPi.objects.filter(game=None).values() ] + [ x for x in RaspberryPi.objects.filter(game=self).values() ]
+
 		return [ x for x in RaspberryPi.objects.filter(game=None) ] + [ x for x in RaspberryPi.objects.filter(game=self) ]
 
 	class Meta:

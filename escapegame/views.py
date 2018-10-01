@@ -120,8 +120,11 @@ def escapegame_status(request, game_slug):
 	method = 'escapegame.views.escapegame_status'
 
 	try:
+		game = EscapeGame.objects.get(slug=game_slug)
+		raspis = game.get_controllers(as_dict=True)
+
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
-		game['raspberrypis'] = game.get_controllers()
+		game['raspberrypis'] = raspis
 		game['rooms'] = []
 		game['doors'] = []
 		game['lifts'] = []
