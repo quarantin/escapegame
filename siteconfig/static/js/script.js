@@ -351,6 +351,12 @@ function game_control_handler(action)
  */
 function video_control_handler(action)
 {
+	$('select#selected-video').change(function() {
+		$('button#video-play').removeClass('d-none');
+		$('button#video-pause').addClass('d-none');
+
+	});
+
 	$('button#video-' + action).click(function() {
 
 		if (action == 'play') {
@@ -381,6 +387,12 @@ function video_control_handler(action)
 
 function audio_control_handler(action)
 {
+	$('select#selected-audio').change(function() {
+		$('button#audio-play').removeClass('d-none');
+		$('button#audio-pause').addClass('d-none');
+
+	});
+
 	$('button#audio-' + action).click(function(){
 		if (action == 'play') {
 			$('button#audio-play').addClass('d-none');
