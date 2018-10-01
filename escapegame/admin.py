@@ -94,7 +94,33 @@ class EscapeGameCubeAdmin(admin.ModelAdmin):
 		)}),
 	)
 
+class EscapeGameRoomForm(forms.ModelForm):
+
+	class Meta:
+		model = EscapeGameRoom
+		fields = [
+			'door'
+		]
+
+	def clean(self):
+
+		if 'door' not in self.cleaned_data:
+			return
+
+		door = self.cleaned_data['door']
+
+		try:
+			gpio = DoorGPIO.objects.get(pk=door.pk)
+			if gpio.dependent_on is not None:
+				raise ValidationError({
+					'door': _('You cannot assign this DoorGPIO because it has a dependency to challenge `%s`.\nIf you really want to assign this DoorGPIO, please remove its dependency first.' % gpio.dependent_on.name),
+				})
+
+		except DoorGPIO.DoesNotExist:
+			pass
+
 class EscapeGameRoomAdmin(admin.ModelAdmin):
+	form = EscapeGameRoomForm
 	list_display = [
 		'name',
 		'slug',
