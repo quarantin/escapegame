@@ -51,6 +51,33 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.MIGRATE_HEADING('Populating database:'))
 
 #
+# Raspberry Pis
+#
+		self.stdout.write('  Populating model `RaspberryPi`', ending='')
+
+		# Raspberry Pi: Master game controller
+		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local')
+		raspi_master.save()
+
+		# Raspberry Pi: Les 1001 nuits
+		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits', hostname='les-1001-nuits.local')
+		raspi_1001_nuits.save()
+
+		# Raspberry Pi: Sons Les 1001 nuits
+		raspi_sons_1001_nuits = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
+		raspi_sons_1001_nuits.save()
+
+		# Raspberry Pi: Stranger Things
+		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
+		raspi_stranger_things.save()
+
+		# Raspberry Pi: Son Stranger Things
+		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
+		raspi_son_stranger_things.save()
+
+		self.stdout.write(self.style.SUCCESS(' OK'))
+
+#
 # Audio
 #
 		self.stdout.write('  Populating model `Audio`', ending='')
@@ -155,33 +182,6 @@ class Command(BaseCommand):
 		# Stranger Things - Challenge Video - La Forêt
 		video_la_foret = Video(name='Stranger Things - Challenge - La Forêt', path='uploads/videos/test.h264')
 		video_la_foret.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-#
-# Raspberry Pis
-#
-		self.stdout.write('  Populating model `RaspberryPi`', ending='')
-
-		# Raspberry Pi: Master game controller
-		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local')
-		raspi_master.save()
-
-		# Raspberry Pi: Les 1001 nuits
-		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits', hostname='les-1001-nuits.local')
-		raspi_1001_nuits.save()
-
-		# Raspberry Pi: Sons Les 1001 nuits
-		raspi_sons_1001_nuits = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
-		raspi_sons_1001_nuits.save()
-
-		# Raspberry Pi: Stranger Things
-		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
-		raspi_stranger_things.save()
-
-		# Raspberry Pi: Son Stranger Things
-		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
-		raspi_son_stranger_things.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
