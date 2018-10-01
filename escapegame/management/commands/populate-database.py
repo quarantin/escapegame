@@ -64,16 +64,16 @@ class Command(BaseCommand):
 		raspi_1001_nuits.save()
 
 		# Raspberry Pi: Sons Les 1001 nuits
-		raspi_sons_1001_nuits = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
-		raspi_sons_1001_nuits.save()
+		raspi_1001_nuits_sons = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
+		raspi_1001_nuits_sons.save()
 
 		# Raspberry Pi: Stranger Things
 		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
 		raspi_stranger_things.save()
 
 		# Raspberry Pi: Son Stranger Things
-		raspi_son_stranger_things = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
-		raspi_son_stranger_things.save()
+		raspi_stranger_things_sons = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
+		raspi_stranger_things_sons.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
@@ -202,6 +202,13 @@ class Command(BaseCommand):
 
 		game_1001_nuits.save()
 
+		raspi_1001_nuits.game = game_1001_nuits
+		raspi_1001_nuits.save()
+
+
+		raspi_1001_nuits_sons.game = game_1001_nuits
+		raspi_1001_nuits_sons.save()
+
 		# Escape game: Stranger Things
 		time_limit_stranger_things = timedelta(hours=1)
 		game_stranger_things = EscapeGame(
@@ -213,6 +220,12 @@ class Command(BaseCommand):
 			map_image=map_image)
 
 		game_stranger_things.save()
+
+		raspi_stranger_things.game = game_stranger_things
+		raspi_stranger_things.save()
+
+		raspi_stranger_things_sons.game = game_stranger_things
+		raspi_stranger_things_sons.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 

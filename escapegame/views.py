@@ -39,7 +39,7 @@ def escapegame_detail(request, game_slug):
 	lang = request.LANGUAGE_CODE
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(game=game)
-	raspberry_pis = RaspberryPi.objects.all()
+	raspberry_pis = game.get_controllers()
 	videos = game.get_videos()
 	audios = Audio.objects.all()
 
@@ -121,7 +121,7 @@ def escapegame_status(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
-		game['raspberrypis'] = [ x for x in RaspberryPi.objects.values() ]
+		game['raspberrypis'] = game.get_controllers()
 		game['rooms'] = []
 		game['doors'] = []
 		game['lifts'] = []

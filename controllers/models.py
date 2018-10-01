@@ -143,6 +143,7 @@ class RaspberryPi(Controller):
 		( TYPE_VIDEO, _('Video') ),
 	)
 
+	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.SET_NULL, blank=True, null=True)
 	media_type = models.CharField(max_length=6, default=TYPE_VIDEO, choices=MEDIA_TYPES)
 
 	class Meta:
