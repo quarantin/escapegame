@@ -22,13 +22,13 @@ class ImageAdmin(admin.ModelAdmin):
 
 class VideoAdmin(admin.ModelAdmin):
 	list_display = [
-		'video_name',
+		'name',
 		'slug',
 		'video_path',
 	]
 	fieldsets = (
 		('Video', { 'fields': (
-			'video_name',
+			'name',
 			'slug',
 			'video_path',
 		)}),

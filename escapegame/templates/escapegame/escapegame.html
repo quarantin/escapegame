@@ -37,8 +37,8 @@
 
 					<div class="row">
 						<select id="selected-video" class="head_block form-control mx-auto select-media">{% for video in videos %}
-							<option name="{{ video.video_name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
-								{% trans "Video" %} - {{ video.video_name }}
+							<option name="{{ video.name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
+								{% trans "Video" %} - {{ video.name }}
 							</option>{% endfor %}
 						</select>
 					</div>

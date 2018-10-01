@@ -304,7 +304,7 @@ def rest_video_control(request, video_slug, action):
 				libraspi.notify_frontend()
 
 		except LiftGPIO.DoesNotExist:
-			print('Not raising lift because no lift associated to video `%s`' % video.video_name)
+			print('Not raising lift because no lift associated to video `%s`' % video.name)
 			pass
 
 		return JsonResponse({
