@@ -8,8 +8,3 @@ import logging
 class EscapegameConfig(AppConfig):
 	name = 'escapegame'
 	logger = logging.getLogger(name)
-
-	def ready(self):
-
-		# Register signals
-		from .signals import save
