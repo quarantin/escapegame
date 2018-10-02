@@ -139,7 +139,8 @@ class EscapeGameRoom(models.Model):
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, blank=True, null=True)
 
-	is_sas = models.BooleanField(default=False)
+	starts_the_timer = models.BooleanField(default=False)
+	stops_the_timer = models.BooleanField(default=False)
 
 	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
 

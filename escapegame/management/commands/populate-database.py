@@ -254,7 +254,7 @@ class Command(BaseCommand):
 		room_briefing_1001_nuits.save()
 
 		# Room: Le SAS des 1001 nuits (SAS 1)
-		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Le SAS des 1001 nuits', is_sas=True)
+		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Le SAS des 1001 nuits', starts_the_timer=True)
 		room_sas_1.save()
 
 		# Room: La fontaine
@@ -270,7 +270,7 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: Retour au SAS des 1001 nuits (SAS 1)
-		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Retour au SAS des 1001 nuits')
+		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Retour au SAS des 1001 nuits', stops_the_timer=True)
 		room_sas_1_retour.save()
 
 		# Room: Retour dans la salle de briefing des 1001 nuits
@@ -286,11 +286,11 @@ class Command(BaseCommand):
 		room_briefing_stranger_things.save()
 
 		# Room: Le SAS obscur de Stranger Things (SAS 2)
-		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', is_sas=True)
+		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', starts_the_timer=True)
 		room_sas_2.save()
 
 		# Room: Le SAS clair de Stranger Things (SAS 3)
-		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', is_sas=True)
+		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', starts_the_timer=True)
 		room_sas_3.save()
 
 		# Room: La salle claire
@@ -306,11 +306,11 @@ class Command(BaseCommand):
 		room_foret.save()
 
 		# Room: Retour au SAS obscur (SAS 2)
-		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Retour au SAS obscur')
+		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Retour au SAS obscur', stops_the_timer=True)
 		room_sas_2_retour.save()
 
 		# Room: Rettour au SAS clair (SAS 3)
-		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Retour au SAS clair')
+		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Retour au SAS clair', stops_the_timer=True)
 		room_sas_3_retour.save()
 
 		# Room: Salle de briefing - Stranger Things (Retour)

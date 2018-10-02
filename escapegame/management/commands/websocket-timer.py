@@ -27,18 +27,18 @@ class Command(BaseCommand):
 
 		libraspi.notify_frontend(game, message)
 
-	def get_start_time(self, sas_rooms):
+	def get_max_unlock_time(self, rooms):
 
-		if not sas_rooms:
+		if not rooms:
 			return None
 
-		for room in sas_rooms:
+		for room in rooms:
 			if room.door.unlocked_at is None:
 				return None
 
-		max_room = max(sas_rooms, key=lambda x: x.door.unlocked_at)
+		max_unlock_time_room = max(rooms, key=lambda x: x.door.unlocked_at)
 
-		return max_room.door.unlocked_at
+		return max_unlock_time_room.door.unlocked_at
 
 	def handle(self, *args, **options):
 
@@ -55,16 +55,18 @@ class Command(BaseCommand):
 
 				for game in games:
 
-					sas_rooms = EscapeGameRoom.objects.filter(game=game, is_sas=True)
+					start_rooms = EscapeGameRoom.objects.filter(game=game, starts_the_timer=True)
+					finish_rooms = EscapeGameRoom.objects.filter(game=game, stops_the_timer=True)
 
-					start_time = self.get_start_time(sas_rooms)
+					start_time = self.get_max_unlock_time(start_rooms)
+					finish_time = self.get_max_unlock_time(finish_rooms)
 
 					if game not in game_started:
 						game_started[game] = True
 
-					if start_time and game.finish_time:
+					if start_time and finish_time:
 						game_started[game] = False
-						self.publish_counter(game, start_time, game.finish_time)
+						self.publish_counter(game, start_time, finish_time)
 
 					elif start_time:
 						game_started[game] = True
