@@ -50,12 +50,12 @@ class EscapeGame(models.Model):
 			self.finish_time = timezone.localtime()
 			self.save()
 
-			time_diff = self.finish_time - self.start_time
-			if self.losers_video and time_diff > self.time_limit:
-				self.losers_video.play()
+		time_diff = self.finish_time - self.start_time
+		if self.losers_video and time_diff > self.time_limit:
+			self.losers_video.play()
 
-			if self.winners_video and time_diff <= self.time_limit:
-				self.winners_video.play()
+		if self.winners_video and time_diff <= self.time_limit:
+			self.winners_video.play()
 
 	def reset(self):
 		self.start_time = None
