@@ -59,21 +59,33 @@ class Command(BaseCommand):
 		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local')
 		raspi_master.save()
 
-		# Raspberry Pi: Les 1001 nuits
-		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits', hostname='les-1001-nuits.local')
+		# Raspberry Pi: Les 1001 nuits sons bruitages et lampes
+		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits bruitages et lampes', hostname='les-1001-nuits.local', media_type='audio')
 		raspi_1001_nuits.save()
 
-		# Raspberry Pi: Sons Les 1001 nuits
-		raspi_1001_nuits_sons = RaspberryPi(name='Sons Les 1001 nuits', hostname='sons-les-1001-nuits.local', media_type= "audio")
-		raspi_1001_nuits_sons.save()
+		# Raspberry Pi: Les 1001 nuits sons fontaine
+		raspi_1001_nuits_fontaine = RaspberryPi(name='Les 1001 nuits sons la fontaine', hostname='les-1001-nuits-sons-fontaine.local', media_type='audio')
+		raspi_1001_nuits_fontaine.save()
 
-		# Raspberry Pi: Stranger Things
-		raspi_stranger_things = RaspberryPi(name='Stranger Things', hostname='stranger-things.local')
+		# Raspberry Pi: Les 1001 nuits sons caverne
+		raspi_1001_nuits_sons_caverne = RaspberryPi(name='Les 1001 nuits sons la caverne ', hostname='les-1001-nuits-sons-caverne.local', media_type='audio')
+		raspi_1001_nuits_sons_caverne.save()
+
+		# Raspberry Pi: Stranger Things sons bruitages
+		raspi_stranger_things = RaspberryPi(name='Stranger Things sons bruitages', hostname='stranger-things.local', media_type='audio')
 		raspi_stranger_things.save()
 
-		# Raspberry Pi: Son Stranger Things
-		raspi_stranger_things_sons = RaspberryPi(name='Sons Stranger Things', hostname='sons-stranger-things.local', media_type= "audio")
-		raspi_stranger_things_sons.save()
+		# Raspberry Pi: Stranger Things sons Salle Claire et Salle Sombre
+		raspi_stranger_things_sons_claire_sombre = RaspberryPi(name='Stranger Things sons Salle Claire et Salle Sombre', hostname='sons-stranger-things-claire-sombre.local', media_type='audio')
+		raspi_stranger_things_sons_claire_sombre.save()
+
+		# Raspberry Pi: Stranger Things sons La Forêt
+		raspi_stranger_things_sons_foret = RaspberryPi(name='Stranger Things sons La Forêt', hostname='sons-stranger-things-la-foret.local', media_type='audio')
+		raspi_stranger_things_sons_foret.save()
+
+		# Raspberry Pi: Stranger Things Le Monstre
+		raspi_stranger_things_le_monstre = RaspberryPi(name='Stranger Things Le Monstre', hostname='sons-stranger-things-le-monstre.local')
+		raspi_stranger_things_le_monstre.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
@@ -191,7 +203,7 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `EscapeGame`', ending='')
 
 		# Escape game: Les 1001 nuits
-		time_limit_1001_nuits = timedelta(minutes=30)
+		time_limit_1001_nuits = timedelta(hours=1)
 		game_1001_nuits = EscapeGame(
 			name='Les 1001 nuits',
 			time_limit=time_limit_1001_nuits,
@@ -206,8 +218,11 @@ class Command(BaseCommand):
 		raspi_1001_nuits.save()
 
 
-		raspi_1001_nuits_sons.game = game_1001_nuits
-		raspi_1001_nuits_sons.save()
+		raspi_1001_nuits_fontaine.game = game_1001_nuits
+		raspi_1001_nuits_fontaine.save()
+
+		raspi_1001_nuits_sons_caverne.game = game_1001_nuits
+		raspi_1001_nuits_sons_caverne.save()
 
 		# Escape game: Stranger Things
 		time_limit_stranger_things = timedelta(hours=1)
@@ -224,8 +239,16 @@ class Command(BaseCommand):
 		raspi_stranger_things.game = game_stranger_things
 		raspi_stranger_things.save()
 
-		raspi_stranger_things_sons.game = game_stranger_things
-		raspi_stranger_things_sons.save()
+		raspi_stranger_things_sons_claire_sombre.game = game_stranger_things
+		raspi_stranger_things_sons_claire_sombre.save()
+
+
+		raspi_stranger_things_sons_foret.game = game_stranger_things
+		raspi_stranger_things_sons_foret.save()
+
+
+		raspi_stranger_things_le_monstre.game = game_stranger_things
+		raspi_stranger_things_le_monstre.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
