@@ -126,7 +126,7 @@ class Controller(models.Model):
 		except:
 			pass
 
-		self.save()
+		self.save(update_fields=[ 'online' ])
 
 		if status != self.online:
 			libraspi.notify_frontend()
