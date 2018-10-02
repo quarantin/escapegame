@@ -77,22 +77,18 @@ class EscapeGame(models.Model):
 		libraspi.notify_frontend()
 		libraspi.notify_frontend(self, '0:00:00')
 
-	def get_challenges(self, controller=None):
-
-		if not controller:
-			controller = self.controller
+	def get_challenges(self):
 
 		challenges = []
 		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
 			challs = EscapeGameChallenge.objects.filter(room=room)
 			for chall in challs:
-				if chall.get_controller() == controller:
-					challenges.append(chall)
+				challenges.append(chall)
 
 		return challenges
 
-	def get_videos(self, controller=None):
+	def get_videos(self):
 
 		videos = []
 
@@ -111,7 +107,7 @@ class EscapeGame(models.Model):
 		if self.losers_video is not None:
 			videos.append(self.losers_video)
 
-		challs = self.get_challenges(controller)
+		challs = self.get_challenges()
 		for chall in challs:
 			if chall.solved_video is not None:
 				videos.append(chall.solved_video)
