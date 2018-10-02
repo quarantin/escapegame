@@ -45,17 +45,44 @@ class EscapeGame(models.Model):
 		self.clean()
 		super(EscapeGame, self).save(*args, **kwargs)
 
-	def finish(self, request):
+	def get_max_unlock_time(self, rooms):
+
+		if not rooms:
+			print("Room list is empty!")
+			return None
+
+		for room in rooms:
+			if room.door.unlocked_at is None:
+				print("WTF we found a locked door! %s %s" % (room, room.door))
+				return None
+
+		max_unlock_time_room = max(rooms, key=lambda x: x.door.unlocked_at)
+
+		return max_unlock_time_room.door.unlocked_at
+
+	def finish(self, controller):
 		if not self.finish_time:
 			self.finish_time = timezone.localtime()
 			self.save()
 
-		time_diff = self.finish_time - self.start_time
-		if self.losers_video and time_diff > self.time_limit:
-			self.losers_video.play()
+		start_time = self.get_max_unlock_time(EscapeGameRoom.objects.filter(game=self, starts_the_timer=True))
+		finish_time = self.get_max_unlock_time(EscapeGameRoom.objects.filter(game=self, stops_the_timer=True))
 
-		if self.winners_video and time_diff <= self.time_limit:
-			self.winners_video.play()
+		time_diff = finish_time - start_time
+		win = time_diff <= self.time_limit
+
+		video = None
+
+		if self.winners_video and win:
+			video = self.winners_video
+
+		elif self.losers_video and not win:
+			video = self.losers_video
+
+		if video is not None:
+			video_url = video.get_action_url(controller)
+			print("Playing ending video: %s" % video_url)
+			libraspi.do_get(video_url)
 
 	def reset(self):
 		self.start_time = None
@@ -282,11 +309,12 @@ class EscapeGameChallenge(models.Model):
 			if status != 0:
 				raise Exception(message)
 
+			controller = self.get_controller()
+
 			if self.gpio.solved:
 
 				# If we have an associated video, play it remotely on the controller of this challenge
 				if self.solved_video is not None:
-					controller = self.get_controller()
 					video_url = self.solved_video.get_action_url(controller)
 					print("Solved video: %s" % video_url)
 					libraspi.do_get(video_url)
@@ -315,8 +343,8 @@ class EscapeGameChallenge(models.Model):
 				# Was this the last room of this game?
 				if self.room.is_last_room():
 
-					print('This was the last room, stopping escape game counter')
-					self.room.game.finish(request)
+					print('This was the last room, finishing escape game')
+					self.room.game.finish(controller)
 
 				else:
 					print('Still some rooms to explore')
