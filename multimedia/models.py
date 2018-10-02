@@ -95,12 +95,19 @@ class Video(PlayerControlMixin, models.Model):
 		self.clean()
 		super(Video, self).save(*args, **kwargs)
 
-	def get_url(self, request=None, controller=None):
+	def get_url(self, controller=None):
 		from controllers.models import RaspberryPi
 		from escapegame import libraspi
 		controller = controller or RaspberryPi.get_master()
 		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
+
+	def get_action_url(self, controller=None):
+		from controllers.models import RaspberryPi
+		from escapegame import libraspi
+		controller = controller or RaspberryPi.get_master()
+		host, port, protocol = libraspi.get_net_info(controller)
+		return '%s://%s%s/en/api/video/%s/play/' % (protocol, host, port, self.slug)
 
 	def control(self, action):
 		# Initialize PlayerControlMixin
@@ -127,12 +134,19 @@ class Audio(PlayerControlMixin, models.Model):
 		self.clean()
 		super(Audio, self).save(*args, **kwargs)
 
-	def get_url(self, request=None, controller=None):
+	def get_url(self, controller=None):
 		from controllers.models import RaspberryPi
 		from escapegame import libraspi
 		controller = controller or RaspberryPi.get_master()
 		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
+
+	def get_action_url(self, controller=None):
+		from controllers.models import RaspberryPi
+		from escapegame import libraspi
+		controller = controller or RaspberryPi.get_master()
+		host, port, protocol = libraspi.get_net_info(controller)
+		return '%s://%s%s/en/api/audio/%s/play/' % (protocol, host, port, self.slug)
 
 	def control(self, action):
 		# Initialize PlayerControlMixin

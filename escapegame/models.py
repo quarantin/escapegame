@@ -284,9 +284,12 @@ class EscapeGameChallenge(models.Model):
 
 			if self.gpio.solved:
 
-				# If we have an associated video, play it
-				if self.solved_video:
-					self.solved_video.play()
+				# If we have an associated video, play it remotely on the controller of this challenge
+				if self.solved_video is not None:
+					controller = self.get_controller()
+					video_url = self.solved_video.get_action_url(controller)
+					print("Solved video: %s" % video_url)
+					libraspi.do_get(video_url)
 
 				# Open extra doors with a dependency on me
 				try:
