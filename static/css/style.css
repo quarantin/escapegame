@@ -9,19 +9,11 @@
 	margin-bottom: 50px;
 }
 
-.play_img {
-	background-image: url(img/icons8-play-100.png);
-}
-
-.reset_img {
-	background-image: url(img/icons8-stop-100.png);
-}
-
-.head_border {
+.head-border {
 	border: solid black 1px;
 }
 
-.head_block {
+.head-block {
 	text-align: center;
 	width: 50%;
 	margin: 10px auto !important;
@@ -36,9 +28,6 @@ button {
 	margin-top: 30px;
 	font-size: 20px;
 	font-weight: bold;
-}
-
-.card {
 }
 
 .navbar {
@@ -126,6 +115,7 @@ div.radio-raspi {
 
 .badge {
 	min-width: 20%;
+	max-height: 24px;
 }
 
 .button-disabled {

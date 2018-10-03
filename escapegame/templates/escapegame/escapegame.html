@@ -11,11 +11,11 @@
 		</div>
 
 		<!-- Game controls -->
-		<div class="col head_block">
+		<div class="col head-block">
 
 			<!-- Escape game controls -->
-			<label class="head_block head_border">{% trans "Escape game controls" %}</label>
-			<div class="row head_block">
+			<label class="head-block head-border">{% trans "Escape game controls" %}</label>
+			<div class="row head-block">
 				<div class="col">
 
 					<!-- Reset escape game button -->
@@ -29,14 +29,14 @@
 			</div>
 
 			<!-- Video controls -->
-			<label class="head_block head_border">{% trans "Video controls" %}</label>
-			<div class="row head_block">
+			<label class="head-block head-border">{% trans "Video controls" %}</label>
+			<div class="row head-block">
 
 				<!-- Video lists-->
 				<div class="col">
 
 					<div class="row">
-						<select id="selected-video" class="head_block form-control mx-auto select-media">{% for video in videos %}
+						<select id="selected-video" class="head-block form-control mx-auto select-media">{% for video in videos %}
 							<option name="{{ video.name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
 								{% trans "Video" %} - {{ video.name }}
 							</option>{% endfor %}
@@ -94,14 +94,14 @@
 			</div>
 
 <!-- Audio controls -->
-			<label class="head_block head_border">{% trans "Audio controls" %}</label>
-			<div class="row head_block">
+			<label class="head-block head-border">{% trans "Audio controls" %}</label>
+			<div class="row head-block">
 
 				<!-- Audio lists-->
 				<div class="col">
 
 					<div class="row">
-						<select id="selected-audio" class="head_block form-control mx-auto select-media">{% for audio in audios %}
+						<select id="selected-audio" class="head-block form-control mx-auto select-media">{% for audio in audios %}
 							<option name="{{ audio.name }}" value="{{ audio.slug }}">
 								{% trans "Audio" %} - {{ audio.name }}
 							</option>{% endfor %}
@@ -159,8 +159,8 @@
 			</div>
 
 			<!-- Lift controls -->
-			<label class="head_block head_border">{% trans "Lift controls" %}</label>
-			<div class="row head_block">
+			<label class="head-block head-border">{% trans "Lift controls" %}</label>
+			<div class="row head-block">
 				<div class="col"></div>
 		{% if game.lifts|length < 1 %}
 			<p>{% trans "No lift available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create new lifts." %}</p>
@@ -194,8 +194,8 @@
 			</div>
 
 			<!-- Doors controls -->
-			<label class="head_block head_border">{% trans "Corridor door controls" %}</label>
-			<div class="row head_block">
+			<label class="head-block head-border">{% trans "Corridor door controls" %}</label>
+			<div class="row head-block">
 				<div class="col">
 
 			{% if game.doors|length < 1 %}
@@ -227,8 +227,8 @@
 			</div>
 
 			<!-- Escape game counter -->
-			<label class="head_block head_border">{% trans "Time Elapsed" %}</label>
-			<div class="row head_block" style="text-align: center;">
+			<label class="head-block head-border">{% trans "Time Elapsed" %}</label>
+			<div class="row head-block" style="text-align: center;">
 				<div class="col">
 					<font size="18">
 						<div id="counter">
@@ -240,7 +240,7 @@
 		</div>
 {% if rooms|length < 1 %}
 		<!-- Room controls -->
-		<div class="col head_block">
+		<div class="col head-block">
 			<span>
 				<p>
 					{% trans "No room configured yet for this escape game." %}
@@ -255,9 +255,9 @@
 		</div>
 {% else %}{% for room in rooms %}
 		<!-- Room controls -->
-		<div class="col head_block" id="{{ room.slug }}">
-			<label class="head_block head_border">&laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
-			<div class="row head_block">
+		<div class="col head-block" id="{{ room.slug }}">
+			<label class="head-block head-border">&laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
+			<div class="row head-block">
 
 			{% if room.challs|length < 1 %}
 				<!-- Challenge controls -->
@@ -320,10 +320,10 @@
 		</div>
 {% endfor %}{% endif %}
 		<!-- Map -->
-		<div class="col head_block">
-			<label class="head_block head_border">{% trans "Map" %}</label>
-			<div class="col head_block">
-				{% if not game.map_image %}<span>{% trans "No map data available." %}</span>{% else %}<canvas id="map" class="col head_block" width="1648" height="904"></canvas>{% endif %}
+		<div class="col head-block">
+			<label class="head-block head-border">{% trans "Map" %}</label>
+			<div class="col head-block">
+				{% if not game.map_image %}<span>{% trans "No map data available." %}</span>{% else %}<canvas id="map" class="col head-block" width="1648" height="904"></canvas>{% endif %}
 			</div>
 		</div>
 
