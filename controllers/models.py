@@ -100,6 +100,7 @@ class Controller(models.Model):
 		self.clean()
 		super(Controller, self).save(*args, **kwargs)
 
+	@property
 	def get_url(self):
 		host, port, protocol = libraspi.get_net_info(self)
 		return '%s://%s%s' % (protocol, host, port)

@@ -35,6 +35,66 @@
 				<!-- Video lists-->
 				<div class="col">
 
+					<!-- Select video field -->
+					<select id="selected-video" class="head-block form-control mx-auto select-media">{% for video in videos %}
+						<option name="{{ video.name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
+							{% trans "Video" %} - {{ video.name }}
+						</option>{% endfor %}
+					</select>
+
+					<table class="multimedia" cellspacing="0" cellpadding="0">
+{% for raspi in raspberry_pis %}
+						<tr>
+						{% if raspi.media_type == "video" %}
+
+							<!-- Raspberry Pi name -->
+							<td class="td-raspi">
+								{% trans "Raspberry Pi" %} - {{ raspi.name }}
+							</td>
+
+							<!-- Play/pause buttons -->
+							<td class="td-button">
+
+								<!-- Play video button -->
+								<button class="video-play" data-raspi="{{ raspi.get_url }}"type="submit">
+									<div class="">
+										<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}" class="smaller">
+									</div>
+								</button>
+
+								<!-- Pause video button -->
+								<button class="video-pause" data-raspi="{{ raspi.get_url }}" type="submit" class="d-none">
+									<div class="">
+										<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}" class="smaller">
+									</div>
+								</button>
+
+							</td>
+
+							<!-- Stop button -->
+							<td class="td-button">
+
+								<!-- Stop video button -->
+								<button class="video-stop" data-raspi="{{ raspi.get_url }}" type="submit">
+									<div class="">
+										<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}" class="smaller">
+									</div>
+								</button>
+
+							</td>
+
+							<!-- Online/offline status -->
+							<td class="td-status">
+								<span class="text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
+							</td>
+
+						</label>
+						{% endif %}
+						</tr>
+{% endfor %}
+
+					</table>
+
 					<div class="row">
 					{% if videos|length == 0 %}
 						<div class="col text-left">
@@ -57,8 +117,35 @@
 							<label class="row mx-auto">
 								<input class="col-1" name="selected-raspberry-pi-video"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online or videos|length == 0 %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
-								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
-								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
+								<span class="col-6 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
+								<span class="col">
+									<!-- Play video button -->
+									<button id="video-play" type="submit">
+										<div class="image-with-caption">
+											<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}" class="smaller">
+											<p>{% trans "Start video" %}</p>
+										</div>
+									</button>
+
+									<!-- Pause video button -->
+									<button id="video-pause" type="submit" class="d-none">
+										<div class="image-with-caption">
+											<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}" class="smaller">
+											<p>{% trans "Pause video" %}</p>
+										</div>
+									</button>
+
+								</span>
+								<span class="col">
+									<!-- Stop video button -->
+									<button id="video-stop" type="submit">
+										<div class="image-with-caption">
+											<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}" class="smaller">
+											<p>{% trans "Stop video" %}</p>
+										</div>
+									</button>
+								</span>
+								<span class="col-1 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
 							</label>
 							{% endif %}
 {% endfor %}
