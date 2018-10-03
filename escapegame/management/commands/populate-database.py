@@ -56,35 +56,35 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `RaspberryPi`', ending='')
 
 		# Raspberry Pi: Master game controller
-		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local')
+		raspi_master = RaspberryPi(name='Game Master', hostname='escapegame.local', media_type='video')
 		raspi_master.save()
 
-		# Raspberry Pi: Les 1001 nuits sons bruitages et lampes
-		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits bruitages et lampes', hostname='les-1001-nuits.local', media_type='audio')
+		# Raspberry Pi: Les 1001 nuits - Sons bruitages et lampes
+		raspi_1001_nuits = RaspberryPi(name='Sons, bruitages et lampes', hostname='les-1001-nuits.local', media_type='audio')
 		raspi_1001_nuits.save()
 
-		# Raspberry Pi: Les 1001 nuits sons fontaine
-		raspi_1001_nuits_fontaine = RaspberryPi(name='Les 1001 nuits sons la fontaine', hostname='les-1001-nuits-sons-fontaine.local', media_type='audio')
-		raspi_1001_nuits_fontaine.save()
+		# Raspberry Pi: Les 1001 nuits - Sons - La fontaine
+		raspi_1001_nuits_sons_fontaine = RaspberryPi(name='Sons - La fontaine', hostname='les-1001-nuits-sons-fontaine.local', media_type='audio')
+		raspi_1001_nuits_sons_fontaine.save()
 
-		# Raspberry Pi: Les 1001 nuits sons caverne
-		raspi_1001_nuits_sons_caverne = RaspberryPi(name='Les 1001 nuits sons la caverne ', hostname='les-1001-nuits-sons-caverne.local', media_type='audio')
+		# Raspberry Pi: Les 1001 nuits - Sons - La caverne
+		raspi_1001_nuits_sons_caverne = RaspberryPi(name='Sons - La caverne ', hostname='les-1001-nuits-sons-caverne.local', media_type='audio')
 		raspi_1001_nuits_sons_caverne.save()
 
-		# Raspberry Pi: Stranger Things sons bruitages
-		raspi_stranger_things = RaspberryPi(name='Stranger Things sons bruitages', hostname='stranger-things.local', media_type='audio')
+		# Raspberry Pi: Stranger Things - Sons et bruitages
+		raspi_stranger_things = RaspberryPi(name='Sons et bruitages', hostname='stranger-things.local', media_type='audio')
 		raspi_stranger_things.save()
 
-		# Raspberry Pi: Stranger Things sons Salle Claire et Salle Sombre
-		raspi_stranger_things_sons_claire_sombre = RaspberryPi(name='Stranger Things sons Salle Claire et Salle Sombre', hostname='sons-stranger-things-claire-sombre.local', media_type='audio')
-		raspi_stranger_things_sons_claire_sombre.save()
+		# Raspberry Pi: Stranger Things - Sons - Salle claire/obscure
+		raspi_stranger_things_sons_claire_obscure = RaspberryPi(name='Sons - Salle claire/obscure', hostname='stranger-things-sons-claire-obscure.local', media_type='audio')
+		raspi_stranger_things_sons_claire_obscure.save()
 
-		# Raspberry Pi: Stranger Things sons La Forêt
-		raspi_stranger_things_sons_foret = RaspberryPi(name='Stranger Things sons La Forêt', hostname='sons-stranger-things-la-foret.local', media_type='audio')
+		# Raspberry Pi: Stranger Things - Sons - La forêt
+		raspi_stranger_things_sons_foret = RaspberryPi(name='Sons - La forêt', hostname='stranger-things-sons-la-foret.local', media_type='audio')
 		raspi_stranger_things_sons_foret.save()
 
-		# Raspberry Pi: Stranger Things Le Monstre
-		raspi_stranger_things_le_monstre = RaspberryPi(name='Stranger Things Le Monstre', hostname='sons-stranger-things-le-monstre.local')
+		# Raspberry Pi: Stranger Things - Le monstre
+		raspi_stranger_things_le_monstre = RaspberryPi(name='Le monstre', hostname='stranger-things-le-monstre.local', media_type='video')
 		raspi_stranger_things_le_monstre.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -218,8 +218,8 @@ class Command(BaseCommand):
 		raspi_1001_nuits.save()
 
 
-		raspi_1001_nuits_fontaine.game = game_1001_nuits
-		raspi_1001_nuits_fontaine.save()
+		raspi_1001_nuits_sons_fontaine.game = game_1001_nuits
+		raspi_1001_nuits_sons_fontaine.save()
 
 		raspi_1001_nuits_sons_caverne.game = game_1001_nuits
 		raspi_1001_nuits_sons_caverne.save()
@@ -239,8 +239,8 @@ class Command(BaseCommand):
 		raspi_stranger_things.game = game_stranger_things
 		raspi_stranger_things.save()
 
-		raspi_stranger_things_sons_claire_sombre.game = game_stranger_things
-		raspi_stranger_things_sons_claire_sombre.save()
+		raspi_stranger_things_sons_claire_obscure.game = game_stranger_things
+		raspi_stranger_things_sons_claire_obscure.save()
 
 
 		raspi_stranger_things_sons_foret.game = game_stranger_things
