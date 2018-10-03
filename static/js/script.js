@@ -357,12 +357,12 @@ function game_control_handler(action)
 function video_control_handler(action)
 {
 	$('select#selected-video').change(function() {
-		$('button#video-play').removeClass('d-none');
-		$('button#video-pause').addClass('d-none');
+		$('button.video-play').removeClass('d-none');
+		$('button.video-pause').addClass('d-none');
 
 	});
 
-	$('button#video-' + action).click(function() {
+	$('button.video-' + action).click(function() {
 
 		if (action == 'play') {
 

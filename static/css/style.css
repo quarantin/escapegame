@@ -16,7 +16,7 @@ label.head-border {
 
 .head-block {
 	text-align: center;
-	width: 50%;
+	width: 70%;
 	margin: 10px auto !important;
 }
 
@@ -46,6 +46,33 @@ table, th, td {
 	border: 1px solid black;
 }
 
+table.multimedia {
+	border: none;
+	width: 90%;
+	margin-left: 5%;
+}
+
+table.multimedia td {
+	/*border: none;*/
+	border-collapse: collapse;
+}
+
+td.td-raspi {
+	text-align: left;
+}
+
+td.td-button {
+	width: 10%;
+}
+
+td.td-status {
+	width: 15%;
+}
+
+td.td-status span {
+	display: block;
+}
+
 td a {
 	display: block;
 	width: 100%;
@@ -69,9 +96,26 @@ td a {
 	margin: 0 auto;
 }
 
+div.radio-raspi {
+	width: 80%;
+}
+
+div.escapegame-card {
+	margin-bottom: 20px;
+}
+
 div.import-export {
 	width: 50%;
 	margin: 0 auto;
+}
+
+div.challenge-status {
+	/* width: 500px; */
+}
+
+table.challenge-status {
+	margin-bottom: 30px;
+	width: 100%;
 }
 
 input[type=file].import-export {
@@ -83,15 +127,6 @@ input[type=checkbox].import-export {
 	margin-right: 10px;
 }
 
-div.challenge-status {
-	width: 500px;
-}
-
-table.challenge-status {
-	margin-bottom: 30px;
-	width: 100%;
-}
-
 img.map {
 	display: block;
 	padding: 5px;
@@ -99,6 +134,10 @@ img.map {
 	margin-left: auto;
 	margin-right: auto;
 	width: 90%;
+}
+
+img.smaller {
+	zoom: 0.5;
 }
 
 .dropdown-menu .dropdown-item:hover {
@@ -110,10 +149,6 @@ select.select-media {
 	width: 90%;
 }
 
-div.radio-raspi {
-	width: 80%;
-}
-
 .badge {
 	min-width: 20%;
 	max-height: 24px;
@@ -123,6 +158,3 @@ div.radio-raspi {
 	opacity: 0.2;
 }
 
-div.escapegame-card {
-	margin-bottom: 20px;
-}
