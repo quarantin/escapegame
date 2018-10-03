@@ -63,7 +63,7 @@ class Command(BaseCommand):
 				thread.join()
 
 				# And remove it from the thread list
-				del self.threads[thread]
+				del self.threads[raspi]
 
 	def handle(self, *args, **options):
 

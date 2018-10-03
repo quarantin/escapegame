@@ -9,8 +9,9 @@
 	margin-bottom: 50px;
 }
 
-.head-border {
+label.head-border {
 	border: solid black 1px;
+	margin-top: 20px !important;
 }
 
 .head-block {

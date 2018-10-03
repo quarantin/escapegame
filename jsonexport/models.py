@@ -16,9 +16,8 @@ import json
 
 
 model_mapping = [
-	('audios', Audio),
 	('images', Image),
-	('videos', Video),
+	('media_files', MultimediaFile),
 	('controllers', Controller),
 	('raspberry_pis', RaspberryPi),
 	('GPIOs', GPIO),

@@ -38,8 +38,5 @@ urlpatterns = [
 	path('api/lift/<slug:game_slug>/<slug:lift_slug>/<str:action>/', views.rest_lift_control),
 
 	# Video controls
-	path('api/video/<slug:video_slug>/<str:action>/', views.rest_video_control),
-
-	# Audio controls
-	path('api/audio/<slug:audio_slug>/<str:action>/', views.rest_audio_control),
+	path('api/video/<slug:media_slug>/<str:action>/', views.rest_media_control),
 ]

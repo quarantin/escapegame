@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django import forms
 from django.contrib import admin
 
 from escapegame.admin import site
@@ -20,42 +21,35 @@ class ImageAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'width', 'height' )
 
-class VideoAdmin(admin.ModelAdmin):
+class MultimediaFileForm(forms.ModelForm):
+	class Meta:
+		model = MultimediaFile
+		exclude = []
+
+class MultimediaFileAdmin(admin.ModelAdmin):
+	form = MultimediaFileForm
 	list_display = [
 		'name',
 		'slug',
+		'game',
+		'audio_out',
+		'media_type',
 		'path',
 	]
 	fieldsets = (
-		('Video', { 'fields': (
+		('Multimedia File', { 'fields': (
 			'name',
 			'slug',
+			'game',
+			'audio_out',
+			'media_type',
 			'path',
 		)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):
 		return self.readonly_fields + ( 'slug', )
-
-class AudioAdmin(admin.ModelAdmin):
-	list_display = [
-		'name',
-		'slug',
-		'path',
-	]
-	fieldsets = (
-		('Audio', { 'fields': (
-			'name',
-			'slug',
-			'path',
-		)}),
-	)
-
-	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
-
 
 # Register our models to our custom admin site
 site.register(Image, ImageAdmin)
-site.register(Video, VideoAdmin)
-site.register(Audio, AudioAdmin)
+site.register(MultimediaFile, MultimediaFileAdmin)

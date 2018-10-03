@@ -26,7 +26,7 @@ class Command(BaseCommand):
 				# Retrieve the local Raspberry Pi
 				myself = RaspberryPi.get_myself()
 				if myself is None:
-					raise Exception('I\'m not a registered controller, no GPIO to poll for.')
+					raise Exception('I\'m not a registered controller, no GPIO to poll for (sleeping %d seconds).' % delay)
 
 				# Retrieve all challenges
 				challenges = EscapeGameChallenge.objects.all()

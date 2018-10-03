@@ -118,7 +118,7 @@ MASTER(){
 	CREATE_MYSQL_USER %
 
 	# Create migration files and migrate the data
-	./scripts/update-migrations.sh
+	./scripts/update-migrations.sh migrate
 
 	CREATE_DJANGO_USER
 
@@ -135,7 +135,7 @@ MASTER(){
 	#done
 
 	# Configure munin (sort of post-provision.sh for now, will be improved in the future)
-	./scripts/configure-munin.sh
+	#./scripts/configure-munin.sh
 }
 
 if [ $HOSTNAME == $MASTER_HOSTNAME ]; then

@@ -61,7 +61,8 @@ function get_audio_url(action)
 	raspi_url = '';
 	if (selected_raspi)
 		raspi_url = selected_raspi.data('raspi-url');
-	return raspi_url + '/' + get_language() + '/api/audio/' + selected_audio + '/' + action + '/';
+
+	return raspi_url + '/' + get_language() + '/api/video/' + selected_audio + '/' + action + '/';
 
 }
 

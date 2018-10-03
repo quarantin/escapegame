@@ -36,11 +36,12 @@
 				<div class="col">
 
 					<div class="row">
+						{% if videos|length == 0 %}<div><p>{% trans "No video file configured for this escapegame.." %}</p></div>{% else %}
 						<select id="selected-video" class="head-block form-control mx-auto select-media">{% for video in videos %}
-							<option name="{{ video.name }}" value="{{ video.slug }}" {% if video.slug == game.briefing_video.slug %} selected{% endif %}>
+							<option name="{{ video.name }}" value="{{ video.slug }}">
 								{% trans "Video" %} - {{ video.name }}
 							</option>{% endfor %}
-						</select>
+						</select>{% endif %}
 					</div>
 
 					<div class="row">
@@ -93,7 +94,7 @@
 
 			</div>
 
-<!-- Audio controls -->
+			<!-- Audio controls -->
 			<label class="head-block head-border">{% trans "Audio controls" %}</label>
 			<div class="row head-block">
 
@@ -101,11 +102,12 @@
 				<div class="col">
 
 					<div class="row">
+						{% if audios|length == 0 %}<div><p>{% trans "No audio file configured for this escapegame." %}</p></div>{% else %}
 						<select id="selected-audio" class="head-block form-control mx-auto select-media">{% for audio in audios %}
 							<option name="{{ audio.name }}" value="{{ audio.slug }}">
 								{% trans "Audio" %} - {{ audio.name }}
 							</option>{% endfor %}
-						</select>
+						</select>{% endif %}
 					</div>
 
 					<div class="row">

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 
 from escapegame import libraspi
-from multimedia.models import Image, Video
+from multimedia.models import Image, MultimediaFile
 from controllers.models import RaspberryPi, ChallengeGPIO, DoorGPIO, LiftGPIO
 
 from datetime import timedelta
@@ -22,14 +22,9 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	time_limit = models.DurationField(default=timedelta(hours=1))
-	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE)
+	controller = models.ForeignKey('controllers.RaspberryPi', on_delete=models.CASCADE)
 
-	cube_delay = models.DurationField(default=timedelta(seconds=30))
-
-	winners_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_winners_video')
-	losers_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_losers_video')
-
-	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
+	map_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 
 	def __str__(self):
 		return 'Escape Game - %s' % self.name
@@ -65,24 +60,33 @@ class EscapeGame(models.Model):
 		time_diff = finish_time - start_time
 		win = time_diff <= self.time_limit
 
-		video = None
+		media = None
 
-		if self.winners_video and win:
-			video = self.winners_video
+		cubes = EscapeGameCube.objects.filter(game=self)
+		for cube in cubes:
 
-		elif self.losers_video and not win:
-			video = self.losers_video
+			if cube.winners_media and win:
+				media = cube.winners_media
 
-		if video is not None:
-			video_url = video.get_action_url(controller)
-			print("Playing ending video: %s" % video_url)
-			libraspi.do_get(video_url)
+			elif cube.losers_media and not win:
+				media = cube.losers_media
+
+			if media is not None:
+				media_url = media.get_action_url(controller)
+				print("Playing ending media: %s" % media_url)
+				libraspi.do_get(media_url)
 
 	def reset(self):
 
-		lifts = LiftGPIO.objects.filter(game=self)
-		for lift in lifts:
-			lift.reset()
+		cubes = EscapeGameCube.objects.filter(game=self)
+		for cube in cubes:
+
+			try:
+				lift = LiftGPIO.objects.get(cube=cube)
+				lift.reset()
+
+			except LiftGPIO.DoesNotExist:
+				pass
 
 		rooms = EscapeGameRoom.objects.filter(game=self)
 		for room in rooms:
@@ -104,31 +108,42 @@ class EscapeGame(models.Model):
 
 		return challenges
 
-	def get_videos(self):
+	def get_multimedia_files(self, media_type):
 
-		videos = []
+		media_list = []
 
 		try:
-			lifts = LiftGPIO.objects.filter(game=self)
+			cubes = EscapeGameCube.objects.filter(game=self)
+			for cube in cubes:
 
-			for lift in lifts:
-				videos.append(lift.briefing_video)
+				if media_type == cube.briefing_media.media_type:
+					media_list.append(cube.briefing_media)
 
-		except LiftGPIO.DoesNotExist:
+				if media_type == cube.losers_media.media_type:
+					media_list.append(cube.losers_media)
+
+				if media_type == cube.winners_media.media_type:
+					media_list.append(cube.winners_media)
+
+		except EscapeGameCube.DoesNotExist:
 			pass
 
-		if self.winners_video is not None:
-			videos.append(self.winners_video)
+		try:
+			extra_media = MultimediaFile.objects.filter(game=self)
 
-		if self.losers_video is not None:
-			videos.append(self.losers_video)
+			for media in extra_media:
+				if media_type == media.media_type:
+					media_list.append(media)
+
+		except MultimediaFile.DoesNotExist:
+			pass
 
 		challs = self.get_challenges()
 		for chall in challs:
-			if chall.solved_video is not None:
-				videos.append(chall.solved_video)
+			if chall.solved_media is not None and media_type == chall.solved_media.media_type:
+				media_list.append(chall.solved_media)
 
-		return videos
+		return set(media_list)
 
 	def get_controllers(self, as_dict=False):
 		if as_dict:
@@ -141,27 +156,31 @@ class EscapeGame(models.Model):
 
 class EscapeGameCube(models.Model):
 
+	name = models.CharField(max_length=255, unique=True)
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
 	tag_id = models.CharField(max_length=8, default="FFFFFFFF")
+	cube_delay = models.DurationField(default=timedelta(seconds=30))
+	briefing_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegame_cube_briefing_media')
+	losers_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_losers_media')
+	winners_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_winners_media')
 
 	def __str__(self):
-		return 'Cube - %s - %s' % (self.game.name, self.tag_id)
+		return 'Cube - %s - %s' % (self.name, self.tag_id)
 
-	# TODO write clean method to validate hex input for tag_id
 class EscapeGameRoom(models.Model):
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	game = models.ForeignKey(EscapeGame, on_delete=models.CASCADE)
-	controller = models.ForeignKey(RaspberryPi, on_delete=models.CASCADE, blank=True, null=True)
+	controller = models.ForeignKey('controllers.RaspberryPi', on_delete=models.CASCADE, blank=True, null=True)
 
 	starts_the_timer = models.BooleanField(default=False)
 	stops_the_timer = models.BooleanField(default=False)
 
-	door = models.ForeignKey(DoorGPIO, null=True, on_delete=models.CASCADE, related_name='room_door')
+	door = models.ForeignKey('controllers.DoorGPIO', null=True, on_delete=models.CASCADE, related_name='room_door')
 
-	room_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
-	door_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
+	room_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
+	door_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
 
 	def __str__(self):
 		return 'Room - %s - %s' % (self.game.name, self.name)
@@ -173,7 +192,7 @@ class EscapeGameRoom(models.Model):
 
 		if self.door is None:
 			name = 'Exit Door - %s' % self.name
-			door = DoorGPIO(name=name, controller=self.get_controller(), image=self.door_image)
+			door = DoorGPIO(name=name, controller=self.get_controller())
 			door.save()
 			self.door = door
 
@@ -203,10 +222,6 @@ class EscapeGameRoom(models.Model):
 
 	def reset(self):
 
-		# TODO reset cubes
-		#if self.cube is not None:
-		#	self.cube.reset()
-
 		self.door.reset()
 
 		challs = EscapeGameChallenge.objects.filter(room=self)
@@ -222,13 +237,13 @@ class EscapeGameChallenge(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
-	gpio = models.ForeignKey(ChallengeGPIO, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
+	gpio = models.ForeignKey('controllers.ChallengeGPIO', null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
 	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
-	solved_video = models.ForeignKey(Video, blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_video')
+	solved_media = models.ForeignKey('multimedia.MultimediaFile', blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_media')
 
-	challenge_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
-	challenge_solved_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
+	challenge_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_image')
+	challenge_solved_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='challenge_solved_image')
 
 	callback_url_solve = models.URLField(default='')
 	callback_url_reset = models.URLField(default='')
@@ -302,11 +317,11 @@ class EscapeGameChallenge(models.Model):
 
 			if self.gpio.solved:
 
-				# If we have an associated video, play it remotely on the controller of this challenge
-				if self.solved_video is not None:
-					video_url = self.solved_video.get_action_url(controller)
-					print("Solved video: %s" % video_url)
-					libraspi.do_get(video_url)
+				# If we have an associated media, play it remotely on the controller of this challenge
+				if self.solved_media is not None:
+					media_url = self.solved_media.get_action_url(controller)
+					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
+					libraspi.do_get(media_url)
 
 				# Open extra doors with a dependency on me
 				try:

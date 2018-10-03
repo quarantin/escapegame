@@ -162,7 +162,6 @@ class GPIOAdmin(admin.ModelAdmin):
 		'reset_pin',
 		'action_url',
 		'reset_url',
-		'image',
 	]
 
 	fieldsets = (
@@ -175,10 +174,6 @@ class GPIOAdmin(admin.ModelAdmin):
 		('Reset configuration', { 'fields': (
 			'reset_pin',
 			'reset_url',
-		)}),
-
-		('Multimedia', { 'fields': (
-			'image',
 		)}),
 	)
 
@@ -253,11 +248,9 @@ class LiftGPIOAdmin(admin.ModelAdmin):
 		'name',
 		'slug',
 		'controller',
-		'game',
-		'briefing_video',
+		'cube',
 		'pin',
 		'raised',
-		'image',
 	]
 
 	fieldsets = (
@@ -269,14 +262,9 @@ class LiftGPIOAdmin(admin.ModelAdmin):
 		)}),
 
 		('Lift', { 'fields': (
-			'game',
-			'briefing_video',
+			'cube',
 			'pin',
 			'raised',
-		)}),
-
-		('Multimedia', { 'fields': (
-			'image',
 		)}),
 	)
 

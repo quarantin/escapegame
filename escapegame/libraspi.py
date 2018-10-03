@@ -120,7 +120,7 @@ def set_pin(pin, signal):
 def get_pin(pin):
 
 	try:
-		signal = 0
+		signal = 1
 		if RUNNING_ON_PI:
 			GPIO.setup(pin, GPIO.IN)
 			signal = GPIO.input(pin)

@@ -3,7 +3,6 @@
 from django.core.management.base import BaseCommand
 
 from siteconfig import settings
-from multimedia.models import Video
 
 import os
 import time
@@ -26,13 +25,14 @@ OMX_ACTIONS = {
 class Command(BaseCommand):
 	help = 'Video player background task'
 
-	fifo = '/tmp/video-control.fifo'
-	fifo_player = '/tmp/video-player.fifo'
+	fifo_player = settings.VIDEO_PLAYER_FIFO
+	fifo_control = settings.VIDEO_CONTROL_FIFO
+
 	actions = settings.RUNNING_ON_PI and OMX_ACTIONS or MPV_ACTIONS
 
 	process = None
 
-	def control(self, action, url=None):
+	def control(self, action, audio_out, url=None):
 
 		print('Video player: %s %s' % (action, url is not None and url or ''))
 
@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
 			# Let's start the video player script
 			script = os.path.join(settings.BASE_DIR, 'scripts/video-player.sh')
-			self.process = subprocess.Popen([ script, self.fifo_player, url ], stdin=subprocess.PIPE, stdout=None, stderr=None)
+			self.process = subprocess.Popen([ script, self.fifo_player, audio_out, url ], stdin=subprocess.PIPE, stdout=None, stderr=None)
 
 	def handle(self, *args, **options):
 
@@ -71,15 +71,15 @@ class Command(BaseCommand):
 		while True:
 
 			try:
-				if not os.path.exists(self.fifo):
-					os.mkfifo(self.fifo)
+				if not os.path.exists(self.fifo_control):
+					os.mkfifo(self.fifo_control)
 
-				fifo = open(self.fifo, 'r')
-				lines = fifo.read().strip().split('\n')
-				fifo.close()
+				fifo_control = open(self.fifo_control, 'r')
+				lines = fifo_control.read().strip().split('\n')
+				fifo_control.close()
 
 				for command in lines:
-					cmd = command.strip().split(' ', 1)
+					cmd = command.strip().split(' ', 2)
 					self.control(*cmd)
 
 				continue

@@ -6,8 +6,8 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from controllers.models import ChallengeGPIO, DoorGPIO, LiftGPIO, RaspberryPi
-from multimedia.models import Image, Video, Audio
-from .models import EscapeGame, EscapeGameRoom, EscapeGameChallenge
+from multimedia.models import Image, MultimediaFile
+from .models import EscapeGame, EscapeGameCube, EscapeGameRoom, EscapeGameChallenge
 from escapegame import libraspi
 
 import os
@@ -40,8 +40,8 @@ def escapegame_detail(request, game_slug):
 	game = EscapeGame.objects.get(slug=game_slug)
 	rooms = EscapeGameRoom.objects.filter(game=game)
 	raspberry_pis = game.get_controllers()
-	videos = game.get_videos()
-	audios = Audio.objects.all()
+	videos = game.get_multimedia_files(MultimediaFile.TYPE_VIDEO)
+	audios = game.get_multimedia_files(MultimediaFile.TYPE_AUDIO)
 
 	for room in rooms:
 		room.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, room.slug, room.door.slug)
@@ -57,9 +57,11 @@ def escapegame_detail(request, game_slug):
 			door.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, 'extra', door.slug)
 			game.doors.append(door)
 
-	game.lifts = LiftGPIO.objects.filter(game=game)
-	for lift in game.lifts:
-		lift.url_callback = '/%s/api/lift/%s/%s' % (lang, game.slug, lift.slug)
+	cubes = EscapeGameCube.objects.filter(game=game)
+	for cube in cubes:
+		game.lifts = LiftGPIO.objects.filter(cube=cube)
+		for lift in game.lifts:
+			lift.url_callback = '/%s/api/lift/%s/%s' % (lang, game.slug, lift.slug)
 
 	for raspi in raspberry_pis:
 
@@ -122,6 +124,7 @@ def escapegame_status(request, game_slug):
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
 		raspis = game.get_controllers(as_dict=True)
+		cubes = EscapeGameCube.objects.filter(game=game)
 
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
 		game['raspberrypis'] = raspis
@@ -136,9 +139,10 @@ def escapegame_status(request, game_slug):
 
 			raspi['status'], raspi['badge'], raspi['not_badge'] = raspi['online'] and success or failure
 
-		lifts = LiftGPIO.objects.filter(game=game['id']).values()
-		for lift in lifts:
-			game['lifts'].append(lift)
+		for cube in cubes:
+			lifts = LiftGPIO.objects.filter(cube=cube).values()
+			for lift in lifts:
+				game['lifts'].append(lift)
 
 		__populate_images(game, 'map_image')
 
@@ -261,9 +265,19 @@ def rest_lift_control(request, game_slug, lift_slug, action):
 		raised = (action == 'raise')
 
 		game = EscapeGame.objects.get(slug=game_slug)
-		lift = LiftGPIO.objects.get(game=game, slug=lift_slug)
+		cubes = EscapeGameCube.objects.filter(game=game)
 
-		status, message = lift.set_raised(raised, from_gamemaster=True)
+		for cube in cubes:
+			lift = LiftGPIO.objects.get(cube=cube, slug=lift_slug)
+
+			status, message = lift.set_raised(raised, from_gamemaster=True)
+			if status != 0:
+				return JsonResponse({
+					'status': 1,
+					'method': method,
+					'message': 'Error: %s' % err,
+					'traceback': traceback.format_exc(),
+				})
 
 		return JsonResponse({
 			'status': status,
@@ -279,19 +293,19 @@ def rest_lift_control(request, game_slug, lift_slug, action):
 			'traceback': traceback.format_exc(),
 		})
 """
-	REST video controls, no login required for now (REST API)
+	REST media controls for audio and video files, no login required for now (REST API)
 """
-def rest_video_control(request, video_slug, action):
+def rest_media_control(request, media_slug, action):
 
-	method = 'escapegame.views.rest_video_control'
+	method = 'escapegame.views.rest_media_control'
 
 	try:
 		if action not in [ 'pause', 'play', 'stop' ]:
 			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
-		video = Video.objects.get(slug=video_slug)
+		media = MultimediaFile.objects.get(slug=media_slug)
 
-		status, message = video.control(action)
+		status, message = media.control(action)
 		if status != 0:
 			return JsonResponse({
 				'status': status,
@@ -301,13 +315,17 @@ def rest_video_control(request, video_slug, action):
 
 		try:
 			if action == 'play':
-				lift = LiftGPIO.objects.get(briefing_video=video)
+				cube = EscapeGameCube.objects.get(briefing_media=media)
+				lift = LiftGPIO.objects.get(cube=cube)
 				status, message = lift.raise_lift()
 
 				libraspi.notify_frontend()
 
+		except EscapeGameCube.DoesNotExist:
+			print('Not raising lift because no cube associated to media `%s`' % media.name)
+			pass
 		except LiftGPIO.DoesNotExist:
-			print('Not raising lift because no lift associated to video `%s`' % video.name)
+			print('Not raising lift because no lift associated to cube `%s`' % cube.name)
 			pass
 
 		return JsonResponse({
@@ -315,39 +333,6 @@ def rest_video_control(request, video_slug, action):
 			'method': method,
 			'message': message,
 		})
-
-	except Exception as err:
-		return JsonResponse({
-			'status': 1,
-			'method': method,
-			'message': 'Error: %s' % err,
-			'traceback': traceback.format_exc(),
-		})
-
-def rest_audio_control(request, audio_slug, action):
-
-	method = 'escapegame.views.rest_audio_control'
-
-	try:
-		if action not in [ 'pause', 'play', 'stop' ]:
-			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
-
-		audio = Audio.objects.get(slug=audio_slug)
-
-		status, message = audio.control(action)
-		if status != 0:
-			return JsonResponse({
-				'status': status,
-				'method': method,
-				'message': message,
-			})
-
-		return JsonResponse({
-			'status': status,
-			'method': method,
-			'message': message,
-		})
-
 
 	except Exception as err:
 		return JsonResponse({

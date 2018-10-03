@@ -32,9 +32,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'slug',
 		'time_limit',
 		'controller',
-		'cube_delay',
-		'winners_video',
-		'losers_video',
 		'map_image',
 	]
 	fieldsets = (
@@ -44,14 +41,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			'time_limit',
 			'controller',
 			)}),
-		('Cube Controls', { 'fields': (
-			'cube_delay',
-			)}),
-		('Videos', { 'fields': (
-			'winners_video',
-			'losers_video',
-			)}),
-		('Maps', { 'fields': (
+		('Map', { 'fields': (
 			'map_image',
 			)}),
 	)
@@ -80,13 +70,26 @@ class EscapeGameCubeForm(forms.ModelForm):
 class EscapeGameCubeAdmin(admin.ModelAdmin):
 	form = EscapeGameCubeForm
 	list_display = [
+		'name',
 		'game',
 		'tag_id',
+		'cube_delay',
+		'briefing_media',
+		'losers_media',
+		'winners_media',
 	]
 	fieldsets = (
 		('Escape Game Cube', { 'fields': (
+			'name',
 			'game',
 			'tag_id',
+			'cube_delay',
+		)}),
+
+		('Multimedia Files', { 'fields': (
+			'briefing_media',
+			'losers_media',
+			'winners_media',
 		)}),
 	)
 
@@ -140,7 +143,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		('Door controls', { 'fields': (
 			'door',
 			)}),
-		('Maps', { 'fields': (
+		('Map', { 'fields': (
 			'room_image',
 			'door_image',
 			)})
@@ -156,7 +159,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'room',
 		'gpio',
 		'dependent_on',
-		'solved_video',
+		'solved_media',
 		'challenge_image',
 		'challenge_solved_image',
 		'callback_url_solve',
@@ -172,10 +175,10 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		('Challenge Controls', { 'fields': (
 			'gpio',
 			)}),
-		('Videos', { 'fields': (
-			'solved_video',
+		('Multimedia Files', { 'fields': (
+			'solved_media',
 			)}),
-		('Maps', { 'fields': (
+		('Map', { 'fields': (
 			'challenge_image',
 			'challenge_solved_image',
 			)}),

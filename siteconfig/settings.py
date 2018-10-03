@@ -53,8 +53,7 @@ IS_SLAVE = not IS_MASTER
 
 # Upload Settings
 UPLOAD_IMAGE_PATH = 'uploads/images'
-UPLOAD_VIDEO_PATH = 'uploads/videos'
-UPLOAD_AUDIO_PATH = 'uploads/audios'
+UPLOAD_MEDIA_PATH = 'uploads/media'
 UPLOAD_SKETCH_PATH = 'uploads/sketches'
 
 # File system permissions for uploaded files

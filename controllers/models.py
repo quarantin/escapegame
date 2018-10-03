@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from siteconfig import settings
-from multimedia.models import Image
 from escapegame import libraspi
 
 import os
@@ -158,6 +157,8 @@ class RaspberryPi(Controller):
 			return RaspberryPi.objects.get(hostname=hostname)
 		except RaspberryPi.DoesNotExist:
 			return None
+		except:
+			return None
 
 	def get_master():
 		return RaspberryPi.get_by_name(settings.MASTER_HOSTNAME)
@@ -181,8 +182,6 @@ class GPIO(models.Model):
 
 	reset_url = models.URLField(max_length=255, blank=True, null=True)
 	action_url = models.URLField(max_length=255, blank=True, null=True)
-
-	image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
 		return 'GPIO - %s' % self.name
@@ -447,13 +446,10 @@ class LiftGPIO(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	controller = models.ForeignKey(Controller, null=True, on_delete=models.CASCADE)
 
-	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.CASCADE, blank=True, null=True)
-	briefing_video = models.ForeignKey('multimedia.Video', on_delete=models.SET_NULL, null=True)
+	cube = models.ForeignKey('escapegame.EscapeGameCube', on_delete=models.CASCADE)
 
 	pin = models.IntegerField(default=11)
 	raised = models.BooleanField(default=False)
-
-	image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL)
 
 	class Meta:
 		verbose_name = 'Lift GPIO'
@@ -472,12 +468,11 @@ class LiftGPIO(models.Model):
 		super(LiftGPIO, self).save(*args, **kwargs)
 
 	def reset(self):
-		self.briefing_video.stop()
 		return self.lower_lift()
 
 	def set_raised(self, raised, from_gamemaster=False):
 
-		delay = raised and self.game.cube_delay.total_seconds() or 0
+		delay = raised and self.cube.cube_delay.total_seconds() or 0
 
 		# We never want to have a delay when the
 		# gamemaster asks to lower/raise a lift.

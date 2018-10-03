@@ -14,9 +14,8 @@ class Command(BaseCommand):
 	def flush_database(self):
 
 		all_models = [
-			Audio,
 			Image,
-			Video,
+			MultimediaFile,
 			RaspberryPi,   # RaspberryPi before Controller (parent model)
 			Controller,
 			ChallengeGPIO, # ChallengeGPIO before GPIO (parent model)
@@ -60,41 +59,32 @@ class Command(BaseCommand):
 		raspi_master.save()
 
 		# Raspberry Pi: Les 1001 nuits - Sons bruitages et lampes
-		raspi_1001_nuits = RaspberryPi(name='Sons, bruitages et lampes', hostname='les-1001-nuits.local', media_type='audio')
+		raspi_1001_nuits = RaspberryPi(name='Les 1001 nuits - Sons, bruitages et lampes', hostname='les-1001-nuits.local', media_type='audio')
 		raspi_1001_nuits.save()
 
 		# Raspberry Pi: Les 1001 nuits - Sons - La fontaine
-		raspi_1001_nuits_sons_fontaine = RaspberryPi(name='Sons - La fontaine', hostname='les-1001-nuits-sons-fontaine.local', media_type='audio')
+		raspi_1001_nuits_sons_fontaine = RaspberryPi(name='Les 1001 nuits - Sons - La fontaine', hostname='les-1001-nuits-sons-fontaine.local', media_type='audio')
 		raspi_1001_nuits_sons_fontaine.save()
 
 		# Raspberry Pi: Les 1001 nuits - Sons - La caverne
-		raspi_1001_nuits_sons_caverne = RaspberryPi(name='Sons - La caverne ', hostname='les-1001-nuits-sons-caverne.local', media_type='audio')
+		raspi_1001_nuits_sons_caverne = RaspberryPi(name='Les 1001 nuits - Sons - La caverne ', hostname='les-1001-nuits-sons-caverne.local', media_type='audio')
 		raspi_1001_nuits_sons_caverne.save()
 
 		# Raspberry Pi: Stranger Things - Sons et bruitages
-		raspi_stranger_things = RaspberryPi(name='Sons et bruitages', hostname='stranger-things.local', media_type='audio')
+		raspi_stranger_things = RaspberryPi(name='Stranger Things - Sons et bruitages', hostname='stranger-things.local', media_type='audio')
 		raspi_stranger_things.save()
 
 		# Raspberry Pi: Stranger Things - Sons - Salle claire/obscure
-		raspi_stranger_things_sons_claire_obscure = RaspberryPi(name='Sons - Salle claire/obscure', hostname='stranger-things-sons-claire-obscure.local', media_type='audio')
+		raspi_stranger_things_sons_claire_obscure = RaspberryPi(name='Stranger Things - Sons - Salle claire/obscure', hostname='stranger-things-sons-claire-obscure.local', media_type='audio')
 		raspi_stranger_things_sons_claire_obscure.save()
 
 		# Raspberry Pi: Stranger Things - Sons - La forêt
-		raspi_stranger_things_sons_foret = RaspberryPi(name='Sons - La forêt', hostname='stranger-things-sons-la-foret.local', media_type='audio')
+		raspi_stranger_things_sons_foret = RaspberryPi(name='Stranger Things - Sons - La forêt', hostname='stranger-things-sons-la-foret.local', media_type='audio')
 		raspi_stranger_things_sons_foret.save()
 
 		# Raspberry Pi: Stranger Things - Le monstre
-		raspi_stranger_things_le_monstre = RaspberryPi(name='Le monstre', hostname='stranger-things-le-monstre.local', media_type='video')
+		raspi_stranger_things_le_monstre = RaspberryPi(name='Stranger Things - Le monstre', hostname='stranger-things-le-monstre.local', media_type='video')
 		raspi_stranger_things_le_monstre.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-#
-# Audio
-#
-		self.stdout.write('  Populating model `Audio`', ending='')
-		demo_audio = Audio(name='Audio Demo', path='uploads/audios/test.h264')
-		demo_audio.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
@@ -153,46 +143,50 @@ class Command(BaseCommand):
 #
 # Videos
 #
-		self.stdout.write('  Populating model `Video`', ending='')
+		self.stdout.write('  Populating model `MultimediaFile`', ending='')
 
-		# Demo Video
-		demo_video = Video(name='Video Demo', path='uploads/videos/test.h264')
-		demo_video.save()
+		# Demo audio
+		audio_demo = MultimediaFile(name='Audio Demo', path='uploads/media/test.h264', media_type='audio')
+		audio_demo.save()
 
-		# Demo Video 2
-		demo_video_2 = Video(name='Video Demo 2', path='uploads/videos/small.mp4')
-		demo_video_2.save()
+		# Demo video
+		video_demo = MultimediaFile(name='Video Demo', path='uploads/media/test.h264')
+		video_demo.save()
+
+		# Demo video 2
+		video_demo_2 = MultimediaFile(name='Video Demo 2', path='uploads/media/small.mp4')
+		video_demo_2.save()
 
 		# Les 1001 nuits - Briefing Video
-		briefing_video_1001_nuits = Video(name='Les 1001 nuits - Briefing', path='uploads/videos/test.h264')
-		briefing_video_1001_nuits.save()
+		video_les_1001_nuits_briefing = MultimediaFile(name='Les 1001 nuits - Briefing', path='uploads/media/test.h264')
+		video_les_1001_nuits_briefing.save()
 
 		# Les 1001 nuits - Winners Video
-		winners_video_1001_nuits = Video(name='Les 1001 nuits - Good End', path='uploads/videos/test.h264')
-		winners_video_1001_nuits.save()
+		video_les_1001_nuits_winners = MultimediaFile(name='Les 1001 nuits - Good End', path='uploads/media/test.h264')
+		video_les_1001_nuits_winners.save()
 
 		# Les 1001 nuits - Losers Video
-		losers_video_1001_nuits = Video(name='Les 1001 nuits - Bad End', path='uploads/videos/test.h264')
-		losers_video_1001_nuits.save()
+		video_les_1001_nuits_losers = MultimediaFile(name='Les 1001 nuits - Bad End', path='uploads/media/test.h264')
+		video_les_1001_nuits_losers.save()
 
 		# Stranger Things - Salle obscure - Briefing Video
-		briefing_video_stranger_things_salle_obscure = Video(name='Stranger Things - Salle obscure - Briefing', path='uploads/videos/test.h264')
-		briefing_video_stranger_things_salle_obscure.save()
+		video_stranger_things_briefing_salle_obscure = MultimediaFile(name='Stranger Things - Salle obscure - Briefing', path='uploads/media/test.h264')
+		video_stranger_things_briefing_salle_obscure.save()
 
 		# Stranger Things - Salle claire - Briefing Video
-		briefing_video_stranger_things_salle_claire = Video(name='Stranger Things - Salle claire - Briefing', path='uploads/videos/test.h264')
-		briefing_video_stranger_things_salle_claire.save()
+		video_stranger_things_briefing_salle_claire = MultimediaFile(name='Stranger Things - Salle claire - Briefing', path='uploads/media/test.h264')
+		video_stranger_things_briefing_salle_claire.save()
 
 		# Stranger Things - Winners Video
-		winners_video_stranger_things = Video(name='Stranger Things - Good End', path='uploads/videos/test.h264')
-		winners_video_stranger_things.save()
+		video_stranger_things_winners = MultimediaFile(name='Stranger Things - Good End', path='uploads/media/test.h264')
+		video_stranger_things_winners.save()
 
 		# Stranger Things - Losers Video
-		losers_video_stranger_things = Video(name='Stranger Things - Bad End', path='uploads/videos/test.h264')
-		losers_video_stranger_things.save()
+		video_stranger_things_losers = MultimediaFile(name='Stranger Things - Bad End', path='uploads/media/test.h264')
+		video_stranger_things_losers.save()
 
-		# Stranger Things - Challenge Video - La Forêt
-		video_la_foret = Video(name='Stranger Things - Challenge - La Forêt', path='uploads/videos/test.h264')
+		# Stranger Things - Challenge Video - La forêt
+		video_la_foret = MultimediaFile(name='Stranger Things - Challenge - La Forêt', path='uploads/media/test.h264')
 		video_la_foret.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -207,8 +201,6 @@ class Command(BaseCommand):
 		game_1001_nuits = EscapeGame(
 			name='Les 1001 nuits',
 			time_limit=time_limit_1001_nuits,
-			winners_video=winners_video_1001_nuits,
-			losers_video=losers_video_1001_nuits,
 			controller=raspi_1001_nuits,
 			map_image=map_image)
 
@@ -229,8 +221,6 @@ class Command(BaseCommand):
 		game_stranger_things = EscapeGame(
 			name='Stranger Things',
 			time_limit=time_limit_stranger_things,
-			winners_video=winners_video_stranger_things,
-			losers_video=losers_video_stranger_things,
 			controller=raspi_stranger_things,
 			map_image=map_image)
 
@@ -255,13 +245,31 @@ class Command(BaseCommand):
 #
 # Cubes
 #
-		cube_1001_nuits = EscapeGameCube(tag_id='FF000001', game=game_1001_nuits)
+		cube_1001_nuits = EscapeGameCube(
+			name='Cube des 1001 nuits',
+			tag_id='FF000001',
+			game=game_1001_nuits,
+			briefing_media=video_les_1001_nuits_briefing,
+			winners_media=video_les_1001_nuits_winners,
+			losers_media=video_les_1001_nuits_losers)
 		cube_1001_nuits.save()
 
-		cube_obscur = EscapeGameCube(tag_id='FF000002', game=game_stranger_things)
+		cube_obscur = EscapeGameCube(
+			name='Cube Stranger Things - Parcours obscur',
+			tag_id='FF000002',
+			game=game_stranger_things,
+			briefing_media=video_stranger_things_briefing_salle_obscure,
+			winners_media=video_stranger_things_winners,
+			losers_media=video_stranger_things_losers)
 		cube_obscur.save()
 
-		cube_clair = EscapeGameCube(tag_id='FF000003', game=game_stranger_things)
+		cube_clair = EscapeGameCube(
+			name='Cube Stranger Things - Parcours clair',
+			tag_id='FF000003',
+			game=game_stranger_things,
+			briefing_media=video_stranger_things_briefing_salle_claire,
+			winners_media=video_stranger_things_winners,
+			losers_media=video_stranger_things_losers)
 		cube_clair.save()
 #
 # Rooms
@@ -273,7 +281,7 @@ class Command(BaseCommand):
 		#
 
 		# Room: La salle de briefing des 1001 nuits
-		room_briefing_1001_nuits = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Salle de briefing des 1001 nuits')
+		room_briefing_1001_nuits = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing des 1001 nuits')
 		room_briefing_1001_nuits.save()
 
 		# Room: Le SAS des 1001 nuits (SAS 1)
@@ -492,11 +500,11 @@ class Command(BaseCommand):
 		chall_salle_claire_2.save()
 
 		# Challenge: La radio (Stranger Things / La salle obscure)
-		chall_radio = EscapeGameChallenge(room=room_obscure, name='La radio', dependent_on=chall_salle_claire_2)
+		chall_radio = EscapeGameChallenge(room=room_obscure, name='La radio', solved_media=audio_demo, dependent_on=chall_salle_claire_2)
 		chall_radio.save()
 
 		# Challenge: Stranger Things / La forêt / 1
-		chall_la_foret_1 = EscapeGameChallenge(room=room_foret, name='La forêt - chall1', solved_video=video_la_foret, dependent_on=chall_radio)
+		chall_la_foret_1 = EscapeGameChallenge(room=room_foret, name='La forêt - chall1', solved_media=video_la_foret, dependent_on=chall_radio)
 		chall_la_foret_1.save()
 
 		# Challenge: Stranger Things / La forêt / 2
@@ -559,15 +567,15 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
 
 		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS 1001 Nuits', dependent_on=chall_briefing_1001_nuits_take_cube, controller=raspi_master, image=door_corridor_sas_1_image, action_pin=11)
+		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS des 1001 nuits', dependent_on=chall_briefing_1001_nuits_take_cube, controller=raspi_master, action_pin=11)
 		door_corridor_sas_1.save()
 
 		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', dependent_on=chall_briefing_stranger_things_take_cube_obscur, controller=raspi_master, image=door_corridor_sas_2_image, action_pin=11)
+		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', dependent_on=chall_briefing_stranger_things_take_cube_obscur, controller=raspi_master, action_pin=11)
 		door_corridor_sas_2.save()
 
 		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', dependent_on=chall_briefing_stranger_things_take_cube_clair, controller=raspi_master, image=door_corridor_sas_3_image, action_pin=11)
+		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', dependent_on=chall_briefing_stranger_things_take_cube_clair, controller=raspi_master, action_pin=11)
 		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -578,15 +586,15 @@ class Command(BaseCommand):
 		self.stdout.write('  Populating model `LiftGPIO`', ending='')
 
 		# Lift: cube les 1001 nuits
-		lift_1001_nuits = LiftGPIO(name='Les 1001 nuits', controller=raspi_master, game=game_1001_nuits, briefing_video=briefing_video_1001_nuits, pin=31)
+		lift_1001_nuits = LiftGPIO(name='Les 1001 nuits', controller=raspi_master, cube=cube_1001_nuits, pin=31)
 		lift_1001_nuits.save()
 
 		# Lift: Stranger Things - Salle obscure
-		lift_stranger_things_salle_obscure = LiftGPIO(name='Stranger Things - Salle obscure', controller=raspi_master, game=game_stranger_things, briefing_video=briefing_video_stranger_things_salle_obscure, pin=32)
+		lift_stranger_things_salle_obscure = LiftGPIO(name='Stranger Things - Salle obscure', controller=raspi_master, cube=cube_obscur, pin=32)
 		lift_stranger_things_salle_obscure.save()
 
 		# Lift: Stranger Things - Salle claire
-		lift_stranger_things_salle_claire = LiftGPIO(name='Stranger Things - Salle claire', controller=raspi_master, game=game_stranger_things, briefing_video=briefing_video_stranger_things_salle_claire, pin=33)
+		lift_stranger_things_salle_claire = LiftGPIO(name='Stranger Things - Salle claire', controller=raspi_master, cube=cube_clair, pin=33)
 		lift_stranger_things_salle_claire.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))

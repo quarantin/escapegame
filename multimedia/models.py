@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 
 from siteconfig import settings
 
@@ -32,60 +33,40 @@ class Image(models.Model):
 	class Meta:
 		ordering = [ 'name' ]
 
-class PlayerControlMixin:
+class MultimediaFile(models.Model):
 
-	fifo_path = None
-	media_url = None
+	TYPE_AUDIO = 'audio'
+	TYPE_VIDEO = 'video'
 
-	def init(self, fifo_path, media_url):
-		self.fifo_path = fifo_path
-		self.media_url = media_url
-		return self
+	MEDIA_TYPES = (
+		(TYPE_AUDIO, _('Audio')),
+		(TYPE_VIDEO, _('Video')),
+	)
 
-	def fifo_control(self, command):
-		try:
-			if not os.path.exists(self.fifo_path):
-				raise Exception('Player fifo does not exist! Please run: python3 manage.py video-player')
+	MEDIA_TYPES_DICT = {
+		TYPE_AUDIO: _('Audio'),
+		TYPE_VIDEO: _('Video'),
+	}
 
-			fifo = open(self.fifo_path, 'w')
-			fifo.write('%s\n' % command)
-			fifo.close()
+	TYPE_AUDIO_OUT_BOTH = 'both'
+	TYPE_AUDIO_OUT_HDMI = 'hdmi'
+	TYPE_AUDIO_OUT_HEADPHONE = 'local'
 
-			return 0, 'Success'
-
-		except:
-			return 1, 'Error: %s' % traceback.format_exc()
-
-	def pause(self):
-		return self.fifo_control('pause')
-
-	def play(self):
-		return self.fifo_control('play %s' % self.media_url)
-
-	def stop(self):
-		return self.fifo_control('stop')
-
-	def player_control(self, action):
-
-		if action == 'pause':
-			return self.pause()
-
-		elif action == 'stop':
-			return self.stop()
-
-		elif action == 'play':
-			return self.play()
-
-		return 1, 'Invalid action `%s`' % action
-
-class Video(PlayerControlMixin, models.Model):
+	AUDIO_OUT_TYPES = (
+		(TYPE_AUDIO_OUT_HDMI, _('HDMI')),
+		(TYPE_AUDIO_OUT_HEADPHONE, _('Headphone')),
+		(TYPE_AUDIO_OUT_BOTH, _('Both')),
+	)
 
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
-	path = models.FileField(upload_to=settings.UPLOAD_VIDEO_PATH)
+	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.SET_NULL, blank=True, null=True)
+	audio_out = models.CharField(max_length=6, default=TYPE_AUDIO_OUT_BOTH, choices=AUDIO_OUT_TYPES)
+	media_type = models.CharField(max_length=6, default=TYPE_VIDEO, choices=MEDIA_TYPES)
+	path = models.FileField(upload_to=settings.UPLOAD_MEDIA_PATH)
 
 	def __str__(self):
-		return 'Video - %s' % self.name
+		return '%s - %s' % (self.MEDIA_TYPES_DICT[self.media_type], self.name)
 
 	def save(self, *args, **kwargs):
 		new_slug = slugify(self.name)
@@ -93,7 +74,7 @@ class Video(PlayerControlMixin, models.Model):
 			self.slug = new_slug
 
 		self.clean()
-		super(Video, self).save(*args, **kwargs)
+		super(MultimediaFile, self).save(*args, **kwargs)
 
 	def get_url(self, controller=None):
 		from controllers.models import RaspberryPi
@@ -109,49 +90,42 @@ class Video(PlayerControlMixin, models.Model):
 		host, port, protocol = libraspi.get_net_info(controller)
 		return '%s://%s%s/en/api/video/%s/play/' % (protocol, host, port, self.slug)
 
-	def control(self, action):
-		# Initialize PlayerControlMixin
-		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
-		return self.player_control(action)
+	def fifo_control(self, command):
+		try:
+			fifo_path = settings.VIDEO_CONTROL_FIFO
+			if not os.path.exists(fifo_path):
+				raise Exception('Player fifo does not exist! Please run: python3 manage.py video-player')
 
-	class Meta:
-		ordering = [ 'name' ]
+			fifo = open(fifo_path, 'w')
+			fifo.write('%s\n' % command)
+			fifo.close()
 
-class Audio(PlayerControlMixin, models.Model):
+			return 0, 'Success'
 
-	slug = models.SlugField(max_length=255, unique=True, blank=True)
-	name = models.CharField(max_length=255, unique=True)
-	path = models.FileField(upload_to=settings.UPLOAD_AUDIO_PATH)
+		except:
+			return 1, 'Error: %s' % traceback.format_exc()
 
-	def __str__(self):
-		return 'Audio - %s' % self.name
+	def pause(self):
+		return self.fifo_control('pause %s' % self.audio_out)
 
-	def save(self, *args, **kwargs):
-		new_slug = slugify(self.name)
-		if not self.slug or self.slug != new_slug:
-			self.slug = new_slug
+	def play(self):
+		return self.fifo_control('play %s %s' % (self.audio_out, self.get_url()))
 
-		self.clean()
-		super(Audio, self).save(*args, **kwargs)
-
-	def get_url(self, controller=None):
-		from controllers.models import RaspberryPi
-		from escapegame import libraspi
-		controller = controller or RaspberryPi.get_master()
-		host, port, protocol = libraspi.get_net_info(controller)
-		return '%s://%s%s%s' % (protocol, host, port, self.path.url)
-
-	def get_action_url(self, controller=None):
-		from controllers.models import RaspberryPi
-		from escapegame import libraspi
-		controller = controller or RaspberryPi.get_master()
-		host, port, protocol = libraspi.get_net_info(controller)
-		return '%s://%s%s/en/api/audio/%s/play/' % (protocol, host, port, self.slug)
+	def stop(self):
+		return self.fifo_control('stop %s' % self.audio_out)
 
 	def control(self, action):
-		# Initialize PlayerControlMixin
-		self.init(settings.VIDEO_CONTROL_FIFO, self.get_url())
-		return self.player_control(action)
+
+		if action == 'pause':
+			return self.pause()
+
+		elif action == 'stop':
+			return self.stop()
+
+		elif action == 'play':
+			return self.play()
+
+		return 1, 'Invalid action `%s`' % action
 
 	class Meta:
 		ordering = [ 'name' ]
