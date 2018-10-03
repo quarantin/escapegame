@@ -85,8 +85,6 @@ function toggle_elements(lock_button, unlock_button, locked)
  */
 function toggle_online_status(raspi)
 {
-	console.log('toggle_online_status');
-
 	var span = $('#raspberry-pi-' + raspi.slug);
 	var input = span.parent().find('input');
 
@@ -189,25 +187,33 @@ function draw_map(game)
 	var canvas = $('canvas#map')[0];
 	var ctx = canvas.getContext('2d');
 
-	// Reset canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	if (!game.map_image)
+		return;
 
-	if (game.map_image)
-		draw_image(ctx, game.map_image);
+	var map = new Image();
 
-	for (index in game.rooms) {
+	map.onload = function() {
 
-		var room = game.rooms[index];
-		if (room.door_image && !room.door.locked)
-			draw_image(ctx, room.door_image);
-	}
+		canvas.width = map.width;
+		canvas.height = map.height;
+		ctx.drawImage(map, 0, 0, map.width, map.height);
 
-	for (index in game.doors) {
+		for (index in game.rooms) {
 
-		var door = game.doors[index];
-		if (door.image && !door.locked)
-			draw_image(ctx, door.image);
-	}
+			var room = game.rooms[index];
+			if (room.door_image && !room.door.locked)
+				draw_image(ctx, room.door_image);
+		}
+
+		for (index in game.doors) {
+
+			var door = game.doors[index];
+			if (door.image && !door.locked)
+				draw_image(ctx, door.image);
+		}
+	};
+
+	map.src = '/media/' + game.map_image.path;
 };
 
 /*
@@ -248,8 +254,6 @@ function create_websocket()
 {
 	var port;
 	var protocol;
-
-	console.log('creating websocket');
 
 	if (location.protocol == 'http:') {
 		port = (location.port == 80 ? '' : ':' + location.port);
@@ -539,7 +543,5 @@ $(document).ready(function() {
 	create_websocket();
 
 	// Call refresh_page() to draw the map
-	refresh_page();
-	refresh_page();
 	refresh_page();
 });
