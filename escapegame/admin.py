@@ -33,8 +33,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'time_limit',
 		'controller',
 		'cube_delay',
-		'start_time',
-		'finish_time',
 		'winners_video',
 		'losers_video',
 		'map_image',
@@ -48,8 +46,6 @@ class EscapeGameAdmin(admin.ModelAdmin):
 			)}),
 		('Cube Controls', { 'fields': (
 			'cube_delay',
-			'start_time',
-			'finish_time',
 			)}),
 		('Videos', { 'fields': (
 			'winners_video',
@@ -61,7 +57,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', 'start_time', 'finish_time' )
+		return self.readonly_fields + ( 'slug', )
 
 class EscapeGameCubeForm(forms.ModelForm):
 

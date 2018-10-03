@@ -29,9 +29,6 @@ class EscapeGame(models.Model):
 	winners_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_winners_video')
 	losers_video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL, related_name='escapegame_losers_video')
 
-	start_time = models.DateTimeField(blank=True, null=True)
-	finish_time = models.DateTimeField(blank=True, null=True)
-
 	map_image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 
 	def __str__(self):
@@ -61,9 +58,6 @@ class EscapeGame(models.Model):
 		return max_unlock_time_room.door.unlocked_at
 
 	def finish(self, controller):
-		if not self.finish_time:
-			self.finish_time = timezone.localtime()
-			self.save()
 
 		start_time = self.get_max_unlock_time(EscapeGameRoom.objects.filter(game=self, starts_the_timer=True))
 		finish_time = self.get_max_unlock_time(EscapeGameRoom.objects.filter(game=self, stops_the_timer=True))
@@ -85,9 +79,6 @@ class EscapeGame(models.Model):
 			libraspi.do_get(video_url)
 
 	def reset(self):
-		self.start_time = None
-		self.finish_time = None
-		self.save()
 
 		lifts = LiftGPIO.objects.filter(game=self)
 		for lift in lifts:
@@ -97,10 +88,8 @@ class EscapeGame(models.Model):
 		for room in rooms:
 			room.reset()
 
-		# Some rooms or challenges might eventually be shared between escape games, so instead
+		# Some rooms, doors, or challenges might eventually be shared between escape games, so instead
 		# of just notifying this game frontend, notify all game frontends just in case.
-
-		#libraspi.notify_frontend(self)
 		libraspi.notify_frontend()
 		libraspi.notify_frontend(self, '0:00:00')
 
