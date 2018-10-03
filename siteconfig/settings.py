@@ -57,6 +57,9 @@ UPLOAD_VIDEO_PATH = 'uploads/videos'
 UPLOAD_AUDIO_PATH = 'uploads/audios'
 UPLOAD_SKETCH_PATH = 'uploads/sketches'
 
+# File system permissions for uploaded files
+FILE_UPLOAD_PERMISSIONS = 0o644
+
 # Build full hostname by appending master hostname with master TLD
 MASTER_HOSTNAME = '%s%s' % (MASTER.HOSTNAME, MASTER.TLD)
 
