@@ -65,11 +65,11 @@ class EscapeGame(models.Model):
 		cubes = EscapeGameCube.objects.filter(game=self)
 		for cube in cubes:
 
-			if cube.winners_media and win:
-				media = cube.winners_media
-
-			elif cube.losers_media and not win:
+			if cube.losers_media is not None and not win:
 				media = cube.losers_media
+
+			elif cube.winners_media is not None and win:
+				media = cube.winners_media
 
 			if media is not None:
 				media_url = media.get_action_url(controller)
@@ -119,10 +119,10 @@ class EscapeGame(models.Model):
 				if media_type == cube.briefing_media.media_type:
 					media_list.append(cube.briefing_media)
 
-				if media_type == cube.losers_media.media_type:
+				if cube.losers_media is not None and media_type == cube.losers_media.media_type:
 					media_list.append(cube.losers_media)
 
-				if media_type == cube.winners_media.media_type:
+				if cube.winners_media is not None and media_type == cube.winners_media.media_type:
 					media_list.append(cube.winners_media)
 
 		except EscapeGameCube.DoesNotExist:
@@ -161,8 +161,8 @@ class EscapeGameCube(models.Model):
 	tag_id = models.CharField(max_length=8, default="FFFFFFFF")
 	cube_delay = models.DurationField(default=timedelta(seconds=30))
 	briefing_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegame_cube_briefing_media')
-	losers_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_losers_media')
-	winners_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_winners_media')
+	losers_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_losers_media', blank=True, null=True)
+	winners_media = models.ForeignKey('multimedia.MultimediaFile', on_delete=models.CASCADE, related_name='escapegamecube_winners_media', blank=True, null=True)
 
 	def __str__(self):
 		return 'Cube - %s - %s' % (self.name, self.tag_id)
@@ -177,7 +177,7 @@ class EscapeGameRoom(models.Model):
 	starts_the_timer = models.BooleanField(default=False)
 	stops_the_timer = models.BooleanField(default=False)
 
-	door = models.ForeignKey('controllers.DoorGPIO', null=True, on_delete=models.CASCADE, related_name='room_door')
+	door = models.ForeignKey('controllers.DoorGPIO', blank=True, null=True, on_delete=models.CASCADE, related_name='room_door')
 	has_no_challenge = models.BooleanField(default=False)
 	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -239,7 +239,7 @@ class EscapeGameChallenge(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	room = models.ForeignKey(EscapeGameRoom, on_delete=models.CASCADE)
 
-	gpio = models.ForeignKey('controllers.ChallengeGPIO', null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
+	gpio = models.ForeignKey('controllers.ChallengeGPIO', blank=True, null=True, on_delete=models.CASCADE, related_name='challenge_gpio')
 	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
 	solved_media = models.ForeignKey('multimedia.MultimediaFile', blank=True, null=True, on_delete=models.SET_NULL, related_name='solved_media')
