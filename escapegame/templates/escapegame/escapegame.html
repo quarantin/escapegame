@@ -56,14 +56,14 @@
 							<td class="td-button">
 
 								<!-- Play video button -->
-								<button class="video-play" data-raspi="{{ raspi.slug }}"type="submit">
+								<button class="video-play" data-raspi="{{ raspi.get_url }}"type="submit">
 									<div class="">
 										<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}" class="smaller">
 									</div>
 								</button>
 
 								<!-- Pause video button -->
-								<button class="video-pause" data-raspi="{{ raspi.slug }}" type="submit" class="d-none">
+								<button class="video-pause" data-raspi="{{ raspi.get_url }}" type="submit" class="d-none">
 									<div class="">
 										<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}" class="smaller">
 									</div>
@@ -75,7 +75,7 @@
 							<td class="td-button">
 
 								<!-- Stop video button -->
-								<button class="video-stop" data-raspi="{{ raspi.slug }}" type="submit">
+								<button class="video-stop" data-raspi="{{ raspi.get_url }}" type="submit">
 									<div class="">
 										<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}" class="smaller">
 									</div>
