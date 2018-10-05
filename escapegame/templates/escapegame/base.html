@@ -16,6 +16,9 @@
 				{% endwith %}
 			{% endfor %}
 			<a href="/{{ request.LANGUAGE_CODE }}/" class="btn btn-primary" data-toggle="tooltip" title="{% trans "Visit home page" %}">{% trans "Home" %}</a>
+		{% if request.user.is_superuser %}
+			<a href="/{{ request.LANGUAGE_CODE }}/admin/" class="btn btn-primary" data-toggle="tooltip" title="{% trans "Visit Administration section" %}">{% trans "Administration" %}</a>
+		{% endif %}
 		</span>
 	</nav>
 	<div class="container">{% block content %}{% endblock %}	</div>

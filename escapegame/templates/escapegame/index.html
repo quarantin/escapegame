@@ -8,7 +8,9 @@
 			<div class="col-sm-6">
 				<span>
 					<p>{% trans "No escape game configured yet." %}<br>
+				{% if request.user.is_superuser %}
 					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegame/">{% trans "this" %}</a> {% trans "page to create new escape games." %}</p>
+				{% endif %}
 				</span>
 			</div>
 {% else %}{% for game in games %}

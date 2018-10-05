@@ -165,7 +165,13 @@
 			<div class="row head-block">
 				<div class="col"></div>
 		{% if game.lifts|length < 1 %}
-			<p>{% trans "No lift available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create new lifts." %}</p>
+			<p>
+				{% trans "No lift available for this escape game." %}
+				<br>
+			{% if request.user.is_superuser %}
+				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create new lifts." %}
+			{% endif %}
+		</p>
 		{% else %}
 			{% for lift in game.lifts %}
 				{% with lift_prefix=lift.name|slice:"0:1"|lower lift_suffix=lift.name|slice:"1:" %}
@@ -214,11 +220,9 @@
 				<p>
 					{% trans "No room configured yet for this escape game." %}
 					<br>
-					{% trans "You can visit" %}
-					<a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">
-						{% trans "this" %}
-					</a>
-					{% trans "page to create new rooms." %}
+				{% if request.user.is_superuser %}
+					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">{% trans "this" %}</a> {% trans "page to create new rooms." %}
+				{% endif %}
 				</p>
 			</span>
 		</div>
@@ -235,11 +239,9 @@
 						<p>
 							{% trans "No challenge configured yet for this room." %}
 							<br>
-							{% trans "You can visit" %}
-							<a href="/admin/escapegame/escapegamechallenge">
-								{% trans "this" %}
-							</a>
-							{% trans "page to create new challenges." %}
+						{% if request.user.is_superuser %}
+							{% trans "You can visit" %}	<a href="/admin/escapegame/escapegamechallenge">{% trans "this" %}</a> {% trans "page to create new challenges." %}
+						{% endif %}
 						</p>
 					</span>
 				</div>
