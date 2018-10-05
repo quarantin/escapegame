@@ -121,13 +121,11 @@ class Controller(models.Model):
 			response = requests.get(url, timeout=5)
 			if response and response.content.decode('utf-8') == 'OK':
 				self.online = True
-
 		except:
 			pass
 
-		self.save(update_fields=[ 'online' ])
-
 		if status != self.online:
+			self.save(update_fields=[ 'online' ])
 			libraspi.notify_frontend()
 
 		return self.online
