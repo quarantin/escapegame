@@ -49,11 +49,13 @@ def escapegame_detail(request, game_slug):
 		for chall in room.challs:
 			chall.url_callback = '/%s/api/challenge/%s/%s/%s' % (lang, game.slug, room.slug, chall.slug)
 
+	game.lifts = []
 	cubes = EscapeGameCube.objects.filter(game=game)
 	for cube in cubes:
-		game.lifts = LiftGPIO.objects.filter(cube=cube)
-		for lift in game.lifts:
+		lifts = LiftGPIO.objects.filter(cube=cube)
+		for lift in lifts:
 			lift.url_callback = '/%s/api/lift/%s/%s' % (lang, game.slug, lift.slug)
+			game.lifts.append(lift)
 
 	for raspi in raspberry_pis:
 
