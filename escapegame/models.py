@@ -336,15 +336,15 @@ class EscapeGameChallenge(models.Model):
 			else:
 				print('Still unsolved challenge in room %s' % self.room.name)
 
-			if self.gpio.solved:
-
-				# If we have an associated media, play it remotely on the controller of this challenge
-				if self.solved_media is not None:
+			# If this challenge is solved and we have an associated media, play it remotely on the controller of this challenge
+			if self.gpio.solved and self.solved_media is not None:
 					media_url = self.solved_media.get_action_url(controller)
 					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
 					libraspi.do_get(media_url)
 
-				# Open rooms with a dependency on my room
+			# Open rooms with a dependency on my room if it's been opened
+			if self.room.door.unlocked_at is not None:
+
 				try:
 					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room)
 
