@@ -102,20 +102,15 @@ class EscapeGameRoomForm(forms.ModelForm):
 			'dependent_on',
 		]
 
-	def clean(self):
+		def clean(self):
 
-		dependent_on = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
-		has_no_challenge = 'has_no_challenge' in self.cleaned_data and self.cleaned_data['has_no_challenge'] is True
+			dependent_on = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
+			has_no_challenge = 'has_no_challenge' in self.cleaned_data and self.cleaned_data['has_no_challenge'] is True
 
-		if has_no_challenge is True and dependent_on is False:
-			raise ValidationError({
-				'dependent_on': _('This field is required because this room has no challenge'),
-			})
-
-		if has_no_challenge is False and dependent_on is True:
-			raise ValidationError({
-				'dependent_on': _('This room cannot be dependent because it has some challenges'),
-			})
+			if has_no_challenge is True and dependent_on is False:
+				raise ValidationError({
+						'dependent_on': _('This field is required because this room has no challenge'),
+				})
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 

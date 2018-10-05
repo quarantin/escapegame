@@ -39,6 +39,10 @@ class Command(BaseCommand):
 					if chall.get_controller().id != myself.id:
 						continue
 
+					# We don't want to process challenges in rooms that are dependent on other still locked rooms
+					if not chall.room.can_unlock():
+						continue
+
 					# If the challenge is not already solved in database, but the GPIO indicates it is solved...
 					if chall.gpio.solved_at is None and chall.check_solved():
 

@@ -201,6 +201,13 @@ class EscapeGameRoom(models.Model):
 		self.clean()
 		super(EscapeGameRoom, self).save(*args, **kwargs)
 
+	def can_unlock(self):
+
+		if self.dependent_on is not None and self.dependent_on.door.unlocked_at is None:
+			return False
+
+		return True
+
 	def all_challenge_validated(self):
 		try:
 			valid = True
@@ -316,9 +323,9 @@ class EscapeGameChallenge(models.Model):
 				if status != 0:
 					raise Exception(message)
 
-				# Open rooms with a dependency on my room
+				# Open rooms with a dependency on my room if they have no challenge
 				try:
-					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room)
+					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room, has_no_challenge=True)
 
 				except EscapeGameRoom.DoesNotExist:
 					dependent_rooms = []
