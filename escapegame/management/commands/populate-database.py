@@ -357,11 +357,11 @@ class Command(BaseCommand):
 		room_foret.save()
 
 		# Room: Retour au SAS obscur (SAS 2)
-		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_2_image, name='Retour au SAS obscur', dependent_on=la_foret, stops_the_timer=True)
+		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_2_image, name='Retour au SAS obscur', dependent_on=room_foret, stops_the_timer=True)
 		room_sas_2_retour.save()
 
 		# Room: Retour au SAS clair (SAS 3)
-		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_3_image, name='Retour au SAS clair', dependent_on=la_foret, stops_the_timer=True)
+		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_3_image, name='Retour au SAS clair', dependent_on=room_foret, stops_the_timer=True)
 		room_sas_3_retour.save()
 
 		# Room: Le couloir de Stranger Things - Parcours obscur (Retour)
