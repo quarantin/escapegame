@@ -328,6 +328,12 @@ function game_control_handler(action)
 			url: '/' + get_language() + '/' + this.value + '/' + action + '/',
 			success: function() {
 				refresh_page();
+
+				$('button#video-play').removeClass('d-none');
+				$('button#video-pause').addClass('d-none');
+				$('button#audio-play').removeClass('d-none');
+				$('button#audio-pause').addClass('d-none');
+
 				alert('Game reset was successful!');
 			},
 			error: function() {
@@ -345,7 +351,6 @@ function video_control_handler(action)
 	$('select#selected-video').change(function() {
 		$('button#video-play').removeClass('d-none');
 		$('button#video-pause').addClass('d-none');
-
 	});
 
 	$('button#video-' + action).click(function() {
