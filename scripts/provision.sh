@@ -107,6 +107,10 @@ sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
 echo "Installing the following pip packages: ${PIP_PACKAGES[@]}"
 sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
 
+# Setting correct permissions on upload folders
+sudo chown -R :www-data ${ROOTDIR}/media/uploads/
+sudo chmod g+s ${ROOTDIR}/media/uploads/*
+
 # Install golang 1.11
 GOLANG_VERSION=1.11
 GOLANG_PKG=go${GOLANG_VERSION}.linux-${ARCH}.tar.gz
