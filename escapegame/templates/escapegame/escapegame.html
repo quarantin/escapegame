@@ -169,7 +169,7 @@
 				{% trans "No lift available for this escape game." %}
 				<br>
 			{% if request.user.is_superuser %}
-				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/">{% trans "this" %}</a> {% trans "page to create new lifts." %}
+				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/add/">{% trans "this" %}</a> {% trans "page to create new lifts." %}
 			{% endif %}
 		</p>
 		{% else %}
@@ -221,7 +221,7 @@
 					{% trans "No room configured yet for this escape game." %}
 					<br>
 				{% if request.user.is_superuser %}
-					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/">{% trans "this" %}</a> {% trans "page to create new rooms." %}
+					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegameroom/add/">{% trans "this" %}</a> {% trans "page to create new rooms." %}
 				{% endif %}
 				</p>
 			</span>
@@ -240,7 +240,7 @@
 							{% trans "No challenge configured yet for this room." %}
 							<br>
 						{% if request.user.is_superuser %}
-							{% trans "You can visit" %}	<a href="/admin/escapegame/escapegamechallenge">{% trans "this" %}</a> {% trans "page to create new challenges." %}
+							{% trans "You can visit" %}	<a href="/admin/escapegame/escapegamechallenge/add/">{% trans "this" %}</a> {% trans "page to create new challenges." %}
 						{% endif %}
 						</p>
 					</span>
@@ -269,7 +269,7 @@
 							<a class="challenge-reset{% if not chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/reset/" id="reset-{{ game.slug }}-{{ chall.slug }}">
 								<img src="{% static 'admin/img/icon-yes.svg' %}" />
 							</a>
-							<a class="challenge-validate{%if chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/validate/" id="validate-{{ game.slug}}-{{ chall.slug }}">
+							<a class="challenge-validate{% if chall.gpio.solved %} d-none{% endif %}" href="{{ chall.url_callback }}/validate/" id="validate-{{ game.slug}}-{{ chall.slug }}">
 								<img src="{% static 'admin/img/icon-no.svg' %}"/>
 							</a>
 							</td>
@@ -303,7 +303,14 @@
 		<div class="col head-block">
 			<label class="head-block head-border">{% trans "Map" %}</label>
 			<div class="col head-block">
-				{% if not game.map_image %}<span>{% trans "No map data available." %}</span>{% else %}<canvas id="map" class="col head-block" width="1648" height="904"></canvas>{% endif %}
+			{% if not game.map_image %}
+				<span>{% trans "No map data available." %}</span>
+				{% if request.user.is_superuser %}
+					{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/escapegame/escapegame/{{ game.id }}/change/">{% trans "this" %}</a> {% trans "page to add a map." %}
+				{% endif %}
+			{% else %}
+				<canvas id="map" class="col head-block" width="1648" height="904"></canvas>
+			{% endif %}
 			</div>
 		</div>
 
