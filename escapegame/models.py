@@ -179,7 +179,8 @@ class EscapeGameRoom(models.Model):
 
 	door = models.ForeignKey('controllers.DoorGPIO', on_delete=models.CASCADE, blank=True, null=True)
 	has_no_challenge = models.BooleanField(default=False)
-	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
+	lock_dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True, related_name='room_lock_dependent_on')
+	unlock_dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True, related_name='room_unlock_dependent_on')
 
 	room_image = models.ForeignKey('multimedia.Image', on_delete=models.SET_NULL, blank=True, null=True, related_name="room_image")
 	door_image = models.ForeignKey('multimedia.Image', on_delete=models.SET_NULL, blank=True, null=True, related_name="door_image")
@@ -203,7 +204,7 @@ class EscapeGameRoom(models.Model):
 
 	def can_unlock(self):
 
-		if self.dependent_on is not None and self.dependent_on.door.unlocked_at is None:
+		if self.unlock_dependent_on is not None and self.unlock_dependent_on.door.unlocked_at is None:
 			return False
 
 		return True
@@ -323,23 +324,6 @@ class EscapeGameChallenge(models.Model):
 				if status != 0:
 					raise Exception(message)
 
-				# Open rooms with a dependency on my room if they have no challenge
-				try:
-					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room, has_no_challenge=True)
-
-				except EscapeGameRoom.DoesNotExist:
-					dependent_rooms = []
-
-				if not dependent_rooms:
-					print("No room dependent on me")
-
-				for dependent_room in dependent_rooms:
-
-					print("Opening dependent room: %s" % dependent_room.name)
-					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
-					if status != 0:
-						raise Exception(message)
-
 				# Was this the last room of this game?
 				if self.room.is_last_room():
 
@@ -348,6 +332,39 @@ class EscapeGameChallenge(models.Model):
 
 				else:
 					print('Still some rooms to explore')
+
+				# Unlock rooms with an unlock dependency on my room if they have no challenge
+				try:
+					dependent_rooms = EscapeGameRoom.objects.filter(unlock_dependent_on=self.room, has_no_challenge=True)
+
+				except EscapeGameRoom.DoesNotExist:
+					dependent_rooms = []
+
+				if not dependent_rooms:
+					print("No room unlock dependent on me")
+
+				for dependent_room in dependent_rooms:
+
+					print("Opening dependent room: %s" % dependent_room.name)
+					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
+					if status != 0:
+						raise Exception(message)
+
+				# Lock rooms with a lock dependency on my room
+				try:
+					dependent_rooms = EscapeGameRoom.objects.filter(lock_dependent_on=self.room)
+				except EscapeGameRoom.DoesNotExist:
+					dependent_rooms = []
+
+				if not dependent_rooms:
+					print("No room lock dependent on me")
+
+				for dependent_room in dependent_rooms:
+
+					print("Closing dependent room: %s" % dependent_room.name)
+					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'lock')
+					if status != 0:
+						raise Exception(message)
 			else:
 				print('Still unsolved challenge in room %s' % self.room.name)
 

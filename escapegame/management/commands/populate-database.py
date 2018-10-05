@@ -285,35 +285,43 @@ class Command(BaseCommand):
 		room_briefing_1001_nuits.save()
 
 		# Room: Le couloir des 1001 nuits
-		room_corridor_sas_1 = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_corridor_sas_1_image, name='Le couloir des 1001 nuits', dependent_on=room_briefing_1001_nuits, has_no_challenge=True)
+		room_corridor_sas_1 = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_corridor_sas_1_image, name='Le couloir des 1001 nuits', unlock_dependent_on=room_briefing_1001_nuits, has_no_challenge=True)
 		room_corridor_sas_1.save()
 
 		# Room: Le SAS des 1001 nuits (SAS 1)
-		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Le SAS des 1001 nuits', dependent_on=room_corridor_sas_1, starts_the_timer=True)
+		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Le SAS des 1001 nuits', unlock_dependent_on=room_corridor_sas_1, starts_the_timer=True)
 		room_sas_1.save()
 
 		# Room: La fontaine
-		room_fontaine = EscapeGameRoom(game=game_1001_nuits, door_image=door_fontain_room_image, name='La fontaine', dependent_on=room_sas_1)
+		room_fontaine = EscapeGameRoom(game=game_1001_nuits, door_image=door_fontain_room_image, name='La fontaine', unlock_dependent_on=room_sas_1)
 		room_fontaine.save()
 
 		# Room: La caverne
-		room_caverne = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='La caverne', dependent_on=room_fontaine)
+		room_caverne = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='La caverne', unlock_dependent_on=room_fontaine)
 		room_caverne.save()
 
+		# Room: La fontaine is lock dependent on La caverne
+		room_fontaine.lock_dependent_on = room_caverne
+		room_fontaine.save()
+
 		# Room: La lampe
-		room_lampe = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='La lampe', dependent_on=room_caverne)
+		room_lampe = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='La lampe', unlock_dependent_on=room_caverne)
 		room_lampe.save()
 
+		# Room: La caverne (Retour)
+		room_caverne_retour = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='Retour à la caverne', unlock_dependent_on=room_lampe)
+		room_caverne_retour.save()
+
 		# Room: Retour au SAS des 1001 nuits (SAS 1)
-		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_corridor_sas_1_image, name='Retour au SAS des 1001 nuits', dependent_on=room_lampe, stops_the_timer=True)
+		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_corridor_sas_1_image, name='Retour au SAS des 1001 nuits', unlock_dependent_on=room_caverne_retour, stops_the_timer=True)
 		room_sas_1_retour.save()
 
 		# Room: Le couloir des 1001 nuits (Retour)
-		room_corridor_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_briefing_room_image, name='Retour dans le couloir des 1001 nuits', dependent_on=room_sas_1_retour, has_no_challenge=True)
+		room_corridor_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_briefing_room_image, name='Retour dans le couloir des 1001 nuits', unlock_dependent_on=room_sas_1_retour, has_no_challenge=True)
 		room_corridor_sas_1_retour.save()
 
 		# Room: Retour dans la salle de briefing des 1001 nuits
-		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing des 1001 nuits', dependent_on=room_corridor_sas_1_retour)
+		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing des 1001 nuits', unlock_dependent_on=room_corridor_sas_1_retour)
 		room_briefing_1001_nuits_retour.save()
 
 		#
@@ -329,51 +337,51 @@ class Command(BaseCommand):
 		room_briefing_stranger_things_clair.save()
 
 		# Room: Le couloir de Stranger Things - Parcours obscur
-		room_corridor_sas_2 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_2_image, name='Le couloir de Stranger Things - Parcours obscur', dependent_on=room_briefing_stranger_things_obscur, has_no_challenge=True)
+		room_corridor_sas_2 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_2_image, name='Le couloir de Stranger Things - Parcours obscur', unlock_dependent_on=room_briefing_stranger_things_obscur, has_no_challenge=True)
 		room_corridor_sas_2.save()
 
 		# Room: Le couloir de Stranger Things - Parcours clair
-		room_corridor_sas_3 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_3_image, name='Le couloir de Stranger Things - Parcours clair', dependent_on=room_briefing_stranger_things_clair, has_no_challenge=True)
+		room_corridor_sas_3 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_3_image, name='Le couloir de Stranger Things - Parcours clair', unlock_dependent_on=room_briefing_stranger_things_clair, has_no_challenge=True)
 		room_corridor_sas_3.save()
 
 		# Room: Le SAS obscur de Stranger Things (SAS 2)
-		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', dependent_on=room_corridor_sas_2, starts_the_timer=True)
+		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', unlock_dependent_on=room_corridor_sas_2, starts_the_timer=True)
 		room_sas_2.save()
 
 		# Room: Le SAS clair de Stranger Things (SAS 3)
-		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', dependent_on=room_corridor_sas_3, starts_the_timer=True)
+		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', unlock_dependent_on=room_corridor_sas_3, starts_the_timer=True)
 		room_sas_3.save()
 
 		# Room: La salle obscure
-		room_obscure = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_obscure_image, name='La salle obscure', dependent_on=room_sas_2)
+		room_obscure = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_obscure_image, name='La salle obscure', unlock_dependent_on=room_sas_2)
 		room_obscure.save()
 
 		# Room: La salle claire
-		room_claire = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_claire_image, name='La salle claire', dependent_on=room_sas_3)
+		room_claire = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_claire_image, name='La salle claire', unlock_dependent_on=room_sas_3)
 		room_claire.save()
 
 		# Room: La forêt
-		room_foret = EscapeGameRoom(game=game_stranger_things, name='La forêt', dependent_on=room_obscure)
+		room_foret = EscapeGameRoom(game=game_stranger_things, name='La forêt', unlock_dependent_on=room_obscure)
 		room_foret.save()
 
 		# Room: Retour au SAS obscur (SAS 2)
-		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_2_image, name='Retour au SAS obscur', dependent_on=room_foret, stops_the_timer=True)
+		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_2_image, name='Retour au SAS obscur', unlock_dependent_on=room_foret, stops_the_timer=True)
 		room_sas_2_retour.save()
 
 		# Room: Retour au SAS clair (SAS 3)
-		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_3_image, name='Retour au SAS clair', dependent_on=room_foret, stops_the_timer=True)
+		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_3_image, name='Retour au SAS clair', unlock_dependent_on=room_foret, stops_the_timer=True)
 		room_sas_3_retour.save()
 
 		# Room: Le couloir de Stranger Things - Parcours obscur (Retour)
-		room_corridor_sas_2_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours obscur', dependent_on=room_sas_2_retour, has_no_challenge=True)
+		room_corridor_sas_2_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours obscur', unlock_dependent_on=room_sas_2_retour, has_no_challenge=True)
 		room_corridor_sas_2_retour.save()
 
 		# Room: Le couloir de Stranger Things - Parcours clair (Retour)
-		room_corridor_sas_3_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours clair', dependent_on=room_sas_3_retour, has_no_challenge=True)
+		room_corridor_sas_3_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours clair', unlock_dependent_on=room_sas_3_retour, has_no_challenge=True)
 		room_corridor_sas_3_retour.save()
 
 		# Room: Salle de briefing - Stranger Things (Retour)
-		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing de Stranger Things', dependent_on=room_corridor_sas_2_retour)
+		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing de Stranger Things', unlock_dependent_on=room_corridor_sas_2_retour)
 		room_briefing_stranger_things_retour.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -431,12 +439,16 @@ class Command(BaseCommand):
 		chall_fakir = EscapeGameChallenge(room=room_caverne, name='Le fakir', dependent_on=chall_serpents)
 		chall_fakir.save()
 
-		# Challenge La lampe
+		# Challenge: La lampe
 		chall_lampe = EscapeGameChallenge(room=room_lampe, name='La lampe', dependent_on=chall_fakir)
 		chall_lampe.save()
 
+		# Challenge: Retour à la caverne
+		chall_caverne_retour = EscapeGameChallenge(room=room_caverne_retour, name='Retour à la caverne', dependent_on=chall_lampe)
+		chall_caverne_retour.save()
+
 		# Cube Challenge: Retour au SAS des 1001 nuits - Poser le cube
-		chall_sas_1_put_cube_retour = EscapeGameChallenge(room=room_sas_1_retour, name='Retour au SAS des 1001 nuits - Poser le cube', dependent_on=chall_lampe)
+		chall_sas_1_put_cube_retour = EscapeGameChallenge(room=room_sas_1_retour, name='Retour au SAS des 1001 nuits - Poser le cube', dependent_on=chall_caverne_retour)
 		chall_sas_1_put_cube_retour.save()
 		gpio = chall_sas_1_put_cube_retour.gpio
 		gpio.cube = cube_1001_nuits
