@@ -75,40 +75,6 @@ class ChallengeGPIOForm(GPIOForm):
 				'cube': _('Cube field cannot be empty for cube challenges'),
 			})
 
-class DoorGPIOForm(GPIOForm):
-
-	class Meta:
-		model = DoorGPIO
-		fields = [
-			'dependent_on',
-		]
-
-	def clean(self):
-
-		super(DoorGPIOForm, self).clean()
-
-		has_dependency = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
-
-		if has_dependency:
-
-			from escapegame.models import EscapeGameRoom
-
-			try:
-				room = EscapeGameRoom.objects.get(door=self.instance)
-
-				raise ValidationError({
-					'dependent_on': _('You cannot create a dependency for this door GPIO because it is already assigned to room `%s`.\nIf you really want to create a dependency for this door GPIO, please unassign it from the room first.' % room.name),
-				})
-
-			except EscapeGameRoom.DoesNotExist:
-				pass
-
-class LiftGPIOForm(forms.ModelForm):
-
-	class Meta:
-		model = LiftGPIO
-		exclude = []
-
 #
 # Controllers admin classes
 #
@@ -213,10 +179,7 @@ class ChallengeGPIOAdmin(GPIOAdmin):
 
 class DoorGPIOAdmin(GPIOAdmin):
 
-	form = DoorGPIOForm
-
 	list_display = GPIOAdmin.list_display + [
-		'dependent_on',
 		'locked',
 		'unlocked_at',
 	]
@@ -230,7 +193,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 		)}),
 
 		('Door', { 'fields': (
-			'dependent_on',
 			'locked',
 			'unlocked_at',
 		)}),
@@ -241,8 +203,6 @@ class DoorGPIOAdmin(GPIOAdmin):
 		return super(DoorGPIOAdmin, self).get_readonly_fields(request, obj) + ( 'locked', 'unlocked_at' )
 
 class LiftGPIOAdmin(admin.ModelAdmin):
-
-	form = LiftGPIOForm
 
 	list_display = [
 		'name',

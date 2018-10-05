@@ -195,39 +195,6 @@
 				<div class="col"></div>
 			</div>
 
-			<!-- Doors controls -->
-			<label class="head-block head-border">{% trans "Corridor door controls" %}</label>
-			<div class="row head-block">
-				<div class="col">
-
-			{% if game.doors|length < 1 %}
-				<p>{% trans "No door available for this escape game." %} {% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/doorgpio/">{% trans "this" %}</a> {% trans "page to create new doors." %}</p>
-			{% else %}
-				{% for door in game.doors %}
-					{% with door_prefix=door.name|slice:"0:1"|lower door_suffix=door.name|slice:"1:" %}
-					{% with door_name=door_prefix|add:door_suffix %}
-
-
-					<button class="unlock-button{% if not door.locked %} d-none{% endif %}" id="unlock-{{ game.slug }}-extra-{{ door.slug }}" value="{{ door.url_callback }}/unlock/" type="submit">
-						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-locked-100.png' %}" title="{% trans "Unlock" %} {{ door_name }}">
-							<p>{% trans "Unlock" %} {{ door_name }}</p>
-						</div>
-					</button>
-					<button class="lock-button{% if door.locked %} d-none{% endif %}" id="lock-{{ game.slug }}-extra-{{ door.slug }}" value="{{ door.url_callback }}/lock/" type="submit">
-						<div class="image-with-caption">
-							<img src="{% static 'img/icons8-unlocked-100.png' %}" title="{% trans "Lock" %} {{ door_name }}">
-							<p>{% trans "Lock" %} {{ door_name }}</p>
-						</div>
-					</button>
-
-					{% endwith %}
-					{% endwith %}
-				{% endfor %}
-			{% endif %}
-				</div>
-			</div>
-
 			<!-- Escape game counter -->
 			<label class="head-block head-border">{% trans "Time Elapsed" %}</label>
 			<div class="row head-block" style="text-align: center;">
@@ -261,7 +228,7 @@
 			<label class="head-block head-border">&laquo;&nbsp;{{ room.name }}&nbsp;&raquo;</label>
 			<div class="row head-block">
 
-			{% if room.challs|length < 1 %}
+			{% if room.challs|length < 1 and not room.has_no_challenge %}
 				<!-- Challenge controls -->
 				<div class="col">
 					<span>
@@ -273,6 +240,15 @@
 								{% trans "this" %}
 							</a>
 							{% trans "page to create new challenges." %}
+						</p>
+					</span>
+				</div>
+			{% elif room.has_no_challenge %}
+				<!-- Challenge controls -->
+				<div class="col">
+					<span>
+						<p>
+							{% trans "No challenge in this room." %}
 						</p>
 					</span>
 				</div>

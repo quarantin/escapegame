@@ -340,8 +340,6 @@ class DoorGPIO(GPIO):
 		verbose_name = 'Door GPIO'
 		verbose_name_plural = 'Door GPIOs'
 
-	dependent_on = models.ForeignKey('escapegame.EscapeGameChallenge', on_delete=models.SET_NULL, blank=True, null=True)
-
 	locked = models.BooleanField(default=True)
 	unlocked_at = models.DateTimeField(blank=True, null=True)
 

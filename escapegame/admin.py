@@ -98,28 +98,29 @@ class EscapeGameRoomForm(forms.ModelForm):
 	class Meta:
 		model = EscapeGameRoom
 		fields = [
-			'door'
+			'has_no_challenge',
+			'dependent_on',
 		]
 
 	def clean(self):
 
-		if 'door' not in self.cleaned_data:
-			return
+		dependent_on = 'dependent_on' in self.cleaned_data and self.cleaned_data['dependent_on'] is not None
+		has_no_challenge = 'has_no_challenge' in self.cleaned_data and self.cleaned_data['has_no_challenge'] is True
 
-		door = self.cleaned_data['door']
+		if has_no_challenge is True and dependent_on is False:
+			raise ValidationError({
+				'dependent_on': _('This field is required because this room has no challenge'),
+			})
 
-		try:
-			gpio = DoorGPIO.objects.get(pk=door.pk)
-			if gpio.dependent_on is not None:
-				raise ValidationError({
-					'door': _('You cannot assign this DoorGPIO because it has a dependency to challenge `%s`.\nIf you really want to assign this DoorGPIO, please remove its dependency first.' % gpio.dependent_on.name),
-				})
-
-		except DoorGPIO.DoesNotExist:
-			pass
+		if has_no_challenge is False and dependent_on is True:
+			raise ValidationError({
+				'dependent_on': _('This room cannot be dependent because it has some challenges'),
+			})
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
+
 	form = EscapeGameRoomForm
+
 	list_display = [
 		'name',
 		'slug',
@@ -128,9 +129,12 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'starts_the_timer',
 		'stops_the_timer',
 		'door',
+		'has_no_challenge',
+		'dependent_on',
 		'room_image',
 		'door_image',
 	]
+
 	fieldsets = (
 		('Escape Game Room', { 'fields': (
 			'name',
@@ -142,6 +146,8 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			)}),
 		('Door controls', { 'fields': (
 			'door',
+			'has_no_challenge',
+			'dependent_on',
 			)}),
 		('Map', { 'fields': (
 			'room_image',
@@ -153,6 +159,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		return self.readonly_fields + ( 'slug', 'unlock_time' )
 
 class EscapeGameChallengeAdmin(admin.ModelAdmin):
+
 	list_display = [
 		'name',
 		'slug',
@@ -165,6 +172,7 @@ class EscapeGameChallengeAdmin(admin.ModelAdmin):
 		'callback_url_solve',
 		'callback_url_reset',
 	]
+
 	fieldsets = (
 		('Escape Game Challenge', { 'fields': (
 			'name',

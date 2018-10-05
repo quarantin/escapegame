@@ -49,14 +49,6 @@ def escapegame_detail(request, game_slug):
 		for chall in room.challs:
 			chall.url_callback = '/%s/api/challenge/%s/%s/%s' % (lang, game.slug, room.slug, chall.slug)
 
-	game.doors = []
-
-	doors = DoorGPIO.objects.filter(~Q(dependent_on=None))
-	for door in doors:
-		if door.dependent_on.room.game == game:
-			door.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, 'extra', door.slug)
-			game.doors.append(door)
-
 	cubes = EscapeGameCube.objects.filter(game=game)
 	for cube in cubes:
 		game.lifts = LiftGPIO.objects.filter(cube=cube)
@@ -129,7 +121,6 @@ def escapegame_status(request, game_slug):
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
 		game['raspberrypis'] = raspis
 		game['rooms'] = []
-		game['doors'] = []
 		game['lifts'] = []
 
 		for raspi in game['raspberrypis']:
@@ -159,12 +150,6 @@ def escapegame_status(request, game_slug):
 				chall['solved'] = gpio['solved']
 
 				__populate_images(chall, 'challenge_solved_image')
-
-
-				extra_doors = DoorGPIO.objects.filter(dependent_on=chall['id']).values()
-				for door in extra_doors:
-					__populate_images(door, 'image')
-					game['doors'].append(door)
 
 				room['challenges'].append(chall)
 

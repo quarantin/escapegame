@@ -178,6 +178,8 @@ class EscapeGameRoom(models.Model):
 	stops_the_timer = models.BooleanField(default=False)
 
 	door = models.ForeignKey('controllers.DoorGPIO', null=True, on_delete=models.CASCADE, related_name='room_door')
+	has_no_challenge = models.BooleanField(default=False)
+	dependent_on = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
 	room_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='room_image')
 	door_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='door_image')
@@ -315,27 +317,6 @@ class EscapeGameChallenge(models.Model):
 
 			controller = self.get_controller()
 
-			if self.gpio.solved:
-
-				# If we have an associated media, play it remotely on the controller of this challenge
-				if self.solved_media is not None:
-					media_url = self.solved_media.get_action_url(controller)
-					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
-					libraspi.do_get(media_url)
-
-				# Open extra doors with a dependency on me
-				try:
-					extra_doors = DoorGPIO.objects.filter(dependent_on=self)
-
-				except DoorGPIO.DoesNotExist:
-					extra_doors = []
-
-				for extra_door in extra_doors:
-
-					status, message = extra_door.forward_lock_request(request, self.room.game, self.room, 'unlock')
-					if status != 0:
-						raise Exception(message)
-
 			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
 
@@ -354,6 +335,27 @@ class EscapeGameChallenge(models.Model):
 					print('Still some rooms to explore')
 			else:
 				print('Still unsolved challenge in room %s' % self.room.name)
+
+			if self.gpio.solved:
+
+				# If we have an associated media, play it remotely on the controller of this challenge
+				if self.solved_media is not None:
+					media_url = self.solved_media.get_action_url(controller)
+					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
+					libraspi.do_get(media_url)
+
+				# Open rooms with a dependency on my room
+				try:
+					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room)
+
+				except EscapeGameRoom.DoesNotExist:
+					dependent_rooms = []
+
+				for dependent_room in dependent_rooms:
+
+					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
+					if status != 0:
+						raise Exception(message)
 
 			return 0, 'Success'
 

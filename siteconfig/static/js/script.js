@@ -145,13 +145,6 @@ function toggle_all_elements(game)
 		toggle_online_status(raspi);
 	}
 
-	for (var door_index in game.doors) {
-
-		var door = game.doors[door_index];
-		var door_name = game.slug + '-extra-' + door.slug;
-		toggle_elements('button#lock-' + door_name, 'button#unlock-' + door_name, door.locked);
-	}
-
 	for (var room_index in game.rooms) {
 
 		var room = game.rooms[room_index];
@@ -204,13 +197,6 @@ function draw_map(game)
 			var room = game.rooms[index];
 			if (room.door_image && !room.door.locked)
 				draw_image(ctx, room.door_image);
-		}
-
-		for (index in game.doors) {
-
-			var door = game.doors[index];
-			if (door.image && !door.locked)
-				draw_image(ctx, door.image);
 		}
 	};
 

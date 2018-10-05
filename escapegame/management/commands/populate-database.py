@@ -284,6 +284,10 @@ class Command(BaseCommand):
 		room_briefing_1001_nuits = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing des 1001 nuits')
 		room_briefing_1001_nuits.save()
 
+		# Room: Le couloir des 1001 nuits
+		room_corridor_sas_1 = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_corridor_sas_1_image, name='Le couloir des 1001 nuits', has_no_challenge=True, dependent_on=room_briefing_1001_nuits)
+		room_corridor_sas_1.save()
+
 		# Room: Le SAS des 1001 nuits (SAS 1)
 		room_sas_1 = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Le SAS des 1001 nuits', starts_the_timer=True)
 		room_sas_1.save()
@@ -301,20 +305,36 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: Retour au SAS des 1001 nuits (SAS 1)
-		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_sas_1_image, name='Retour au SAS des 1001 nuits', stops_the_timer=True)
+		room_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_corridor_sas_1_image, name='Retour au SAS des 1001 nuits', stops_the_timer=True)
 		room_sas_1_retour.save()
 
+		# Room: Le couloir des 1001 nuits (Retour)
+		room_corridor_sas_1_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_1001_nuits, door_image=door_briefing_room_image, name='Retour dans le couloir des 1001 nuits', has_no_challenge=True, dependent_on=room_sas_1_retour)
+		room_corridor_sas_1_retour.save()
+
 		# Room: Retour dans la salle de briefing des 1001 nuits
-		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing des 1001 nuits')
+		room_briefing_1001_nuits_retour = EscapeGameRoom(game=game_1001_nuits, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing des 1001 nuits')
 		room_briefing_1001_nuits_retour.save()
 
 		#
 		# Stranger Things
 		#
 
-		# Room: La salle de briefing de Stranger Things
-		room_briefing_stranger_things = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things')
-		room_briefing_stranger_things.save()
+		# Room: La salle de briefing de Stranger Things - Parcours obscur
+		room_briefing_stranger_things_obscur = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things - Parcours obscur')
+		room_briefing_stranger_things_obscur.save()
+
+		# Room: La salle de briefing de Stranger Things - Parcours clair
+		room_briefing_stranger_things_clair = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='La salle de briefing de Stranger Things - Parcours clair')
+		room_briefing_stranger_things_clair.save()
+
+		# Room: Le couloir de Stranger Things - Parcours obscur
+		room_corridor_sas_2 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_2_image, name='Le couloir de Stranger Things - Parcours obscur', has_no_challenge=True, dependent_on=room_briefing_stranger_things_obscur)
+		room_corridor_sas_2.save()
+
+		# Room: Le couloir de Stranger Things - Parcours clair
+		room_corridor_sas_3 = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_corridor_sas_3_image, name='Le couloir de Stranger Things - Parcours clair', has_no_challenge=True, dependent_on=room_briefing_stranger_things_clair)
+		room_corridor_sas_3.save()
 
 		# Room: Le SAS obscur de Stranger Things (SAS 2)
 		room_sas_2 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Le SAS obscur', starts_the_timer=True)
@@ -337,15 +357,23 @@ class Command(BaseCommand):
 		room_foret.save()
 
 		# Room: Retour au SAS obscur (SAS 2)
-		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_2_image, name='Retour au SAS obscur', stops_the_timer=True)
+		room_sas_2_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_2_image, name='Retour au SAS obscur', stops_the_timer=True)
 		room_sas_2_retour.save()
 
-		# Room: Rettour au SAS clair (SAS 3)
-		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Retour au SAS clair', stops_the_timer=True)
+		# Room: Retour au SAS clair (SAS 3)
+		room_sas_3_retour = EscapeGameRoom(game=game_stranger_things, door_image=door_corridor_sas_3_image, name='Retour au SAS clair', stops_the_timer=True)
 		room_sas_3_retour.save()
 
+		# Room: Le couloir de Stranger Things - Parcours obscur (Retour)
+		room_corridor_sas_2_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours obscur', has_no_challenge=True, dependent_on=room_sas_2_retour)
+		room_corridor_sas_2_retour.save()
+
+		# Room: Le couloir de Stranger Things - Parcours clair (Retour)
+		room_corridor_sas_3_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_stranger_things, door_image=door_briefing_room_image, name='Retour dans le couloir de Stranger Things - Parcours clair', has_no_challenge=True, dependent_on=room_sas_3_retour)
+		room_corridor_sas_3_retour.save()
+
 		# Room: Salle de briefing - Stranger Things (Retour)
-		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=door_briefing_room_image, name='Retour dans la salle de briefing de Stranger Things')
+		room_briefing_stranger_things_retour = EscapeGameRoom(game=game_stranger_things, controller=raspi_master, door_image=None, name='Retour dans la salle de briefing de Stranger Things')
 		room_briefing_stranger_things_retour.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
@@ -436,7 +464,7 @@ class Command(BaseCommand):
 		#
 
 		# Cube Challenge: Salle de briefing Stranger Things - Prendre le cube obscur
-		chall_briefing_stranger_things_take_cube_obscur = EscapeGameChallenge(room=room_briefing_stranger_things, name='Salle de briefing Stranger Things - Prendre le cube obscur')
+		chall_briefing_stranger_things_take_cube_obscur = EscapeGameChallenge(room=room_briefing_stranger_things_obscur, name='Salle de briefing Stranger Things - Prendre le cube obscur')
 		chall_briefing_stranger_things_take_cube_obscur.save()
 		gpio = chall_briefing_stranger_things_take_cube_obscur.gpio
 		gpio.cube = cube_obscur
@@ -444,7 +472,7 @@ class Command(BaseCommand):
 		gpio.save()
 
 		# Cube Challenge: Salle de briefing Stranger Things - Prendre le cube clair
-		chall_briefing_stranger_things_take_cube_clair = EscapeGameChallenge(room=room_briefing_stranger_things, name='Salle de briefing Stranger Things - Prendre le cube clair')
+		chall_briefing_stranger_things_take_cube_clair = EscapeGameChallenge(room=room_briefing_stranger_things_clair, name='Salle de briefing Stranger Things - Prendre le cube clair')
 		chall_briefing_stranger_things_take_cube_clair.save()
 		gpio = chall_briefing_stranger_things_take_cube_clair.gpio
 		gpio.cube = cube_clair
@@ -558,25 +586,6 @@ class Command(BaseCommand):
 		gpio.cube = cube_clair
 		gpio.challenge_type = ChallengeGPIO.TYPE_PUT_CUBE
 		gpio.save()
-
-		self.stdout.write(self.style.SUCCESS(' OK'))
-
-#
-# Extra doors
-#
-		self.stdout.write('  Populating model `DoorGPIO` (extra)', ending='')
-
-		# SAS 1 is for Les 1001 nuits
-		door_corridor_sas_1 = DoorGPIO(name='La porte couloir du SAS des 1001 nuits', dependent_on=chall_briefing_1001_nuits_take_cube, controller=raspi_master, action_pin=11)
-		door_corridor_sas_1.save()
-
-		# SAS 2 is for Stranger Things - Salle Claire
-		door_corridor_sas_2 = DoorGPIO(name='La porte couloir du SAS obscur', dependent_on=chall_briefing_stranger_things_take_cube_obscur, controller=raspi_master, action_pin=11)
-		door_corridor_sas_2.save()
-
-		# SAS 3 is for Stranger Things - Salle Obscure
-		door_corridor_sas_3 = DoorGPIO(name='La porte couloir du SAS clair', dependent_on=chall_briefing_stranger_things_take_cube_clair, controller=raspi_master, action_pin=11)
-		door_corridor_sas_3.save()
 
 		self.stdout.write(self.style.SUCCESS(' OK'))
 
