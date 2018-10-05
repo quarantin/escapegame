@@ -81,7 +81,6 @@ def escapegame_reset(request, game_slug):
 
 	try:
 		game = EscapeGame.objects.get(slug=game_slug)
-		rooms = EscapeGameRoom.objects.filter(game=game)
 		print('Reseting escape game %s' % game.name)
 
 		game.reset()
