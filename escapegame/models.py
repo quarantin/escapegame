@@ -289,15 +289,6 @@ class EscapeGameChallenge(models.Model):
 		self.gpio.reset()
 		self.save()
 
-		try:
-			doors = DoorGPIO.objects.filter(dependent_on=self)
-
-		except DoorGPIO.DoesNotExist:
-			doors = []
-
-		for door in doors:
-			door.reset()
-
 	def check_solved(self):
 
 		if self.dependent_on is not None and self.dependent_on.gpio.solved_at is None:
@@ -325,6 +316,23 @@ class EscapeGameChallenge(models.Model):
 				if status != 0:
 					raise Exception(message)
 
+				# Open rooms with a dependency on my room
+				try:
+					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room)
+
+				except EscapeGameRoom.DoesNotExist:
+					dependent_rooms = []
+
+				if not dependent_rooms:
+					print("No room dependent on me")
+
+				for dependent_room in dependent_rooms:
+
+					print("Opening dependent room: %s" % dependent_room.name)
+					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
+					if status != 0:
+						raise Exception(message)
+
 				# Was this the last room of this game?
 				if self.room.is_last_room():
 
@@ -341,21 +349,6 @@ class EscapeGameChallenge(models.Model):
 					media_url = self.solved_media.get_action_url(controller)
 					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
 					libraspi.do_get(media_url)
-
-			# Open rooms with a dependency on my room if it's been opened
-			if self.room.door.unlocked_at is not None:
-
-				try:
-					dependent_rooms = EscapeGameRoom.objects.filter(dependent_on=self.room)
-
-				except EscapeGameRoom.DoesNotExist:
-					dependent_rooms = []
-
-				for dependent_room in dependent_rooms:
-
-					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
-					if status != 0:
-						raise Exception(message)
 
 			return 0, 'Success'
 
