@@ -120,12 +120,12 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		'name',
 		'slug',
 		'game',
+		'dependent_on',
 		'controller',
 		'starts_the_timer',
 		'stops_the_timer',
 		'door',
 		'has_no_challenge',
-		'dependent_on',
 		'room_image',
 		'door_image',
 	]
@@ -135,6 +135,7 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'name',
 			'slug',
 			'game',
+			'dependent_on',
 			'controller',
 			'starts_the_timer',
 			'stops_the_timer',
@@ -142,7 +143,6 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		('Door controls', { 'fields': (
 			'door',
 			'has_no_challenge',
-			'dependent_on',
 			)}),
 		('Map', { 'fields': (
 			'room_image',
