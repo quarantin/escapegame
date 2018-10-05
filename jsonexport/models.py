@@ -17,13 +17,13 @@ import json
 
 model_mapping = [
 	('images', Image),
+	('escapegames', EscapeGame),
 	('media_files', MultimediaFile),
+	('cubes', EscapeGameCube),
 	('controllers', Controller),
 	('raspberry_pis', RaspberryPi),
 	('GPIOs', GPIO),
-	('escapegames', EscapeGame),
 	('liftGPIOs', LiftGPIO),
-	('cubes', EscapeGameCube),
 	('doorGPIOs', DoorGPIO),
 	('rooms', EscapeGameRoom),
 	('challengeGPIOs', ChallengeGPIO),
@@ -46,21 +46,30 @@ class JsonImport(models.Model):
 		pass
 
 	@staticmethod
-	def load_list(model, listdic):
+	def load_list(model, listdic, game_controllers):
 
 		try:
 			dics = json.dumps(listdic)
 			objects = serializers.deserialize('json', dics)
 			for obj in objects:
+
+				# If we are desrializing an EscapeGame instance save the controller id to
+				# restore it later and delete it from instance to avoid circular import issues
+				if hasattr(obj, 'object') and hasattr(obj.object, 'controller_id') and type(obj.object) is EscapeGame:
+					game_controllers[obj.object.pk] = obj.object.controller_id
+					obj.object.controller_id = None
+
 				obj.save()
 
-			return 0, 'Success'
+			return 0, 'Success', game_controllers
 
 		except Exception as err:
-			return 1, 'Error: %s' % traceback.format_exc()
+			return 1, 'Error: %s' % traceback.format_exc(), None
 
 	@staticmethod
 	def load(json_configuration):
+
+		game_controllers = {}
 
 		try:
 			databytes = bytearray()
@@ -72,9 +81,17 @@ class JsonImport(models.Model):
 
 			for jsonkey, model in model_mapping:
 				if jsonkey in config:
-					status, message = JsonImport.load_list(model, config[jsonkey])
+					status, message, game_controllers = JsonImport.load_list(model, config[jsonkey], game_controllers)
 					if status != 0:
 						return status, message
+
+			# Restore game controllers (see: JsonImport.load_list())
+			for game_id in game_controllers:
+				game = EscapeGame.objects.get(pk=game_id)
+				raspi_id = game_controllers[game_id]
+				raspi = RaspberryPi.objects.get(pk=raspi_id)
+				game.controller = raspi
+				game.save(update_fields=['controller'])
 
 			return status, message
 
