@@ -344,13 +344,13 @@ class Command(BaseCommand):
 		room_sas_3 = EscapeGameRoom(game=game_stranger_things, door_image=door_sas_3_image, name='Le SAS clair', starts_the_timer=True)
 		room_sas_3.save()
 
-		# Room: La salle claire
-		room_claire = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_claire_image, name='La salle claire')
-		room_claire.save()
-
 		# Room: La salle obscure
 		room_obscure = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_obscure_image, name='La salle obscure')
 		room_obscure.save()
+
+		# Room: La salle claire
+		room_claire = EscapeGameRoom(game=game_stranger_things, door_image=door_salle_claire_image, name='La salle claire')
+		room_claire.save()
 
 		# Room: La forêt
 		room_foret = EscapeGameRoom(game=game_stranger_things, name='La forêt')
