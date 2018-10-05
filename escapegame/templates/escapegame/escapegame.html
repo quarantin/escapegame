@@ -36,12 +36,17 @@
 				<div class="col">
 
 					<div class="row">
-						{% if videos|length == 0 %}<div><p>{% trans "No video file configured for this escapegame." %}</p></div>{% else %}
+					{% if videos|length == 0 %}
+						<div class="col text-left">
+							<p>{% trans "No video file configured for this escapegame." %}</p>
+						</div>
+					{% else %}
 						<select id="selected-video" class="head-block form-control mx-auto select-media">{% for video in videos %}
 							<option name="{{ video.name }}" value="{{ video.slug }}">
 								{% trans "Video" %} - {{ video.name }}
 							</option>{% endfor %}
-						</select>{% endif %}
+						</select>
+					{% endif %}
 					</div>
 
 					<div class="row">
@@ -50,7 +55,7 @@
 {% for raspi in raspberry_pis %}
 							{% if raspi.media_type == "video" %}
 							<label class="row mx-auto">
-								<input class="col-1" name="selected-raspberry-pi-video"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
+								<input class="col-1" name="selected-raspberry-pi-video"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online or videos|length == 0 %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
 								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
 								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
@@ -64,7 +69,7 @@
 						<div class="col">
 
 							<!-- Play video button -->
-							<button id="video-play" type="submit">
+							<button id="video-play" type="submit"{% if videos|length == 0 %} class="button-disabled"{% endif %}>
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}">
 									<p>{% trans "Start video" %}</p>
@@ -72,7 +77,7 @@
 							</button>
 
 							<!-- Pause video button -->
-							<button id="video-pause" type="submit" class="d-none">
+							<button id="video-pause" type="submit" class="d-none{% if videos|length == 0 %} button-disabled{% endif %}">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}">
 									<p>{% trans "Pause video" %}</p>
@@ -80,7 +85,7 @@
 							</button>
 
 							<!-- Stop video button -->
-							<button id="video-stop" type="submit">
+							<button id="video-stop" type="submit"{% if videos|length == 0 %} class="button-disabled"{% endif %}>
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}">
 									<p>{% trans "Stop video" %}</p>
@@ -102,12 +107,17 @@
 				<div class="col">
 
 					<div class="row">
-						{% if audios|length == 0 %}<div><p>{% trans "No audio file configured for this escapegame." %}</p></div>{% else %}
+					{% if audios|length == 0 %}
+						<div class="col text-left">
+							<p>{% trans "No audio file configured for this escapegame." %}</p>
+						</div>
+					{% else %}
 						<select id="selected-audio" class="head-block form-control mx-auto select-media">{% for audio in audios %}
 							<option name="{{ audio.name }}" value="{{ audio.slug }}">
 								{% trans "Audio" %} - {{ audio.name }}
 							</option>{% endfor %}
-						</select>{% endif %}
+						</select>
+					{% endif %}
 					</div>
 
 					<div class="row">
@@ -116,7 +126,7 @@
 						{% for raspi in raspberry_pis %}
 							{% if raspi.media_type == "audio" %}
 							<label class="row mx-auto">
-								<input class="col-1" name="selected-raspberry-pi-audio"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
+								<input class="col-1" name="selected-raspberry-pi-audio"  data-raspi-url="{{ raspi.url }}" type="radio"{% if not raspi.online or audios|length == 0 %} disabled{% elif raspi == raspberry_pis.0 %} checked{% endif %}>
 								&nbsp;
 								<span class="col-8 text-left">{% trans "Raspberry Pi" %} - {{ raspi.name }}&nbsp;</span>
 								<span class="col-2 text-center badge badge-{{ raspi.badge }}" id="raspberry-pi-{{ raspi.slug }}">{{ raspi.status }}</span>
@@ -130,7 +140,7 @@
 						<div class="col">
 
 							<!-- Play audio button -->
-							<button id="audio-play" type="submit">
+							<button id="audio-play" type="submit"{% if audios|length == 0 %} class="button-disabled"{% endif %}>
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play audio" %}">
 									<p>{% trans "Start audio" %}</p>
@@ -138,7 +148,7 @@
 							</button>
 
 							<!-- Pause audio button -->
-							<button id="audio-pause" type="submit" class="d-none">
+							<button id="audio-pause" type="submit"class="d-none{% if audios|length == 0 %} button-disabled{% endif %}">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause audio" %}">
 									<p>{% trans "Pause audio" %}</p>
@@ -146,7 +156,7 @@
 							</button>
 
 							<!-- Stop audio button -->
-							<button id="audio-stop" type="submit">
+							<button id="audio-stop" type="submit"{% if audios|length == 0 %} class="button-disabled"{% endif %}>
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop audio" %}">
 									<p>{% trans "Stop audio" %}</p>
