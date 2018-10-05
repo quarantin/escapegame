@@ -86,13 +86,16 @@ function toggle_elements(lock_button, unlock_button, locked)
  */
 function toggle_online_status(raspi)
 {
+	var media_type = raspi.media_type;
+	var no_media = $('select#selected-' + media_type).length === 0;
+
 	var span = $('#raspberry-pi-' + raspi.slug);
 	var input = span.parent().find('input');
 
 	span.removeClass('badge-' + raspi.not_badge);
 	span.addClass('badge-' + raspi.badge);
 	span.text(raspi.status);
-	input.prop('disabled', !raspi.online);
+	input.prop('disabled', !raspi.online || no_media);
 
 	if (!raspi.online)
 		input.prop('checked', false);
@@ -355,6 +358,10 @@ function video_control_handler(action)
 
 	$('button#video-' + action).click(function() {
 
+		var disabled = $(this).hasClass('button-disabled');
+		if (disabled)
+			return;
+
 		if (action == 'play') {
 
 			$('button#video-play').addClass('d-none');
@@ -389,12 +396,18 @@ function audio_control_handler(action)
 
 	});
 
-	$('button#audio-' + action).click(function(){
+	$('button#audio-' + action).click(function() {
+
+		var disabled = $(this).hasClass('button-disabled');
+		if (disabled)
+			return;
+
 		if (action == 'play') {
+
 			$('button#audio-play').addClass('d-none');
 			$('button#audio-pause').removeClass('d-none');
 		}
-		else{
+		else {
 			$('button#audio-play').removeClass('d-none');
 			$('button#audio-pause').addClass('d-none');
 		}
@@ -421,7 +434,7 @@ function lift_control_handler(action)
 {
 	$('button.' + action + '-lift').click(function() {
 
-		var disabled = $(this).hasClass('button-disabled')
+		var disabled = $(this).hasClass('button-disabled');
 		if (disabled)
 			return;
 
@@ -448,6 +461,10 @@ function door_control_handler(action)
 {
 	$('button.' + action + '-button').click(function() {
 
+		var disabled = $(this).hasClass('button-disabled');
+		if (disabled)
+			return;
+
 		ok = confirm('Are you really sure you want to ' + action + ' the door?');
 		if (ok !== true)
 			return;
@@ -470,6 +487,10 @@ function door_control_handler(action)
 function challenge_control_handler(action)
 {
 	$('a.challenge-' + action).click(function (e) {
+
+		var disabled = $(this).hasClass('button-disabled');
+		if (disabled)
+			return;
 
 		ok = confirm('Are you really sure you want to ' + action + ' this challenge?');
 		if (ok !== true)
