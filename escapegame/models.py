@@ -22,7 +22,7 @@ class EscapeGame(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	time_limit = models.DurationField(default=timedelta(hours=1))
-	controller = models.ForeignKey('controllers.RaspberryPi', on_delete=models.CASCADE)
+	controller = models.ForeignKey('controllers.RaspberryPi', on_delete=models.CASCADE, blank=True, null=True)
 
 	map_image = models.ForeignKey('multimedia.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='game_map_image')
 
