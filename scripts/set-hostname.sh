@@ -10,6 +10,9 @@ if [ -z "${HOSTNAME}" ]; then
 	exit
 fi
 
+# Fix hostname in case user also supplied the .local part
+HOSTNAME=$(echo ${HOSTNAME} | sed 's/\.local//')
+
 if [ ${HOSTNAME} = ${OLD_HOSTNAME} ]; then
 	echo 'Not changing same hostname'
 	exit
@@ -17,6 +20,8 @@ fi
 
 # Ask sudo password before anything else to avoid polluting script output.
 sudo echo -n > /dev/null
+
+echo "[ * ] Configuring new hostname ${HOSTNAME} (current: ${OLD_HOSTNAME})"
 
 # Modify /etc/hosts so we can resolve both our old and new hostnames locally
 # This allow us to avoid the error sudo: Unable to resolve host <old hostname>

@@ -11,14 +11,8 @@ if [ -z ${NEW_HOSTNAME} ]; then
 	exit
 fi
 
-# Fix hostname in case user also supplied the .local part
-NEW_HOSTNAME=$(echo ${NEW_HOSTNAME} | sed 's/\.local//')
-
 # Configure hostname of the machine
-if [ ${HOSTNAME} != ${NEW_HOSTNAME} ]; then
-	echo "[ * ] Configuring new hostname ${NEW_HOSTNAME} (current: ${HOSTNAME})"
-	sudo ${ROOTDIR}/scripts/set-hostname.sh ${NEW_HOSTNAME}
-fi
+sudo ${ROOTDIR}/scripts/set-hostname.sh ${NEW_HOSTNAME}
 
 # Source env.sh again to update HOSTNAME
 . $(dirname $0)/env.sh
