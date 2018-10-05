@@ -16,7 +16,7 @@ label.head-border {
 
 .head-block {
 	text-align: center;
-	width: 50%;
+	width: 70%;
 	margin: 10px auto !important;
 }
 
@@ -69,9 +69,22 @@ td a {
 	margin: 0 auto;
 }
 
+div.radio-raspi {
+	width: 80%;
+}
+
+div.escapegame-card {
+	margin-bottom: 20px;
+}
+
 div.import-export {
 	width: 50%;
 	margin: 0 auto;
+}
+
+table.challenge-status {
+	margin-bottom: 30px;
+	width: 100%;
 }
 
 input[type=file].import-export {
@@ -81,15 +94,6 @@ input[type=file].import-export {
 input[type=checkbox].import-export {
 	margin-top: 5px;
 	margin-right: 10px;
-}
-
-div.challenge-status {
-	width: 500px;
-}
-
-table.challenge-status {
-	margin-bottom: 30px;
-	width: 100%;
 }
 
 img.map {
@@ -110,10 +114,6 @@ select.select-media {
 	width: 90%;
 }
 
-div.radio-raspi {
-	width: 80%;
-}
-
 .badge {
 	min-width: 20%;
 	max-height: 24px;
@@ -123,6 +123,3 @@ div.radio-raspi {
 	opacity: 0.2;
 }
 
-div.escapegame-card {
-	margin-bottom: 20px;
-}
