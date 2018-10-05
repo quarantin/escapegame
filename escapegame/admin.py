@@ -24,9 +24,11 @@ import re
 # Escape game admin classes
 
 class EscapeGameAdmin(admin.ModelAdmin):
+
 	formfield_overrides = {
 		models.DurationField: { 'widget': DateTimeInput },
 	}
+
 	list_display = [
 		'name',
 		'slug',
@@ -34,6 +36,7 @@ class EscapeGameAdmin(admin.ModelAdmin):
 		'controller',
 		'map_image',
 	]
+
 	fieldsets = (
 		('Escape Game', { 'fields': (
 			'name',
@@ -68,7 +71,9 @@ class EscapeGameCubeForm(forms.ModelForm):
 			})
 
 class EscapeGameCubeAdmin(admin.ModelAdmin):
+
 	form = EscapeGameCubeForm
+
 	list_display = [
 		'name',
 		'game',
@@ -78,6 +83,7 @@ class EscapeGameCubeAdmin(admin.ModelAdmin):
 		'losers_media',
 		'winners_media',
 	]
+
 	fieldsets = (
 		('Escape Game Cube', { 'fields': (
 			'name',
@@ -102,15 +108,15 @@ class EscapeGameRoomForm(forms.ModelForm):
 			'unlock_dependent_on',
 		]
 
-		def clean(self):
+	def clean(self):
 
-			unlock_dependent_on = 'unlock_dependent_on' in self.cleaned_data and self.cleaned_data['unlock_dependent_on'] is not None
-			has_no_challenge = 'has_no_challenge' in self.cleaned_data and self.cleaned_data['has_no_challenge'] is True
+		unlock_dependent_on = 'unlock_dependent_on' in self.cleaned_data and self.cleaned_data['unlock_dependent_on'] is not None
+		has_no_challenge = 'has_no_challenge' in self.cleaned_data and self.cleaned_data['has_no_challenge'] is True
 
-			if has_no_challenge is True and unlock_dependent_on is False:
-				raise ValidationError({
-						'unlock_dependent_on': _('This field is required because this room has no challenge'),
-				})
+		if has_no_challenge is True and unlock_dependent_on is False:
+			raise ValidationError({
+					'unlock_dependent_on': _('This field is required because this room has no challenge'),
+			})
 
 class EscapeGameRoomAdmin(admin.ModelAdmin):
 
@@ -136,8 +142,6 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 			'name',
 			'slug',
 			'game',
-			'lock_dependent_on',
-			'unlock_dependent_on',
 			'controller',
 			'starts_the_timer',
 			'stops_the_timer',
@@ -145,6 +149,8 @@ class EscapeGameRoomAdmin(admin.ModelAdmin):
 		('Door controls', { 'fields': (
 			'door',
 			'has_no_challenge',
+			'unlock_dependent_on',
+			'lock_dependent_on',
 			)}),
 		('Map', { 'fields': (
 			'room_image',
