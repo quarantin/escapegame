@@ -35,6 +35,7 @@ class MultimediaFileAdmin(admin.ModelAdmin):
 		'audio_out',
 		'media_type',
 		'path',
+		'status',
 	]
 	fieldsets = (
 		('Multimedia File', { 'fields': (
@@ -44,11 +45,12 @@ class MultimediaFileAdmin(admin.ModelAdmin):
 			'audio_out',
 			'media_type',
 			'path',
+			'status',
 		)}),
 	)
 
 	def get_readonly_fields(self, request, obj=None):
-		return self.readonly_fields + ( 'slug', )
+		return self.readonly_fields + ( 'slug', 'status' )
 
 # Register our models to our custom admin site
 site.register(Image, ImageAdmin)
