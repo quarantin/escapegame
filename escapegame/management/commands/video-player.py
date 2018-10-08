@@ -18,8 +18,8 @@ MPV_ACTIONS = {
 	'pause':        'cycle pause\n',
 	'play':         'cycle pause\n',
 	'stop':         'stop\n',
-	'rewind':       'seek -10\n',
-	'fast-forward': 'seek 10\n',
+	'rewind':       'seek -30\n',
+	'fast-forward': 'seek 30\n',
 	'volume-down':  'cycle volume down\n',
 	'volume-up':    'cycle volume up\n',
 }
