@@ -61,6 +61,7 @@ class MultimediaFile(models.Model):
 	slug = models.SlugField(max_length=255, unique=True, blank=True)
 	name = models.CharField(max_length=255, unique=True)
 	game = models.ForeignKey('escapegame.EscapeGame', on_delete=models.SET_NULL, blank=True, null=True)
+	loop = models.BooleanField(default=False)
 	audio_out = models.CharField(max_length=6, default=TYPE_AUDIO_OUT_BOTH, choices=AUDIO_OUT_TYPES)
 	media_type = models.CharField(max_length=6, default=TYPE_VIDEO, choices=MEDIA_TYPES)
 	path = models.FileField(upload_to=settings.UPLOAD_MEDIA_PATH)
@@ -107,7 +108,8 @@ class MultimediaFile(models.Model):
 			return 1, 'Error: %s' % traceback.format_exc()
 
 	def play(self):
-		return self.fifo_control('play %s %s' % (self.pk, self.get_url()))
+		loop = self.loop and 'loop' or ''
+		return self.fifo_control('play %s %s %s' % (self.pk, self.get_url(), loop))
 
 	def pause(self):
 		return self.fifo_control('pause %s' % self.pk)
