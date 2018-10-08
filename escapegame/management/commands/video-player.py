@@ -11,15 +11,23 @@ import subprocess
 
 
 MPV_ACTIONS = {
-	'pause': 'cycle pause\n',
-	'play':  'cycle pause\n',
-	'stop':  'stop\n',
+	'pause':        'cycle pause\n',
+	'play':         'cycle pause\n',
+	'stop':         'stop\n',
+	'rewind':       'seek -10\n',
+	'fast-forward': 'seek 10\n',
+	'volume-down':  'cycle volume down\n',
+	'volume-up':    'cycle volume up\n',
 }
 
 OMX_ACTIONS = {
-	'pause': 'p',
-	'play':  'p',
-	'stop':  'q',
+	'pause':        'p',
+	'play':         'p',
+	'stop':         'q',
+	'rewind':       '<',
+	'fast-forward': '>',
+	'volume-down':  '-',
+	'volume-up':    '+',
 }
 
 class Command(BaseCommand):
