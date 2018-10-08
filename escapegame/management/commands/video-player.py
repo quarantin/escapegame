@@ -28,8 +28,8 @@ OMX_ACTIONS = {
 	'pause':        'p',
 	'play':         'p',
 	'stop':         'q',
-	'rewind':       '<',
-	'fast-forward': '>',
+	'rewind':       '\x1b\x5b\x44',
+	'fast-forward': '\x1b\x5b\x43',
 	'volume-down':  '-',
 	'volume-up':    '+',
 }
