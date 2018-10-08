@@ -105,25 +105,49 @@ class MultimediaFile(models.Model):
 		except:
 			return 1, 'Error: %s' % traceback.format_exc()
 
-	def pause(self):
-		return self.fifo_control('pause %s' % self.audio_out)
-
 	def play(self):
 		return self.fifo_control('play %s %s' % (self.audio_out, self.get_url()))
+
+	def pause(self):
+		return self.fifo_control('pause %s' % self.audio_out)
 
 	def stop(self):
 		return self.fifo_control('stop %s' % self.audio_out)
 
+	def rewind(self):
+		return self.fifo_control('rewind %s' % self.audio_out)
+
+	def fast_forward(self):
+		return self.fifo_control('fast-forward %s' % self.audio_out)
+
+	def volume_down(self):
+		return self.fifo_control('volume-down %s' % self.audio_out)
+
+	def volume_up(self):
+		return self.fifo_control('volume-up %s' % self.audio_out)
+
 	def control(self, action):
 
-		if action == 'pause':
+		if action == 'play':
+			return self.play()
+
+		elif action == 'pause':
 			return self.pause()
 
 		elif action == 'stop':
 			return self.stop()
 
-		elif action == 'play':
-			return self.play()
+		elif action == 'rewind':
+			return self.rewind()
+
+		elif action == 'fast-forward':
+			return self.fast_forward()
+
+		elif action == 'volume-down':
+			return self.volume_down()
+
+		elif action == 'volume-up':
+			return self.volume_up()
 
 		return 1, 'Invalid action `%s`' % action
 
