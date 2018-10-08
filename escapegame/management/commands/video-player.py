@@ -62,7 +62,7 @@ class Command(BaseCommand):
 		self.zombies.append(self.pool.pop())
 		self.lock.release()
 
-	def control(self, action, media_id, url=None):
+	def control(self, action, media_id, url=None, loop=None):
 
 		print('Video player: %s %s' % (action, url is not None and url or ''))
 
@@ -92,7 +92,11 @@ class Command(BaseCommand):
 
 			# Let's start the video player script
 			script = os.path.join(settings.BASE_DIR, 'scripts/video-player.sh')
-			self.process = subprocess.Popen([ script, self.fifo_player, media_file.audio_out, url ], stdin=subprocess.PIPE, stdout=None, stderr=None)
+			argv = [ script, self.fifo_player, media_file.audio_out, url ]
+			if loop is not None:
+				argv.append('loop=true')
+
+			self.process = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=None, stderr=None)
 
 			thread = Thread(target=self.wait_for_player_thread, args=(media_file,))
 
@@ -142,7 +146,7 @@ class Command(BaseCommand):
 				fifo_control.close()
 
 				for command in lines:
-					cmd = command.strip().split(' ', 2)
+					cmd = command.strip().split(' ', 3)
 					self.control(*cmd)
 
 				continue
