@@ -64,6 +64,7 @@ class MultimediaFile(models.Model):
 	audio_out = models.CharField(max_length=6, default=TYPE_AUDIO_OUT_BOTH, choices=AUDIO_OUT_TYPES)
 	media_type = models.CharField(max_length=6, default=TYPE_VIDEO, choices=MEDIA_TYPES)
 	path = models.FileField(upload_to=settings.UPLOAD_MEDIA_PATH)
+	status = models.CharField(max_length=255, default='stopped')
 
 	def __str__(self):
 		return '%s - %s' % (self.MEDIA_TYPES_DICT[self.media_type], self.name)
