@@ -120,6 +120,8 @@ def escapegame_status(request, game_slug):
 		cubes = EscapeGameCube.objects.filter(game=game)
 
 		game = EscapeGame.objects.filter(slug=game_slug).values().get()
+		game['videos'] = [ x for x in MultimediaFile.objects.filter(media_type='video').values() ]
+		game['audios'] = [ x for x in MultimediaFile.objects.filter(media_type='audio').values() ]
 		game['raspberrypis'] = raspis
 		game['rooms'] = []
 		game['lifts'] = []
