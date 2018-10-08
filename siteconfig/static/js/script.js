@@ -42,17 +42,38 @@ function get_media_url(media, action)
 }
 
 /*
- * Initialize media buttons for the supplied media
+ * Disable media buttons for the supplied media
  */
-function init_media_buttons(media)
+function disable_media_buttons(media)
 {
 	$('button#' + media + '-play').removeClass('d-none');
 	$('button#' + media + '-pause').addClass('d-none');
-	$('button#' + media + '-rewind').addClass('button-disabled');
 	$('button#' + media + '-stop').addClass('button-disabled');
+	$('button#' + media + '-rewind').addClass('button-disabled');
 	$('button#' + media + '-fast-forward').addClass('button-disabled');
 	$('button#' + media + '-volume-down').addClass('button-disabled');
 	$('button#' + media + '-volume-up').addClass('button-disabled');
+}
+
+/*
+ * Enable media buttons for the supplied media
+ */
+function enable_media_buttons(media, media_status='stopped')
+{
+	if (media_status == 'paused') {
+		$('button#' + media + '-play').removeClass('d-none');
+		$('button#' + media + '-pause').addClass('d-none');
+	}
+	else {
+		$('button#' + media + '-play').addClass('d-none');
+		$('button#' + media + '-pause').removeClass('d-none');
+	}
+
+	$('button#' + media + '-stop').removeClass('button-disabled');
+	$('button#' + media + '-rewind').removeClass('button-disabled');
+	$('button#' + media + '-fast-forward').removeClass('button-disabled');
+	$('button#' + media + '-volume-down').removeClass('button-disabled');
+	$('button#' + media + '-volume-up').removeClass('button-disabled');
 }
 
 /*
@@ -99,6 +120,29 @@ function toggle_online_status(raspi)
 		$('input[name=selected-raspberry-pi-audio]:enabled:first').prop('checked', true);
 }
 
+/*
+ * Toggle media buttons according to selected media state
+ */
+function toggle_media_buttons(media_type, media_list)
+{
+	selected_media = $('select#selected-' + media_type).val();
+	if (!selected_media || selected_media === undefined)
+		return;
+
+	for (media_index in media_list) {
+
+		media = media_list[media_index];
+		if (media.slug != selected_media)
+			continue;
+
+		if (media.status == 'stopped')
+			disable_media_buttons(media_type);
+
+		else
+			enable_media_buttons(media_type, media.status);
+	}
+}
+
 /**
  * Toggle lifts according to their state
  */
@@ -128,6 +172,9 @@ function toggle_lifts(game)
 function toggle_all_elements(game)
 {
 	toggle_lifts(game);
+
+	toggle_media_buttons('video', game.videos);
+	toggle_media_buttons('audio', game.audios);
 
 	for (var raspi_index in game.raspberrypis) {
 
@@ -319,8 +366,8 @@ function game_control_handler(action)
 			url: '/' + get_language() + '/' + this.value + '/' + action + '/',
 			success: function() {
 
-				init_media_buttons('video');
-				init_media_buttons('audio');
+				disable_media_buttons('video');
+				disable_media_buttons('audio');
 
 				refresh_page();
 
@@ -339,7 +386,7 @@ function game_control_handler(action)
 function media_control_handler(media, action)
 {
 	$('select#selected-' + media).change(function() {
-		init_media_buttons(media);
+		refresh_page();
 	});
 
 	$('button#' + media + '-' + action).click(function() {
@@ -348,23 +395,16 @@ function media_control_handler(media, action)
 		if (disabled)
 			return;
 
-		if (action == 'play') {
+		if (action == 'play')
+			enable_media_buttons(media);
 
-			$('button#' + media + '-rewind').removeClass('button-disabled');
-			$('button#' + media + '-play').addClass('d-none');
-			$('button#' + media + '-pause').removeClass('d-none');
-			$('button#' + media + '-stop').removeClass('button-disabled');
-			$('button#' + media + '-fast-forward').removeClass('button-disabled');
-			$('button#' + media + '-volume-down').removeClass('button-disabled');
-			$('button#' + media + '-volume-up').removeClass('button-disabled');
-		}
 		else if (action == 'pause' || action == 'stop') {
 
 			$('button#' + media + '-play').removeClass('d-none');
 			$('button#' + media + '-pause').addClass('d-none');
 
 			if (action == 'stop')
-				init_media_buttons(media);
+				disable_media_buttons(media);
 		}
 
 		var media_url = get_media_url(media, action);
