@@ -13,10 +13,25 @@
 		<!-- Game controls -->
 		<div class="col head-block">
 
+			<!-- Escape game counter -->
+			<label class="head-block head-border">{% trans "Time Elapsed" %}</label>
+			<div class="row head-block" style="text-align: center;">
+				<div class="col">
+					<font size="18">
+						<div id="counter">
+							0:00:00
+						</div>
+					</font>
+				</div>
+			</div>
+
 			<!-- Escape game controls -->
 			<label class="head-block head-border">{% trans "Escape game controls" %}</label>
 			<div class="row head-block">
-				<div class="col">
+			{% if game.lifts|length == 1 %}
+				<div class="col-sm-2"></div>
+			{% endif %}
+				<div class="col-sm-4">
 
 					<!-- Reset escape game button -->
 					<button id="reset-escapegame" value="{{ game.slug }}" type="submit">
@@ -26,6 +41,46 @@
 						</div>
 					</button>
 				</div>
+		{% if game.lifts|length < 1 %}
+				<div class="col-sm-4">
+					<p>
+						{% trans "No lift available for this escape game." %}
+						<br>
+					{% if request.user.is_superuser %}
+						{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/add/">{% trans "this" %}</a> {% trans "page to create new lifts." %}
+					{% endif %}
+					</p>
+				</div>
+		{% else %}
+			{% for lift in game.lifts %}
+				{% with lift_prefix=lift.name|slice:"0:1"|lower lift_suffix=lift.name|slice:"1:" %}
+		        {% with lift_name=lift_prefix|add:lift_suffix %}
+
+				<div class="col-sm-4">
+
+					<!-- Raise lift button -->
+					<button id="raise-{{ game.slug }}-{{ lift.slug }}" class="raise-lift{% if lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/raise/" type="submit">
+						<img src="{% static 'img/icons8-raise-100.png' %}" title="{% trans "Raise lift" %} {{ lift_name }}">
+					</button>
+
+					<!-- Lower lift button -->
+					<button id="lower-{{ game.slug }}-{{ lift.slug }}" class="lower-lift{% if not lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/lower/" type="submit">
+						<img src="{% static 'img/icons8-lower-100.png' %}" title="{% trans "Lower lift" %} {{ lift_name }}">
+					</button>
+
+					<label for="lower-{{ game.slug }}-{{ lift.slug }}" class="image-with-caption">
+						<p>{% trans "Lift" %} {{ lift_name }}</p>
+					</label>
+				</div>
+
+				{% if game.lifts|length == 1 %}
+				<div class="col-sm-2"></div>
+				{% endif %}
+
+				{% endwith %}
+				{% endwith %}
+			{% endfor %}
+		{% endif %}
 			</div>
 
 			<!-- Video controls -->
@@ -48,7 +103,7 @@
 						</select>
 					{% endif %}
 					</div>
-
+					<br>
 					<div class="row">
 						<div class="col radio radio-raspi">
 
@@ -153,7 +208,7 @@
 						</select>
 					{% endif %}
 					</div>
-
+					<br>
 					<div class="row">
 						<div class="col radio radio-raspi">
 
@@ -233,61 +288,6 @@
 
 						</div>
 					</div>
-
-				</div>
-
-			</div>
-
-			<!-- Lift controls -->
-			<label class="head-block head-border">{% trans "Lift controls" %}</label>
-			<div class="row head-block">
-				<div class="col"></div>
-		{% if game.lifts|length < 1 %}
-			<p>
-				{% trans "No lift available for this escape game." %}
-				<br>
-			{% if request.user.is_superuser %}
-				{% trans "You can visit" %} <a href="/{{ request.LANGUAGE_CODE }}/admin/controllers/liftgpio/add/">{% trans "this" %}</a> {% trans "page to create new lifts." %}
-			{% endif %}
-		</p>
-		{% else %}
-			{% for lift in game.lifts %}
-				{% with lift_prefix=lift.name|slice:"0:1"|lower lift_suffix=lift.name|slice:"1:" %}
-	            {% with lift_name=lift_prefix|add:lift_suffix %}
-
-				<div class="col">
-
-					<!-- Raise lift button -->
-					<button id="raise-{{ game.slug }}-{{ lift.slug }}" class="raise-lift{% if lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/raise/" type="submit">
-						<img src="{% static 'img/icons8-raise-100.png' %}" title="{% trans "Raise lift" %} {{ lift_name }}">
-					</button>
-
-					<!-- Lower lift button -->
-					<button id="lower-{{ game.slug }}-{{ lift.slug }}" class="lower-lift{% if not lift.raised %} button-disabled{% endif %}" value="{{ lift.url_callback }}/lower/" type="submit">
-						<img src="{% static 'img/icons8-lower-100.png' %}" title="{% trans "Lower lift" %} {{ lift_name }}">
-					</button>
-
-					<label for="lower-{{ game.slug }}-{{ lift.slug }}" class="image-with-caption">
-						<p>{% trans "Lift" %} {{ lift_name }}</p>
-					</label>
-
-				</div>
-				{% endwith %}
-				{% endwith %}
-			{% endfor %}
-		{% endif %}
-				<div class="col"></div>
-			</div>
-
-			<!-- Escape game counter -->
-			<label class="head-block head-border">{% trans "Time Elapsed" %}</label>
-			<div class="row head-block" style="text-align: center;">
-				<div class="col">
-					<font size="18">
-						<div id="counter">
-							0:00:00
-						</div>
-					</font>
 				</div>
 			</div>
 		</div>
