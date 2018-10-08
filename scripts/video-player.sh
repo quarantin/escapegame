@@ -22,7 +22,11 @@ if [ ${RUNNING_ON_PI} = true ]; then
 	# the FIFO to start playing the video.
 	echo > ${FIFO} &
 
-	/usr/bin/omxplayer --no-osd --adev ${AUDIO_OUT} ${URL} ${4} < ${FIFO}
+	if [ ! -z "${4}" ]; then
+		LOOP=--loop
+	fi
+	/usr/bin/omxplayer --no-osd --adev ${AUDIO_OUT} ${URL} ${LOOP} < ${FIFO}
+
 else
 	LOOP_PARAM='no'
 	if [ ! -z "${4}" ]; then
