@@ -3,11 +3,15 @@
 from django.core.management.base import BaseCommand
 
 from siteconfig import settings
+from multimedia.models import MultimediaFile
+from escapegame import libraspi
 
 import os
 import time
 import traceback
 import subprocess
+
+from threading import Lock, Thread
 
 
 MPV_ACTIONS = {
@@ -36,11 +40,29 @@ class Command(BaseCommand):
 	fifo_player = settings.VIDEO_PLAYER_FIFO
 	fifo_control = settings.VIDEO_CONTROL_FIFO
 
+	lock = Lock()
+
+	pool = []
+	zombies = []
+
 	actions = settings.RUNNING_ON_PI and OMX_ACTIONS or MPV_ACTIONS
 
 	process = None
 
-	def control(self, action, audio_out, url=None):
+	def wait_for_player_thread(self, media_file):
+
+		self.process.wait()
+		self.process = None
+
+		media_file.status = 'stopped'
+		media_file.save(update_fields=['status'])
+		libraspi.notify_frontend()
+
+		self.lock.acquire()
+		self.zombies.append(self.pool.pop())
+		self.lock.release()
+
+	def control(self, action, media_id, url=None):
 
 		print('Video player: %s %s' % (action, url is not None and url or ''))
 
@@ -49,6 +71,8 @@ class Command(BaseCommand):
 
 		if action not in self.actions:
 			raise Exception('Invalid player action: `%s`' % action)
+
+		media_file = MultimediaFile.objects.get(pk=media_id)
 
 		# If the video process has already been instanciated and is still running...
 		if self.process is not None and self.process.poll() is None:
@@ -63,12 +87,38 @@ class Command(BaseCommand):
 			fifo_player.write(command)
 			fifo_player.close()
 
-		# Otherwise, if the action was not 'stop' and we have a valid URL
+		# Otherwise, if the action is not 'stop' and we have a valid URL
 		elif action is not 'stop' and url is not None:
 
 			# Let's start the video player script
 			script = os.path.join(settings.BASE_DIR, 'scripts/video-player.sh')
-			self.process = subprocess.Popen([ script, self.fifo_player, audio_out, url ], stdin=subprocess.PIPE, stdout=None, stderr=None)
+			self.process = subprocess.Popen([ script, self.fifo_player, media_file.audio_out, url ], stdin=subprocess.PIPE, stdout=None, stderr=None)
+
+			thread = Thread(target=self.wait_for_player_thread, args=(media_file,))
+
+			self.lock.acquire()
+			self.pool.append(thread)
+			self.lock.release()
+
+			thread.daemon = True
+			thread.start()
+
+
+		# Update status of multimedia file
+		status = media_file.status
+
+		if action == 'play':
+			media_file.status = 'playing'
+
+		elif action == 'pause':
+			media_file.status = 'paused'
+
+		elif action == 'stop':
+			media_file.status = 'stopped'
+
+		if status != media_file.status:
+			media_file.save(update_fields=['status'])
+			libraspi.notify_frontend()
 
 	def handle(self, *args, **options):
 
@@ -79,6 +129,11 @@ class Command(BaseCommand):
 		while True:
 
 			try:
+				self.lock.acquire()
+				for thread in self.zombies:
+					thread.join()
+				self.lock.release()
+
 				if not os.path.exists(self.fifo_control):
 					os.mkfifo(self.fifo_control)
 

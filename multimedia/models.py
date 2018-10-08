@@ -107,25 +107,25 @@ class MultimediaFile(models.Model):
 			return 1, 'Error: %s' % traceback.format_exc()
 
 	def play(self):
-		return self.fifo_control('play %s %s' % (self.audio_out, self.get_url()))
+		return self.fifo_control('play %s %s' % (self.pk, self.get_url()))
 
 	def pause(self):
-		return self.fifo_control('pause %s' % self.audio_out)
+		return self.fifo_control('pause %s' % self.pk)
 
 	def stop(self):
-		return self.fifo_control('stop %s' % self.audio_out)
+		return self.fifo_control('stop %s' % self.pk)
 
 	def rewind(self):
-		return self.fifo_control('rewind %s' % self.audio_out)
+		return self.fifo_control('rewind %s' % self.pk)
 
 	def fast_forward(self):
-		return self.fifo_control('fast-forward %s' % self.audio_out)
+		return self.fifo_control('fast-forward %s' % self.pk)
 
 	def volume_down(self):
-		return self.fifo_control('volume-down %s' % self.audio_out)
+		return self.fifo_control('volume-down %s' % self.pk)
 
 	def volume_up(self):
-		return self.fifo_control('volume-up %s' % self.audio_out)
+		return self.fifo_control('volume-up %s' % self.pk)
 
 	def control(self, action):
 
