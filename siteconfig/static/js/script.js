@@ -19,51 +19,40 @@ function get_language()
 /*
  * Retrieve the URL of the Raspberry Pi selected in the radio button list.
  */
-function get_selected_video_raspi()
+function get_selected_raspi(media)
 {
-	raspi = $('input[name=selected-raspberry-pi-video]:checked');
+	raspi = $('input[name=selected-raspberry-pi-' + media + ']:checked');
 
 	return (raspi.length > 0 ? raspi : false);
 }
 
-
-function get_selected_audio_raspi()
-{
-	raspi = $('input[name=selected-raspberry-pi-audio]:checked');
-
-	return (raspi.length > 0 ? raspi : false);
-}
 /*
- * Return the video URL for the video selected in select field.
+ * Return the media URL for the media selected in select field.
  */
-function get_video_url(action)
+function get_media_url(media, action)
 {
-	selected_video = $('#selected-video').val();
-	selected_raspi = get_selected_video_raspi();
+	selected_media = $('#selected-' + media).val();
+	selected_raspi = get_selected_raspi(media);
 
 	raspi_url = '';
 	if (selected_raspi)
 		raspi_url = selected_raspi.data('raspi-url');
 
-	return raspi_url + '/' + get_language() + '/api/video/' + selected_video + '/' + action + '/';
+	return raspi_url + '/' + get_language() + '/api/video/' + selected_media + '/' + action + '/';
 }
 
-
 /*
- *Return the audio URL for the audio selected in select field.
+ * Initialize media buttons for the supplied media
  */
-
-function get_audio_url(action)
+function init_media_buttons(media)
 {
-	selected_audio = $('#selected-audio').val();
-	selected_raspi = get_selected_audio_raspi();
-
-	raspi_url = '';
-	if (selected_raspi)
-		raspi_url = selected_raspi.data('raspi-url');
-
-	return raspi_url + '/' + get_language() + '/api/video/' + selected_audio + '/' + action + '/';
-
+	$('button#' + media + '-play').removeClass('d-none');
+	$('button#' + media + '-pause').addClass('d-none');
+	$('button#' + media + '-rewind').addClass('button-disabled');
+	$('button#' + media + '-stop').addClass('button-disabled');
+	$('button#' + media + '-fast-forward').addClass('button-disabled');
+	$('button#' + media + '-volume-down').addClass('button-disabled');
+	$('button#' + media + '-volume-up').addClass('button-disabled');
 }
 
 /*
@@ -100,12 +89,11 @@ function toggle_online_status(raspi)
 	if (!raspi.online)
 		input.prop('checked', false);
 
-	selected_raspi_video = get_selected_video_raspi();
-	selected_raspi_audio = get_selected_audio_raspi();
+	selected_raspi_video = get_selected_raspi('video');
+	selected_raspi_audio = get_selected_raspi('audio');
 
 	if (!selected_raspi_video)
 		$('input[name=selected-raspberry-pi-video]:enabled:first').prop('checked', true);
-
 
 	if (!selected_raspi_audio)
 		$('input[name=selected-raspberry-pi-audio]:enabled:first').prop('checked', true);
@@ -330,12 +318,11 @@ function game_control_handler(action)
 		$.ajax({
 			url: '/' + get_language() + '/' + this.value + '/' + action + '/',
 			success: function() {
-				refresh_page();
 
-				$('button#video-play').removeClass('d-none');
-				$('button#video-pause').addClass('d-none');
-				$('button#audio-play').removeClass('d-none');
-				$('button#audio-pause').addClass('d-none');
+				init_media_buttons('video');
+				init_media_buttons('audio');
+
+				refresh_page();
 
 				alert('Game reset was successful!');
 			},
@@ -347,16 +334,15 @@ function game_control_handler(action)
 }
 
 /*
- * Assign click event handler for video control buttons.
+ * Assign click event handler for media control buttons.
  */
-function video_control_handler(action)
+function media_control_handler(media, action)
 {
-	$('select#selected-video').change(function() {
-		$('button#video-play').removeClass('d-none');
-		$('button#video-pause').addClass('d-none');
+	$('select#selected-' + media).change(function() {
+		init_media_buttons(media);
 	});
 
-	$('button#video-' + action).click(function() {
+	$('button#' + media + '-' + action).click(function() {
 
 		var disabled = $(this).hasClass('button-disabled');
 		if (disabled)
@@ -364,64 +350,33 @@ function video_control_handler(action)
 
 		if (action == 'play') {
 
-			$('button#video-play').addClass('d-none');
-			$('button#video-pause').removeClass('d-none');
+			$('button#' + media + '-rewind').removeClass('button-disabled');
+			$('button#' + media + '-play').addClass('d-none');
+			$('button#' + media + '-pause').removeClass('d-none');
+			$('button#' + media + '-stop').removeClass('button-disabled');
+			$('button#' + media + '-fast-forward').removeClass('button-disabled');
+			$('button#' + media + '-volume-down').removeClass('button-disabled');
+			$('button#' + media + '-volume-up').removeClass('button-disabled');
 		}
-		else {
+		else if (action == 'pause' || action == 'stop') {
 
-			$('button#video-play').removeClass('d-none');
-			$('button#video-pause').addClass('d-none');
+			$('button#' + media + '-play').removeClass('d-none');
+			$('button#' + media + '-pause').addClass('d-none');
+
+			if (action == 'stop')
+				init_media_buttons(media);
 		}
 
-		var video_url = get_video_url(action);
+		var media_url = get_media_url(media, action);
 
 		$.ajax({
-			url: video_url,
+			url: media_url,
 			timeout: timeout,
 			success: function() {
 				//refresh_page();
 			},
 			error: function() {
-				alert('Could not connect to URL: ' + video_url);
-			},
-		});
-	});
-}
-
-function audio_control_handler(action)
-{
-	$('select#selected-audio').change(function() {
-		$('button#audio-play').removeClass('d-none');
-		$('button#audio-pause').addClass('d-none');
-
-	});
-
-	$('button#audio-' + action).click(function() {
-
-		var disabled = $(this).hasClass('button-disabled');
-		if (disabled)
-			return;
-
-		if (action == 'play') {
-
-			$('button#audio-play').addClass('d-none');
-			$('button#audio-pause').removeClass('d-none');
-		}
-		else {
-			$('button#audio-play').removeClass('d-none');
-			$('button#audio-pause').addClass('d-none');
-		}
-
-		var audio_url = get_audio_url(action);
-
-		$.ajax({
-			url: audio_url,
-			timeout: timeout,
-			success: function() {
-				//refresh_page();
-			},
-			error: function() {
-				alert('Could not connect to URL: ' + audio_url);
+				alert('Could not connect to URL: ' + media_url);
 			},
 		});
 	});
@@ -513,26 +468,23 @@ function challenge_control_handler(action)
 
 $(document).ready(function() {
 
+	media_types = [
+		'video',
+		'audio',
+	];
+
+	actions = [
+		'play',
+		'pause',
+		'stop',
+		'rewind',
+		'fast-forward',
+		'volume-down',
+		'volume-up',
+	];
+
 	// Handler for the button to reset the escape game
 	game_control_handler('reset');
-
-	// Handler for the button to start the video
-	video_control_handler('play');
-
-	// Handler for the button to pause the video
-	video_control_handler('pause');
-
-	// Handler for the button to stop the video
-	video_control_handler('stop');
-
-	// Handler for the button to start the audio
-	audio_control_handler('play');
-
-	// Handler for the button to pause the audio
-	audio_control_handler('pause');
-
-	// Handler for the button to stop the audio
-	audio_control_handler('stop');
 
 	// Handler for the buttons to raise the lifts
 	lift_control_handler('raise');
@@ -551,6 +503,19 @@ $(document).ready(function() {
 
 	// Handler for the buttons to validate challenges
 	challenge_control_handler('validate');
+
+	// Handlers for all media player buttons
+	for (media_index in media_types) {
+
+		media = media_types[media_index];
+
+		for (action_index in actions) {
+
+			action = actions[action_index]
+
+			media_control_handler(media, action);
+		}
+	}
 
 	// Create our websocket
 	create_websocket();

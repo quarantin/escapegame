@@ -123,3 +123,10 @@ select.select-media {
 	opacity: 0.2;
 }
 
+.small-img {
+	zoom: 0.5;
+}
+
+.small-img p {
+	zoom: 1.5;
+}
