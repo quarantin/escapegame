@@ -309,7 +309,7 @@ class Command(BaseCommand):
 		room_lampe.save()
 
 		# Room: La caverne (Retour)
-		room_caverne_retour = EscapeGameRoom(game=game_1001_nuits, door_image=None, name='Retour à la caverne', unlock_dependent_on=room_lampe)
+		room_caverne_retour = EscapeGameRoom(game=game_1001_nuits, door_image=door_fontain_room_image, name='Retour à la caverne', unlock_dependent_on=room_lampe)
 		room_caverne_retour.save()
 
 		# Room: Retour au SAS des 1001 nuits (SAS 1)
