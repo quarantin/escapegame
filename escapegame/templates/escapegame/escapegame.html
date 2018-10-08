@@ -68,27 +68,61 @@
 					<div class="row">
 						<div class="col">
 
+							<br>
+
+							<!-- Rewind video button -->
+							<button id="video-rewind" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-rewind-100.png' %}" title="{% trans "Rewind video" %}">
+									<p>{% trans "Rewind" %}</p>
+								</div>
+							</button>
+
 							<!-- Play video button -->
-							<button id="video-play" type="submit"{% if videos|length == 0 %} class="button-disabled"{% endif %}>
+							<button id="video-play" type="submit" class="small-img{% if videos|length == 0 %} button-disabled{% endif %}">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play video" %}">
-									<p>{% trans "Start video" %}</p>
+									<p>{% trans "Play" %}</p>
 								</div>
 							</button>
 
 							<!-- Pause video button -->
-							<button id="video-pause" type="submit" class="d-none{% if videos|length == 0 %} button-disabled{% endif %}">
+							<button id="video-pause" type="submit" class="small-img d-none">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause video" %}">
-									<p>{% trans "Pause video" %}</p>
+									<p>{% trans "Pause" %}</p>
+								</div>
+							</button>
+
+							<!-- Fast forward video button -->
+							<button id="video-fast-forward" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-fast-forward-100.png' %}" title="{% trans "Fast forward video" %}">
+									<p>{% trans "Fast-Forward" %}</p>
 								</div>
 							</button>
 
 							<!-- Stop video button -->
-							<button id="video-stop" type="submit"{% if videos|length == 0 %} class="button-disabled"{% endif %}>
+							<button id="video-stop" type="submit" class="small-img button-disabled">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop video" %}">
-									<p>{% trans "Stop video" %}</p>
+									<p>{% trans "Stop" %}</p>
+								</div>
+							</button>
+
+							<!-- Volume down button -->
+							<button id="video-volume-down" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-volume-down-100.png' %}" title="{% trans "Turn volume down" %}">
+									<p>{% trans "Volume Down" %}</p>
+								</div>
+							</button>
+
+							<!-- Volume up button -->
+							<button id="video-volume-up" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-volume-up-100.png' %}" title="{% trans "Turn volume up" %}">
+									<p>{% trans "Volume Up" %}</p>
 								</div>
 							</button>
 
@@ -139,27 +173,61 @@
 					<div class="row">
 						<div class="col">
 
+							<br>
+
+							<!-- Rewind audio button -->
+							<button id="audio-rewind" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-rewind-100.png' %}" title="{% trans "Rewind audio" %}">
+									<p>{% trans "Rewind" %}</p>
+								</div>
+							</button>
+
 							<!-- Play audio button -->
-							<button id="audio-play" type="submit"{% if audios|length == 0 %} class="button-disabled"{% endif %}>
+							<button id="audio-play" type="submit" class="small-img{% if audios|length == 0 %} button-disabled{% endif %}">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-play-100.png' %}" title="{% trans "Play audio" %}">
-									<p>{% trans "Start audio" %}</p>
+									<p>{% trans "Play" %}</p>
 								</div>
 							</button>
 
 							<!-- Pause audio button -->
-							<button id="audio-pause" type="submit"class="d-none{% if audios|length == 0 %} button-disabled{% endif %}">
+							<button id="audio-pause" type="submit" class="small-img d-none">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-pause-100.png' %}" title="{% trans "Pause audio" %}">
-									<p>{% trans "Pause audio" %}</p>
+									<p>{% trans "Pause" %}</p>
+								</div>
+							</button>
+
+							<!-- Fast forward audio button -->
+							<button id="audio-fast-forward" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-fast-forward-100.png' %}" title="{% trans "Fast forward audio" %}">
+									<p>{% trans "Fast-Forward" %}</p>
 								</div>
 							</button>
 
 							<!-- Stop audio button -->
-							<button id="audio-stop" type="submit"{% if audios|length == 0 %} class="button-disabled"{% endif %}>
+							<button id="audio-stop" type="submit" class="small-img button-disabled">
 								<div class="image-with-caption">
 									<img src="{% static 'img/icons8-stop-100.png' %}" title="{% trans "Stop audio" %}">
-									<p>{% trans "Stop audio" %}</p>
+									<p>{% trans "Stop" %}</p>
+								</div>
+							</button>
+
+							<!-- Volume down button -->
+							<button id="audio-volume-down" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-volume-down-100.png' %}" title="{% trans "Turn volume down" %}">
+									<p>{% trans "Volume Down" %}</p>
+								</div>
+							</button>
+
+							<!-- Volume up button -->
+							<button id="audio-volume-up" type="submit" class="small-img button-disabled">
+								<div class="image-with-caption">
+									<img src="{% static 'img/icons8-volume-up-100.png' %}" title="{% trans "Turn volume up" %}">
+									<p>{% trans "Volume Up" %}</p>
 								</div>
 							</button>
 
