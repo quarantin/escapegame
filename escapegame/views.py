@@ -282,7 +282,7 @@ def rest_media_control(request, media_slug, action):
 	method = 'escapegame.views.rest_media_control'
 
 	try:
-		if action not in [ 'pause', 'play', 'stop' ]:
+		if action not in [ 'pause', 'play', 'stop', 'rewind', 'fast-forward', 'volume-down', 'volume-up' ]:
 			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
 		media = MultimediaFile.objects.get(slug=media_slug)
