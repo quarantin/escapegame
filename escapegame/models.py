@@ -209,6 +209,58 @@ class EscapeGameRoom(models.Model):
 
 		return True
 
+	def set_locked(self, request, action):
+
+		controller = self.get_controller()
+
+		status, message = self.door.forward_lock_request(request, self.game, self, action)
+		if status != 0:
+			raise Exception(message)
+
+		# Was this the last room of this game?
+		if self.is_last_room():
+
+			print('This was the last room, finishing escape game')
+			self.game.finish(controller)
+
+		else:
+			print('Still some rooms to explore')
+
+		# Unlock rooms with an unlock dependency on me if they have no challenge
+		try:
+			dependent_rooms = EscapeGameRoom.objects.filter(unlock_dependent_on=self, has_no_challenge=True)
+
+		except EscapeGameRoom.DoesNotExist:
+			dependent_rooms = []
+
+		if not dependent_rooms:
+			print("No room unlock dependent on me")
+
+		for dependent_room in dependent_rooms:
+
+			print("Opening dependent room: %s" % dependent_room.name)
+			status, message = dependent_room.set_locked(request, 'unlock')
+			if status != 0:
+				raise Exception(message)
+
+		# Lock rooms with a lock dependency on me
+		try:
+			dependent_rooms = EscapeGameRoom.objects.filter(lock_dependent_on=self)
+		except EscapeGameRoom.DoesNotExist:
+			dependent_rooms = []
+
+		if not dependent_rooms:
+			print("No room lock dependent on me")
+
+		for dependent_room in dependent_rooms:
+
+			print("Closing dependent room: %s" % dependent_room.name)
+			status, message = dependent_room.set_locked(request, 'lock')
+			if status != 0:
+				raise Exception(message)
+
+		return 0, 'Success'
+
 	def all_challenge_validated(self):
 		try:
 			valid = True
@@ -228,6 +280,10 @@ class EscapeGameRoom(models.Model):
 		return last_room == self
 
 	def get_controller(self):
+
+		if self.door is not None and self.door.controller is not None:
+			return self.door.controller
+
 		return self.controller or self.game.controller
 
 	def reset(self):
@@ -318,66 +374,21 @@ class EscapeGameChallenge(models.Model):
 
 			# Was this the last challenge to solve in this room?
 			if self.room.all_challenge_validated():
-
 				print('This was the last remaining challenge to solve, opening door for %s' % self.room.name)
-				status, message = self.room.door.forward_lock_request(request, self.room.game, self.room, 'unlock')
-				if status != 0:
-					raise Exception(message)
-
-				# Was this the last room of this game?
-				if self.room.is_last_room():
-
-					print('This was the last room, finishing escape game')
-					self.room.game.finish(controller)
-
-				else:
-					print('Still some rooms to explore')
-
-				# Unlock rooms with an unlock dependency on my room if they have no challenge
-				try:
-					dependent_rooms = EscapeGameRoom.objects.filter(unlock_dependent_on=self.room, has_no_challenge=True)
-
-				except EscapeGameRoom.DoesNotExist:
-					dependent_rooms = []
-
-				if not dependent_rooms:
-					print("No room unlock dependent on me")
-
-				for dependent_room in dependent_rooms:
-
-					print("Opening dependent room: %s" % dependent_room.name)
-					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'unlock')
-					if status != 0:
-						raise Exception(message)
-
-				# Lock rooms with a lock dependency on my room
-				try:
-					dependent_rooms = EscapeGameRoom.objects.filter(lock_dependent_on=self.room)
-				except EscapeGameRoom.DoesNotExist:
-					dependent_rooms = []
-
-				if not dependent_rooms:
-					print("No room lock dependent on me")
-
-				for dependent_room in dependent_rooms:
-
-					print("Closing dependent room: %s" % dependent_room.name)
-					status, message = dependent_room.door.forward_lock_request(request, dependent_room.game, dependent_room, 'lock')
-					if status != 0:
-						raise Exception(message)
+				self.room.set_locked(request, 'unlock')
 			else:
 				print('Still unsolved challenge in room %s' % self.room.name)
 
 			# If this challenge is solved and we have an associated media, play it remotely on the controller of this challenge
 			if self.gpio.solved and self.solved_media is not None:
-					media_url = self.solved_media.get_action_url(controller)
-					print("Solved media: %s - %s" % (self.solved_media.name, media_url))
-					libraspi.do_get(media_url)
+				media_url = self.solved_media.get_action_url(controller)
+				print("Solved media: %s - %s" % (self.solved_media.name, media_url))
+				libraspi.do_get(media_url)
 
 			return 0, 'Success'
 
 		except Exception as err:
-			return 1, 'Error: %s\n\n%s' % (err, traceback.format_exc())
+			return 1, 'Error: %s' % traceback.format_exc()
 
 	class Meta:
 		ordering = [ 'id', 'room', 'name' ]

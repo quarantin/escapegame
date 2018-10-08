@@ -44,7 +44,7 @@ def escapegame_detail(request, game_slug):
 	audios = game.get_multimedia_files(MultimediaFile.TYPE_AUDIO)
 
 	for room in rooms:
-		room.url_callback = '/%s/api/door/%s/%s/%s' % (lang, game.slug, room.slug, room.door.slug)
+		room.url_callback = '/%s/api/door/%s/%s' % (lang, game.slug, room.slug)
 		room.challs = EscapeGameChallenge.objects.filter(room=room)
 		for chall in room.challs:
 			chall.url_callback = '/%s/api/challenge/%s/%s/%s' % (lang, game.slug, room.slug, chall.slug)
@@ -209,7 +209,7 @@ def rest_challenge_control(request, game_slug, room_slug, challenge_slug, action
 """
 	REST door controls, no login required for now (REST API)
 """
-def rest_door_control(request, game_slug, room_slug, door_slug, action):
+def rest_door_control(request, game_slug, room_slug, action):
 
 	method = 'escapegame.views.rest_door_control'
 
@@ -217,14 +217,10 @@ def rest_door_control(request, game_slug, room_slug, door_slug, action):
 		if action not in [ 'lock', 'unlock' ]:
 			raise Exception('Invalid action `%s` for method: `%s`' % (action, method))
 
-		door = DoorGPIO.objects.get(slug=door_slug)
 		game = EscapeGame.objects.get(slug=game_slug)
-		room = None
+		room = EscapeGameRoom.objects.get(game=game, slug=room_slug)
 
-		if room_slug != 'extra':
-			room = EscapeGameRoom.objects.get(slug=room_slug)
-
-		status, message = door.forward_lock_request(request, game, room, action)
+		status, message = room.set_locked(request, action)
 
 		return JsonResponse({
 			'status': status,

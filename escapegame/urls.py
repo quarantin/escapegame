@@ -32,7 +32,7 @@ urlpatterns = [
 	path('api/challenge/<slug:game_slug>/<slug:room_slug>/<slug:challenge_slug>/<str:action>/', views.rest_challenge_control),
 
 	# Door controls
-	path('api/door/<slug:game_slug>/<slug:room_slug>/<slug:door_slug>/<str:action>/', views.rest_door_control),
+	path('api/door/<slug:game_slug>/<slug:room_slug>/<str:action>/', views.rest_door_control),
 
 	# Lift controls
 	path('api/lift/<slug:game_slug>/<slug:lift_slug>/<str:action>/', views.rest_lift_control),
