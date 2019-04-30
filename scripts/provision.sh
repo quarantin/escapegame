@@ -6,13 +6,13 @@
 sudo echo -n
 
 NEW_HOSTNAME=$1
-if [ -z ${NEW_HOSTNAME} ]; then
+if [ -z "${NEW_HOSTNAME}" ]; then
 	echo "Usage: ${0} <hostname>"
 	exit
 fi
 
 # Configure hostname of the machine
-sudo ${ROOTDIR}/scripts/set-hostname.sh ${NEW_HOSTNAME}
+sudo -E ${ROOTDIR}/scripts/set-hostname.sh ${NEW_HOSTNAME}
 
 # Source env.sh again to update HOSTNAME
 . $(dirname $0)/env.sh
@@ -30,16 +30,18 @@ fi
 
 DEBIAN_PACKAGES=(
 	bc
+	dialog
 	git
 	libdbd-mysql-perl
+	libffi-dev
+	libmysqlclient-dev
 	libssl-dev
 	#munin-node
 	$NGINX_PKG
 	python3
 	python3-pip
 	screen
-	uwsgi
-	uwsgi-plugin-python3
+	unzip
 	vim
 )
 
@@ -56,9 +58,11 @@ fi
 
 PIP_PACKAGES=(
 	asn1crypto==0.24.0
+	autobahn==18.8.1
 	cffi==1.11.5
 	channels==2.1.3
 	cryptography==2.3.1
+	daphne==2.2.5
 	django==2.0.7
 	django-cors-headers==2.4.0
 	django-extensions==2.1.0
@@ -95,52 +99,56 @@ UWSGI_APPS_AVAILABLE=/etc/uwsgi/apps-available
 
 # Install Debian packages
 echo "Installing the following Debian packages: ${DEBIAN_PACKAGES[@]}"
-sudo apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
+sudo -E apt-get install --yes --quiet "${DEBIAN_PACKAGES[@]}"
+
+# Upgrading pip
+echo "Upgrading pip..."
+sudo -E -H ${PIP} install --upgrade pip
 
 # Install pip packages
 echo "Installing the following pip packages: ${PIP_PACKAGES[@]}"
-sudo -H ${PIP} install "${PIP_PACKAGES[@]}"
+sudo -E -H ${PIP} install "${PIP_PACKAGES[@]}"
 
 # Setting correct permissions on upload folders
 sudo chown -R :www-data ${ROOTDIR}/media/uploads/
 sudo chmod g+s ${ROOTDIR}/media/uploads/*
 
 # Install golang 1.11
-GOLANG_VERSION=1.11
-GOLANG_PKG=go${GOLANG_VERSION}.linux-${ARCH}.tar.gz
-GOLANG_URL=https://storage.googleapis.com/golang/${GOLANG_PKG}
-wget -q -O /tmp/${GOLANG_PKG} ${GOLANG_URL}
-sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf /tmp/${GOLANG_PKG}
-export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin
-rm -f /tmp/${GOLANG_PKG}
+#GOLANG_VERSION=1.11
+#GOLANG_PKG=go${GOLANG_VERSION}.linux-${ARCH}.tar.gz
+#GOLANG_URL=https://storage.googleapis.com/golang/${GOLANG_PKG}
+#wget -q -O /tmp/${GOLANG_PKG} ${GOLANG_URL}
+#sudo rm -rf /usr/local/go
+#sudo tar -C /usr/local -xf /tmp/${GOLANG_PKG}
+#export GOROOT=/usr/local/go
+#export PATH=$PATH:$GOROOT/bin
+#rm -f /tmp/${GOLANG_PKG}
 
 # Install arduino-cli
-GO_DIR=~/golang
-rm -rf ${GO_DIR}
-mkdir -p ${GO_DIR}
-export GOPATH=${GO_DIR}
-export PATH=$PATH:$GOPATH
-go get -u github.com/arduino/arduino-cli
-mkdir -p ~/.arduino15
-${GO_DIR}/bin/arduino-cli core update-index
-${GO_DIR}/bin/arduino-cli core install arduino:avr
+#GO_DIR=~/golang
+#rm -rf ${GO_DIR}
+#mkdir -p ${GO_DIR}
+#export GOPATH=${GO_DIR}
+#export PATH=$PATH:$GOPATH
+#go get -u github.com/arduino/arduino-cli
+#mkdir -p ~/.arduino15
+#${GO_DIR}/bin/arduino-cli core update-index
+#${GO_DIR}/bin/arduino-cli core install arduino:avr
 
 # Install github.com/elechouse/PN532 (NFC library for Arduino)
-PN532_PKG=PN532_HSU.zip
-PN532_URL=https://github.com/elechouse/PN532/archive/${PN532_PKG}
-ARDUINO_LIBS=~/Arduino/libraries/
-mkdir -p ${ARDUINO_LIBS}
-rm -rf ${ARDUINO_LIBS}/*
-wget -q -O /tmp/${PN532_PKG} ${PN532_URL}
-unzip -q /tmp/${PN532_PKG} -d ${ARDUINO_LIBS}
-rm -f /tmp/${PN532_PKG}
-mv ${ARDUINO_LIBS}/PN532-PN532_HSU/* ${ARDUINO_LIBS}
-rm -rf ${ARDUINO_LIBS}/PN532-PN532_HSU
+#PN532_PKG=PN532_HSU.zip
+#PN532_URL=https://github.com/elechouse/PN532/archive/${PN532_PKG}
+#ARDUINO_LIBS=~/Arduino/libraries/
+#mkdir -p ${ARDUINO_LIBS}
+#rm -rf ${ARDUINO_LIBS}/*
+#wget -q -O /tmp/${PN532_PKG} ${PN532_URL}
+#unzip -q /tmp/${PN532_PKG} -d ${ARDUINO_LIBS}
+#rm -f /tmp/${PN532_PKG}
+#mv ${ARDUINO_LIBS}/PN532-PN532_HSU/* ${ARDUINO_LIBS}
+#rm -rf ${ARDUINO_LIBS}/PN532-PN532_HSU
 
 # Creates default ~/.vimrc
-if [ ${USER} = 'pi' ]; then
+if [ "${USER}" = 'pi' ]; then
 cat << EOF > ~/.vimrc
 syntax on
 set ic
@@ -150,7 +158,7 @@ EOF
 fi
 
 # Configure timezone
-sudo timedatectl set-timezone ${TIMEZONE}
+#sudo timedatectl set-timezone ${TIMEZONE}
 
 # Hide GNU screen startup message
 sudo sed -i 's/^#startup_message off$/startup_message off/' /etc/screenrc
@@ -206,7 +214,7 @@ sudo ln -s -r -t ${UWSGI_APPS_ENABLED}/  ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF}
 sudo ln -s -r -t ${UWSGI_APPS_ENABLED}/  ${UWSGI_APPS_AVAILABLE}/${UWSGI_CONF_DEFAULT}
 
 # Enable nginx service at boot time
-sudo update-rc.d nginx defaults
+sudo -E update-rc.d nginx defaults
 
 # Enable uwsgi services at boot time
 ${ROOTDIR}/scripts/set-crontab.sh
